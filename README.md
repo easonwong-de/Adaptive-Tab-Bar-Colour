@@ -20,7 +20,7 @@ This add-on works well with websites with built-in dark mode and also supports <
 <br>
 
 ## Safety Warning
-Beware of malicious web UI: Please distinguish between application UI and web components, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. （Credit to u/KazaHesto on Reddit）  
+Beware of malicious web UI: Please distinguish between application UI and web components, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to u/KazaHesto on Reddit)  
 <br>
 
 ## License
