@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.message == 'background_color'){
 			headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
-			if (headerTag == null){ //If there's no existing defined theme color
+			if (headerTag == null){ //If there's no existing defined theme-color
 				response = getComputedColor();
 			}else{
 				if (tooBright(headerTag.content)){ //Theme color is too bright
