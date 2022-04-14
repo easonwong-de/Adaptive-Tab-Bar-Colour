@@ -37,7 +37,7 @@ adaptive_themes = {
       toolbar_text: "rgb(0, 0, 0)",
       frame: "rgb(255, 255, 255)",
       tab_background_text: "rgb(30, 30, 30)",
-      toolbar_field: "rgb(220, 220, 220)",
+      toolbar_field: "rgb(235, 235, 235)",
       toolbar_field_text: "rgb(0, 0, 0)",
       tab_line: "rgba(0, 0, 0, 0)",
       popup: "rgb(255, 255, 255)",
@@ -92,6 +92,9 @@ function startup() {
       applyTheme(default_theme); //Use default color in browser-owned pages
     }else{
       changeFrameColorToBackground();
+      setTimeout(function() { //Try again after 500 ms, in case the website loads too slow
+        changeFrameColorToBackground();
+      }, 500);
     }
   });
 }

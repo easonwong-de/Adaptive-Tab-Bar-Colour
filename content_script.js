@@ -28,8 +28,8 @@ chrome.runtime.onMessage.addListener(
 			}else{ //C,D,E,F
 				themeColor = getThemeColor();
 				backgroundColor = getComputedColor();
-				//console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
-				//console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
+				console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
+				console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
 				if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
 					responseColor = backgroundColor;
 					darkMode = true;
@@ -56,7 +56,9 @@ chrome.runtime.onMessage.addListener(
 
 //Get computed background color e.g. "rgb(30, 30, 30)"
 function getComputedColor() {
-	return window.getComputedStyle(document.body,null).getPropertyValue('background-color');
+	color = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
+	if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
+	return color;
 }
 
 //Get provided theme-color e.g. "#ffffff", "rgba(30, 30, 30, 0.9)"
