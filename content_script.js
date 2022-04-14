@@ -1,40 +1,80 @@
 
-response = "";
+responseColor = "";
+darkMode = true;
+themeColor = "";
+backgroundColor = "";
+
+//dark&light mode decides the color of the tab text, button icons etc.
+//theme-color is provided by website: getThemeColor()
+//background is computed: getComputedColor()
+
+//A: no theme-color exists, background is dark => returns background & in dark mode
+//B: no theme-color exists, background is bright => returns background & in light mode
+//C: theme-color is bright, background is dark => returns background & in dark mode
+//D: theme-color is dark, background is bright => returns theme-color & in dark mode
+//E: both are bright => returns theme-color & in light mode
+//F: both are dark => returns theme-color & in dark mode
 
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.message == 'background_color'){
-			headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
-			if (headerTag == null){ //If there's no existing defined theme-color
-				response = getComputedColor();
-			}else{
-				if (tooBright(headerTag.content)){ //Theme color is too bright
-					response = getComputedColor();
-				}else{
-					response = headerTag.content;
+			if (getThemeColor() == null){ //A,B
+				responseColor = getComputedColor();
+				if (tooBright(responseColor)){ //B
+					darkMode = false;
+				}else{ //A
+					darkMode = true;
+				}
+			}else{ //C,D,E,F
+				themeColor = getThemeColor();
+				backgroundColor = getComputedColor();
+				//console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
+				//console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
+				if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
+					responseColor = backgroundColor;
+					darkMode = true;
+				}else if (!tooBright(themeColor) && tooBright(backgroundColor)){ //D
+					responseColor = themeColor;
+					darkMode = true;
+				}else if (tooBright(themeColor) && tooBright(backgroundColor)){ //E
+					responseColor = themeColor;
+					darkMode = false;
+				}else if (!tooBright(themeColor) && !tooBright(backgroundColor)){ //F
+					responseColor = themeColor;
+					darkMode = true;
 				}
 			}
-			sendResponse({value: response});
+			//Make sure there will be no alpha value transmitted to background.js
+			if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
+			sendResponse({
+				color: responseColor,
+				darkMode: darkMode
+			});
 		}
 	}
 );
 
-//Get computed background color, if it's too bright, return default color
+//Get computed background color e.g. "rgb(30, 30, 30)"
 function getComputedColor() {
-	rgbString = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
-	if (tooBright(rgbString)){
-		return "rgb(28, 27, 34)";
+	return window.getComputedStyle(document.body,null).getPropertyValue('background-color');
+}
+
+//Get provided theme-color e.g. "#ffffff", "rgba(30, 30, 30, 0.9)"
+function getThemeColor() {
+	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
+	if (headerTag == null){
+		return null;
 	}else{
-		return rgbString;
+		return headerTag.content;
 	}
 }
 
-//Check if the color is too bright
+//Check if the color is too bright for dark mode
 function tooBright(string) {
-	if (string.startsWith("rgb")){
-		return rgbBrightness(rgbToRgb(string)) > 120;
-	}else{
+	if (string.startsWith("#")){
 		return hexBrightness(string) > 120;
+	}else{
+		return rgbBrightness(rgbaToRgba(string)) > 120;
 	}
 }
 
@@ -65,13 +105,19 @@ function hexToRgb(hex) {
 	} : null;
 }
 
-//Convert rgb (String) to rgb (Object)
-function rgbToRgb(rgbString) {
-	var result = rgbString.match(/\d+/g).map(Number);
+//Convert rgba (String) to rgba (Object)
+function rgbaToRgba(rgbaString) {
+	var result = rgbaString.match(/\d+/g).map(Number);
 	return result ? {
 		r: result[0],
 		g: result[1],
 		b: result[2],
 		a: result[3]
 	} : null;
+}
+
+//Delete alpha value from rgba (String)
+function noAplphaValue(rgbaString) {
+	rgba = rgbaToRgba(rgbaString);
+	return "rgb(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ")";
 }
