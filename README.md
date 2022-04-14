@@ -24,7 +24,7 @@ Beware of malicious web UI: Please distinguish between application UI and web co
 <br>
 
 ## Known Bugs
-The color of tab bar sometimes does not change when the website loads slowly.  
+The color of tab bar sometimes does not change when the website loads slowly. (Can be fixed by switching tabs)  
 <br>
 
 ## License
