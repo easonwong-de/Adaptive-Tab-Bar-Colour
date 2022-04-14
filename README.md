@@ -23,6 +23,10 @@ This add-on works well with websites with built-in dark mode and also supports <
 Beware of malicious web UI: Please distinguish between application UI and web components, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to u/KazaHesto on Reddit)  
 <br>
 
+## Known Bugs
+The color of tab bar sometimes does not change when the website loads slowly.  
+<br>
+
 ## License
 [The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
 <br>
