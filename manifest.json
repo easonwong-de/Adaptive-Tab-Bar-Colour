@@ -3,6 +3,11 @@
   "version": "1.0",
   "description": "Change the color of Firefox tab bar to match the website theme.",
   "author": "Eason Wong",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ATBC@EasonWong"
+    }
+  },
   "permissions": ["activeTab", "tabs", "theme"],
   "background": {
     "scripts": ["background.js"],
