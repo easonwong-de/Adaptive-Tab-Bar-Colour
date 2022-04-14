@@ -28,7 +28,7 @@ Beware of malicious web UI: Please distinguish between application UI and web co
 <br>
 
 ## Similar Projects
-Below listed are products of similar use from other intellegent people. Make sure you trust them before installing.  
+Below listed are products of similar use from other intelligent people. Make sure you trust them before installing.  
 
 Chameleon Dynamic Theme: [GitHub](https://github.com/taboca/browser-adaptation-dynamic-theme)  
 VivaldiFox: [GitHub](https://github.com/nt1m/vivaldi-fox/), [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/)  
