@@ -1,6 +1,7 @@
 
 responseColor = "";
 darkMode = true;
+
 themeColor = "";
 backgroundColor = "";
 

@@ -8,7 +8,7 @@
       "id": "ATBC@EasonWong"
     }
   },
-  "permissions": ["activeTab", "tabs", "theme"],
+  "permissions": ["activeTab", "tabs", "theme", "storage"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
@@ -17,14 +17,9 @@
     "matches": ["<all_urls>"],
     "js": ["content_script.js"]
   }],
-  "page_action": {
-    "default_icon": {
-      "16": "images/ATBC_16.png",
-      "32": "images/ATBC_32.png",
-      "48": "images/ATBC_48.png",
-      "96": "images/ATBC_96.png",
-      "128": "images/ATBC_128.png"
-    }
+  "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
   },
   "icons": {
     "16": "images/ATBC_16.png",

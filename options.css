@@ -1,0 +1,16 @@
+body {
+	font-size: 12px;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+.light {
+	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
+}
+
+.dark {
+	background-color: rgb(28, 27, 34);
+	color: rgb(255, 255, 255);
+}
