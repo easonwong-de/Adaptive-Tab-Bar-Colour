@@ -69,9 +69,9 @@ function hexToRgb(hex) {
 function rgbToRgb(rgbString) {
 	var result = rgbString.match(/\d+/g).map(Number);
 	return result ? {
-			r: result[0],
-			g: result[1],
-			b: result[2],
-			a: result[3]
+		r: result[0],
+		g: result[1],
+		b: result[2],
+		a: result[3]
 	} : null;
 }
