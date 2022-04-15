@@ -1,9 +1,10 @@
-
-responseColor = "";
-darkMode = true;
+//Content script tells background.js what color to use
 
 themeColor = "";
 backgroundColor = "";
+
+responseColor = "";
+darkMode = true;
 
 //dark&light mode decides the color of the tab text, button icons etc.
 //theme-color is provided by website: getThemeColor()
@@ -16,41 +17,45 @@ backgroundColor = "";
 //E: both are bright => returns theme-color & in light mode
 //F: both are dark => returns theme-color & in dark mode
 
+if (getThemeColor() == null){ //A,B
+	responseColor = getComputedColor();
+	if (tooBright(responseColor)){ //B
+		darkMode = false;
+	}else{ //A
+		darkMode = true;
+	}
+}else{ //C,D,E,F
+	themeColor = getThemeColor();
+	backgroundColor = getComputedColor();
+	//console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
+	//console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
+	if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
+		responseColor = backgroundColor;
+		darkMode = true;
+	}else if (!tooBright(themeColor) && tooBright(backgroundColor)){ //D
+		responseColor = themeColor;
+		darkMode = true;
+	}else if (tooBright(themeColor) && tooBright(backgroundColor)){ //E
+		responseColor = themeColor;
+		darkMode = false;
+	}else if (!tooBright(themeColor) && !tooBright(backgroundColor)){ //F
+		responseColor = themeColor;
+		darkMode = true;
+	}
+}
+
+//Make sure there will be no alpha value transmitted to background.js
+if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
+
+//Sent color to background.js once as soon as a new tab is opened
+let port = browser.runtime.connect({name:"port_cs"});
+port.postMessage({color: responseColor, darkMode: darkMode});
+
+//Remind background.js of the color in case he forgets it
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		if (request.message == 'background_color'){
-			if (getThemeColor() == null){ //A,B
-				responseColor = getComputedColor();
-				if (tooBright(responseColor)){ //B
-					darkMode = false;
-				}else{ //A
-					darkMode = true;
-				}
-			}else{ //C,D,E,F
-				themeColor = getThemeColor();
-				backgroundColor = getComputedColor();
-				console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
-				console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
-				if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
-					responseColor = backgroundColor;
-					darkMode = true;
-				}else if (!tooBright(themeColor) && tooBright(backgroundColor)){ //D
-					responseColor = themeColor;
-					darkMode = true;
-				}else if (tooBright(themeColor) && tooBright(backgroundColor)){ //E
-					responseColor = themeColor;
-					darkMode = false;
-				}else if (!tooBright(themeColor) && !tooBright(backgroundColor)){ //F
-					responseColor = themeColor;
-					darkMode = true;
-				}
-			}
-			//Make sure there will be no alpha value transmitted to background.js
-			if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
-			sendResponse({
-				color: responseColor,
-				darkMode: darkMode
-			});
+		if (request.message == 'remind_me'){
+			sendResponse({color: responseColor, darkMode: darkMode});
 		}
 	}
 );

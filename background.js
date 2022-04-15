@@ -1,8 +1,3 @@
-
-browser.runtime.onInstalled.addListener(startup);
-chrome.tabs.onUpdated.addListener(startup);
-chrome.tabs.onActivated.addListener(startup);
-
 adaptive_themes = {
   'light': {
     colors: {
@@ -58,16 +53,43 @@ adaptive_themes = {
   }
 };
 
-function startup() {
+browser.runtime.onInstalled.addListener(function () {
+  browser.storage.local.get("scheme", function (obj) {
+    scheme = obj.scheme;
+    if (scheme == undefined || scheme.length == 0){ //Read present theme to select color scheme
+      if (window.matchMedia("(prefers-color-scheme: light)").matches){
+        browser.storage.local.set({scheme: "light"});
+      }else{
+        browser.storage.local.set({scheme: "dark"});
+      }
+      browser.runtime.openOptionsPage();
+    }
+  });
+  onTabUpdate();
+});
+
+chrome.tabs.onUpdated.addListener(onTabUpdate);
+chrome.tabs.onActivated.addListener(onTabUpdate);
+
+let port_cs;
+
+browser.runtime.onConnect.addListener(function (port) {
+  port_cs = port;
+  port_cs.onMessage.addListener(function (response) {
+      console.log("+++EXPRESS RESPONSE+++ Response color: " + response.color + ", in dark mode: " + response.darkMode);
+      changeFrameColorTo(response.color, response.darkMode);
+    });
+});
+
+function onTabUpdate() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     let tab = tabs[0];
     if (tab.url.startsWith("about:")){
-      resetFrameColor(); //Use default color in browser-owned pages
+      //Use default color in browser-owned pages
+      //In this case, content script can't work
+      resetFrameColor();
     }else{
       changeFrameColorToBackground();
-      setTimeout(function() { //Try again after 500 ms, in case the website loads too slow
-        changeFrameColorToBackground();
-      }, 500);
     }
   });
 }
@@ -75,21 +97,20 @@ function startup() {
 // Colorize tab bar after defined theme-color or computed background color
 function changeFrameColorToBackground() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {message: 'background_color'}, function(response) {
+    chrome.tabs.sendMessage(tabs[0].id, {message: 'remind_me'}, function(response) {
       let tab = tabs[0];
-      console.log("Request sent to " + tab.url);
       if (response != undefined){
         console.log("Response color: " + response.color + ", in dark mode: " + response.darkMode);
         changeFrameColorTo(response.color, response.darkMode);
       }else{
         resetFrameColor();
-        console.log("No response.");
+        console.log("LOST CONNECTION TO CONTENT SCRIPT");
       }
     });
   });
 }
 
-//Change tab bar to appointed color
+//Change tab bar to the appointed color
 function changeFrameColorTo(color, darkMode) {
   if (darkMode){
     adaptive_themes['dark']['colors']['frame'] = color;
@@ -104,6 +125,7 @@ function changeFrameColorTo(color, darkMode) {
   }
 }
 
+//Reset frame color when something bad happens
 function resetFrameColor() {
   browser.storage.local.get("scheme", function (obj) {
     if (obj.scheme == "dark"){
@@ -116,7 +138,6 @@ function resetFrameColor() {
 
 //Apply theme
 function applyTheme(theme) {
-  console.log("Change color to: " + theme['colors']['frame']);
   browser.theme.update(theme);
 }
 
