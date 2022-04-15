@@ -13,6 +13,8 @@ This add-on works well with websites with built-in dark mode and also supports <
 ![Showcase_2](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_2.jpg)  
 
 ![Showcase_3](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_3.jpg)  
+
+![Showcase_4](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_4.jpg)  
 <br>
 
 ## Download
