@@ -8,13 +8,13 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 
 This add-on works well with websites with built-in dark mode and also supports <a href="https://addons.mozilla.org/en-GB/firefox/addon/darkreader/">Dark Reader</a>.  
 
+![Showcase_4](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_4.jpg)  
+
 ![Showcase_1](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_1.jpg)  
 
 ![Showcase_2](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_2.jpg)  
 
 ![Showcase_3](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_3.jpg)  
-
-![Showcase_4](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_4.jpg)  
 <br>
 
 ## Download
@@ -26,7 +26,7 @@ Beware of malicious web UI: Please distinguish between application UI and web co
 <br>
 
 ## Known Bugs
-The color of tab bar sometimes does not change when the website loads slowly. (Can be fixed by switching tabs)  
+Might not support CSS themes  
 <br>
 
 ## License
