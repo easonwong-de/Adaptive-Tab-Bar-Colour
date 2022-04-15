@@ -100,7 +100,7 @@ function changeFrameColorToBackground() {
     chrome.tabs.sendMessage(tabs[0].id, {message: 'remind_me'}, function(response) {
       let tab = tabs[0];
       if (response != undefined){
-        console.log("Response color: " + response.color + ", in dark mode: " + response.darkMode);
+        console.log(tab.url + " Response color: " + response.color + ", in dark mode: " + response.darkMode);
         changeFrameColorTo(response.color, response.darkMode);
       }else{
         resetFrameColor();
