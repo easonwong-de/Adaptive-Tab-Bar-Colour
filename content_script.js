@@ -8,6 +8,7 @@ darkMode = true;
 
 //Find the best color
 function findColor() {
+	console.log("looking for color. Theme color: " + getThemeColor());
 	//dark&light mode decides the color of the tab text, button icons etc.
 	//theme-color is provided by website: getThemeColor()
 	//background is computed: getComputedColor()
@@ -48,7 +49,7 @@ function findColor() {
 	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
 }
 
-//Sent color to background.js once as soon as a new tab is opened
+//Sent color to background.js once as soon as content script is loaded
 findColor();
 let port = browser.runtime.connect({name:"port_cs"});
 port.postMessage({color: responseColor, darkMode: darkMode});
