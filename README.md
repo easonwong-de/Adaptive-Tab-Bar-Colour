@@ -26,6 +26,7 @@ Beware of malicious web UI: Please distinguish between application UI and web co
 <br>
 
 ## Known Bugs
+Wrong theme color for some websites e.g. TickTick, IMDb, Microsoft sites  
 Might not support CSS themes  
 <br>
 
