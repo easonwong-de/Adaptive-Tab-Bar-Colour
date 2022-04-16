@@ -53,14 +53,12 @@ findColor();
 let port = browser.runtime.connect({name:"port_cs"});
 port.postMessage({color: responseColor, darkMode: darkMode});
 
-//Remind background.js of the color in case he forgets it
+//Remind background.js of the color
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.message == 'remind_me'){
-			console.log("FIRST RES");
-			sendResponse({color: responseColor, darkMode: darkMode});
-			findColor();
-			console.log("SECOND RES");
+			sendResponse({color: responseColor, darkMode: darkMode}); //Sends stored color to background.js
+			findColor(); //In case preferences are changed
 			sendResponse({color: responseColor, darkMode: darkMode});
 		}
 	}
@@ -77,8 +75,9 @@ function getComputedColor() {
 function getThemeColor() {
 	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
 	if (headerTag == null){
-		if (document.querySelector('.o365sx-navbar') != null){ //When it's a Microsoft website, which hide its theme-color on purpose
-			return getComputedStyle(document.querySelector('.o365sx-navbar')).backgroundColor;
+		MicrosoftNavbar = document.querySelector('.o365sx-navbar');
+		if (MicrosoftNavbar != null){ //If it's a Microsoft website, which hide its theme-color for some reason
+			return getComputedStyle(MicrosoftNavbar).backgroundColor;
 		}else{
 			return null;
 		}
