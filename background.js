@@ -68,7 +68,7 @@ browser.runtime.onInstalled.addListener(function () {
   onTabUpdate();
 });
 
-chrome.tabs.onUpdated.addListener(onTabUpdate);
+//chrome.tabs.onUpdated.addListener(onTabUpdate);
 chrome.tabs.onActivated.addListener(onTabUpdate);
 
 let port_cs;

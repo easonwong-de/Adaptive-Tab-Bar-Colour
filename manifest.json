@@ -19,7 +19,7 @@
   }],
   "options_ui": {
       "page": "options.html",
-      "open_in_tab": true
+      "browser_style": true
   },
   "icons": {
     "16": "images/ATBC_16.png",
