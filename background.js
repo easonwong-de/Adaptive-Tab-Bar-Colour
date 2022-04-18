@@ -1,5 +1,5 @@
 adaptive_themes = {
-  'light': {
+  "light": {
     colors: {
       toolbar: "rgba(0, 0, 0, 0)",
       toolbar_text: "rgb(0, 0, 0)",
@@ -25,7 +25,7 @@ adaptive_themes = {
       tab_loading: "rgba(0, 0, 0, 0)",
     }
   },
-  'dark': {
+  "dark": {
     colors: {
       toolbar: "rgba(0, 0, 0, 0)",
       toolbar_text: "rgb(255, 255, 255)",
@@ -53,26 +53,36 @@ adaptive_themes = {
   }
 };
 
+const reservedColor = {
+  "light": {
+    "about:privatebrowsing": "rgb(37, 0, 62)",
+    "about:devtools-toolbox": "rgb(249, 249, 250)",
+    "about:debugging#": "rgb(249, 249, 250)"
+  },
+  "dark": {
+    "about:privatebrowsing": "rgb(37, 0, 62)",
+    "about:devtools-toolbox": "rgb(12, 12, 13)",
+    "addons.mozilla.org": "rgb(32, 18, 58)",
+    "open.spotify.com": "rgb(0, 0, 0)"
+  }
+}
+
+//When first installed, detect which mode the user is using
 browser.runtime.onInstalled.addListener(function () {
-  browser.storage.local.get("scheme", function (obj) {
-    scheme = obj.scheme;
-    if (scheme == undefined || scheme.length == 0){ //Read present theme to select color scheme
-      if (window.matchMedia("(prefers-color-scheme: light)").matches){
-        browser.storage.local.set({scheme: "light"});
-      }else{
-        browser.storage.local.set({scheme: "dark"});
-      }
-      browser.runtime.openOptionsPage();
+  scheme = DarkModePref();
+  if (scheme == undefined || scheme.length == 0){
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
+      browser.storage.local.set({scheme: "dark"});
+    }else{
+      browser.storage.local.set({scheme: "light"});
     }
-  });
-  onTabUpdate();
+    browser.runtime.openOptionsPage();
+  }
+  update();
 });
 
-//chrome.tabs.onUpdated.addListener(onTabUpdate);
-chrome.tabs.onActivated.addListener(onTabUpdate);
-
+//Use port to speed things up
 let port_cs;
-
 browser.runtime.onConnect.addListener(function (port) {
   port_cs = port;
   port_cs.onMessage.addListener(function (response) {
@@ -81,18 +91,38 @@ browser.runtime.onConnect.addListener(function (port) {
     });
 });
 
-function onTabUpdate() {
+function update() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    let tab = tabs[0];
-    if (tab.url.startsWith("about:")){
-      //Use default color in browser-owned pages
-      //In this case, content script can't work
-      resetFrameColor();
+    url = tabs[0].url;
+    console.log("Current URL: " + url);
+    if (url.startsWith("file:")){
+      if (DarkModePref() == "dark"){
+        changeFrameColorTo("rgb(56, 56, 61)", true);
+      }else{
+        changeFrameColorTo("rgb(249, 249, 250)", false);
+      }
     }else{
-      changeFrameColorToBackground();
+      if (url.startsWith("about:")){
+        key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
+      }else{
+        key = url.split(/\/|\?/)[2]; // e.g. key can be "www.irgendwas.com"
+      }
+      pref = DarkModePref();
+      if (reservedColor[pref][key] != null){ //For prefered scheme there's a reserved color
+        changeFrameColorTo(reservedColor[DarkModePref()][key], DarkModePref() == "dark");
+      }else if (reservedColor["light"][key] != null && reservedColor["dark"][key] == null && pref == "light"){ //Site always in light mode
+        changeFrameColorTo(reservedColor["light"][key], false);
+      }else if (reservedColor["dark"][key] != null && reservedColor["light"][key] == null && pref == "dark"){ //Site always in dark mode
+        changeFrameColorTo(reservedColor["dark"][key], true);
+      }else{
+        changeFrameColorToBackground();
+      }
     }
   });
 }
+
+//chrome.tabs.onUpdated.addListener(update);
+chrome.tabs.onActivated.addListener(update);
 
 // Colorize tab bar after defined theme-color or computed background color
 function changeFrameColorToBackground() {
@@ -104,13 +134,14 @@ function changeFrameColorToBackground() {
         changeFrameColorTo(response.color, response.darkMode);
       }else{
         resetFrameColor();
-        console.log("LOST CONNECTION TO CONTENT SCRIPT");
+        console.log("NO CONNECTION TO CONTENT SCRIPT");
       }
     });
   });
 }
 
 //Change tab bar to the appointed color
+//"darkMode" decides the color of the text & url bar
 function changeFrameColorTo(color, darkMode) {
   if (darkMode){
     adaptive_themes['dark']['colors']['frame'] = color;
@@ -125,10 +156,10 @@ function changeFrameColorTo(color, darkMode) {
   }
 }
 
-//Reset frame color when something bad happens
+//Reset frame color when something unexpected happens
 function resetFrameColor() {
-  browser.storage.local.get("scheme", function (obj) {
-    if (obj.scheme == "dark"){
+  browser.storage.local.get("scheme", function (pref) {
+    if (pref.scheme == "dark"){
       changeFrameColorTo("rgb(28, 27, 34)", true);
     }else{
       changeFrameColorTo("rgb(255, 255, 255)", false);
@@ -143,5 +174,12 @@ function applyTheme(theme) {
 
 //When prefered scheme changed
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request == "apply_settings") resetFrameColor();
+  if (request == "apply_settings") update();
 });
+
+function DarkModePref() {
+  browser.storage.local.get("scheme", function (pref) {
+    scheme = pref.scheme;
+  });
+  return scheme;
+}

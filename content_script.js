@@ -8,7 +8,6 @@ darkMode = true;
 
 //Find the best color
 function findColor() {
-	console.log("looking for color. Theme color: " + getThemeColor());
 	//dark&light mode decides the color of the tab text, button icons etc.
 	//theme-color is provided by website: getThemeColor()
 	//background is computed: getComputedColor()
@@ -73,13 +72,15 @@ function getComputedColor() {
 	return EmiliosHeader();
 }
 
-//By emilio@crisal.io
+//Suggested by emilio@crisal.io
+//Huge thanks and respect to Emilio Cobos Álvarez
 function EmiliosHeader(){
 	let color = null;
-	for (let el = document.elementFromPoint(window.innerWidth / 2, 2); el; el = el.parentElement) {
+	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
 	let temp_color = getComputedStyle(el).backgroundColor;
-	if (temp_color != "rgba(0, 0, 0, 0)")
+	if (temp_color != "rgba(0, 0, 0, 0)" && temp_color != "rgb(255, 255, 255)" && temp_color != "rgb(0, 0, 0)")
 		color = temp_color;
+		console.log("Emilio: " + color);
 	}
 	return color;
 }
@@ -88,12 +89,12 @@ function EmiliosHeader(){
 function getThemeColor() {
 	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
 	if (headerTag == null){
-		MicrosoftNavbar = document.querySelector('.o365sx-navbar');
+		/*MicrosoftNavbar = document.querySelector('.o365sx-navbar');
 		if (MicrosoftNavbar != null){ //If it's a Microsoft website, which hide its theme-color for some reason
 			return getComputedStyle(MicrosoftNavbar).backgroundColor;
-		}else{
+		}else{*/
 			return null;
-		}
+		//}
 	}else{
 		return headerTag.content;
 	}
