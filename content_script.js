@@ -66,10 +66,12 @@ chrome.runtime.onMessage.addListener(
 
 //Get computed background color e.g. "rgb(30, 30, 30)"
 function getComputedColor() {
-	/*color = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
-	if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
-	return color;*/
-	return EmiliosHeader();
+	color = EmiliosHeader();
+	if (color == null){
+		color = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
+		if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
+	}
+	return color;
 }
 
 //Suggested by emilio@crisal.io
