@@ -68,38 +68,45 @@ const reservedColor = {
 }
 
 //When first installed, detect which mode the user is using
-browser.runtime.onInstalled.addListener(function () {
+browser.runtime.onInstalled.addListener(init);
+
+function init() {
   scheme = DarkModePref();
-  if (scheme == undefined || scheme.length == 0){
+  if (scheme == undefined || scheme == ""){
+    console.log("OOO");
     if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
       browser.storage.local.set({scheme: "dark"});
     }else{
       browser.storage.local.set({scheme: "light"});
     }
-    browser.runtime.openOptionsPage();
   }
+  browser.runtime.openOptionsPage();
   update();
-});
+}
 
 //Use port to speed things up
 let port_cs;
 browser.runtime.onConnect.addListener(function (port) {
   port_cs = port;
   port_cs.onMessage.addListener(function (response) {
-      console.log("+++EXPRESS RESPONSE+++ Response color: " + response.color + ", in dark mode: " + response.darkMode);
-      changeFrameColorTo(response.color, response.darkMode);
+      console.log("+++EXPRESS RESPONSE+++ Response color: " + response.color + "\nIn dark mode: " + response.darkMode);
+      //changeFrameColorTo(windowId, response.color, response.darkMode);
     });
 });
+
+chrome.tabs.onUpdated.addListener(update);
+chrome.tabs.onActivated.addListener(update);
 
 function update() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     url = tabs[0].url;
-    console.log("Current URL: " + url);
+    windowId = tabs[0].windowId;
+    console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
     if (url.startsWith("file:")){
       if (DarkModePref() == "dark"){
-        changeFrameColorTo("rgb(56, 56, 61)", true);
+        changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
       }else{
-        changeFrameColorTo("rgb(249, 249, 250)", false);
+        changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
       }
     }else{
       if (url.startsWith("about:")){
@@ -108,12 +115,13 @@ function update() {
         key = url.split(/\/|\?/)[2]; // e.g. key can be "www.irgendwas.com"
       }
       pref = DarkModePref();
+      console.log("PREF: " + pref);
       if (reservedColor[pref][key] != null){ //For prefered scheme there's a reserved color
-        changeFrameColorTo(reservedColor[DarkModePref()][key], DarkModePref() == "dark");
+        changeFrameColorTo(windowId, reservedColor[pref][key], pref == "dark");
       }else if (reservedColor["light"][key] != null && reservedColor["dark"][key] == null && pref == "light"){ //Site always in light mode
-        changeFrameColorTo(reservedColor["light"][key], false);
+        changeFrameColorTo(windowId, reservedColor["light"][key], false);
       }else if (reservedColor["dark"][key] != null && reservedColor["light"][key] == null && pref == "dark"){ //Site always in dark mode
-        changeFrameColorTo(reservedColor["dark"][key], true);
+        changeFrameColorTo(windowId, reservedColor["dark"][key], true);
       }else{
         changeFrameColorToBackground();
       }
@@ -121,55 +129,53 @@ function update() {
   });
 }
 
-//chrome.tabs.onUpdated.addListener(update);
-chrome.tabs.onActivated.addListener(update);
-
 // Colorize tab bar after defined theme-color or computed background color
 function changeFrameColorToBackground() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {message: 'remind_me'}, function(response) {
-      let tab = tabs[0];
+      url = tabs[0].url;
+      windowId = tabs[0].windowId;
       if (response != undefined){
-        console.log(tab.url + " Response color: " + response.color + ", in dark mode: " + response.darkMode);
-        changeFrameColorTo(response.color, response.darkMode);
+        console.log("Window ID: " + windowId + "\nURL: " + url + "\nResponse color: " + response.color + "\nIn dark mode: " + response.darkMode);
+        changeFrameColorTo(windowId, response.color, response.darkMode);
       }else{
-        resetFrameColor();
-        console.log("NO CONNECTION TO CONTENT SCRIPT");
+        resetFrameColor(windowId);
+        console.log("NO CONNECTION TO CONTENT SCRIPT\nMay be about:pages");
       }
     });
   });
 }
 
-//Change tab bar to the appointed color
+//Change tab bar to the appointed color (with windowId)
 //"darkMode" decides the color of the text & url bar
-function changeFrameColorTo(color, darkMode) {
+function changeFrameColorTo(windowId, color, darkMode) {
   if (darkMode){
     adaptive_themes['dark']['colors']['frame'] = color;
     adaptive_themes['dark']['colors']['frame_inactive'] = color;
     adaptive_themes['dark']['colors']['popup'] = color;
-    applyTheme(adaptive_themes['dark']);
+    applyTheme(windowId, adaptive_themes['dark']);
   }else{
     adaptive_themes['light']['colors']['frame'] = color;
     adaptive_themes['light']['colors']['frame_inactive'] = color;
     adaptive_themes['light']['colors']['popup'] = color;
-    applyTheme(adaptive_themes['light']);
+    applyTheme(windowId, adaptive_themes['light']);
   }
 }
 
-//Reset frame color when something unexpected happens
-function resetFrameColor() {
+//Reset frame color when something unexpected happens (with windowId)
+function resetFrameColor(windowId) {
   browser.storage.local.get("scheme", function (pref) {
-    if (pref.scheme == "dark"){
-      changeFrameColorTo("rgb(28, 27, 34)", true);
+    if (pref.scheme == "light"){
+      changeFrameColorTo(windowId, "rgb(255, 255, 255)", false);
     }else{
-      changeFrameColorTo("rgb(255, 255, 255)", false);
+      changeFrameColorTo(windowId, "rgb(28, 27, 34)", true);
     }
   });
 }
 
-//Apply theme
-function applyTheme(theme) {
-  browser.theme.update(theme);
+//Apply theme (with windowId)
+function applyTheme(windowId, theme) {
+  browser.theme.update(windowId, theme);
 }
 
 //When prefered scheme changed
@@ -178,6 +184,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 function DarkModePref() {
+  scheme = "";
   browser.storage.local.get("scheme", function (pref) {
     scheme = pref.scheme;
   });

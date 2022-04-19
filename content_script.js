@@ -1,4 +1,5 @@
 //Content script tells background.js what color to use
+//and in which color should the text in tab bar be
 
 themeColor = "";
 backgroundColor = "";
