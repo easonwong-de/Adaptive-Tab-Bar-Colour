@@ -1,10 +1,8 @@
 let color_scheme_light = document.getElementById("color_scheme_light");
 let color_scheme_dark = document.getElementById("color_scheme_dark");
 
-scheme = "";
-
-browser.storage.local.get("scheme", function (obj) {
-	scheme = obj.scheme;
+browser.storage.local.get("scheme", function (pref) {
+	let scheme = pref.scheme;
 	if (scheme == "light"){
 		color_scheme_light.checked = true;
 		document.getElementsByTagName("body")[0].className = "light";

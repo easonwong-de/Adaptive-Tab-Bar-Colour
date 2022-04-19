@@ -1,4 +1,4 @@
-adaptive_themes = {
+var adaptive_themes = {
   "light": {
     colors: {
       toolbar: "rgba(0, 0, 0, 0)",
@@ -71,60 +71,65 @@ const reservedColor = {
 browser.runtime.onInstalled.addListener(init);
 
 function init() {
-  scheme = DarkModePref();
-  if (scheme == undefined || scheme == ""){
-    console.log("OOO");
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
-      browser.storage.local.set({scheme: "dark"});
-    }else{
-      browser.storage.local.set({scheme: "light"});
+  browser.storage.local.get("scheme", function (pref) {
+    let scheme = pref.scheme;
+    if (scheme == ""){
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
+        browser.storage.local.set({scheme: "dark"});
+      }else{
+        browser.storage.local.set({scheme: "light"});
+      }
     }
-  }
-  browser.runtime.openOptionsPage();
-  update();
+    browser.runtime.openOptionsPage();
+    update();
+  });
 }
 
-//Use port to speed things up
+//Use port_ContentScript to speed things up
 let port_cs;
 browser.runtime.onConnect.addListener(function (port) {
   port_cs = port;
-  port_cs.onMessage.addListener(function (response) {
-      console.log("+++EXPRESS RESPONSE+++ Response color: " + response.color + "\nIn dark mode: " + response.darkMode);
-      //changeFrameColorTo(windowId, response.color, response.darkMode);
-    });
+  port_cs.onMessage.addListener(function (msg, sender, sendResponse) {
+    console.log("+++EXPRESS MESSAGE+++ \nWindow ID: " + sender.sender.tab.windowId + "\nColor: " + msg.color + "\nIn dark mode: " + msg.darkMode);
+    changeFrameColorTo(sender.sender.tab.windowId, msg.color, msg.darkMode);
+  });
 });
 
 chrome.tabs.onUpdated.addListener(update);
-chrome.tabs.onActivated.addListener(update);
+browser.windows.onFocusChanged.addListener(update);
 
 function update() {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    url = tabs[0].url;
-    windowId = tabs[0].windowId;
+  chrome.tabs.query({active: true, currentWindow: true, status: "complete"}, function(tabs) {
+    let url = tabs[0].url;
+    let windowId = tabs[0].windowId;
     console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
     if (url.startsWith("file:")){
-      if (DarkModePref() == "dark"){
-        changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
-      }else{
-        changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
-      }
+      browser.storage.local.get("scheme", function (pref) {
+        if (pref.scheme == "dark"){
+          changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
+        }else{
+          changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
+        }
+      });
     }else{
-      if (url.startsWith("about:")){
-        key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
-      }else{
-        key = url.split(/\/|\?/)[2]; // e.g. key can be "www.irgendwas.com"
-      }
-      pref = DarkModePref();
-      console.log("PREF: " + pref);
-      if (reservedColor[pref][key] != null){ //For prefered scheme there's a reserved color
-        changeFrameColorTo(windowId, reservedColor[pref][key], pref == "dark");
-      }else if (reservedColor["light"][key] != null && reservedColor["dark"][key] == null && pref == "light"){ //Site always in light mode
-        changeFrameColorTo(windowId, reservedColor["light"][key], false);
-      }else if (reservedColor["dark"][key] != null && reservedColor["light"][key] == null && pref == "dark"){ //Site always in dark mode
-        changeFrameColorTo(windowId, reservedColor["dark"][key], true);
-      }else{
-        changeFrameColorToBackground();
-      }
+      browser.storage.local.get("scheme", function (pref) {
+        let key = "";
+        let scheme = pref.scheme;
+        if (url.startsWith("about:")){
+          key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
+        }else{
+          key = url.split(/\/|\?/)[2]; // e.g. key can be "www.irgendwas.com"
+        }
+        if (reservedColor[scheme][key] != null){ //For prefered scheme there's a reserved color
+          changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
+        }else if (reservedColor["light"][key] != null && reservedColor["dark"][key] == null && scheme == "light"){ //Site always in light mode
+          changeFrameColorTo(windowId, reservedColor["light"][key], false);
+        }else if (reservedColor["dark"][key] != null && reservedColor["light"][key] == null && scheme == "dark"){ //Site always in dark mode
+          changeFrameColorTo(windowId, reservedColor["dark"][key], true);
+        }else{
+          changeFrameColorToBackground();
+        }
+      });
     }
   });
 }
@@ -133,8 +138,8 @@ function update() {
 function changeFrameColorToBackground() {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {message: 'remind_me'}, function(response) {
-      url = tabs[0].url;
-      windowId = tabs[0].windowId;
+      let url = tabs[0].url;
+      let windowId = tabs[0].windowId;
       if (response != undefined){
         console.log("Window ID: " + windowId + "\nURL: " + url + "\nResponse color: " + response.color + "\nIn dark mode: " + response.darkMode);
         changeFrameColorTo(windowId, response.color, response.darkMode);
@@ -183,10 +188,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request == "apply_settings") update();
 });
 
-function DarkModePref() {
-  scheme = "";
-  browser.storage.local.get("scheme", function (pref) {
-    scheme = pref.scheme;
-  });
-  return scheme;
-}
+/*browser.storage.local.get("scheme", function (pref) {
+  let scheme = pref.scheme;
+});*/

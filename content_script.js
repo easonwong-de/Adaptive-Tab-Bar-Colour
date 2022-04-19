@@ -1,11 +1,11 @@
 //Content script tells background.js what color to use
 //and in which color should the text in tab bar be
 
-themeColor = "";
-backgroundColor = "";
+var themeColor = "";
+var backgroundColor = "";
 
-responseColor = "";
-darkMode = true;
+var responseColor = "";
+var darkMode = true;
 
 //Find the best color
 function findColor() {
@@ -92,12 +92,7 @@ function EmiliosHeader(){
 function getThemeColor() {
 	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
 	if (headerTag == null){
-		/*MicrosoftNavbar = document.querySelector('.o365sx-navbar');
-		if (MicrosoftNavbar != null){ //If it's a Microsoft website, which hide its theme-color for some reason
-			return getComputedStyle(MicrosoftNavbar).backgroundColor;
-		}else{*/
-			return null;
-		//}
+		return null;
 	}else{
 		return headerTag.content;
 	}
@@ -108,19 +103,25 @@ function tooBright(string) {
 	if (string.startsWith("#")){
 		return hexBrightness(string) > 120;
 	}else{
-		return rgbBrightness(rgbaToRgba(string)) > 120;
+		return rgbBrightness(string) > 120;
 	}
 }
 
-//rgb (Object) to brightness
-function rgbBrightness(rgb) {
-	return 0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b;
+//rgba (String) to brightness
+function rgbBrightness(rgba) {
+	rgbaObj = rgbaToRgba(rgba);
+	return rgbObjBrightness(rgbaObj);
 }
 
 //hex color (String) to brightness
 function hexBrightness(hex) {
 	rgb = hexToRgb(hex);
-	return rgbBrightness(rgb);
+	return rgbObjBrightness(rgb);
+}
+
+//rgb (Object) to brightness
+function rgbObjBrightness(rgb) {
+	return 0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b;
 }
 
 //from TimDown@stackoverflow.com
