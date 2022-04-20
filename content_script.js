@@ -7,8 +7,38 @@ var backgroundColor = "";
 var responseColor = "";
 var darkMode = true;
 
+const reservedColor = {
+	"light": {
+		"github.com": "rgb(36, 41, 47)"
+	},
+	"dark": {
+		"open.spotify.com": "rgb(0, 0, 0)",
+		"www.twitch.tv": "rgb(24, 24, 27)",
+		"github.com": "rgb(22, 27, 34)"
+	}
+}
+
 //Find the best color
 function findColor() {
+	browser.storage.local.get(function (pref) {
+		let key = "";
+		let scheme = pref.scheme;
+		let reversed_scheme = "light";
+		if (scheme == "light") reversed_scheme = "dark";
+		host = document.location.host; // e.g. key can be "www.irgendwas.com"
+		if (reservedColor[scheme][host] != null){ //For prefered scheme there's a reserved color
+			responseColor = reservedColor[scheme][host];
+			darkMode = !tooBright(responseColor);
+		}else if (reservedColor[reversed_scheme][host] != null){ //Site has reserved color in the other mode
+			responseColor = reservedColor[reversed_scheme][host];
+			darkMode = !tooBright(responseColor);
+		}else{
+			findColorUnreserved();
+		}
+	});
+}
+
+function findColorUnreserved() {
 	//dark&light mode decides the color of the tab text, button icons etc.
 	//theme-color is provided by website: getThemeColor()
 	//background is computed: getComputedColor()

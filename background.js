@@ -53,6 +53,8 @@ var adaptive_themes = {
   }
 };
 
+//Pages where content script can't be injected
+//other reserved color are in content_script.js
 const reservedColor = {
   "light": {
     "about:devtools-toolbox": "rgb(249, 249, 250)",
@@ -62,10 +64,7 @@ const reservedColor = {
     "about:privatebrowsing": "rgb(37, 0, 62)",
     "about:devtools-toolbox": "rgb(12, 12, 13)",
     "about:debugging#": "rgb(28, 27, 34)",
-    "addons.mozilla.org": "rgb(32, 18, 58)",
-    "open.spotify.com": "rgb(0, 0, 0)",
-    "www.twitch.tv": "rgb(24, 24, 27)",
-    "github.com": "rgb(22, 27, 34)"
+    "addons.mozilla.org": "rgb(32, 18, 58)"
   }
 }
 
@@ -124,7 +123,7 @@ function update() {
         if (url.startsWith("about:")){
           key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
         }else{
-          key = url.split(/\/|\?/)[2]; // e.g. key can be "www.irgendwas.com"
+          key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
         }
         if (reservedColor[scheme][key] != null){ //For prefered scheme there's a reserved color
           changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
