@@ -71,13 +71,14 @@ const reservedColor = {
 browser.runtime.onInstalled.addListener(init);
 
 function init() {
-  browser.storage.local.get("scheme", function (pref) {
+  browser.storage.local.get(function (pref) {
     let scheme = pref.scheme;
-    if (scheme == ""){
+    let force = pref.force;
+    if (scheme == "" || force == ""){
       if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
-        browser.storage.local.set({scheme: "dark"});
+        browser.storage.local.set({scheme: "dark", force: false});
       }else{
-        browser.storage.local.set({scheme: "light"});
+        browser.storage.local.set({scheme: "light", force: false});
       }
     }
     browser.runtime.openOptionsPage();
@@ -104,15 +105,15 @@ function update() {
     let windowId = tabs[0].windowId;
     console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
     if (url.startsWith("file:")){
-      browser.storage.local.get("scheme", function (pref) {
+      browser.storage.local.get(function (pref) {
         if (pref.scheme == "dark"){
           changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
-        }else{
+        }else if (pref.scheme == "light"){
           changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
         }
       });
     }else{
-      browser.storage.local.get("scheme", function (pref) {
+      browser.storage.local.get(function (pref) {
         let key = "";
         let scheme = pref.scheme;
         if (url.startsWith("about:")){
@@ -151,29 +152,51 @@ function changeFrameColorToBackground() {
   });
 }
 
-//Change tab bar to the appointed color (with windowId)
-//"darkMode" decides the color of the text & url bar
-function changeFrameColorTo(windowId, color, darkMode) {
-  if (darkMode){
-    adaptive_themes['dark']['colors']['frame'] = color;
-    adaptive_themes['dark']['colors']['frame_inactive'] = color;
-    adaptive_themes['dark']['colors']['popup'] = color;
-    applyTheme(windowId, adaptive_themes['dark']);
-  }else{
-    adaptive_themes['light']['colors']['frame'] = color;
-    adaptive_themes['light']['colors']['frame_inactive'] = color;
-    adaptive_themes['light']['colors']['popup'] = color;
-    applyTheme(windowId, adaptive_themes['light']);
-  }
-}
-
 //Reset frame color when something unexpected happens (with windowId)
 function resetFrameColor(windowId) {
-  browser.storage.local.get("scheme", function (pref) {
+  browser.storage.local.get(function (pref) {
     if (pref.scheme == "light"){
       changeFrameColorTo(windowId, "rgb(255, 255, 255)", false);
     }else{
       changeFrameColorTo(windowId, "rgb(28, 27, 34)", true);
+    }
+  });
+}
+
+//Change tab bar to the appointed color (with windowId)
+//"darkMode" decides the color of the text & url bar
+//force, scheme, darkMode
+//force: false => normal
+//force: true, scheme: dark, darkMode: true => normal
+//force: true, scheme: light, darkMode: false => normal
+//force: true, scheme: dark, darkMode: false => dark
+//force: true, scheme: light, darkMode: true => light
+function changeFrameColorTo(windowId, color, darkMode) {
+  browser.storage.local.get(function (pref) {
+    let scheme = pref.scheme;
+    let force = pref.force;
+    if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
+      if (darkMode){
+        adaptive_themes['dark']['colors']['frame'] = color;
+        adaptive_themes['dark']['colors']['frame_inactive'] = color;
+        adaptive_themes['dark']['colors']['popup'] = color;
+        applyTheme(windowId, adaptive_themes['dark']);
+      }else{
+        adaptive_themes['light']['colors']['frame'] = color;
+        adaptive_themes['light']['colors']['frame_inactive'] = color;
+        adaptive_themes['light']['colors']['popup'] = color;
+        applyTheme(windowId, adaptive_themes['light']);
+      }
+    }else if (force && scheme == "dark" && !darkMode){
+      adaptive_themes['dark']['colors']['frame'] = "rgb(28, 27, 34)";
+      adaptive_themes['dark']['colors']['frame_inactive'] = "rgb(28, 27, 34)";
+      adaptive_themes['dark']['colors']['popup'] = "rgb(28, 27, 34)";
+      applyTheme(windowId, adaptive_themes['dark']);
+    }else if (force && scheme == "light" && darkMode){
+      adaptive_themes['light']['colors']['frame'] = "rgb(255, 255, 255)";
+      adaptive_themes['light']['colors']['frame_inactive'] = "rgb(255, 255, 255)";
+      adaptive_themes['light']['colors']['popup'] = "rgb(255, 255, 255)";
+      applyTheme(windowId, adaptive_themes['light']);
     }
   });
 }
@@ -188,6 +211,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request == "apply_settings") update();
 });
 
-/*browser.storage.local.get("scheme", function (pref) {
-  let scheme = pref.scheme;
+/*browser.storage.local.get(function (pref) {
+  console.log(pref.scheme + "\n" + pref.force);
 });*/

@@ -58,7 +58,7 @@ port.postMessage({color: responseColor, darkMode: darkMode});
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.message == 'remind_me'){
-			sendResponse({color: responseColor, darkMode: darkMode}); //Sends stored color to background.js
+			sendResponse({color: responseColor, darkMode: darkMode}); //Sends cached color to background.js
 			findColor(); //In case preferences are changed
 			sendResponse({color: responseColor, darkMode: darkMode});
 		}
