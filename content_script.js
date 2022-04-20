@@ -1,11 +1,8 @@
 //Content script tells background.js what color to use
 //and in which color should the text in tab bar be
 
-var themeColor = "";
-var backgroundColor = "";
-
 var responseColor = "";
-var darkMode = true;
+var darkMode = false;
 
 const reservedColor = {
 	"light": {
@@ -33,11 +30,16 @@ function findColor() {
 			responseColor = reservedColor[reversed_scheme][host];
 			darkMode = !tooBright(responseColor);
 		}else{
+			//No reserved color found, use noemal way to find a color
 			findColorUnreserved();
 		}
+		//Sent color to background.js
+		port = browser.runtime.connect();
+		if (!document.hidden) port.postMessage({color: responseColor, darkMode: darkMode});
 	});
 }
 
+//When there isn't a reserved color for the website
 function findColorUnreserved() {
 	//dark&light mode decides the color of the tab text, button icons etc.
 	//theme-color is provided by website: getThemeColor()
@@ -57,6 +59,8 @@ function findColorUnreserved() {
 			darkMode = true;
 		}
 	}else{ //C,D,E,F
+		let themeColor = "";
+		let backgroundColor = "";
 		themeColor = getThemeColor();
 		backgroundColor = getComputedColor();
 		//console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
@@ -79,10 +83,7 @@ function findColorUnreserved() {
 	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
 }
 
-//Sent color to background.js once as soon as content script is loaded
 findColor();
-let port = browser.runtime.connect({name:"port_cs"});
-port.postMessage({color: responseColor, darkMode: darkMode});
 
 //Remind background.js of the color
 chrome.runtime.onMessage.addListener(
@@ -90,7 +91,6 @@ chrome.runtime.onMessage.addListener(
 		if (request.message == 'remind_me'){
 			sendResponse({color: responseColor, darkMode: darkMode}); //Sends cached color to background.js
 			findColor(); //In case preferences are changed
-			sendResponse({color: responseColor, darkMode: darkMode});
 		}
 	}
 );

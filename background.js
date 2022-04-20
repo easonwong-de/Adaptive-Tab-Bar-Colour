@@ -75,7 +75,6 @@ function init() {
   browser.storage.local.get(function (pref) {
     let scheme = pref.scheme;
     let force = pref.force;
-    console.log(scheme);
     if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
         browser.storage.local.set({scheme: "dark", force: false});
@@ -105,7 +104,7 @@ function update() {
   chrome.tabs.query({active: true, currentWindow: true, status: "complete"}, function(tabs) {
     let url = tabs[0].url;
     let windowId = tabs[0].windowId;
-    console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
+    //console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
     if (url.startsWith("file:")){
       browser.storage.local.get(function (pref) {
         if (pref.scheme == "dark"){
@@ -130,6 +129,7 @@ function update() {
         }else if (reservedColor[reversed_scheme][key] != null){ //Site has reserved color in the other mode
           changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
         }else{
+          //For normal websites where content script can be injected
           changeFrameColorToBackground();
         }
       });
@@ -144,7 +144,7 @@ function changeFrameColorToBackground() {
       let url = tabs[0].url;
       let windowId = tabs[0].windowId;
       if (response != undefined){
-        console.log("Window ID: " + windowId + "\nURL: " + url + "\nResponse color: " + response.color + "\nIn dark mode: " + response.darkMode);
+        //console.log("Window ID: " + windowId + "\nURL: " + url + "\nColor: " + response.color + "\nIn dark mode: " + response.darkMode);
         changeFrameColorTo(windowId, response.color, response.darkMode);
       }else{
         resetFrameColor(windowId);
