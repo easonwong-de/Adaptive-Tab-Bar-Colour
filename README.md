@@ -26,8 +26,6 @@ Beware of malicious web UI: Please distinguish between application UI and web co
 <br>
 
 ## Known Issues
-Wrong theme color for some websites e.g. TickTick, IMDb, Microsoft sites, YouTube Studio  
-Flashes when opening tabs in background  
 Do not support CSS themes  
 <br>
 
