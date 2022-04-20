@@ -26,6 +26,7 @@ Beware of malicious web UI: Please distinguish between application UI and web co
 <br>
 
 ## Known Issues
+Flashes might happen when opening tabs in background  
 Do not support CSS themes  
 <br>
 
