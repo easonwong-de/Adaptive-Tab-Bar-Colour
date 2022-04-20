@@ -64,7 +64,8 @@ const reservedColor = {
     "about:debugging#": "rgb(28, 27, 34)",
     "addons.mozilla.org": "rgb(32, 18, 58)",
     "open.spotify.com": "rgb(0, 0, 0)",
-    "www.twitch.tv": "rgb(24, 24, 27)"
+    "www.twitch.tv": "rgb(24, 24, 27)",
+    "github.com": "rgb(22, 27, 34)"
   }
 }
 
