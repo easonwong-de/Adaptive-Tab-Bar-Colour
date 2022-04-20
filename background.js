@@ -55,15 +55,16 @@ var adaptive_themes = {
 
 const reservedColor = {
   "light": {
-    "about:privatebrowsing": "rgb(37, 0, 62)",
     "about:devtools-toolbox": "rgb(249, 249, 250)",
     "about:debugging#": "rgb(249, 249, 250)"
   },
   "dark": {
     "about:privatebrowsing": "rgb(37, 0, 62)",
     "about:devtools-toolbox": "rgb(12, 12, 13)",
+    "about:debugging#": "rgb(28, 27, 34)",
     "addons.mozilla.org": "rgb(32, 18, 58)",
-    "open.spotify.com": "rgb(0, 0, 0)"
+    "open.spotify.com": "rgb(0, 0, 0)",
+    "www.twitch.tv": "rgb(24, 24, 27)"
   }
 }
 
@@ -117,6 +118,8 @@ function update() {
       browser.storage.local.get(function (pref) {
         let key = "";
         let scheme = pref.scheme;
+        let reversed_scheme = "light";
+        if (scheme == "light") reversed_scheme = "dark";
         if (url.startsWith("about:")){
           key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
         }else{
@@ -124,10 +127,8 @@ function update() {
         }
         if (reservedColor[scheme][key] != null){ //For prefered scheme there's a reserved color
           changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
-        }else if (reservedColor["light"][key] != null && reservedColor["dark"][key] == null && scheme == "light"){ //Site always in light mode
-          changeFrameColorTo(windowId, reservedColor["light"][key], false);
-        }else if (reservedColor["dark"][key] != null && reservedColor["light"][key] == null && scheme == "dark"){ //Site always in dark mode
-          changeFrameColorTo(windowId, reservedColor["dark"][key], true);
+        }else if (reservedColor[reversed_scheme][key] != null){ //Site has reserved color in the other mode
+          changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
         }else{
           changeFrameColorToBackground();
         }

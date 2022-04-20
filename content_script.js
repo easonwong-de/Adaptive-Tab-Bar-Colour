@@ -20,7 +20,7 @@ function findColor() {
 	//F: both are dark => returns theme-color & in dark mode
 	if (getThemeColor() == null){ //A,B
 		responseColor = getComputedColor();
-		console.log("theme-color not found. bgcolor: " + responseColor + ", too bright: " + tooBright(responseColor));
+		//console.log("theme-color not found. bgcolor: " + responseColor + ", too bright: " + tooBright(responseColor));
 		if (tooBright(responseColor)){ //B
 			darkMode = false;
 		}else{ //A
@@ -29,8 +29,8 @@ function findColor() {
 	}else{ //C,D,E,F
 		themeColor = getThemeColor();
 		backgroundColor = getComputedColor();
-		console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
-		console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
+		//console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
+		//console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
 		if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
 			responseColor = backgroundColor;
 			darkMode = true;
