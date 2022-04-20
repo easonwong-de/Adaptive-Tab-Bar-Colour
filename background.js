@@ -144,7 +144,7 @@ function changeFrameColorToBackground() {
       let url = tabs[0].url;
       let windowId = tabs[0].windowId;
       if (response != undefined){
-        //console.log("Window ID: " + windowId + "\nURL: " + url + "\nColor: " + response.color + "\nIn dark mode: " + response.darkMode);
+        console.log("Changing color\nWindow ID: " + windowId + "\nURL: " + url + "\nColor: " + response.color + "\nIn dark mode: " + response.darkMode);
         changeFrameColorTo(windowId, response.color, response.darkMode);
       }else{
         resetFrameColor(windowId);

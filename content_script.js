@@ -88,7 +88,7 @@ findColor();
 //Remind background.js of the color
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		if (request.message == 'remind_me'){
+		if (request.message == 'remind_me' && responseColor != ""){
 			sendResponse({color: responseColor, darkMode: darkMode}); //Sends cached color to background.js
 			findColor(); //In case preferences are changed
 		}
