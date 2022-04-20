@@ -74,7 +74,8 @@ function init() {
   browser.storage.local.get(function (pref) {
     let scheme = pref.scheme;
     let force = pref.force;
-    if (scheme == "" || force == ""){
+    console.log(scheme);
+    if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
         browser.storage.local.set({scheme: "dark", force: false});
       }else{
