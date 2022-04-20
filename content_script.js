@@ -83,7 +83,7 @@ function EmiliosHeader(){
 	let temp_color = getComputedStyle(el).backgroundColor;
 	if (temp_color != "rgba(0, 0, 0, 0)" && temp_color != "rgb(255, 255, 255)" && temp_color != "rgb(0, 0, 0)")
 		color = temp_color;
-		console.log("Emilio: " + color);
+		//console.log("Emilio: " + color);
 	}
 	return color;
 }
