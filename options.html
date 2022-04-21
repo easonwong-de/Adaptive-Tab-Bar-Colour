@@ -21,11 +21,22 @@
 						<label for="color_scheme_no_light">Force Dark Mode</label></h4>
 						<p>Avoid bright tab bar</p>
 				</div>
+				<p>&nbsp;</p>
+				<div>
+					<h4><input access="false" id="custom" type="checkbox">
+						<label for="customize">More customizations</label></h4>
+					<div id="custom_options" hidden="true">
+						<label for="light_color">Default light color: </label>
+							<input type="color" value="#FFFFFF" name="dark_color" id="light_color">
+						<br><br>
+						<label for="dark_color">Default dark color: </label>
+							<input type="color" value="#1C1B22" name="dark_color" id="dark_color">
+						<br><br>
+						<button type="button" style="default" id="custom_reset">Reset</button>
+					</div>
+				</div>
 			</div>
 		</div>
-		<h1>&nbsp;</h1>
-		<h1>&nbsp;</h1>
-		<h1>&nbsp;</h1>
 		<script type="text/javascript" src="../options.js"></script>
 	</body>
 </html>

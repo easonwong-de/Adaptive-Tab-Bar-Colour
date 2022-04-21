@@ -63,10 +63,13 @@ const reservedColor = {
   "dark": {
     "about:privatebrowsing": "rgb(37, 0, 62)",
     "about:devtools-toolbox": "rgb(12, 12, 13)",
-    "about:debugging#": "rgb(28, 27, 34)",
+    "about:debugging#": "DEFAULT",
     "addons.mozilla.org": "rgb(32, 18, 58)"
   }
 }
+
+var default_light_color = "#FFFFFF";
+var default_dark_color = "#1C1B22";
 
 //When first installed, detect which mode the user is using
 browser.runtime.onInstalled.addListener(init);
@@ -75,14 +78,24 @@ function init() {
   browser.storage.local.get(function (pref) {
     let scheme = pref.scheme;
     let force = pref.force;
+    let pref_custom = pref.custom;
+    let pref_light_color = pref.light_color;
+    let pref_dark_color = pref.dark_color;
     if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
         browser.storage.local.set({scheme: "dark", force: false});
       }else{
         browser.storage.local.set({scheme: "light", force: false});
       }
+      if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){
+        browser.storage.local.set({
+          custom: false,
+          light_color: default_light_color,
+          dark_color: default_dark_color
+        });
+      }
+      browser.runtime.openOptionsPage();
     }
-    browser.runtime.openOptionsPage();
     update();
   });
 }
@@ -105,16 +118,24 @@ function update() {
     let url = tabs[0].url;
     let windowId = tabs[0].windowId;
     //console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
-    if (url.startsWith("file:")){
-      browser.storage.local.get(function (pref) {
+    browser.storage.local.get(function (pref) {
+      let pref_custom = pref.custom;
+      let pref_light_color = pref.light_color;
+      let pref_dark_color = pref.dark_color;
+      if (pref_custom){
+        default_light_color = pref_light_color;
+        default_dark_color = pref_dark_color;
+      }else{
+        default_light_color = "#FFFFFF";
+        default_dark_color = "#1C1B22";
+      }
+      if (url.startsWith("file:")){
         if (pref.scheme == "dark"){
           changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
         }else if (pref.scheme == "light"){
           changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
         }
-      });
-    }else{
-      browser.storage.local.get(function (pref) {
+      }else{
         let key = "";
         let scheme = pref.scheme;
         let reversed_scheme = "light";
@@ -132,8 +153,8 @@ function update() {
           //For normal websites where content script can be injected
           changeFrameColorToBackground();
         }
-      });
-    }
+      }
+    });
   });
 }
 
@@ -144,7 +165,7 @@ function changeFrameColorToBackground() {
       let url = tabs[0].url;
       let windowId = tabs[0].windowId;
       if (response != undefined){
-        console.log("Changing color\nWindow ID: " + windowId + "\nURL: " + url + "\nColor: " + response.color + "\nIn dark mode: " + response.darkMode);
+        //console.log("Changing color\nWindow ID: " + windowId + "\nURL: " + url + "\nColor: " + response.color + "\nIn dark mode: " + response.darkMode);
         changeFrameColorTo(windowId, response.color, response.darkMode);
       }else{
         resetFrameColor(windowId);
@@ -158,9 +179,9 @@ function changeFrameColorToBackground() {
 function resetFrameColor(windowId) {
   browser.storage.local.get(function (pref) {
     if (pref.scheme == "light"){
-      changeFrameColorTo(windowId, "rgb(255, 255, 255)", false);
+      changeFrameColorTo(windowId, default_light_color, false);
     }else{
-      changeFrameColorTo(windowId, "rgb(28, 27, 34)", true);
+      changeFrameColorTo(windowId, default_dark_color, true);
     }
   });
 }
@@ -179,25 +200,27 @@ function changeFrameColorTo(windowId, color, darkMode) {
     let force = pref.force;
     if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
       if (darkMode){
+        if (color == "DEFAULT") color = default_dark_color;
         adaptive_themes['dark']['colors']['frame'] = color;
         adaptive_themes['dark']['colors']['frame_inactive'] = color;
         adaptive_themes['dark']['colors']['popup'] = color;
         applyTheme(windowId, adaptive_themes['dark']);
       }else{
+        if (color == "DEFAULT") color = default_light_color;
         adaptive_themes['light']['colors']['frame'] = color;
         adaptive_themes['light']['colors']['frame_inactive'] = color;
         adaptive_themes['light']['colors']['popup'] = color;
         applyTheme(windowId, adaptive_themes['light']);
       }
     }else if (force && scheme == "dark" && !darkMode){
-      adaptive_themes['dark']['colors']['frame'] = "rgb(28, 27, 34)";
-      adaptive_themes['dark']['colors']['frame_inactive'] = "rgb(28, 27, 34)";
-      adaptive_themes['dark']['colors']['popup'] = "rgb(28, 27, 34)";
+      adaptive_themes['dark']['colors']['frame'] = default_dark_color;
+      adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = default_dark_color;
       applyTheme(windowId, adaptive_themes['dark']);
     }else if (force && scheme == "light" && darkMode){
-      adaptive_themes['light']['colors']['frame'] = "rgb(255, 255, 255)";
-      adaptive_themes['light']['colors']['frame_inactive'] = "rgb(255, 255, 255)";
-      adaptive_themes['light']['colors']['popup'] = "rgb(255, 255, 255)";
+      adaptive_themes['light']['colors']['frame'] = default_light_color;
+      adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
+      adaptive_themes['light']['colors']['popup'] = default_light_color;
       applyTheme(windowId, adaptive_themes['light']);
     }
   });
