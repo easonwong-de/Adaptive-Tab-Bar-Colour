@@ -25,16 +25,23 @@
 				<div>
 					<h4><input access="false" id="custom" type="checkbox">
 						<label for="customize">More customizations</label></h4>
-					<div id="custom_options" hidden="true">
+					<div class="custom_options" id="custom_options" hidden="true">
 						<label for="light_color">Default light color: </label>
-							<input type="color" value="#FFFFFF" name="dark_color" id="light_color">
+							<input type="color" value="#FFFFFF" name="light_color" id="light_color">
 						<br><br>
 						<label for="dark_color">Default dark color: </label>
 							<input type="color" value="#1C1B22" name="dark_color" id="dark_color">
-						<br><br>
+						<br><br><br>
 						<button type="button" style="default" id="custom_reset">Reset</button>
 					</div>
 				</div>
+				<p>&nbsp;</p>
+				<form action="https://www.paypal.com/donate" method="post" target="_blank">
+				<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
+				<input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+				<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+				</form>
+				<p>&nbsp;</p>
 			</div>
 		</div>
 		<script type="text/javascript" src="../options.js"></script>
