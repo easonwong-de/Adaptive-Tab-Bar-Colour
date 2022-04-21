@@ -38,3 +38,9 @@ Below listed are products of similar use from other intelligent people. Make sur
 Chameleon Dynamic Theme: [GitHub](https://github.com/taboca/browser-adaptation-dynamic-theme), [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/chameleon-dynamic-theme-fixed/)  
 VivaldiFox: [GitHub](https://github.com/nt1m/vivaldi-fox/), [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/)  
 <br>
+
+<form action="https://www.paypal.com/donate" method="post" target="_top">
+<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
+<input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+</form>
