@@ -25,7 +25,7 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 
 ## Known Issues
 1. Websites with auto dark mode might bug  
-2. Do not support CSS themes  
+2. Does not support CSS themes  
 <br>
 
 ## License
