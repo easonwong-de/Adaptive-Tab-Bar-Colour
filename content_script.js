@@ -10,6 +10,7 @@ const reservedColor = {
 	},
 	"dark": {
 		"open.spotify.com": "rgb(0, 0, 0)",
+		//"www.youtube.com": "rgb(32, 32, 32)",
 		"www.twitch.tv": "rgb(24, 24, 27)",
 		"github.com": "rgb(22, 27, 34)"
 	}
