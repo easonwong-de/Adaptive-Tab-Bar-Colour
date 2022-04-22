@@ -115,10 +115,10 @@ chrome.tabs.onUpdated.addListener(update);
 browser.windows.onFocusChanged.addListener(update);
 
 function update() {
+  browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, currentWindow: true, status: "complete"}, function(tabs) {
     let url = tabs[0].url;
     let windowId = tabs[0].windowId;
-    //console.log("Current URL: " + url + "\nCurrent Window ID: " + windowId);
     browser.storage.local.get(function (pref) {
       let pref_custom = pref.custom;
       let pref_light_color = pref.light_color;
