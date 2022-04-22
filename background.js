@@ -199,6 +199,7 @@ function changeFrameColorTo(windowId, color, darkMode) {
   browser.storage.local.get(function (pref) {
     let scheme = pref.scheme;
     let force = pref.force;
+    if (darkMode == null) darkMode = scheme == "dark";
     if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
       if (darkMode){
         if (color == "DEFAULT") color = default_dark_color;

@@ -51,34 +51,33 @@ function findColorUnreserved() {
 	//D: theme-color is dark, background is bright => returns theme-color & in dark mode
 	//E: both are bright => returns theme-color & in light mode
 	//F: both are dark => returns theme-color & in dark mode
+	//v1.3.1 update:
+	//0-100 too dark => darkMode = true
+	//100-155 so-so => darkMode = null
+	//155-255 too bright => darkMode = false
 	if (getThemeColor() == null){ //A,B
 		responseColor = getComputedColor();
-		//console.log("theme-color not found. bgcolor: " + responseColor + ", too bright: " + tooBright(responseColor));
-		if (tooBright(responseColor)){ //B
-			darkMode = false;
-		}else{ //A
-			darkMode = true;
-		}
 	}else{ //C,D,E,F
 		let themeColor = "";
 		let backgroundColor = "";
 		themeColor = getThemeColor();
 		backgroundColor = getComputedColor();
-		//console.log("theme-color: " + themeColor + ", too bright: " + tooBright(themeColor));
-		//console.log("bgcolor: " + backgroundColor + ", too bright: " + tooBright(backgroundColor));
 		if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
 			responseColor = backgroundColor;
-			darkMode = true;
 		}else if (!tooBright(themeColor) && tooBright(backgroundColor)){ //D
 			responseColor = themeColor;
-			darkMode = true;
 		}else if (tooBright(themeColor) && tooBright(backgroundColor)){ //E
 			responseColor = themeColor;
-			darkMode = false;
 		}else if (!tooBright(themeColor) && !tooBright(backgroundColor)){ //F
 			responseColor = themeColor;
-			darkMode = true;
 		}
+	}
+	if (tooBright(responseColor)){
+		darkMode = false;
+	}else if (tooDark(responseColor)){
+		darkMode = true;
+	}else{
+		darkMode = null; //Text color depends on preference
 	}
 	//Make sure there will be no alpha value transmitted to background.js
 	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
@@ -132,9 +131,18 @@ function getThemeColor() {
 //Check if the color is too bright for dark mode
 function tooBright(string) {
 	if (string.startsWith("#")){
-		return hexBrightness(string) > 120;
+		return hexBrightness(string) > 155;
 	}else{
-		return rgbBrightness(string) > 120;
+		return rgbBrightness(string) > 155;
+	}
+}
+
+//Check if the color is too bright for dark mode
+function tooDark(string) {
+	if (string.startsWith("#")){
+		return hexBrightness(string) < 100;
+	}else{
+		return rgbBrightness(string) < 100;
 	}
 }
 
