@@ -75,6 +75,7 @@ var default_dark_color = "#1C1B22";
 browser.runtime.onInstalled.addListener(init);
 
 function init() {
+  browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   browser.storage.local.get(function (pref) {
     let scheme = pref.scheme;
     let force = pref.force;
@@ -82,10 +83,10 @@ function init() {
     let pref_light_color = pref.light_color;
     let pref_dark_color = pref.dark_color;
     if (scheme == undefined || force == undefined){
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches){ //Read present theme to select color scheme
-        browser.storage.local.set({scheme: "dark", force: false});
+      if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
+        browser.storage.local.set({scheme: "light", force: true});
       }else{
-        browser.storage.local.set({scheme: "light", force: false});
+        browser.storage.local.set({scheme: "dark", force: true});
       }
       if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){
         browser.storage.local.set({

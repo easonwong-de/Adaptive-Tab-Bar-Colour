@@ -1,5 +1,5 @@
-let color_scheme_light = document.getElementById("color_scheme_light");
-let color_scheme_dark = document.getElementById("color_scheme_dark");
+//let color_scheme_light = document.getElementById("color_scheme_light");
+//let color_scheme_dark = document.getElementById("color_scheme_dark");
 let color_scheme_no_light = document.getElementById("color_scheme_no_light");
 let color_scheme_no_dark = document.getElementById("color_scheme_no_dark");
 let custom = document.getElementById("custom");
@@ -8,16 +8,18 @@ let light_color = document.getElementById("light_color");
 let dark_color = document.getElementById("dark_color");
 let custom_reset = document.getElementById("custom_reset");
 
+browser.storage.local.set({force: true}); //v1.3.1 temporary fix
+
 browser.storage.local.get(function (pref){
 	let scheme = pref.scheme;
 	let force = pref.force;
-	if (scheme == "light" && !force){
+	/*if (scheme == "light" && !force){
 		color_scheme_light.checked = true;
 		switchBodyToLight();
 	}else if (scheme == "dark" && !force){
 		color_scheme_dark.checked = true;
 		switchBodyToDark();
-	}else if (scheme == "dark" && force){
+	}else*/ if (scheme == "dark" && force){
 		color_scheme_no_light.checked = true;
 		switchBodyToDark();
 	}else if (scheme == "light" && force){
@@ -38,7 +40,7 @@ browser.storage.local.get(function (pref){
 	dark_color.value = pref_dark_color;
 });
 
-color_scheme_light.addEventListener("input", function(event) {
+/*color_scheme_light.addEventListener("input", function(event) {
 	if (color_scheme_light.checked) {
 		browser.storage.local.set({scheme: "light", force: false});
 		document.getElementsByTagName("body")[0].className = "light";
@@ -52,7 +54,7 @@ color_scheme_dark.addEventListener("input", function(event) {
 		document.getElementsByTagName("body")[0].className = "dark";
 		applySettings();
 	}
-});
+});*/
 
 color_scheme_no_light.addEventListener("input", function(event) {
 	if (color_scheme_no_light.checked) {
