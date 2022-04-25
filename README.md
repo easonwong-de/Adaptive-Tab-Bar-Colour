@@ -31,9 +31,10 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 [The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
 <br>
 
-## Similar Projects
-Below listed are products of similar use from other intelligent people. Make sure you trust them before installing.  
+## Incompatible with
 
-Chameleon Dynamic Theme: [GitHub](https://github.com/taboca/browser-adaptation-dynamic-theme), [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/chameleon-dynamic-theme-fixed/)  
-VivaldiFox: [GitHub](https://github.com/nt1m/vivaldi-fox/), [Firefox Add-on Store](https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/)  
+1. <a href="https://addons.mozilla.org/en-GB/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a>  
+2. <a href="https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/">VivaldiFox</a>  
+3. <a href="https://addons.mozilla.org/en-GB/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
+4. <a href="https://addons.mozilla.org/en-US/firefox/addon/automatic-dark/">automaticDark</a>  
 <br>
