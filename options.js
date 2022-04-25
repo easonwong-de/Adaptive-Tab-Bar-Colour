@@ -1,5 +1,5 @@
-//let color_scheme_light = document.getElementById("color_scheme_light");
-//let color_scheme_dark = document.getElementById("color_scheme_dark");
+let force_mode_caption = document.getElementById("force_mode_caption");
+let force_mode = document.getElementById("force_mode");
 let color_scheme_no_light = document.getElementById("color_scheme_no_light");
 let color_scheme_no_dark = document.getElementById("color_scheme_no_dark");
 let custom = document.getElementById("custom");
@@ -8,22 +8,19 @@ let light_color = document.getElementById("light_color");
 let dark_color = document.getElementById("dark_color");
 let custom_reset = document.getElementById("custom_reset");
 
-browser.storage.local.set({force: true}); //v1.3.1 temporary fix
+//browser.storage.local.set({force: true}); //v1.3.1 temporary fix
 
 browser.storage.local.get(function (pref){
 	let scheme = pref.scheme;
 	let force = pref.force;
-	/*if (scheme == "light" && !force){
-		color_scheme_light.checked = true;
-		switchBodyToLight();
-	}else if (scheme == "dark" && !force){
-		color_scheme_dark.checked = true;
+	if (force){
+		force_mode.checked = false;
+	}else{
+		force_mode.checked = true;
+	}
+	if (scheme == "dark"){
 		switchBodyToDark();
-	}else*/ if (scheme == "dark" && force){
-		color_scheme_no_light.checked = true;
-		switchBodyToDark();
-	}else if (scheme == "light" && force){
-		color_scheme_no_dark.checked = true;
+	}else{
 		switchBodyToLight();
 	}
 	let pref_custom = pref.custom;
@@ -40,37 +37,33 @@ browser.storage.local.get(function (pref){
 	dark_color.value = pref_dark_color;
 });
 
-/*color_scheme_light.addEventListener("input", function(event) {
-	if (color_scheme_light.checked) {
-		browser.storage.local.set({scheme: "light", force: false});
-		document.getElementsByTagName("body")[0].className = "light";
-		applySettings();
-	}
-});
-
-color_scheme_dark.addEventListener("input", function(event) {
-	if (color_scheme_dark.checked) {
-		browser.storage.local.set({scheme: "dark", force: false});
-		document.getElementsByTagName("body")[0].className = "dark";
-		applySettings();
-	}
-});*/
-
 color_scheme_no_light.addEventListener("input", function(event) {
 	if (color_scheme_no_light.checked) {
-		browser.storage.local.set({scheme: "dark", force: true});
-		document.getElementsByTagName("body")[0].className = "dark";
+		browser.storage.local.set({scheme: "dark"});
+		browser.browserSettings.overrideContentColorScheme.set({value: "dark"});
+		switchBodyToDark();
 		applySettings();
 	}
 });
 
 color_scheme_no_dark.addEventListener("input", function(event) {
 	if (color_scheme_no_dark.checked) {
-		browser.storage.local.set({scheme: "light", force: true});
-		document.getElementsByTagName("body")[0].className = "light";
+		browser.storage.local.set({scheme: "light"});
+		browser.browserSettings.overrideContentColorScheme.set({value: "light"});
+		switchBodyToLight();
 		applySettings();
 	}
 });
+
+force_mode.onclick = function() {
+	if (force_mode.checked) {
+		browser.storage.local.set({force: false});
+		applySettings();
+	}else{
+		browser.storage.local.set({force: true});
+		applySettings();
+	}
+};
 
 custom.onclick = function() {
 	if (custom.checked) {
@@ -112,10 +105,16 @@ function switchBodyToLight() {
 	body = document.getElementsByTagName("body")[0];
 	body.classList.add("light");
 	body.classList.remove("dark");
+	color_scheme_no_light.checked = false;
+	color_scheme_no_dark.checked = true;
+	force_mode_caption.innerHTML = "Allow dark tab bar";
 }
 
 function switchBodyToDark() {
 	body = document.getElementsByTagName("body")[0];
 	body.classList.add("dark");
 	body.classList.remove("light");
+	color_scheme_no_light.checked = true;
+	color_scheme_no_dark.checked = false;
+	force_mode_caption.innerHTML = "Allow light tab bar";
 }

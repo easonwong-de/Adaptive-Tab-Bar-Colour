@@ -6,11 +6,14 @@ var darkMode = false;
 
 const reservedColor = {
 	"light": {
+		"open.spotify.com": "rgb(0, 0, 0)",
+		"www.youtube.com": "rgb(255, 255, 255)",
+		"www.twitch.tv": "rgb(255, 255, 255)",
 		"github.com": "rgb(36, 41, 47)"
 	},
 	"dark": {
 		"open.spotify.com": "rgb(0, 0, 0)",
-		//"www.youtube.com": "rgb(32, 32, 32)",
+		"www.youtube.com": "rgb(32, 32, 32)",
 		"www.twitch.tv": "rgb(24, 24, 27)",
 		"github.com": "rgb(22, 27, 34)"
 	}
@@ -53,7 +56,7 @@ function findColorUnreserved() {
 	//F: both are dark => returns theme-color & in dark mode
 	//v1.3.1 update:
 	//0-100 too dark => darkMode = true
-	//100-155 so-so => darkMode = null
+	//100-155 not too dark, not too bright => darkMode = null, let pref.scheme decide text color
 	//155-255 too bright => darkMode = false
 	if (getThemeColor() == null){ //A,B
 		responseColor = getComputedColor();
@@ -89,8 +92,8 @@ findColor();
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.message == 'remind_me' && responseColor != ""){
-			sendResponse({color: responseColor, darkMode: darkMode}); //Sends cached color to background.js
-			findColor(); //In case preferences are changed
+			sendResponse({});
+			findColor();
 		}
 	}
 );

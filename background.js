@@ -68,25 +68,38 @@ const reservedColor = {
   }
 }
 
+//Settings cache
 var default_light_color = "#FFFFFF";
 var default_dark_color = "#1C1B22";
+var scheme;
+var force;
+var pref_custom;
+var pref_light_color;
+var pref_dark_color;
+var last_version;
 
 //When first installed, detect which mode the user is using
 browser.runtime.onInstalled.addListener(init);
 
 function init() {
-  browser.storage.local.set({force: true}); //v1.3.1 temporary fix
+  //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   browser.storage.local.get(function (pref) {
-    let scheme = pref.scheme;
-    let force = pref.force;
-    let pref_custom = pref.custom;
-    let pref_light_color = pref.light_color;
-    let pref_dark_color = pref.dark_color;
+    scheme = pref.scheme;
+    force = pref.force;
+    pref_custom = pref.custom;
+    pref_light_color = pref.light_color;
+    pref_dark_color = pref.dark_color;
+    last_version = pref.last_version;
+    if (last_version == undefined){ //comes from v1.3.1 to older versions
+      browser.storage.local.set({last_version: "v1.3.2", force: false});
+    }
     if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
-        browser.storage.local.set({scheme: "light", force: true});
+        browser.storage.local.set({scheme: "light", force: false});
+        browser.browserSettings.overrideContentColorScheme.set({value: "light"});
       }else{
-        browser.storage.local.set({scheme: "dark", force: true});
+        browser.storage.local.set({scheme: "dark", force: false});
+        browser.browserSettings.overrideContentColorScheme.set({value: "dark"});
       }
       if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){
         browser.storage.local.set({
@@ -106,7 +119,6 @@ let port_cs;
 browser.runtime.onConnect.addListener(function (port) {
   port_cs = port;
   port_cs.onMessage.addListener(function (msg, sender, sendResponse) {
-    console.log("+++EXPRESS MESSAGE+++ \nWindow ID: " + sender.sender.tab.windowId + "\nColor: " + msg.color + "\nIn dark mode: " + msg.darkMode);
     changeFrameColorTo(sender.sender.tab.windowId, msg.color, msg.darkMode);
   });
 });
@@ -115,14 +127,17 @@ chrome.tabs.onUpdated.addListener(update);
 browser.windows.onFocusChanged.addListener(update);
 
 function update() {
-  browser.storage.local.set({force: true}); //v1.3.1 temporary fix
+  //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, currentWindow: true, status: "complete"}, function(tabs) {
     let url = tabs[0].url;
     let windowId = tabs[0].windowId;
     browser.storage.local.get(function (pref) {
-      let pref_custom = pref.custom;
-      let pref_light_color = pref.light_color;
-      let pref_dark_color = pref.dark_color;
+      scheme = pref.scheme;
+      force = pref.force;
+      pref_custom = pref.custom;
+      pref_light_color = pref.light_color;
+      pref_dark_color = pref.dark_color;
+      browser.browserSettings.overrideContentColorScheme.set({value: scheme});
       if (pref_custom){
         default_light_color = pref_light_color;
         default_dark_color = pref_dark_color;
@@ -131,14 +146,13 @@ function update() {
         default_dark_color = "#1C1B22";
       }
       if (url.startsWith("file:")){
-        if (pref.scheme == "dark"){
+        if (scheme == "dark"){
           changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
-        }else if (pref.scheme == "light"){
+        }else if (scheme == "light"){
           changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
         }
       }else{
         let key = "";
-        let scheme = pref.scheme;
         let reversed_scheme = "light";
         if (scheme == "light") reversed_scheme = "dark";
         if (url.startsWith("about:")){
@@ -165,10 +179,7 @@ function changeFrameColorToBackground() {
     chrome.tabs.sendMessage(tabs[0].id, {message: 'remind_me'}, function(response) {
       let url = tabs[0].url;
       let windowId = tabs[0].windowId;
-      if (response != undefined){
-        //console.log("Changing color\nWindow ID: " + windowId + "\nURL: " + url + "\nColor: " + response.color + "\nIn dark mode: " + response.darkMode);
-        changeFrameColorTo(windowId, response.color, response.darkMode);
-      }else{
+      if (response == undefined){
         resetFrameColor(windowId);
         console.log("NO CONNECTION TO CONTENT SCRIPT\nMay be about:pages");
       }
@@ -178,13 +189,11 @@ function changeFrameColorToBackground() {
 
 //Reset frame color when something unexpected happens (with windowId)
 function resetFrameColor(windowId) {
-  browser.storage.local.get(function (pref) {
-    if (pref.scheme == "light"){
-      changeFrameColorTo(windowId, default_light_color, false);
-    }else{
-      changeFrameColorTo(windowId, default_dark_color, true);
-    }
-  });
+  if (scheme == "light"){
+    changeFrameColorTo(windowId, default_light_color, false);
+  }else{
+    changeFrameColorTo(windowId, default_dark_color, true);
+  }
 }
 
 //Change tab bar to the appointed color (with windowId)
@@ -196,36 +205,32 @@ function resetFrameColor(windowId) {
 //force: true, scheme: dark, darkMode: false => dark
 //force: true, scheme: light, darkMode: true => light
 function changeFrameColorTo(windowId, color, darkMode) {
-  browser.storage.local.get(function (pref) {
-    let scheme = pref.scheme;
-    let force = pref.force;
-    if (darkMode == null) darkMode = scheme == "dark";
-    if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
-      if (darkMode){
-        if (color == "DEFAULT") color = default_dark_color;
-        adaptive_themes['dark']['colors']['frame'] = color;
-        adaptive_themes['dark']['colors']['frame_inactive'] = color;
-        adaptive_themes['dark']['colors']['popup'] = color;
-        applyTheme(windowId, adaptive_themes['dark']);
-      }else{
-        if (color == "DEFAULT") color = default_light_color;
-        adaptive_themes['light']['colors']['frame'] = color;
-        adaptive_themes['light']['colors']['frame_inactive'] = color;
-        adaptive_themes['light']['colors']['popup'] = color;
-        applyTheme(windowId, adaptive_themes['light']);
-      }
-    }else if (force && scheme == "dark" && !darkMode){
-      adaptive_themes['dark']['colors']['frame'] = default_dark_color;
-      adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+  if (darkMode == null) darkMode = scheme == "dark";
+  if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
+    if (darkMode){
+      if (color == "DEFAULT") color = default_dark_color;
+      adaptive_themes['dark']['colors']['frame'] = color;
+      adaptive_themes['dark']['colors']['frame_inactive'] = color;
+      adaptive_themes['dark']['colors']['popup'] = color;
       applyTheme(windowId, adaptive_themes['dark']);
-    }else if (force && scheme == "light" && darkMode){
-      adaptive_themes['light']['colors']['frame'] = default_light_color;
-      adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
-      adaptive_themes['light']['colors']['popup'] = default_light_color;
+    }else{
+      if (color == "DEFAULT") color = default_light_color;
+      adaptive_themes['light']['colors']['frame'] = color;
+      adaptive_themes['light']['colors']['frame_inactive'] = color;
+      adaptive_themes['light']['colors']['popup'] = color;
       applyTheme(windowId, adaptive_themes['light']);
     }
-  });
+  }else if (force && scheme == "dark" && !darkMode){
+    adaptive_themes['dark']['colors']['frame'] = default_dark_color;
+    adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
+    adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+    applyTheme(windowId, adaptive_themes['dark']);
+  }else if (force && scheme == "light" && darkMode){
+    adaptive_themes['light']['colors']['frame'] = default_light_color;
+    adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
+    adaptive_themes['light']['colors']['popup'] = default_light_color;
+    applyTheme(windowId, adaptive_themes['light']);
+  }
 }
 
 //Apply theme (with windowId)
