@@ -16,7 +16,7 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 <br>
 
 ## Download
-<a href="https://addons.mozilla.org/en-GB/firefox/addon/adaptive-tab-bar-color/">Get the add-on from Firefox Add-on Store</a>  
+**[![Get it for Firefox!](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/en-GB/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github)**
 <br>
 
 ## Safety Warning
@@ -27,10 +27,6 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 1. Does not support CSS themes  
 <br>
 
-## License
-[The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
-<br>
-
 ## Incompatible with
 
 1. Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a>  
@@ -38,4 +34,8 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 3. <a href="https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/">VivaldiFox</a>  
 4. <a href="https://addons.mozilla.org/en-GB/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
 5. <a href="https://addons.mozilla.org/en-US/firefox/addon/automatic-dark/">automaticDark</a>  
+<br>
+
+## License
+[The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
 <br>
