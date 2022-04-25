@@ -125,6 +125,7 @@ browser.runtime.onConnect.addListener(function (port) {
 
 chrome.tabs.onUpdated.addListener(update);
 browser.windows.onFocusChanged.addListener(update);
+update();
 
 function update() {
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
