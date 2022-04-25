@@ -36,7 +36,8 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 
 ## Works well with
 
-1. <a href="https://addons.mozilla.org/en-GB/firefox/addon/darkreader/">Dark Reader</a>
+1. <a href="https://addons.mozilla.org/en-GB/firefox/addon/darkreader/">Dark Reader</a>  
+<br>
 
 ## License
 [The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
