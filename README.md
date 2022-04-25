@@ -1,6 +1,7 @@
 ![Icon](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/images/ATBC_128.png)
 # Adaptive Tab Bar Color
 Change the color of Firefox tab bar to match the website theme  
+**[![Get it for Firefox!](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/en-GB/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github)**  
 <br>
 
 ## What Does The Add-on Do
@@ -13,10 +14,6 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 <img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_1.jpg" width="600">
 
 <img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_2.jpg" width="600">
-<br>
-
-## Download
-**[![Get it for Firefox!](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/en-GB/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github)**
 <br>
 
 ## Safety Warning
