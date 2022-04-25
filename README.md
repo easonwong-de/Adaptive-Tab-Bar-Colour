@@ -1,8 +1,11 @@
 ![Icon](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/images/ATBC_128.png)
 # Adaptive Tab Bar Color
 Change the color of Firefox tab bar to match the website theme  
+[![Mozilla Add-on downloads](https://img.shields.io/amo/d/dark-mode-website-switcher.svg)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=badge-downloads&campaign=github)
+[![Mozilla Add-on users](https://img.shields.io/amo/users/dark-mode-website-switcher.svg)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=badge-users&campaign=github)
+[![Mozilla Add-on stars](https://img.shields.io/amo/stars/dark-mode-website-switcher.svg)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/reviews/?utm_source=github.com&utm_medium=git&utm_content=badge-stars&campaign=github)
 <br>
-**[![Get it for Firefox!](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/en-GB/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github)**  
+**[![Get it for Firefox!](https://addons.cdn.mozilla.net/static/img/addons-buttons/AMO-button_1.png)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github)**  
 <br>
 
 ## What Does The Add-on Do
@@ -28,15 +31,15 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 ## Incompatible with
 
 1. Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a>  
-2. <a href="https://addons.mozilla.org/en-GB/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a>  
-3. <a href="https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/">VivaldiFox</a>  
-4. <a href="https://addons.mozilla.org/en-GB/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
-5. <a href="https://addons.mozilla.org/en-GB/firefox/addon/automatic-dark/">automaticDark</a>  
+2. <a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a>  
+3. <a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a>  
+4. <a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
+5. <a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a>  
 <br>
 
 ## Works well with
 
-1. <a href="https://addons.mozilla.org/en-GB/firefox/addon/darkreader/">Dark Reader</a>  
+1. <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a>  
 <br>
 
 ## License
