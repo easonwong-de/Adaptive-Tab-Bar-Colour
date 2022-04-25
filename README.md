@@ -31,8 +31,12 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 2. <a href="https://addons.mozilla.org/en-GB/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a>  
 3. <a href="https://addons.mozilla.org/en-GB/firefox/addon/vivaldifox/">VivaldiFox</a>  
 4. <a href="https://addons.mozilla.org/en-GB/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
-5. <a href="https://addons.mozilla.org/en-US/firefox/addon/automatic-dark/">automaticDark</a>  
+5. <a href="https://addons.mozilla.org/en-GB/firefox/addon/automatic-dark/">automaticDark</a>  
 <br>
+
+## Works well with
+
+1. <a href="https://addons.mozilla.org/en-GB/firefox/addon/darkreader/">Dark Reader</a>
 
 ## License
 [The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
