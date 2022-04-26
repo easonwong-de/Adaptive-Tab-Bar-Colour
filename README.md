@@ -17,26 +17,26 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 <img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_2.jpg" width="600">
 <br>
 
-## Safety Warning
-Beware of malicious web UI: Please distinguish between browser’s UI and web components, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to u/KazaHesto on Reddit)  
-<br>
+## Works well with
 
-## Known Issues  
-1. Does not support CSS themes  
+1. <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on "use system color scheme")  
 <br>
 
 ## Incompatible with
 
-1. Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a>  
+1. Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a> (released on Dec, 2021)  
 2. <a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a>  
 3. <a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a>  
 4. <a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
 5. <a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a>  
 <br>
 
-## Works well with
+## Safety Warning
+Beware of malicious web UI: Please distinguish between browser’s UI and web components, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to u/KazaHesto on Reddit)  
+<br>
 
-1. <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a>  
+## Known Issues  
+1. Does not support CSS themes  
 <br>
 
 ## License
