@@ -37,6 +37,7 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 
 ## Known Issues  
 1. Does not support CSS themes  
+2. Tab bar sometimes flashes when opening/refreshing a webpage  
 <br>
 
 ## License
