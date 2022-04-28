@@ -181,8 +181,10 @@ function changeFrameColorToBackground() {
       let url = tabs[0].url;
       let windowId = tabs[0].windowId;
       if (response == undefined){
-        resetFrameColor(windowId);
-        console.log("NO CONNECTION TO CONTENT SCRIPT\nMay be about:pages");
+        if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
+          resetFrameColor(windowId);
+          console.log("about:pages or addons.mozilla.org detected");
+        }
       }
     });
   });
