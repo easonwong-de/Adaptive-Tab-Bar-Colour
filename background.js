@@ -90,8 +90,8 @@ function init() {
     pref_light_color = pref.light_color;
     pref_dark_color = pref.dark_color;
     last_version = pref.last_version;
-    if (last_version == undefined){ //comes from v1.3.1 to older versions
-      browser.storage.local.set({last_version: "v1.3.2", force: false});
+    if (last_version == undefined){ //updates from v1.3.1 to newer versions
+      browser.storage.local.set({last_version: "v1.3.4", force: false});
     }
     if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
@@ -200,7 +200,8 @@ function resetFrameColor(windowId) {
 }
 
 //Change tab bar to the appointed color (with windowId)
-//"darkMode" decides the color of the text & url bar
+//"darkMode" decides the color of the text
+//"force" and "scheme" come from preferences
 //force, scheme, darkMode
 //force: false => normal
 //force: true, scheme: dark, darkMode: true => normal
@@ -215,23 +216,27 @@ function changeFrameColorTo(windowId, color, darkMode) {
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
       adaptive_themes['dark']['colors']['popup'] = color;
+      adaptive_themes['dark']['colors']['ntp_background'] = color;
       applyTheme(windowId, adaptive_themes['dark']);
     }else{
       if (color == "DEFAULT") color = default_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
       adaptive_themes['light']['colors']['popup'] = color;
+      adaptive_themes['light']['colors']['ntp_background'] = color;
       applyTheme(windowId, adaptive_themes['light']);
     }
   }else if (force && scheme == "dark" && !darkMode){
     adaptive_themes['dark']['colors']['frame'] = default_dark_color;
     adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
     adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+    adaptive_themes['dark']['colors']['ntp_background'] = default_dark_color;
     applyTheme(windowId, adaptive_themes['dark']);
   }else if (force && scheme == "light" && darkMode){
     adaptive_themes['light']['colors']['frame'] = default_light_color;
     adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
     adaptive_themes['light']['colors']['popup'] = default_light_color;
+    adaptive_themes['light']['colors']['ntp_background'] = default_light_color;
     applyTheme(windowId, adaptive_themes['light']);
   }
 }
