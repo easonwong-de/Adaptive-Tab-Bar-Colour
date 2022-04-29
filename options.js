@@ -30,7 +30,7 @@ browser.storage.local.get(function (pref){
 		color_scheme_no_dark.checked = true;
 		color_scheme_system.checked = false;
 	}else if (scheme == "system"){
-		if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+		if (window.matchMedia("(prefers-color-scheme: dark)").matches){
 			switchBodyToDark();
 		}else{
 			switchBodyToLight();
@@ -81,7 +81,7 @@ color_scheme_system.addEventListener("input", function(event) {
 	if (color_scheme_system.checked) {
 		browser.storage.local.set({scheme: "system"});
 		browser.browserSettings.overrideContentColorScheme.set({value: "system"}).then(() => {
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches){
 				switchBodyToDark();
 			}else{
 				switchBodyToLight();
@@ -153,3 +153,11 @@ function switchBodyToDark() {
 	body.classList.remove("light");
 	force_mode_caption.innerHTML = "Allow light tab bar";
 }
+
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+	if (e.matches) {
+		switchBodyToDark();
+	} else {
+		switchBodyToLight();
+	}
+});

@@ -25,7 +25,7 @@ function findColor() {
 		let key = "";
 		let scheme = pref.scheme;
 		if (scheme == "system"){
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches){
 				scheme = "dark";
 			}else{
 				scheme = "light";
@@ -98,7 +98,7 @@ findColor();
 //Remind background.js of the color
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		if (request.message == 'remind_me' && responseColor != ""){
+		if (request.message == "remind_me" && responseColor != ""){
 			sendResponse({});
 			findColor();
 		}

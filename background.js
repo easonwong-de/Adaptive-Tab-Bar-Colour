@@ -98,7 +98,7 @@ function init() {
     pref_dark_color = pref.dark_color;
     last_version = pref.last_version;
     if (last_version == undefined){ //updates from v1.3.1 to newer versions
-      browser.storage.local.set({last_version: "v1.3.5", force: false});
+      browser.storage.local.set({last_version: "v1.4", force: false});
     }
     if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
@@ -132,6 +132,12 @@ browser.runtime.onConnect.addListener(function (port) {
 
 chrome.tabs.onUpdated.addListener(update);
 browser.windows.onFocusChanged.addListener(update);
+//When preferences changed
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request == "apply_settings") update();
+});
+//When color scheme changes
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update);
 update();
 
 function update() {
@@ -145,7 +151,7 @@ function update() {
       pref_dark_color = pref.dark_color;
       browser.browserSettings.overrideContentColorScheme.set({value: scheme});
       if (scheme == "system"){
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches){
           scheme = "dark";
         }else{
           scheme = "light";
@@ -187,11 +193,13 @@ function updateEachWindow(tab) {
       changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
     }else{
       //For normal websites where content script can be injected
-      chrome.tabs.sendMessage(tab.id, {message: 'remind_me'}, function(response) {
+      chrome.tabs.sendMessage(tab.id, {message: "remind_me"}, function(response) {
         if (response == undefined){
           if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
             resetFrameColor(windowId);
             console.log("about:pages or addons.mozilla.org detected");
+          }else{
+            console.log("No connection to content script")
           }
         }
       });
@@ -255,11 +263,3 @@ function applyTheme(windowId, theme) {
   browser.theme.update(windowId, theme);
 }
 
-//When prefered scheme changed
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request == "apply_settings") update();
-});
-
-/*browser.storage.local.get(function (pref) {
-  console.log(pref.scheme + "\n" + pref.force);
-});*/
