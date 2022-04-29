@@ -85,13 +85,6 @@ function init() {
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   browser.storage.local.get(function (pref) {
     scheme = pref.scheme;
-    if (scheme == "system"){
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches){
-        scheme = "dark";
-      }else{
-        scheme = "light";
-      }
-    }
     force = pref.force;
     pref_custom = pref.custom;
     pref_light_color = pref.light_color;
@@ -100,22 +93,30 @@ function init() {
     if (last_version == undefined){ //updates from v1.3.1 to newer versions
       browser.storage.local.set({last_version: "v1.4", force: false});
     }
-    if (scheme == undefined || force == undefined){
+    if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){ //added from v1.3
+      browser.storage.local.set({
+        custom: false,
+        light_color: default_light_color,
+        dark_color: default_dark_color
+      });
+    }
+    if (scheme == undefined || force == undefined){ //first time install
+      let init_scheme;
       if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
-        browser.storage.local.set({scheme: "light", force: false});
+        init_scheme = "light";
         browser.browserSettings.overrideContentColorScheme.set({value: "light"});
       }else{
-        browser.storage.local.set({scheme: "dark", force: false});
+        init_scheme = "dark";
         browser.browserSettings.overrideContentColorScheme.set({value: "dark"});
       }
-      if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){
-        browser.storage.local.set({
-          custom: false,
-          light_color: default_light_color,
-          dark_color: default_dark_color
-        });
+      browser.storage.local.set({scheme: init_scheme, force: false}).then(browser.runtime.openOptionsPage);
+    }
+    if (scheme == "system"){
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+        scheme = "dark";
+      }else{
+        scheme = "light";
       }
-      browser.runtime.openOptionsPage();
     }
     update();
   });
