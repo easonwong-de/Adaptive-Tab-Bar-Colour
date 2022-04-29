@@ -37,6 +37,7 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 
 ## Known Issues  
 1. Does not support CSS themes   
+2. The color of about:devtools-toolbox might bug in light mode  
 <br>
 
 ## License
