@@ -5,7 +5,8 @@
   "author": "Eason Wong",
   "browser_specific_settings": {
     "gecko": {
-      "id": "ATBC@EasonWong"
+      "id": "ATBC@EasonWong",
+      "strict_min_version": "95.0"
     }
   },
   "permissions": ["activeTab", "tabs", "theme", "storage", "browserSettings"],
