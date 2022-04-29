@@ -85,13 +85,20 @@ function init() {
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   browser.storage.local.get(function (pref) {
     scheme = pref.scheme;
+    if (scheme == "system"){
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+        scheme = "dark";
+      }else{
+        scheme = "light";
+      }
+    }
     force = pref.force;
     pref_custom = pref.custom;
     pref_light_color = pref.light_color;
     pref_dark_color = pref.dark_color;
     last_version = pref.last_version;
     if (last_version == undefined){ //updates from v1.3.1 to newer versions
-      browser.storage.local.set({last_version: "v1.3.4", force: false});
+      browser.storage.local.set({last_version: "v1.3.5", force: false});
     }
     if (scheme == undefined || force == undefined){
       if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
@@ -129,9 +136,7 @@ update();
 
 function update() {
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
-  chrome.tabs.query({active: true, currentWindow: true, status: "complete"}, function(tabs) {
-    let url = tabs[0].url;
-    let windowId = tabs[0].windowId;
+  chrome.tabs.query({active: true, status: "complete"}, function(tabs) {
     browser.storage.local.get(function (pref) {
       scheme = pref.scheme;
       force = pref.force;
@@ -139,6 +144,13 @@ function update() {
       pref_light_color = pref.light_color;
       pref_dark_color = pref.dark_color;
       browser.browserSettings.overrideContentColorScheme.set({value: scheme});
+      if (scheme == "system"){
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+          scheme = "dark";
+        }else{
+          scheme = "light";
+        }
+      }
       if (pref_custom){
         default_light_color = pref_light_color;
         default_dark_color = pref_dark_color;
@@ -146,48 +158,45 @@ function update() {
         default_light_color = "#FFFFFF";
         default_dark_color = "#1C1B22";
       }
-      if (url.startsWith("file:")){
-        if (scheme == "dark"){
-          changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
-        }else if (scheme == "light"){
-          changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
-        }
-      }else{
-        let key = "";
-        let reversed_scheme = "light";
-        if (scheme == "light") reversed_scheme = "dark";
-        if (url.startsWith("about:")){
-          key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
-        }else{
-          key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
-        }
-        if (reservedColor[scheme][key] != null){ //For prefered scheme there's a reserved color
-          changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
-        }else if (reservedColor[reversed_scheme][key] != null){ //Site has reserved color in the other mode
-          changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
-        }else{
-          //For normal websites where content script can be injected
-          changeFrameColorToBackground();
-        }
-      }
+      tabs.forEach(updateEachWindow);
     });
   });
 }
 
-// Colorize tab bar after defined theme-color or computed background color
-function changeFrameColorToBackground() {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {message: 'remind_me'}, function(response) {
-      let url = tabs[0].url;
-      let windowId = tabs[0].windowId;
-      if (response == undefined){
-        if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
-          resetFrameColor(windowId);
-          console.log("about:pages or addons.mozilla.org detected");
+function updateEachWindow(tab) {
+  let url = tab.url;
+  let windowId = tab.windowId;
+  if (url.startsWith("file:")){
+    if (scheme == "dark"){
+      changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
+    }else if (scheme == "light"){
+      changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
+    }
+  }else{
+    let key = "";
+    let reversed_scheme = "light";
+    if (scheme == "light") reversed_scheme = "dark";
+    if (url.startsWith("about:")){
+      key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
+    }else{
+      key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
+    }
+    if (reservedColor[scheme][key] != null){ //For prefered scheme there's a reserved color
+      changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
+    }else if (reservedColor[reversed_scheme][key] != null){ //Site has reserved color in the other mode
+      changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
+    }else{
+      //For normal websites where content script can be injected
+      chrome.tabs.sendMessage(tab.id, {message: 'remind_me'}, function(response) {
+        if (response == undefined){
+          if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
+            resetFrameColor(windowId);
+            console.log("about:pages or addons.mozilla.org detected");
+          }
         }
-      }
-    });
-  });
+      });
+    }
+  }
 }
 
 //Reset frame color when something unexpected happens (with windowId)

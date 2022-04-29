@@ -2,6 +2,7 @@ let force_mode_caption = document.getElementById("force_mode_caption");
 let force_mode = document.getElementById("force_mode");
 let color_scheme_no_light = document.getElementById("color_scheme_no_light");
 let color_scheme_no_dark = document.getElementById("color_scheme_no_dark");
+let color_scheme_system = document.getElementById("color_scheme_system");
 let custom = document.getElementById("custom");
 let custom_options = document.getElementById("custom_options");
 let light_color = document.getElementById("light_color");
@@ -20,8 +21,23 @@ browser.storage.local.get(function (pref){
 	}
 	if (scheme == "dark"){
 		switchBodyToDark();
-	}else{
+		color_scheme_no_light.checked = true;
+		color_scheme_no_dark.checked = false;
+		color_scheme_system.checked = false;
+	}else if (scheme == "light"){
 		switchBodyToLight();
+		color_scheme_no_light.checked = false;
+		color_scheme_no_dark.checked = true;
+		color_scheme_system.checked = false;
+	}else if (scheme == "system"){
+		if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+			switchBodyToDark();
+		}else{
+			switchBodyToLight();
+		}
+		color_scheme_no_light.checked = false;
+		color_scheme_no_dark.checked = false;
+		color_scheme_system.checked = true;
 	}
 	let pref_custom = pref.custom;
 	let pref_light_color = pref.light_color;
@@ -42,6 +58,9 @@ color_scheme_no_light.addEventListener("input", function(event) {
 		browser.storage.local.set({scheme: "dark"});
 		browser.browserSettings.overrideContentColorScheme.set({value: "dark"});
 		switchBodyToDark();
+		color_scheme_no_light.checked = true;
+		color_scheme_no_dark.checked = false;
+		color_scheme_system.checked = false;
 		applySettings();
 	}
 });
@@ -51,6 +70,26 @@ color_scheme_no_dark.addEventListener("input", function(event) {
 		browser.storage.local.set({scheme: "light"});
 		browser.browserSettings.overrideContentColorScheme.set({value: "light"});
 		switchBodyToLight();
+		color_scheme_no_light.checked = false;
+		color_scheme_no_dark.checked = true;
+		color_scheme_system.checked = false;
+		applySettings();
+	}
+});
+
+color_scheme_system.addEventListener("input", function(event) {
+	if (color_scheme_system.checked) {
+		browser.storage.local.set({scheme: "system"});
+		browser.browserSettings.overrideContentColorScheme.set({value: "system"}).then(() => {
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+				switchBodyToDark();
+			}else{
+				switchBodyToLight();
+			}
+		});
+		color_scheme_no_light.checked = false;
+		color_scheme_no_dark.checked = false;
+		color_scheme_system.checked = true;
 		applySettings();
 	}
 });
@@ -105,8 +144,6 @@ function switchBodyToLight() {
 	body = document.getElementsByTagName("body")[0];
 	body.classList.add("light");
 	body.classList.remove("dark");
-	color_scheme_no_light.checked = false;
-	color_scheme_no_dark.checked = true;
 	force_mode_caption.innerHTML = "Allow dark tab bar";
 }
 
@@ -114,7 +151,5 @@ function switchBodyToDark() {
 	body = document.getElementsByTagName("body")[0];
 	body.classList.add("dark");
 	body.classList.remove("light");
-	color_scheme_no_light.checked = true;
-	color_scheme_no_dark.checked = false;
 	force_mode_caption.innerHTML = "Allow light tab bar";
 }

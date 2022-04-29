@@ -24,6 +24,13 @@ function findColor() {
 	browser.storage.local.get(function (pref) {
 		let key = "";
 		let scheme = pref.scheme;
+		if (scheme == "system"){
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches){
+				scheme = "dark";
+			}else{
+				scheme = "light";
+			}
+		}
 		let reversed_scheme = "light";
 		if (scheme == "light") reversed_scheme = "dark";
 		host = document.location.host; // e.g. key can be "www.irgendwas.com"
