@@ -55,6 +55,9 @@ var adaptive_themes = {
 
 //Pages where content script can't be injected
 //other reserved color are in content_script.js
+//url listed only in "light"/"dark" => only in light/dark mode
+//url listed in both => choose color scheme as needed
+//url listed as "DEFAULT" => use default_light/dark_color
 const reservedColor = {
   "light": {
     "about:devtools-toolbox": "rgb(249, 249, 250)",

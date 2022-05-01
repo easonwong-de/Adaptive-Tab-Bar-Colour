@@ -1,8 +1,11 @@
 //Content script tells background.js what color to use
-//and in which color should the text in tab bar be
+//and in which color should the text in tab bar be displayed
 
 var responseColor = "";
 var darkMode = false;
+
+//darkMode: true => white text
+//darkMode: false => balck text
 
 const reservedColor = {
 	"light": {
@@ -19,6 +22,10 @@ const reservedColor = {
 	}
 }
 
+var port;
+
+findColor();
+
 //Find the best color
 function findColor() {
 	browser.storage.local.get(function (pref) {
@@ -33,7 +40,7 @@ function findColor() {
 		}
 		let reversed_scheme = "light";
 		if (scheme == "light") reversed_scheme = "dark";
-		host = document.location.host; // e.g. key can be "www.irgendwas.com"
+		let host = document.location.host; // e.g. key can be "www.irgendwas.com"
 		if (reservedColor[scheme][host] != null){ //For prefered scheme there's a reserved color
 			responseColor = reservedColor[scheme][host];
 			darkMode = !tooBright(responseColor);
@@ -41,7 +48,7 @@ function findColor() {
 			responseColor = reservedColor[reversed_scheme][host];
 			darkMode = !tooBright(responseColor);
 		}else{
-			//No reserved color found, use noemal way to find a color
+			//No reserved color found, use normal way to find a color
 			findColorUnreserved();
 		}
 		//Sent color to background.js
@@ -92,8 +99,6 @@ function findColorUnreserved() {
 	//Make sure there will be no alpha value transmitted to background.js
 	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
 }
-
-findColor();
 
 //Remind background.js of the color
 chrome.runtime.onMessage.addListener(
