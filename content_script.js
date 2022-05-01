@@ -2,76 +2,77 @@
 //and in which color should the text in tab bar be displayed
 
 var responseColor = "";
-var darkMode = false;
+var darkMode = null;
 
 //darkMode: true => white text
 //darkMode: false => balck text
 
+//reserved color is a color => it is the theme color
+//reserved color is a IGNORE => use calculated color as theme color
+//reserved color is a tag name => theme color is stored under that tag
+//reserved color is a class name => theme color is stored under that class
 const reservedColor = {
-	"light": {
-		"open.spotify.com": "rgb(0, 0, 0)",
-		"www.youtube.com": "rgb(255, 255, 255)",
-		"www.twitch.tv": "rgb(255, 255, 255)",
-		"github.com": "rgb(36, 41, 47)"
-	},
-	"dark": {
-		"open.spotify.com": "rgb(0, 0, 0)",
-		"www.youtube.com": "rgb(32, 32, 32)",
-		"www.twitch.tv": "rgb(24, 24, 27)",
-		"github.com": "rgb(22, 27, 34)"
-	}
-}
+	"open.spotify.com": "rgb(0, 0, 0)",
+	"mail.google.com": "CLASS: wl",
+	"www.youtube.com": "TAG: ytd-masthead",
+	"www.twitch.tv": "CLASS: top-nav__menu",
+	"github.com": "TAG: header"
+};
 
-var port;
+var port = browser.runtime.connect();
 
 findColor();
 
 //Find the best color
 function findColor() {
-	browser.storage.local.get(function (pref) {
-		let key = "";
-		let scheme = pref.scheme;
-		if (scheme == "system"){
-			if (window.matchMedia("(prefers-color-scheme: dark)").matches){
-				scheme = "dark";
-			}else{
-				scheme = "light";
-			}
-		}
-		let reversed_scheme = "light";
-		if (scheme == "light") reversed_scheme = "dark";
-		let host = document.location.host; // e.g. key can be "www.irgendwas.com"
-		if (reservedColor[scheme][host] != null){ //For prefered scheme there's a reserved color
-			responseColor = reservedColor[scheme][host];
-			darkMode = !tooBright(responseColor);
-		}else if (reservedColor[reversed_scheme][host] != null){ //Site has reserved color in the other mode
-			responseColor = reservedColor[reversed_scheme][host];
-			darkMode = !tooBright(responseColor);
-		}else{
-			//No reserved color found, use normal way to find a color
-			findColorUnreserved();
-		}
-		//Sent color to background.js
-		port = browser.runtime.connect();
-		if (!document.hidden) port.postMessage({color: responseColor, darkMode: darkMode});
-	});
+	if (!findColorReserved()) findColorUnreserved();
+	//Make sure there will be no alpha value transmitted to background.js
+	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
+	//Sent color to background.js
+	if (!document.hidden) port.postMessage({color: responseColor, darkMode: darkMode});
 }
 
-//When there isn't a reserved color for the website
+//When there is a reserved color for the url
+function findColorReserved() {
+	let host = document.location.host; // e.g. "host" can be "www.irgendwas.com"
+	if (reservedColor[host] == null){
+		return false;
+	}else if (reservedColor[host] == "IGNORE_THEME"){
+		responseColor = getComputedColor();
+	}else if (reservedColor[host].startsWith("TAG: ")){
+		let tagName = reservedColor[host].replace("TAG: ", "");
+		let el_list = document.getElementsByTagName(tagName);
+		if (el_list.length == 0) return false;
+		let el = el_list[0];
+		responseColor = window.getComputedStyle(el, null).getPropertyValue('background-color');
+	}else if (reservedColor[host].startsWith("CLASS: ")){
+		let className = reservedColor[host].replace("CLASS: ", "");
+		let el_list = document.getElementsByClassName(className);
+		if (el_list.length == 0) return false;
+		let el = el_list[0];
+		responseColor = window.getComputedStyle(el, null).getPropertyValue('background-color');
+	}else{
+		responseColor = reservedColor[host];
+	}
+	setDarkMode();
+	return true;
+}
+
+//When there isn't a reserved color for the url
+//dark&light mode decides the color of the tab text, button icons etc.
+//theme-color is provided by website: getThemeColor()
+//background is computed: getComputedColor()
+//A: no theme-color exists, background is dark => returns background & in dark mode
+//B: no theme-color exists, background is bright => returns background & in light mode
+//C: theme-color is bright, background is dark => returns background & in dark mode
+//D: theme-color is dark, background is bright => returns theme-color & in dark mode
+//E: both are bright => returns theme-color & in light mode
+//F: both are dark => returns theme-color & in dark mode
+//v1.3.1 update:
+//0-100 too dark => darkMode = true
+//100-155 not too dark, not too bright => darkMode = null, let pref.scheme decide text color
+//155-255 too bright => darkMode = false
 function findColorUnreserved() {
-	//dark&light mode decides the color of the tab text, button icons etc.
-	//theme-color is provided by website: getThemeColor()
-	//background is computed: getComputedColor()
-	//A: no theme-color exists, background is dark => returns background & in dark mode
-	//B: no theme-color exists, background is bright => returns background & in light mode
-	//C: theme-color is bright, background is dark => returns background & in dark mode
-	//D: theme-color is dark, background is bright => returns theme-color & in dark mode
-	//E: both are bright => returns theme-color & in light mode
-	//F: both are dark => returns theme-color & in dark mode
-	//v1.3.1 update:
-	//0-100 too dark => darkMode = true
-	//100-155 not too dark, not too bright => darkMode = null, let pref.scheme decide text color
-	//155-255 too bright => darkMode = false
 	if (getThemeColor() == null){ //A,B
 		responseColor = getComputedColor();
 	}else{ //C,D,E,F
@@ -89,46 +90,31 @@ function findColorUnreserved() {
 			responseColor = themeColor;
 		}
 	}
-	if (tooBright(responseColor)){
-		darkMode = false;
-	}else if (tooDark(responseColor)){
-		darkMode = true;
-	}else{
-		darkMode = null; //Text color depends on preference
-	}
-	//Make sure there will be no alpha value transmitted to background.js
-	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
+	setDarkMode();
 }
 
 //Remind background.js of the color
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		if (request.message == "remind_me" && responseColor != ""){
+		if (request.message == "remind_me"){
 			sendResponse({});
 			findColor();
 		}
 	}
 );
 
+//Contributed by @emilio on GitHub
 //Get computed background color e.g. "rgb(30, 30, 30)"
 function getComputedColor() {
-	color = EmiliosHeader();
+	let color = null;
+	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
+		let temp_color = getComputedStyle(el).backgroundColor;
+		if (temp_color != "rgba(0, 0, 0, 0)")
+			color = temp_color;
+	}
 	if (color == null){
 		color = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
 		if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
-	}
-	return color;
-}
-
-//Suggested by emilio@crisal.io
-//Huge thanks and respect to Emilio Cobos Álvarez
-function EmiliosHeader(){
-	let color = null;
-	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
-	let temp_color = getComputedStyle(el).backgroundColor;
-	if (temp_color != "rgba(0, 0, 0, 0)" && temp_color != "rgb(255, 255, 255)" && temp_color != "rgb(0, 0, 0)")
-		color = temp_color;
-		//console.log("Emilio: " + color);
 	}
 	return color;
 }
@@ -140,6 +126,20 @@ function getThemeColor() {
 		return null;
 	}else{
 		return headerTag.content;
+	}
+}
+
+function setDarkMode() {
+	if (responseColor == "" || responseColor == null){
+		darkMode = null;
+	}else{
+		if (tooBright(responseColor)){
+			darkMode = false;
+		}else if (tooDark(responseColor)){
+			darkMode = true;
+		}else{
+			darkMode = null;
+		}
 	}
 }
 
@@ -209,4 +209,8 @@ function rgbaToRgba(rgbaString) {
 function noAplphaValue(rgbaString) {
 	rgba = rgbaToRgba(rgbaString);
 	return "rgb(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ")";
+}
+
+function isResponseLegal() {
+	return responseColor != "" && responseColor != null && responseColor != undefined;
 }

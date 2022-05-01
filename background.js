@@ -183,64 +183,48 @@ function updateEachWindow(tab) {
       changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
     }
   }else{
-    let key = "";
+    let key = getSearchKey(url);
     let reversed_scheme = "light";
     if (scheme == "light") reversed_scheme = "dark";
-    if (url.startsWith("about:")){
-      key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
-    }else{
-      key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
-    }
     if (reservedColor[scheme][key] != null){ //For prefered scheme there's a reserved color
       changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
     }else if (reservedColor[reversed_scheme][key] != null){ //Site has reserved color in the other mode
       changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
-    }else{
+    }else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")){
       //For normal websites where content script can be injected
+      changeFrameColorTo(windowId, "", null);
+    }else{
       chrome.tabs.sendMessage(tab.id, {message: "remind_me"}, function(response) {
         if (response == undefined){
-          if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
-            resetFrameColor(windowId);
-            console.log("about:pages or addons.mozilla.org detected");
-          }else{
-            console.log("No connection to content script")
-          }
+          console.log("No connection to content script")
         }
       });
     }
   }
 }
 
-//Reset frame color when something unexpected happens (with windowId)
-function resetFrameColor(windowId) {
-  if (scheme == "light"){
-    changeFrameColorTo(windowId, default_light_color, false);
-  }else{
-    changeFrameColorTo(windowId, default_dark_color, true);
-  }
-}
-
-//Change tab bar to the appointed color (with windowId)
-//"darkMode" decides the color of the text
-//"force" and "scheme" come from preferences
-//force, scheme, darkMode
-//force: false => normal
-//force: true, scheme: dark, darkMode: true => normal
-//force: true, scheme: light, darkMode: false => normal
-//force: true, scheme: dark, darkMode: false => dark
-//force: true, scheme: light, darkMode: true => light
+//Change tab bar to the appointed color (with windowId);
+//"darkMode" decides the color of the text;
+//"force" and "scheme" come from preferences;
+//force, scheme, darkMode;
+//force: false => normal;
+//force: true, scheme: dark, darkMode: true => normal;
+//force: true, scheme: light, darkMode: false => normal;
+//force: true, scheme: dark, darkMode: false => dark;
+//force: true, scheme: light, darkMode: true => light;
+//if color is empty, then roll back to default color;
 function changeFrameColorTo(windowId, color, darkMode) {
-  if (darkMode == null) darkMode = scheme == "dark";
+  if (color == "" || darkMode == null) darkMode = scheme == "dark";
   if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
     if (darkMode){
-      if (color == "DEFAULT") color = default_dark_color;
+      if (color == "DEFAULT" || color == "" || color == null) color = default_dark_color;
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
       adaptive_themes['dark']['colors']['popup'] = color;
       adaptive_themes['dark']['colors']['ntp_background'] = color;
       applyTheme(windowId, adaptive_themes['dark']);
     }else{
-      if (color == "DEFAULT") color = default_light_color;
+      if (color == "DEFAULT" || color == "" || color == null) color = default_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
       adaptive_themes['light']['colors']['popup'] = color;
@@ -267,3 +251,12 @@ function applyTheme(windowId, theme) {
   browser.theme.update(windowId, theme);
 }
 
+function getSearchKey(url) {
+  let key = "";
+  if (url.startsWith("about:")){
+    key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
+  }else{
+    key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
+  }
+  return key;
+}
