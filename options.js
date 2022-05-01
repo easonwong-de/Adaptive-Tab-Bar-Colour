@@ -14,11 +14,7 @@ let custom_reset = document.getElementById("custom_reset");
 browser.storage.local.get(function (pref){
 	let scheme = pref.scheme;
 	let force = pref.force;
-	if (force){
-		force_mode.checked = false;
-	}else{
-		force_mode.checked = true;
-	}
+	force_mode.checked = !force;
 	if (scheme == "dark"){
 		switchBodyToDark();
 		color_scheme_no_light.checked = true;
@@ -42,13 +38,8 @@ browser.storage.local.get(function (pref){
 	let pref_custom = pref.custom;
 	let pref_light_color = pref.light_color;
 	let pref_dark_color = pref.dark_color;
-	if (pref_custom){
-		custom.checked = true;
-		custom_options.hidden = false;
-	}else{
-		custom.checked = false;
-		custom_options.hidden = true;
-	}
+	custom.checked = pref_custom;
+	custom_options.hidden = !pref_custom;
 	light_color.value = pref_light_color;
 	dark_color.value = pref_dark_color;
 });

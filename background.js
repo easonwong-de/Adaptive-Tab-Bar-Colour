@@ -81,7 +81,9 @@ var pref_light_color;
 var pref_dark_color;
 var last_version;
 
-//When first installed, detect which mode the user is using
+//Fired when the extension is first installed
+//when the extension is updated to a new version
+//and when the browser is updated to a new version
 browser.runtime.onInstalled.addListener(init);
 
 function init() {
