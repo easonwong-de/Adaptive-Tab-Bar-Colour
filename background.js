@@ -214,21 +214,19 @@ function updateEachWindow(tab) {
 //force: true, scheme: light, darkMode: true => light;
 //if color is empty, then roll back to default color;
 function changeFrameColorTo(windowId, color, darkMode) {
-  if (color == "" || darkMode == null) darkMode = scheme == "dark";
+  if (color == "" || color == null || darkMode == null) darkMode = scheme == "dark";
   if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){
     if (darkMode){
       if (color == "DEFAULT" || color == "" || color == null) color = default_dark_color;
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
       adaptive_themes['dark']['colors']['popup'] = color;
-      adaptive_themes['dark']['colors']['ntp_background'] = color;
       applyTheme(windowId, adaptive_themes['dark']);
     }else{
       if (color == "DEFAULT" || color == "" || color == null) color = default_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
       adaptive_themes['light']['colors']['popup'] = color;
-      adaptive_themes['light']['colors']['ntp_background'] = color;
       applyTheme(windowId, adaptive_themes['light']);
     }
   }else if (force && scheme == "dark" && !darkMode){

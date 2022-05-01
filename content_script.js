@@ -210,7 +210,3 @@ function noAplphaValue(rgbaString) {
 	rgba = rgbaToRgba(rgbaString);
 	return "rgb(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ")";
 }
-
-function isResponseLegal() {
-	return responseColor != "" && responseColor != null && responseColor != undefined;
-}
