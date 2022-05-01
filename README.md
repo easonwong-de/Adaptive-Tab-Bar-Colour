@@ -19,7 +19,7 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 
 ## Works well with
 
-1. <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on "use system color scheme")  
+1. <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on “use system color scheme”)  
 <br>
 
 ## Incompatible with
