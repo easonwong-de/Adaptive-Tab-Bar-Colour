@@ -136,30 +136,12 @@ browser.runtime.onConnect.addListener(function (port) {
   });
 });
 
-browser.tabs.onUpdated.addListener(update1);
-browser.windows.onFocusChanged.addListener(update2);
-//When preferences changed
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request == "apply_settings") update();
-});
-//When color scheme changes
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update3);
+browser.tabs.onUpdated.addListener(update); //When new tab is opened / reloaded
+browser.windows.onFocusChanged.addListener(update); //When new window is opened
+chrome.runtime.onMessage.addListener(update); //When preferences changed
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update); //When color scheme changes
+
 update();
-
-
-function update1() {
-  console.log(Date.now() + " browser.tabs.onUpdated");
-  update();
-}
-function update2() {
-  console.log(Date.now() + " browser.windows.onFocusChanged");
-  update();
-}
-function update3() {
-  console.log(Date.now() + " Match dark mode: " + window.matchMedia("(prefers-color-scheme: dark)").matches);
-  //update();
-}
-
 
 //updates pref cache and trigger color change
 function update() {
