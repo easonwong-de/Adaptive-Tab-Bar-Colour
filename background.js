@@ -79,7 +79,6 @@ var force;
 var pref_custom;
 var pref_light_color;
 var pref_dark_color;
-var last_version;
 
 //Fired when the extension is first installed
 //when the extension is updated to a new version
@@ -94,17 +93,6 @@ function init() {
     pref_custom = pref.custom;
     pref_light_color = pref.light_color;
     pref_dark_color = pref.dark_color;
-    last_version = pref.last_version;
-    if (last_version == undefined){ //updates from v1.3.1 to newer versions
-      browser.storage.local.set({last_version: "v1.4.3", force: false});
-    }
-    if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){ //added from v1.3
-      browser.storage.local.set({
-        custom: false,
-        light_color: default_light_color,
-        dark_color: default_dark_color
-      });
-    }
     if (scheme == undefined || force == undefined){ //first time install
       let init_scheme;
       if (window.matchMedia("(prefers-color-scheme: light)").matches){ //Read present theme to select color scheme
@@ -116,7 +104,17 @@ function init() {
       }
       browser.storage.local.set({scheme: init_scheme, force: false}).then(browser.runtime.openOptionsPage);
     }
-    if (scheme == "system"){
+    if (pref.last_version == undefined){ //updates from v1.3.1 to newer versions
+      browser.storage.local.set({last_version: "v1.4.3", force: false});
+    }
+    if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){ //added from v1.3
+      browser.storage.local.set({
+        custom: false,
+        light_color: default_light_color,
+        dark_color: default_dark_color
+      });
+    }
+    if (scheme == "system"){ //added from v1.4
       if (window.matchMedia('(prefers-color-scheme: dark)').matches){
         scheme = "dark";
       }else{
