@@ -136,18 +136,34 @@ browser.runtime.onConnect.addListener(function (port) {
   });
 });
 
-chrome.tabs.onUpdated.addListener(update);
-browser.windows.onFocusChanged.addListener(update);
+browser.tabs.onUpdated.addListener(update1);
+browser.windows.onFocusChanged.addListener(update2);
 //When preferences changed
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request == "apply_settings") update();
 });
 //When color scheme changes
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update);
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update3);
 update();
+
+
+function update1() {
+  console.log(Date.now() + " browser.tabs.onUpdated");
+  update();
+}
+function update2() {
+  console.log(Date.now() + " browser.windows.onFocusChanged");
+  update();
+}
+function update3() {
+  console.log(Date.now() + " Match dark mode: " + window.matchMedia("(prefers-color-scheme: dark)").matches);
+  //update();
+}
+
 
 //updates pref cache and trigger color change
 function update() {
+  //console.log("Updated at " + Date.now());
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, status: "complete"}, function(tabs) {
     browser.storage.local.get(function (pref) {
