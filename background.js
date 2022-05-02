@@ -185,6 +185,8 @@ function updateEachWindow(tab) {
     }else if (scheme == "light"){
       changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
     }
+  }else if (url.startsWith("moz-extension:")){
+    changeFrameColorTo(windowId, "", null);
   }else{
     let key = getSearchKey(url);
     let reversed_scheme = "light";
@@ -194,7 +196,6 @@ function updateEachWindow(tab) {
     }else if (reservedColor[reversed_scheme][key] != null){ //Site has reserved color in the other mode
       changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
     }else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")){
-      //For normal websites where content script can be injected
       changeFrameColorTo(windowId, "", null);
     }else{
       chrome.tabs.sendMessage(tab.id, {message: "remind_me"}, function(response) {

@@ -38,7 +38,7 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 ## Known Issues  
 1. Does not support CSS themes   
 2. The color of `about:devtools-toolbox` might bug in light mode  
-3. Might flash when there’re two windows with opposite color schemes (only Nightly Firefox)  
+3. Bugs a lot with Firefox Nightly
 <br>
 
 ## License
