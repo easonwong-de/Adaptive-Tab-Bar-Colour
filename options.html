@@ -5,40 +5,46 @@
 		<link href="../options.css" rel="stylesheet" type="text/css">
 	</head>
 	<body class="dark">
-		<div>
+		<div id="loading">
+			<h4>Loading…</h4>
+			<h1>&nbsp;</h1>
+			<h1>&nbsp;</h1>
+			<h1>&nbsp;</h1>
+			<h1>&nbsp;</h1>
+			<h1>&nbsp;</h1>
+		</div>
+		<div id="settings" hidden="true">
 			<div>
-				<div>
-					<h4><input id="color_scheme_no_dark" type="radio"/>
-						<label for="color_scheme_no_dark">Light Mode</label></h4>
-					<h4><input id="color_scheme_no_light" type="radio"/>
-						<label for="color_scheme_no_light">Dark Mode</label></h4>
-					<h4><input id="color_scheme_system" type="radio"/>
-						<label for="color_scheme_system">Follow System</label></h4>
-					<h4><input id="force_mode" type="checkbox"/>
-						<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label></h4>
-				</div>
-				<p>&nbsp;</p>
-				<div>
-					<h4><input access="false" id="custom" type="checkbox">
-						<label for="customize">More customizations</label></h4>
-					<div class="custom_options" id="custom_options" hidden="true">
-						<label for="light_color">Default light color: </label>
-							<input type="color" value="#FFFFFF" name="light_color" id="light_color">
-						<br><br>
-						<label for="dark_color">Default dark color: </label>
-							<input type="color" value="#1C1B22" name="dark_color" id="dark_color">
-						<br><br><br>
-						<button type="button" style="default" id="custom_reset">Reset</button>
-					</div>
-				</div>
-				<p>&nbsp;</p>
-				<form action="https://www.paypal.com/donate" method="post" target="_blank">
-				<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
-				<input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-				<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
-				</form>
-				<p>&nbsp;</p>
+				<h4><input id="color_scheme_no_dark" type="radio"/>
+					<label for="color_scheme_no_dark">Light Mode</label></h4>
+				<h4><input id="color_scheme_no_light" type="radio"/>
+					<label for="color_scheme_no_light">Dark Mode</label></h4>
+				<h4><input id="color_scheme_system" type="radio"/>
+					<label for="color_scheme_system">Follow System</label></h4>
+				<h4><input id="force_mode" type="checkbox"/>
+					<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label></h4>
 			</div>
+			<p>&nbsp;</p>
+			<div>
+				<h4><input access="false" id="custom" type="checkbox">
+					<label for="customize">More customizations</label></h4>
+				<div class="custom_options" id="custom_options" hidden="true">
+					<label for="light_color">Default light color: </label>
+						<input type="color" value="#FFFFFF" name="light_color" id="light_color">
+					<br><br>
+					<label for="dark_color">Default dark color: </label>
+						<input type="color" value="#1C1B22" name="dark_color" id="dark_color">
+					<br><br><br>
+					<button type="button" style="default" id="custom_reset">Reset</button>
+				</div>
+			</div>
+			<p>&nbsp;</p>
+			<form action="https://www.paypal.com/donate" method="post" target="_blank">
+			<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
+			<input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+			<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+			</form>
+			<p>&nbsp;</p>
 		</div>
 		<script type="text/javascript" src="../options.js"></script>
 	</body>

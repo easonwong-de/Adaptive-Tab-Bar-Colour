@@ -8,9 +8,13 @@ let custom_options = document.getElementById("custom_options");
 let light_color = document.getElementById("light_color");
 let dark_color = document.getElementById("dark_color");
 let custom_reset = document.getElementById("custom_reset");
+let loading = document.getElementById("loading");
+let settings = document.getElementById("settings");
 
 //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
 
+settings.hidden = true;
+loading.hidden = false;
 browser.storage.local.get(function (pref){
 	let scheme = pref.scheme;
 	let force = pref.force;
@@ -42,6 +46,8 @@ browser.storage.local.get(function (pref){
 	custom_options.hidden = !pref_custom;
 	light_color.value = pref_light_color;
 	dark_color.value = pref_dark_color;
+	loading.hidden = true;
+	settings.hidden = false;
 });
 
 color_scheme_no_light.addEventListener("input", function(event) {
