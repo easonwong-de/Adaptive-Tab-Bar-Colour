@@ -146,6 +146,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update);
 update();
 
+//updates pref cache and trigger color change
 function update() {
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, status: "complete"}, function(tabs) {
@@ -216,35 +217,47 @@ function updateEachWindow(tab) {
 //force: true, scheme: light, darkMode: true => light;
 //if color is empty, then roll back to default color;
 function changeFrameColorTo(windowId, color, darkMode) {
-  let reset = false;
-  if (color == "" || color == null) reset = true;
   if (darkMode == null) darkMode = scheme == "dark";
-  if (!reset || (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode))){
+  if (color == "" || color == null) { //gonna reset
     if (darkMode){
-      if (color == "DEFAULT" || color == "" || color == null) color = default_dark_color;
+      adaptive_themes['dark']['colors']['frame'] = default_dark_color;
+      adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+      adaptive_themes['dark']['colors']['ntp_background'] = default_dark_color;
+      applyTheme(windowId, adaptive_themes['dark']);
+    }else{
+      adaptive_themes['light']['colors']['frame'] = default_light_color;
+      adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
+      adaptive_themes['light']['colors']['popup'] = default_light_color;
+      adaptive_themes['light']['colors']['ntp_background'] = default_light_color;
+      applyTheme(windowId, adaptive_themes['light']);
+    }
+  }else if (!force || (force && scheme == "dark" && darkMode) || (force && scheme == "light" && !darkMode)){ //normal coloring
+    if (darkMode){
+      if (color == "DEFAULT") color = default_dark_color;
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
       adaptive_themes['dark']['colors']['popup'] = color;
       applyTheme(windowId, adaptive_themes['dark']);
     }else{
-      if (color == "DEFAULT" || color == "" || color == null) color = default_light_color;
+      if (color == "DEFAULT") color = default_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
       adaptive_themes['light']['colors']['popup'] = color;
       applyTheme(windowId, adaptive_themes['light']);
     }
-  }else if ((reset && !darkMode) || (force && scheme == "dark" && !darkMode)){
-    adaptive_themes['dark']['colors']['frame'] = default_dark_color;
-    adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
-    adaptive_themes['dark']['colors']['popup'] = default_dark_color;
-    adaptive_themes['dark']['colors']['ntp_background'] = default_dark_color;
-    applyTheme(windowId, adaptive_themes['dark']);
-  }else if ((reset && darkMode) || (force && scheme == "light" && darkMode)){
-    adaptive_themes['light']['colors']['frame'] = default_light_color;
-    adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
-    adaptive_themes['light']['colors']['popup'] = default_light_color;
-    adaptive_themes['light']['colors']['ntp_background'] = default_light_color;
-    applyTheme(windowId, adaptive_themes['light']);
+  }else if (force){ //force coloring
+    if (!darkMode){
+      adaptive_themes['dark']['colors']['frame'] = default_dark_color;
+      adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+      applyTheme(windowId, adaptive_themes['dark']);
+    }else{
+      adaptive_themes['light']['colors']['frame'] = default_light_color;
+      adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
+      adaptive_themes['light']['colors']['popup'] = default_light_color;
+      applyTheme(windowId, adaptive_themes['light']);
+    }
   }
 }
 
