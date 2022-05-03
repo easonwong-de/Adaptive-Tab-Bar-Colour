@@ -105,7 +105,7 @@ function init() {
       browser.storage.local.set({scheme: init_scheme, force: false}).then(browser.runtime.openOptionsPage);
     }
     if (pref.last_version == undefined){ //updates from v1.3.1 to newer versions
-      browser.storage.local.set({last_version: "v1.4.3", force: false});
+      browser.storage.local.set({last_version: "v1.4.4", force: false});
     }
     if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){ //added from v1.3
       browser.storage.local.set({
