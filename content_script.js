@@ -115,11 +115,10 @@ function getComputedColor() {
 			color_last = color;
 			color = temp_color;	
 		}
-		console.log(el.tagName + " color: " + color);
 	}
 	if (DarkReader && color_last != null) color = color_last;
 	if (color == null){
-		color = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
+		color = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
 		if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
 	}
 	return color;
