@@ -143,7 +143,6 @@ update();
 
 //updates pref cache and trigger color change
 function update() {
-  //console.log("Updated at " + Date.now());
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, status: "complete"}, function(tabs) {
     browser.storage.local.get(function (pref) {
