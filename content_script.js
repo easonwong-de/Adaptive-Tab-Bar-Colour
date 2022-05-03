@@ -106,12 +106,18 @@ chrome.runtime.onMessage.addListener(
 //Contributed by @emilio on GitHub
 //Get computed background color e.g. "rgb(30, 30, 30)"
 function getComputedColor() {
+	let DarkReader = document.getElementsByTagName("HTML")[0].getAttribute("data-darkreader-scheme") != null;
 	let color = null;
+	let color_last = null;
 	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
 		let temp_color = getComputedStyle(el).backgroundColor;
-		if (temp_color != "rgba(0, 0, 0, 0)")
-			color = temp_color;
+		if (temp_color != "rgba(0, 0, 0, 0)"){
+			color_last = color;
+			color = temp_color;	
+		}
+		console.log(el.tagName + " color: " + color);
 	}
+	if (DarkReader && color_last != null) color = color_last;
 	if (color == null){
 		color = window.getComputedStyle(document.body,null).getPropertyValue('background-color');
 		if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
