@@ -13,6 +13,8 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 <img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_1.jpg" width="600">
 
 <img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_2.jpg" width="600">
+
+<img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_3.jpg" width="600">
 <br>
 
 ## Works well with
