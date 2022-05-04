@@ -113,7 +113,7 @@ function getComputedColor() {
 		let temp_color = getComputedStyle(el).backgroundColor;
 		if (temp_color != "rgba(0, 0, 0, 0)"){
 			color_last = color;
-			color = temp_color;	
+			color = temp_color;
 		}
 	}
 	if (DarkReader && color_last != null) color = color_last;
