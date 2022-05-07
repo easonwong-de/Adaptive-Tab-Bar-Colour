@@ -75,7 +75,7 @@ const reservedColor = {
 var default_light_color = "#FFFFFF";
 var default_dark_color = "#1C1B22";
 var scheme;
-var force;
+var force = false;
 var pref_custom;
 var pref_light_color;
 var pref_dark_color;
@@ -105,7 +105,7 @@ function init() {
       browser.storage.local.set({scheme: init_scheme, force: false}).then(browser.runtime.openOptionsPage);
     }
     if (pref.last_version == undefined){ //updates from v1.3.1 to newer versions
-      browser.storage.local.set({last_version: "v1.4.4", force: false});
+      browser.storage.local.set({last_version: "v1.4.6", force: false});
     }
     if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){ //added from v1.3
       browser.storage.local.set({
@@ -144,12 +144,10 @@ update();
 
 //updates pref cache and trigger color change
 function update() {
-  console.log(Date.now() + " update")
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, status: "complete"}, function(tabs) {
     browser.storage.local.get(function (pref) {
       scheme = pref.scheme;
-      force = pref.force;
       pref_custom = pref.custom;
       pref_light_color = pref.light_color;
       pref_dark_color = pref.dark_color;
@@ -162,9 +160,11 @@ function update() {
         }
       }
       if (pref_custom){
+        force = pref.force;
         default_light_color = pref_light_color;
         default_dark_color = pref_dark_color;
       }else{
+        force = false;
         default_light_color = "#FFFFFF";
         default_dark_color = "#1C1B22";
       }
