@@ -135,14 +135,16 @@ browser.runtime.onConnect.addListener(function (port) {
 });
 
 browser.tabs.onUpdated.addListener(update); //When new tab is opened / reloaded
+browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 chrome.runtime.onMessage.addListener(update); //When preferences changed
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update); //When color scheme changes
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update); //When color scheme changes //causing bugs on FDE and FN
 
 update();
 
 //updates pref cache and trigger color change
 function update() {
+  console.log(Date.now() + " update")
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({active: true, status: "complete"}, function(tabs) {
     browser.storage.local.get(function (pref) {
