@@ -19,17 +19,18 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 
 ## Works well with
 
-1. <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on “use system color scheme”)  
+<a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on “use system color scheme”)  
 <br>
 
 ## Incompatible with
 
-1. Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a> (released on Dec, 2021) 
-2. Firefox Developer Edition and Firefox Nightly   
-3. <a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a>  
-4. <a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a>  
-5. <a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a>  
-6. <a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a>  
+<ol>
+	<li>Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a> (released on Dec, 2021)</li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
+</ol> 
 <br>
 
 ## Safety Warning
@@ -42,7 +43,6 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 	<li>The color of “about:devtools-toolbox” might bug in light mode</li>
 	<li>On Firefox Developer Edition and Firefox Nightly:
 		<ul>
-			<li>Tab bar color doesn’t update when switch tabs</li>
 			<li>Falshes when opening dark and light at the same time</li>
 		</ul>
 	</li>
