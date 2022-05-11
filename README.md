@@ -44,6 +44,7 @@ Beware of malicious web UI: Please distinguish between browser’s UI and web co
 	<li>On Firefox Developer Edition and Firefox Nightly:
 		<ul>
 			<li>Falshes when opening windows with dark and light tab bar at the same time (Fix: turn off “Allow dark/light tab bar” or deselect “Follow System” in add-on’s preference page)</li>
+			<li>“Follow System” might not work</li>
 		</ul>
 	</li>
 </ol>
