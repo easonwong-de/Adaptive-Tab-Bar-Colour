@@ -94,7 +94,7 @@ function init() {
     pref_light_color = pref.light_color;
     pref_dark_color = pref.dark_color;
     if (pref.last_version == undefined){ //updates from v1.3.1 to newer versions
-      browser.storage.local.set({last_version: "v1.4.6", force: true});
+      browser.storage.local.set({last_version: "v1.4.7", force: true});
     }
     if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){ //added from v1.3
       browser.storage.local.set({
@@ -142,9 +142,10 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", upd
 
 update();
 
+var follow_system = false; //v1.4.7 temporary fix
 function update1() {
-  console.log(Date.now() + " Dark mode: " + window.matchMedia("(prefers-color-scheme: dark)").matches);
-  if (scheme == "system") update();
+  //console.log(Date.now() + " Dark mode: " + window.matchMedia("(prefers-color-scheme: dark)").matches);
+  if (follow_system) update();
 }
 
 //updates pref cache and trigger color change
@@ -159,11 +160,14 @@ function update() {
       pref_dark_color = pref.dark_color;
       browser.browserSettings.overrideContentColorScheme.set({value: scheme});
       if (scheme == "system"){
+        follow_system = true;
         if (window.matchMedia("(prefers-color-scheme: dark)").matches){
           scheme = "dark";
         }else{
           scheme = "light";
         }
+      }else{
+        follow_system = false;
       }
       if (pref_custom){
         default_light_color = pref_light_color;

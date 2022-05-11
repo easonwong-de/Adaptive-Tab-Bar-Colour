@@ -18,6 +18,14 @@ loading.hidden = false;
 browser.storage.local.get(function (pref){
 	let scheme = pref.scheme;
 	let force = pref.force;
+	if (scheme == undefined || force == undefined){
+		if (window.matchMedia("(prefers-color-scheme: light)").matches){
+			scheme = "light";
+		}else{
+			scheme = "dark";
+		}
+		force = true;
+	}
 	force_mode.checked = !force;
 	if (scheme == "dark"){
 		switchBodyToDark();
@@ -42,6 +50,11 @@ browser.storage.local.get(function (pref){
 	let pref_custom = pref.custom;
 	let pref_light_color = pref.light_color;
 	let pref_dark_color = pref.dark_color;
+	if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){
+		pref_custom = false;
+		pref_light_color = "#FFFFFF";
+		pref_dark_color = "#1C1B22";
+	}
 	custom.checked = pref_custom;
 	custom_options.hidden = !pref_custom;
 	light_color.value = pref_light_color;
