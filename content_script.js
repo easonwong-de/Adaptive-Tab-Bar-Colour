@@ -97,8 +97,9 @@ function findColorUnreserved() {
 chrome.runtime.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if (request.message == "remind_me"){
-			sendResponse({});
+			port = browser.runtime.connect();
 			findColor();
+			sendResponse({});
 		}
 	}
 );
