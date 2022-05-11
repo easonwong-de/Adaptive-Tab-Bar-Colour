@@ -138,12 +138,13 @@ browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 chrome.runtime.onMessage.addListener(update); //When preferences changed
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update1); //When color scheme changes //causing bugs on FDE and FN
 
 update();
 
 function update1() {
   console.log(Date.now() + " Dark mode: " + window.matchMedia("(prefers-color-scheme: dark)").matches);
-  update();
+  if (scheme == "system") update();
 }
 
 //updates pref cache and trigger color change
@@ -157,16 +158,12 @@ function update() {
       pref_light_color = pref.light_color;
       pref_dark_color = pref.dark_color;
       browser.browserSettings.overrideContentColorScheme.set({value: scheme});
-      let colorSchemeQueryList = window.matchMedia("(prefers-color-scheme: dark)");
       if (scheme == "system"){
-        colorSchemeQueryList.addEventListener("change", update1); //When color scheme changes //causing bugs on FDE and FN
-        if (colorSchemeQueryList.matches){
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches){
           scheme = "dark";
         }else{
           scheme = "light";
         }
-      }else{
-        colorSchemeQueryList.removeEventListener("change", update1);
       }
       if (pref_custom){
         default_light_color = pref_light_color;
