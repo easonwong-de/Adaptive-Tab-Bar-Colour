@@ -29,29 +29,29 @@ function findColor() {
 	//Make sure there will be no alpha value transmitted to background.js
 	if (responseColor.startsWith("rgba")) responseColor = noAplphaValue(responseColor);
 	//Sent color to background.js
-	if (!document.hidden) port.postMessage({color: responseColor, darkMode: darkMode});
+	if (!document.hidden) port.postMessage({ color: responseColor, darkMode: darkMode });
 }
 
 //When there is a reserved color for the url
 function findColorReserved() {
 	let host = document.location.host; // e.g. "host" can be "www.irgendwas.com"
-	if (reservedColor[host] == null){
+	if (reservedColor[host] == null) {
 		return false;
-	}else if (reservedColor[host] == "IGNORE_THEME"){
+	} else if (reservedColor[host] == "IGNORE_THEME") {
 		responseColor = getComputedColor();
-	}else if (reservedColor[host].startsWith("TAG: ")){
+	} else if (reservedColor[host].startsWith("TAG: ")) {
 		let tagName = reservedColor[host].replace("TAG: ", "");
 		let el_list = document.getElementsByTagName(tagName);
 		if (el_list.length == 0) return false;
 		let el = el_list[0];
 		responseColor = window.getComputedStyle(el, null).getPropertyValue('background-color');
-	}else if (reservedColor[host].startsWith("CLASS: ")){
+	} else if (reservedColor[host].startsWith("CLASS: ")) {
 		let className = reservedColor[host].replace("CLASS: ", "");
 		let el_list = document.getElementsByClassName(className);
 		if (el_list.length == 0) return false;
 		let el = el_list[0];
 		responseColor = window.getComputedStyle(el, null).getPropertyValue('background-color');
-	}else{
+	} else {
 		responseColor = reservedColor[host];
 	}
 	setDarkMode();
@@ -73,20 +73,20 @@ function findColorReserved() {
 //100-155 not too dark, not too bright => darkMode = null, let pref.scheme decide text color
 //155-255 too bright => darkMode = false
 function findColorUnreserved() {
-	if (getThemeColor() == null){ //A,B
+	if (getThemeColor() == null) { //A,B
 		responseColor = getComputedColor();
-	}else{ //C,D,E,F
+	} else { //C,D,E,F
 		let themeColor = "";
 		let backgroundColor = "";
 		themeColor = getThemeColor();
 		backgroundColor = getComputedColor();
-		if (tooBright(themeColor) && !tooBright(backgroundColor)){ //C
+		if (tooBright(themeColor) && !tooBright(backgroundColor)) { //C
 			responseColor = backgroundColor;
-		}else if (!tooBright(themeColor) && tooBright(backgroundColor)){ //D
+		} else if (!tooBright(themeColor) && tooBright(backgroundColor)) { //D
 			responseColor = themeColor;
-		}else if (tooBright(themeColor) && tooBright(backgroundColor)){ //E
+		} else if (tooBright(themeColor) && tooBright(backgroundColor)) { //E
 			responseColor = themeColor;
-		}else if (!tooBright(themeColor) && !tooBright(backgroundColor)){ //F
+		} else if (!tooBright(themeColor) && !tooBright(backgroundColor)) { //F
 			responseColor = themeColor;
 		}
 	}
@@ -95,8 +95,8 @@ function findColorUnreserved() {
 
 //Remind background.js of the color
 chrome.runtime.onMessage.addListener(
-	function(request, sender, sendResponse) {
-		if (request.message == "remind_me"){
+	function (request, sender, sendResponse) {
+		if (request.message == "remind_me") {
 			port = browser.runtime.connect();
 			findColor();
 			sendResponse({});
@@ -112,13 +112,13 @@ function getComputedColor() {
 	let color_last = null;
 	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
 		let temp_color = getComputedStyle(el).backgroundColor;
-		if (temp_color != "rgba(0, 0, 0, 0)"){
+		if (temp_color != "rgba(0, 0, 0, 0)") {
 			color_last = color;
 			color = temp_color;
 		}
 	}
 	if (DarkReader && color_last != null) color = color_last;
-	if (color == null){
+	if (color == null) {
 		color = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
 		if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
 	}
@@ -128,22 +128,22 @@ function getComputedColor() {
 //Get provided theme-color e.g. "#ffffff", "rgba(30, 30, 30, 0.9)"
 function getThemeColor() {
 	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
-	if (headerTag == null){
+	if (headerTag == null) {
 		return null;
-	}else{
+	} else {
 		return headerTag.content;
 	}
 }
 
 function setDarkMode() {
-	if (responseColor == "" || responseColor == null){
+	if (responseColor == "" || responseColor == null) {
 		darkMode = null;
-	}else{
-		if (tooBright(responseColor)){
+	} else {
+		if (tooBright(responseColor)) {
 			darkMode = false;
-		}else if (tooDark(responseColor)){
+		} else if (tooDark(responseColor)) {
 			darkMode = true;
-		}else{
+		} else {
 			darkMode = null;
 		}
 	}
@@ -151,18 +151,18 @@ function setDarkMode() {
 
 //Check if the color is too bright for dark mode
 function tooBright(string) {
-	if (string.startsWith("#")){
+	if (string.startsWith("#")) {
 		return hexBrightness(string) > 155;
-	}else{
+	} else {
 		return rgbBrightness(string) > 155;
 	}
 }
 
 //Check if the color is too bright for dark mode
 function tooDark(string) {
-	if (string.startsWith("#")){
+	if (string.startsWith("#")) {
 		return hexBrightness(string) < 100;
-	}else{
+	} else {
 		return rgbBrightness(string) < 100;
 	}
 }
@@ -181,7 +181,7 @@ function hexBrightness(hex) {
 
 //rgb (Object) to brightness
 function rgbObjBrightness(rgb) {
-	return 0.299*rgb.r + 0.587*rgb.g + 0.114*rgb.b;
+	return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
 }
 
 //from TimDown@stackoverflow.com
@@ -189,7 +189,7 @@ function rgbObjBrightness(rgb) {
 function hexToRgb(hex) {
 	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
 	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-	hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+	hex = hex.replace(shorthandRegex, function (m, r, g, b) {
 		return r + r + g + g + b + b;
 	});
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

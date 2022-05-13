@@ -15,32 +15,32 @@ let settings = document.getElementById("settings");
 
 settings.hidden = true;
 loading.hidden = false;
-browser.storage.local.get(function (pref){
+browser.storage.local.get(function (pref) {
 	let scheme = pref.scheme;
 	let force = pref.force;
-	if (scheme == undefined || force == undefined){
-		if (window.matchMedia("(prefers-color-scheme: light)").matches){
+	if (scheme == undefined || force == undefined) {
+		if (window.matchMedia("(prefers-color-scheme: light)").matches) {
 			scheme = "light";
-		}else{
+		} else {
 			scheme = "dark";
 		}
 		force = true;
 	}
 	force_mode.checked = !force;
-	if (scheme == "dark"){
+	if (scheme == "dark") {
 		switchBodyToDark();
 		color_scheme_no_light.checked = true;
 		color_scheme_no_dark.checked = false;
 		color_scheme_system.checked = false;
-	}else if (scheme == "light"){
+	} else if (scheme == "light") {
 		switchBodyToLight();
 		color_scheme_no_light.checked = false;
 		color_scheme_no_dark.checked = true;
 		color_scheme_system.checked = false;
-	}else if (scheme == "system"){
-		if (window.matchMedia("(prefers-color-scheme: dark)").matches){
+	} else if (scheme == "system") {
+		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 			switchBodyToDark();
-		}else{
+		} else {
 			switchBodyToLight();
 		}
 		color_scheme_no_light.checked = false;
@@ -50,7 +50,7 @@ browser.storage.local.get(function (pref){
 	let pref_custom = pref.custom;
 	let pref_light_color = pref.light_color;
 	let pref_dark_color = pref.dark_color;
-	if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined){
+	if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined) {
 		pref_custom = false;
 		pref_light_color = "#FFFFFF";
 		pref_dark_color = "#1C1B22";
@@ -63,10 +63,10 @@ browser.storage.local.get(function (pref){
 	settings.hidden = false;
 });
 
-color_scheme_no_light.addEventListener("input", function(event) {
+color_scheme_no_light.addEventListener("input", function (event) {
 	if (color_scheme_no_light.checked) {
-		browser.storage.local.set({scheme: "dark"});
-		browser.browserSettings.overrideContentColorScheme.set({value: "dark"});
+		browser.storage.local.set({ scheme: "dark" });
+		browser.browserSettings.overrideContentColorScheme.set({ value: "dark" });
 		switchBodyToDark();
 		color_scheme_no_light.checked = true;
 		color_scheme_no_dark.checked = false;
@@ -75,10 +75,10 @@ color_scheme_no_light.addEventListener("input", function(event) {
 	}
 });
 
-color_scheme_no_dark.addEventListener("input", function(event) {
+color_scheme_no_dark.addEventListener("input", function (event) {
 	if (color_scheme_no_dark.checked) {
-		browser.storage.local.set({scheme: "light"});
-		browser.browserSettings.overrideContentColorScheme.set({value: "light"});
+		browser.storage.local.set({ scheme: "light" });
+		browser.browserSettings.overrideContentColorScheme.set({ value: "light" });
 		switchBodyToLight();
 		color_scheme_no_light.checked = false;
 		color_scheme_no_dark.checked = true;
@@ -87,13 +87,13 @@ color_scheme_no_dark.addEventListener("input", function(event) {
 	}
 });
 
-color_scheme_system.addEventListener("input", function(event) {
+color_scheme_system.addEventListener("input", function (event) {
 	if (color_scheme_system.checked) {
-		browser.storage.local.set({scheme: "system"});
-		browser.browserSettings.overrideContentColorScheme.set({value: "system"}).then(() => {
-			if (window.matchMedia("(prefers-color-scheme: dark)").matches){
+		browser.storage.local.set({ scheme: "system" });
+		browser.browserSettings.overrideContentColorScheme.set({ value: "system" }).then(() => {
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 				switchBodyToDark();
-			}else{
+			} else {
 				switchBodyToLight();
 			}
 		});
@@ -104,39 +104,39 @@ color_scheme_system.addEventListener("input", function(event) {
 	}
 });
 
-force_mode.onclick = function() {
+force_mode.onclick = function () {
 	if (force_mode.checked) {
-		browser.storage.local.set({force: false});
+		browser.storage.local.set({ force: false });
 		applySettings();
-	}else{
-		browser.storage.local.set({force: true});
+	} else {
+		browser.storage.local.set({ force: true });
 		applySettings();
 	}
 };
 
-custom.onclick = function() {
+custom.onclick = function () {
 	if (custom.checked) {
-		browser.storage.local.set({custom: true});
+		browser.storage.local.set({ custom: true });
 		custom_options.hidden = false;
 		applySettings();
-	}else{
-		browser.storage.local.set({custom: false});
+	} else {
+		browser.storage.local.set({ custom: false });
 		custom_options.hidden = true;
 		applySettings();
 	}
 };
 
-light_color.addEventListener("change", function(event) {
-	browser.storage.local.set({light_color: light_color.value});
+light_color.addEventListener("change", function (event) {
+	browser.storage.local.set({ light_color: light_color.value });
 	applySettings();
 });
 
-dark_color.addEventListener("change", function(event) {
-	browser.storage.local.set({dark_color: dark_color.value});
+dark_color.addEventListener("change", function (event) {
+	browser.storage.local.set({ dark_color: dark_color.value });
 	applySettings();
 });
 
-custom_reset.onclick = function() {
+custom_reset.onclick = function () {
 	browser.storage.local.set({
 		light_color: "#FFFFFF",
 		dark_color: "#1C1B22"
