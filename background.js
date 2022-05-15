@@ -5,8 +5,9 @@ var adaptive_themes = {
       toolbar_text: "rgb(0, 0, 0)",
       frame: "rgb(255, 255, 255)",
       tab_background_text: "rgb(30, 30, 30)",
-      toolbar_field: "rgba(0, 0, 0, 0.10)",
+      toolbar_field: "rgba(0, 0, 0, 0.05)",
       toolbar_field_text: "rgba(0, 0, 0)",
+      toolbar_field_focus: "rgb(255, 255, 255)",
       tab_line: "rgba(0, 0, 0, 0)",
       popup: "rgb(255, 255, 255)",
       popup_text: "rgb(0, 0, 0)",
@@ -31,8 +32,9 @@ var adaptive_themes = {
       toolbar_text: "rgb(255, 255, 255)",
       frame: "rgb(28, 27, 34)",
       tab_background_text: "rgb(226, 226, 226)",
-      toolbar_field: "rgba(0, 0, 0, 0.10)",
+      toolbar_field: "rgba(255, 255, 255, 0.05)",
       toolbar_field_text: "rgb(255, 255, 255)",
+      toolbar_field_focus: "rgb(0, 0, 0)",
       tab_line: "rgba(0, 0, 0, 0)",
       popup: "rgb(28, 27, 34)",
       popup_text: "rgb(225, 225, 225)",
@@ -202,7 +204,11 @@ function updateEachWindow(tab) {
       changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
     }
   } else if (url.startsWith("moz-extension:")) {
-    changeFrameColorTo(windowId, "", null);
+    if (scheme == "dark") {
+      changeFrameColorTo(windowId, "rgb(50, 50, 50)", true);
+    } else if (scheme == "light") {
+      changeFrameColorTo(windowId, "rgb(236, 236, 236)", false);
+    }
   } else {
     let key = getSearchKey(url);
     let reversed_scheme = "light";
