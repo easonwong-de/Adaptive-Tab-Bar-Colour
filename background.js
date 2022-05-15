@@ -107,7 +107,7 @@ function init() {
     pref_light_color = pref.light_color;
     pref_dark_color = pref.dark_color;
     if (pref.last_version == undefined) { //updates from v1.3.1 to newer versions
-      browser.storage.local.set({ last_version: "v1.4.8", force: true });
+      browser.storage.local.set({ last_version: "v1.4.8", force: false });
     }
     if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined) { //added from v1.3
       browser.storage.local.set({
@@ -124,7 +124,7 @@ function init() {
         scheme = "dark";
         browser.browserSettings.overrideContentColorScheme.set({ value: "dark" });
       }
-      browser.storage.local.set({ scheme: scheme, force: true }).then(browser.runtime.openOptionsPage);
+      browser.storage.local.set({ scheme: scheme, force: false }).then(browser.runtime.openOptionsPage);
     }
     if (scheme == "system") { //added from v1.4
       if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
