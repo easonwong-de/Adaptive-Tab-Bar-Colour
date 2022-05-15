@@ -60,11 +60,12 @@ var adaptive_themes = {
 //url listed as "DEFAULT" => use default_light/dark_color
 const reservedColor = {
   "light": {
-    "about:checkerboard": "rgb(236, 236, 236)",
+    "about:checkerboard": "DEFAULT",
     "about:debugging#": "rgb(249, 249, 250)",
     "about:devtools-toolbox": "rgb(249, 249, 250)",
     "about:performance": "DEFAULT",
     "about:plugins": "DEFAULT",
+    "about:processes": "rgb(239, 239, 242)",
     "about:sync-log": "DEFAULT"
   },
   "dark": {
@@ -75,6 +76,7 @@ const reservedColor = {
     "about:performance": "rgb(35, 34, 42)",
     "about:plugins": "rgb(43, 42, 50)",
     "about:privatebrowsing": "rgb(37, 0, 62)",
+    "about:processes": "rgb(43, 42, 50)",
     "about:sync-log": "rgb(30, 30, 30)",
     "addons.mozilla.org": "rgb(32, 18, 58)"
   }
