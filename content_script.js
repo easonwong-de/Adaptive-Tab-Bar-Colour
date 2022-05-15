@@ -16,6 +16,7 @@ const reservedColor = {
 	"mail.google.com": "CLASS: wl",
 	"www.youtube.com": "TAG: ytd-masthead",
 	"www.twitch.tv": "CLASS: top-nav__menu",
+	"www.apple.com": "TAG: nav",
 	"github.com": "TAG: header"
 };
 
