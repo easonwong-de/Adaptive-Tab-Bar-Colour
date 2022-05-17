@@ -1,0 +1,19 @@
+body {
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+}
+
+.light {
+	color: rgb(0, 0, 0);
+	background-color: rgb(255, 255, 255);
+}
+
+.dark {
+	color: rgb(255, 255, 255);
+	background-color: rgb(28, 27, 34);
+}
+
+.custom_options {
+	margin-left: 20px;
+}

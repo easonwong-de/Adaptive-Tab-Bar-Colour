@@ -1,6 +1,6 @@
 {
   "name": "Adaptive Tab Bar Color",
-  "version": "1.4.8a",
+  "version": "1.5",
   "description": "Change the color of Firefox tab bar to match the website theme",
   "author": "Eason Wong",
   "browser_specific_settings": {
@@ -35,6 +35,18 @@
   "options_ui": {
     "page": "options.html",
     "browser_style": true
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Adaptive Tab Bar Color",
+    "browser_style": true,
+    "default_icon": {
+      "16": "images/ATBC_16.png",
+      "32": "images/ATBC_32.png",
+      "48": "images/ATBC_48.png",
+      "96": "images/ATBC_96.png",
+      "128": "images/ATBC_128.png"
+    }
   },
   "icons": {
     "16": "images/ATBC_16.png",

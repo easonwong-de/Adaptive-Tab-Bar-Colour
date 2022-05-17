@@ -15,53 +15,60 @@ let settings = document.getElementById("settings");
 
 settings.hidden = true;
 loading.hidden = false;
-browser.storage.local.get(function (pref) {
-	let scheme = pref.scheme;
-	let force = pref.force;
-	if (scheme == undefined || force == undefined) {
-		if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-			scheme = "light";
-		} else {
-			scheme = "dark";
+load();
+
+document.addEventListener('pageshow',load);
+browser.storage.onChanged.addListener(load);
+
+function load() {
+	browser.storage.local.get(function (pref) {
+		let scheme = pref.scheme;
+		let force = pref.force;
+		if (scheme == undefined || force == undefined) {
+			if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+				scheme = "light";
+			} else {
+				scheme = "dark";
+			}
+			force = true;
 		}
-		force = true;
-	}
-	force_mode.checked = !force;
-	if (scheme == "dark") {
-		switchBodyToDark();
-		color_scheme_no_light.checked = true;
-		color_scheme_no_dark.checked = false;
-		color_scheme_system.checked = false;
-	} else if (scheme == "light") {
-		switchBodyToLight();
-		color_scheme_no_light.checked = false;
-		color_scheme_no_dark.checked = true;
-		color_scheme_system.checked = false;
-	} else if (scheme == "system") {
-		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		force_mode.checked = !force;
+		if (scheme == "dark") {
 			switchBodyToDark();
-		} else {
+			color_scheme_no_light.checked = true;
+			color_scheme_no_dark.checked = false;
+			color_scheme_system.checked = false;
+		} else if (scheme == "light") {
 			switchBodyToLight();
+			color_scheme_no_light.checked = false;
+			color_scheme_no_dark.checked = true;
+			color_scheme_system.checked = false;
+		} else if (scheme == "system") {
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+				switchBodyToDark();
+			} else {
+				switchBodyToLight();
+			}
+			color_scheme_no_light.checked = false;
+			color_scheme_no_dark.checked = false;
+			color_scheme_system.checked = true;
 		}
-		color_scheme_no_light.checked = false;
-		color_scheme_no_dark.checked = false;
-		color_scheme_system.checked = true;
-	}
-	let pref_custom = pref.custom;
-	let pref_light_color = pref.light_color;
-	let pref_dark_color = pref.dark_color;
-	if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined) {
-		pref_custom = false;
-		pref_light_color = "#FFFFFF";
-		pref_dark_color = "#1C1B22";
-	}
-	custom.checked = pref_custom;
-	custom_options.hidden = !pref_custom;
-	light_color.value = pref_light_color;
-	dark_color.value = pref_dark_color;
-	loading.hidden = true;
-	settings.hidden = false;
-});
+		let pref_custom = pref.custom;
+		let pref_light_color = pref.light_color;
+		let pref_dark_color = pref.dark_color;
+		if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined) {
+			pref_custom = false;
+			pref_light_color = "#FFFFFF";
+			pref_dark_color = "#1C1B22";
+		}
+		custom.checked = pref_custom;
+		custom_options.hidden = !pref_custom;
+		light_color.value = pref_light_color;
+		dark_color.value = pref_dark_color;
+		loading.hidden = true;
+		settings.hidden = false;
+	});
+}
 
 color_scheme_no_light.addEventListener("input", function (event) {
 	if (color_scheme_no_light.checked) {
