@@ -30,7 +30,7 @@ function load() {
 			} else {
 				scheme = "dark";
 			}
-			force = true;
+			force = false;
 		}
 		force_mode.checked = !force;
 		if (scheme == "dark") {
@@ -114,23 +114,21 @@ color_scheme_system.addEventListener("input", function (event) {
 force_mode.onclick = function () {
 	if (force_mode.checked) {
 		browser.storage.local.set({ force: false });
-		applySettings();
 	} else {
 		browser.storage.local.set({ force: true });
-		applySettings();
 	}
+	applySettings();
 };
 
 custom.onclick = function () {
 	if (custom.checked) {
 		browser.storage.local.set({ custom: true });
 		custom_options.hidden = false;
-		applySettings();
 	} else {
 		browser.storage.local.set({ custom: false });
 		custom_options.hidden = true;
-		applySettings();
 	}
+	applySettings();
 };
 
 light_color.addEventListener("change", function (event) {

@@ -1,7 +1,6 @@
 body {
-	font-size: 12px;
 	margin: 0;
-	padding: 0;
+	padding: 10px;
 }
 
 .light {
@@ -14,6 +13,20 @@ body {
 	background-color: rgb(28, 27, 34);
 }
 
+.light hr {
+	height: 1px;
+	border-width: 0;
+	color: rgba(0, 0, 0, 0.13);
+	background-color: rgba(0, 0, 0, 0.13)
+}
+
+.dark hr {
+	height: 1px;
+	border-width: 0;
+	color: rgba(255, 255, 255, 0.10);
+	background-color: rgba(255, 255, 255, 0.10)
+}
+
 .custom_options {
-	margin-left: 20px;
+	margin-left: 4ch;
 }
