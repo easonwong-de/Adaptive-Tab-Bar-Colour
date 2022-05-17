@@ -1,15 +1,35 @@
-let force_mode_caption = document.getElementById("force_mode_caption");
-let force_mode = document.getElementById("force_mode");
-let color_scheme_no_light = document.getElementById("color_scheme_no_light");
+let loading = document.getElementById("loading");
+let settings = document.getElementById("settings");
 let color_scheme_no_dark = document.getElementById("color_scheme_no_dark");
+let color_scheme_no_light = document.getElementById("color_scheme_no_light");
 let color_scheme_system = document.getElementById("color_scheme_system");
+let force_mode = document.getElementById("force_mode");
+let force_mode_caption = document.getElementById("force_mode_caption");
 let custom = document.getElementById("custom");
+let body = document.getElementsByTagName("body")[0];
 let custom_options = document.getElementById("custom_options");
 let light_color = document.getElementById("light_color");
 let dark_color = document.getElementById("dark_color");
 let custom_reset = document.getElementById("custom_reset");
-let loading = document.getElementById("loading");
-let settings = document.getElementById("settings");
+let custom_popup = document.getElementById("custom_popup");
+
+//update the background color of the popup
+function changeColor() {
+	browser.theme.getCurrent().then(theme => {
+		body.style.backgroundColor = theme['colors']['popup'];
+		body.style.color = theme['colors']['popup_text'];
+		if (theme['colors']['popup_text'] == "rgb(0, 0, 0)") {
+			body.classList.add("light");
+			body.classList.remove("dark");
+		} else {
+			body.classList.add("dark");
+			body.classList.remove("light");
+		}
+	});
+}
+
+//if the popup is running this code
+if (custom == undefined) browser.theme.onUpdated.addListener(changeColor);
 
 //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
 
@@ -17,7 +37,7 @@ settings.hidden = true;
 loading.hidden = false;
 load();
 
-document.addEventListener('pageshow',load);
+document.addEventListener('pageshow', load);
 browser.storage.onChanged.addListener(load);
 
 function load() {
@@ -61,12 +81,17 @@ function load() {
 			pref_light_color = "#FFFFFF";
 			pref_dark_color = "#1C1B22";
 		}
-		custom.checked = pref_custom;
-		custom_options.hidden = !pref_custom;
-		light_color.value = pref_light_color;
-		dark_color.value = pref_dark_color;
+		if (custom != undefined) { //not popup
+			custom.checked = pref_custom;
+			custom_options.hidden = !pref_custom;
+			light_color.value = pref_light_color;
+			dark_color.value = pref_dark_color;
+		} else {
+			changeColor();
+		}
 		loading.hidden = true;
 		settings.hidden = false;
+		applySettings();
 	});
 }
 
@@ -120,7 +145,7 @@ force_mode.onclick = function () {
 	applySettings();
 };
 
-custom.onclick = function () {
+if (custom != undefined) custom.onclick = function () {
 	if (custom.checked) {
 		browser.storage.local.set({ custom: true });
 		custom_options.hidden = false;
@@ -131,17 +156,17 @@ custom.onclick = function () {
 	applySettings();
 };
 
-light_color.addEventListener("change", function (event) {
+if (custom != undefined) light_color.addEventListener("change", function (event) {
 	browser.storage.local.set({ light_color: light_color.value });
 	applySettings();
 });
 
-dark_color.addEventListener("change", function (event) {
+if (custom != undefined) dark_color.addEventListener("change", function (event) {
 	browser.storage.local.set({ dark_color: dark_color.value });
 	applySettings();
 });
 
-custom_reset.onclick = function () {
+if (custom != undefined) custom_reset.onclick = function () {
 	browser.storage.local.set({
 		light_color: "#FFFFFF",
 		dark_color: "#1C1B22"
@@ -151,28 +176,32 @@ custom_reset.onclick = function () {
 	applySettings();
 };
 
+if (custom_popup != undefined) custom_popup.onclick = () => {
+	browser.runtime.openOptionsPage();
+};
+
 function applySettings() {
 	chrome.runtime.sendMessage("apply_settings");
 }
 
 function switchBodyToLight() {
-	body = document.getElementsByTagName("body")[0];
 	body.classList.add("light");
 	body.classList.remove("dark");
 	force_mode_caption.innerHTML = "Allow dark tab bar";
 }
 
 function switchBodyToDark() {
-	body = document.getElementsByTagName("body")[0];
 	body.classList.add("dark");
 	body.classList.remove("light");
 	force_mode_caption.innerHTML = "Allow light tab bar";
 }
 
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
-	if (e.matches) {
-		switchBodyToDark();
-	} else {
-		switchBodyToLight();
+	if (color_scheme_system.checked) {
+		if (e.matches) {
+			switchBodyToDark();
+		} else {
+			switchBodyToLight();
+		}
 	}
 });

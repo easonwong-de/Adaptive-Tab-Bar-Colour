@@ -17,35 +17,48 @@
 	</div>
 	<div id="settings" hidden="true">
 		<div>
-			<h4><input id="color_scheme_no_dark" type="radio" />
+			<h4>
+				<input id="color_scheme_no_dark" type="radio" />
 				<label for="color_scheme_no_dark">Light Mode</label>
 			</h4>
-			<h4><input id="color_scheme_no_light" type="radio" />
+			<h4>
+				<input id="color_scheme_no_light" type="radio" />
 				<label for="color_scheme_no_light">Dark Mode</label>
 			</h4>
-			<h4><input id="color_scheme_system" type="radio" />
-				<label for="color_scheme_system">Follow System <br>
-					<span style="font-weight:normal"><small>doesn’t work on Nightly / Developer Edition</small></span></label>
-			</h4>
+			<h4>
+				<input id="color_scheme_system" type="radio" />
+				<div style="display: inline-block; vertical-align: middle;">
+					<label for="color_scheme_system">Follow System <br>
+						<div style="font-weight:normal">
+							<small>doesn’t work on Nightly / Developer Edition</small>
+						</div>
+					</label>
+				</div>
+			</h4><hr>
 			<h4><input id="force_mode" type="checkbox" />
 				<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label>
 			</h4>
 		</div>
 		<div>
 			<h4><input id="custom" type="checkbox">
-				<label for="customize">More customizations</label>
+				<label for="custom">More customizations</label>
 			</h4>
-			<div class="custom_options" id="custom_options" hidden="true">
-				<label for="light_color">Default light color: </label>
-				<input type="color" value="#FFFFFF" name="light_color" id="light_color" >
+			<div id="custom_options" class="custom_options" hidden="true">
+				<div>
+					<label>Default light color: </label>
+					<input class="color" type="color" value="#FFFFFF" id="light_color" >
 					<br><br>
-				<label for="dark_color">Default dark color: </label>
-				<input type="color" value="#1C1B22" name="dark_color" id="dark_color">
+				</div>
+				<div>
+					<label>Default dark color: </label>
+					<input class="color" type="color" value="#1C1B22" id="dark_color">
 					<br><br>
+				</div>
 				<button type="button" id="custom_reset">Reset</button>
-					<br><br>
+					<br>
 			</div>
 		</div>
+		<hr>
 		<div>
 			<p><a href="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/issues">Report an issue</a></p>
 		</div>
@@ -56,6 +69,7 @@
 			<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 		</form>
 	</div>
+	<p>&nbsp;</p>
 	<script type="text/javascript" src="../options.js"></script>
 </body>
 

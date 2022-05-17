@@ -17,34 +17,32 @@
 	</div>
 	<div id="settings" hidden="true">
 		<div>
-			<p><input id="color_scheme_no_dark" type="radio" />
-				<label for="color_scheme_no_dark">Light Mode</label>
-			</p>
-			<p><input id="color_scheme_no_light" type="radio" />
-				<label for="color_scheme_no_light">Dark Mode</label>
-			</p>
-			<p><input id="color_scheme_system" type="radio" />
-				<label for="color_scheme_system">Follow System <br>
-					<span style="font-weight:normal"><small>doesn’t work on Nightly / Developer Edition</small></span></label>
-			</p>
+			<label for="color_scheme_no_dark">
+				<input id="color_scheme_no_dark" type="radio" />
+				<span>Light Mode</span>
+			</label>
+			<label for="color_scheme_no_light">
+				<input id="color_scheme_no_light" type="radio" />
+				<span>Dark Mode</span>
+			</label>
+			<label for="color_scheme_system">
+				<input id="color_scheme_system" type="radio" />
+				<div style="display: inline-block; vertical-align: middle;">
+					<span>Follow System
+						<div style="font-weight:normal"><small>doesn’t work on Nightly / Developer Edition</small></div>
+					</span>
+				</div>
+			</label>
 			<hr>
-			<p><input id="force_mode" type="checkbox" />
-				<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label>
-			</p>
+			<label for="force_mode">
+				<input id="force_mode" type="checkbox" />
+				<span id="force_mode_caption">Allow bright tab bar</span>
+			</label>
 		</div>
 		<div>
-			<p><input access="false" id="custom" type="checkbox">
-				<label for="customize">More customizations</label>
-			</p>
-			<div class="custom_options" id="custom_options" hidden="true">
-				<label for="light_color">Default light color: </label>
-				<input type="color" value="#FFFFFF" name="light_color" id="light_color">
-				<br><br>
-				<label for="dark_color">Default dark color: </label>
-				<input type="color" value="#1C1B22" name="dark_color" id="dark_color">
-				<br><br><br>
-				<button type="button" id="custom_reset">Reset</button>
-			</div>
+			<label id="custom_popup">
+				More settings…
+			</label>
 		</div>
 	</div>
 	<script type="text/javascript" src="../options.js"></script>

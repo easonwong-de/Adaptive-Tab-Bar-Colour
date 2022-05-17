@@ -14,7 +14,7 @@ body {
 }
 
 button {
-	padding: 0.5em 1em;
+	padding: 0.5em 2em;
 	display: block;
 	border: none;
 	border-radius: 4px;
@@ -55,7 +55,8 @@ button {
 	margin-left: 4ch;
 }
 
-.light a:link, .light a:visited {
+.light a:link,
+.light a:visited {
 	color: rgb(55, 141, 255);
 	text-decoration: none;
 }
@@ -70,7 +71,8 @@ button {
 	text-decoration: underline;
 }
 
-.dark a:link, .dark a:visited {
+.dark a:link,
+.dark a:visited {
 	color: rgb(59, 221, 255);
 	text-decoration: none;
 }
@@ -83,4 +85,25 @@ button {
 .dark a:active {
 	color: rgb(169, 242, 255);
 	text-decoration: underline;
+}
+
+hr {
+	height: 1px;
+	border-width: 0;
+}
+
+.light hr {
+	background-color: rgb(215, 215, 219);
+}
+
+.dark hr {
+	background-color: rgb(78, 77, 84);
+}
+
+.color {
+	padding: 0;
+	border: none;
+	height: 1em;
+	width: 1em;
+	vertical-align: middle;
 }

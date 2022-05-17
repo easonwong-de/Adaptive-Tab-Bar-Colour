@@ -1,6 +1,6 @@
 body {
 	margin: 0;
-	padding: 10px;
+	padding: 8px;
 }
 
 .light {
@@ -13,20 +13,41 @@ body {
 	background-color: rgb(28, 27, 34);
 }
 
-.light hr {
+label {
+	text-align: left;
+	display: block;
+	margin: 0;
+	padding: 0.5em;
+	border-radius: 4px;
+}
+
+.light label:hover {
+	background-color: rgba(0, 0, 0, 0.15);
+}
+
+.light label:active {
+	background-color: rgba(0, 0, 0, 0.26);
+}
+
+.dark label:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark label:active {
+	background-color: rgba(255, 255, 255, 0.26);
+}
+
+hr {
 	height: 1px;
 	border-width: 0;
+}
+
+.light hr {
 	color: rgba(0, 0, 0, 0.13);
 	background-color: rgba(0, 0, 0, 0.13)
 }
 
 .dark hr {
-	height: 1px;
-	border-width: 0;
 	color: rgba(255, 255, 255, 0.10);
 	background-color: rgba(255, 255, 255, 0.10)
-}
-
-.custom_options {
-	margin-left: 4ch;
 }
