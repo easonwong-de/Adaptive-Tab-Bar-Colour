@@ -1,6 +1,6 @@
 //Content script tells background.js what color to use
 
-var Response_color = "";
+var response_color = "";
 
 //darkMode: true => white text
 //darkMode: false => balck text
@@ -21,44 +21,53 @@ var Port;
 
 findColor();
 
-//Find the best color
+/**
+ * Finds color and send to background.
+ */
 function findColor() {
 	Port = browser.runtime.connect();
 	if (!findColorReserved()) findColorUnreserved();
 	//Sent color to background.js
-	if (!document.hidden) Port.postMessage({ color: Response_color });
+	if (!document.hidden) Port.postMessage({ color: response_color });
 }
 
-//When there is a reserved color for the url
+/**
+ * Sets response_color.
+ * 
+ * @returns If a reserved color for the URl can be found
+ */
 function findColorReserved() {
 	let host = document.location.host; // e.g. "host" can be "www.irgendwas.com"
 	if (reservedColor[host] == null) {
 		return false;
 	} else if (reservedColor[host] == "IGNORE_THEME") {
-		Response_color = getComputedColor();
+		response_color = getComputedColor();
 	} else if (reservedColor[host].startsWith("TAG: ")) {
 		let tagName = reservedColor[host].replace("TAG: ", "");
 		let el_list = document.getElementsByTagName(tagName);
 		if (el_list.length == 0) return false;
 		let el = el_list[0];
-		Response_color = window.getComputedStyle(el, null).getPropertyValue('background-color');
+		response_color = window.getComputedStyle(el, null).getPropertyValue('background-color');
 	} else if (reservedColor[host].startsWith("CLASS: ")) {
 		let className = reservedColor[host].replace("CLASS: ", "");
 		let el_list = document.getElementsByClassName(className);
 		if (el_list.length == 0) return false;
 		let el = el_list[0];
-		Response_color = window.getComputedStyle(el, null).getPropertyValue('background-color');
+		response_color = window.getComputedStyle(el, null).getPropertyValue('background-color');
 	} else {
-		Response_color = reservedColor[host];
+		response_color = reservedColor[host];
 	}
 	return true;
 }
 
+/**
+ * Sets response_color.
+ */
 function findColorUnreserved() {
 	if (getThemeColor() == null) {
-		Response_color = getComputedColor();
+		response_color = getComputedColor();
 	} else {
-		Response_color = getThemeColor();
+		response_color = getThemeColor();
 	}
 }
 
@@ -72,8 +81,10 @@ chrome.runtime.onMessage.addListener(
 	}
 );
 
-//Contributed by @emilio on GitHub
-//Get computed background color e.g. "rgb(30, 30, 30)"
+/**
+ * @author emilio on GitHub
+ * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
+ */
 function getComputedColor() {
 	let DarkReader = document.getElementsByTagName("HTML")[0].getAttribute("data-darkreader-scheme") != null;
 	let color = null;
@@ -93,7 +104,9 @@ function getComputedColor() {
 	return color;
 }
 
-//Get provided theme-color e.g. "#ffffff", "rgba(30, 30, 30, 0.9)"
+/** 
+ * @returns Provided theme-color e.g. "#ffffff", "rgba(30, 30, 30, 0.9)"
+ */
 function getThemeColor() {
 	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
 	if (headerTag == null) {
