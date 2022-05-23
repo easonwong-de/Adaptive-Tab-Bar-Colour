@@ -262,12 +262,16 @@ function changeFrameColorTo(windowId, color, dark_mode) {
       adaptive_themes['dark']['colors']['frame'] = default_dark_color;
       adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
       adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(default_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(default_dark_color, 0.05);
       adaptive_themes['dark']['colors']['ntp_background'] = default_dark_color;
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
       adaptive_themes['light']['colors']['frame'] = default_light_color;
       adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
       adaptive_themes['light']['colors']['popup'] = default_light_color;
+      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(default_light_color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(default_light_color, -0.05);
       adaptive_themes['light']['colors']['ntp_background'] = default_light_color;
       applyTheme(windowId, adaptive_themes['light']);
     }
@@ -277,12 +281,16 @@ function changeFrameColorTo(windowId, color, dark_mode) {
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
       adaptive_themes['dark']['colors']['popup'] = color;
+      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(color, 0.05);
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
       if (color == "DEFAULT") color = default_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
       adaptive_themes['light']['colors']['popup'] = color;
+      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(color, -0.05);
       applyTheme(windowId, adaptive_themes['light']);
     }
   } else if (force) { //force coloring
@@ -290,11 +298,15 @@ function changeFrameColorTo(windowId, color, dark_mode) {
       adaptive_themes['dark']['colors']['frame'] = default_dark_color;
       adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
       adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(default_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(default_dark_color, 0.05);
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
       adaptive_themes['light']['colors']['frame'] = default_light_color;
       adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
       adaptive_themes['light']['colors']['popup'] = default_light_color;
+      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(default_light_color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(default_light_color, -0.05);
       applyTheme(windowId, adaptive_themes['light']);
     }
   }
@@ -375,6 +387,32 @@ function tooDark(string) {
 }
 
 /**
+ * Dims or lightens color.
+ * 
+ * @param {string} color Color to process
+ * @param {number} dim between -1.0 (dim) to 1.0 (light)
+ * @returns Dimmed or lightened color
+ */
+function dimColor(color, dim) {
+  let color_obj;
+  if (color.startsWith("#")) {
+    color_obj = hexToRgb(color);
+  } else {
+    color_obj = rgbaToRgba(color);
+  }
+  if (dim >= 0) {
+    color_obj.r = color_obj.r + dim * (255 - color_obj.r);
+    color_obj.g = color_obj.g + dim * (255 - color_obj.g);
+    color_obj.b = color_obj.b + dim * (255 - color_obj.b);
+  } else {
+    color_obj.r = (dim + 1) * color_obj.r;
+    color_obj.g = (dim + 1) * color_obj.g;
+    color_obj.b = (dim + 1) * color_obj.b;
+  }
+  return "rgb(" + color_obj.r + ", " + color_obj.g + ", " + color_obj.b + ")";
+}
+
+/**
  * Gets brightness value from color in rgb.
  * 
  * @param {string} rgba color in rgba
@@ -441,15 +479,4 @@ function rgbaToRgba(rgbaString) {
     b: result[2],
     a: result[3]
   } : null;
-}
-
-/**
- * Deletes alpha value from rgba (String).
- * 
- * @param {string} rgbaString color in rgba
- * @returns color in rgb
- */
-function noAplphaValue(rgbaString) {
-  rgba = rgbaToRgba(rgbaString);
-  return "rgb(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ")";
 }

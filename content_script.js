@@ -27,6 +27,7 @@ findColor();
 function findColor() {
 	Port = browser.runtime.connect();
 	if (!findColorReserved()) findColorUnreserved();
+	if (response_color.includes("rgba")) response_color = noAplphaValue(response_color);
 	//Sent color to background.js
 	if (!document.hidden) Port.postMessage({ color: response_color });
 }
@@ -114,4 +115,18 @@ function getThemeColor() {
 	} else {
 		return headerTag.content;
 	}
+}
+
+
+/**
+ * Deletes alpha value from rgba (String).
+ * 
+ * @param {string} color color in rgba e.g. "rgba(33, 33, 33, 0.98)"
+ * @returns color in rgb
+ */
+function noAplphaValue(color) {
+	color = color.replace("rgba", "rgb");
+	color = color.slice(0, color.lastIndexOf(","));
+	color = color + ")";
+	return color;
 }
