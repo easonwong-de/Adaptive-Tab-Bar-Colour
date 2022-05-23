@@ -13,7 +13,9 @@ let dark_color = document.getElementById("dark_color");
 let custom_reset = document.getElementById("custom_reset");
 let custom_popup = document.getElementById("custom_popup");
 
-//update the background color of the popup
+/**
+ * Updates the background color of the popup.
+ */
 function changeColor() {
 	browser.theme.getCurrent().then(theme => {
 		body.style.backgroundColor = theme['colors']['popup'];
@@ -40,6 +42,9 @@ load();
 document.addEventListener('pageshow', load);
 browser.storage.onChanged.addListener(load);
 
+/**
+ * Loads settings to options or popup page
+ */
 function load() {
 	browser.storage.local.get(function (pref) {
 		let scheme = pref.scheme;
@@ -180,6 +185,9 @@ if (custom_popup != undefined) custom_popup.onclick = () => {
 	browser.runtime.openOptionsPage();
 };
 
+/**
+ * Triggers color update.
+ */
 function applySettings() {
 	chrome.runtime.sendMessage("apply_settings");
 }
