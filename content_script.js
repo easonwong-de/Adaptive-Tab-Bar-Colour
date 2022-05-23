@@ -14,7 +14,8 @@ const reservedColor = {
 	"www.youtube.com": "TAG: ytd-masthead",
 	"www.twitch.tv": "CLASS: top-nav__menu",
 	"www.apple.com": "TAG: nav",
-	"github.com": "TAG: header"
+	"github.com": "TAG: header",
+	"developer.mozilla.org": "IGNORE_THEME"
 };
 
 var Port;
@@ -35,7 +36,7 @@ function findColor() {
 /**
  * Sets response_color.
  * 
- * @returns If a reserved color for the URl can be found
+ * @returns true if a reserved color for the URl can be found
  */
 function findColorReserved() {
 	let host = document.location.host; // e.g. "host" can be "www.irgendwas.com"
@@ -87,20 +88,10 @@ chrome.runtime.onMessage.addListener(
  * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
  */
 function getComputedColor() {
-	let DarkReader = document.getElementsByTagName("HTML")[0].getAttribute("data-darkreader-scheme") != null;
 	let color = null;
-	let color_last = null;
 	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
-		let temp_color = getComputedStyle(el).backgroundColor;
-		if (temp_color != "rgba(0, 0, 0, 0)") {
-			color_last = color;
-			color = temp_color;
-		}
-	}
-	if (DarkReader && color_last != null) color = color_last;
-	if (color == null) {
-		color = window.getComputedStyle(document.body, null).getPropertyValue('background-color');
-		if (color == "rgba(0, 0, 0, 0)") color = "rgb(255, 255, 255)"; //Sometimes computed color lies
+		color = getComputedStyle(el).backgroundColor;
+		if (color != "rgba(0, 0, 0, 0)") return color;
 	}
 	return color;
 }

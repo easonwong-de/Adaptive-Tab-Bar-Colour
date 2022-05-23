@@ -39,7 +39,7 @@ settings.hidden = true;
 loading.hidden = false;
 load();
 
-document.addEventListener('pageshow', load);
+document.addEventListener("pageshow", load);
 browser.storage.onChanged.addListener(load);
 
 /**
