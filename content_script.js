@@ -1,13 +1,13 @@
-//Content script tells background.js what color to use
+//Tells background.js what color to use
 
 var response_color = "";
 
-//darkMode: true => white text
-//darkMode: false => balck text
-//reserved color is a color => it is the theme color
-//reserved color is a IGNORE => use calculated color as theme color
-//reserved color is a tag name => theme color is stored under that tag
-//reserved color is a class name => theme color is stored under that class
+/* darkMode: true => white text
+darkMode: false => balck text
+reserved color is a color => it is the theme color
+reserved color is a IGNORE => use calculated color as theme color
+reserved color is a tag name => theme color is stored under that tag
+reserved color is a class name => theme color is stored under that class */
 const reservedColor = {
 	"open.spotify.com": "rgb(0, 0, 0)",
 	"mail.google.com": "CLASS: wl",
