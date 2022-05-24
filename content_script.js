@@ -14,7 +14,7 @@ const reservedColor = {
 	"www.youtube.com": "TAG: ytd-masthead",
 	"www.twitch.tv": "CLASS: top-nav__menu",
 	"www.apple.com": "TAG: nav",
-	"github.com": "TAG: header",
+	"github.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME"
 };
 
@@ -29,9 +29,17 @@ function findColor() {
 	Port = browser.runtime.connect();
 	if (!findColorReserved()) findColorUnreserved();
 	if (response_color.includes("rgba")) response_color = noAplphaValue(response_color);
-	//Sent color to background.js
 	if (!document.hidden) Port.postMessage({ color: response_color });
 }
+
+//Updates color when user makes action
+//hopefully clicking a color scheme changing button
+document.onclick = findColor;
+document.onwheel = findColor; //experimental
+document.onscroll = findColor; //experimental
+//Updates color when Dark Reader changes mode
+var ondarkreader = new MutationObserver(findColor);
+ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
 /**
  * Sets response_color.
@@ -88,16 +96,22 @@ chrome.runtime.onMessage.addListener(
  * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
  */
 function getComputedColor() {
-	let color = null;
-	for (let el = document.elementFromPoint(window.innerWidth / 2, 1); el; el = el.parentElement) {
-		color = getComputedStyle(el).backgroundColor;
+	let color = "";
+	for (let element = document.elementFromPoint(window.innerWidth / 2, 1); element; element = element.parentElement) {
+		color = getComputedStyle(element).backgroundColor;
 		if (color != "rgba(0, 0, 0, 0)") return color;
 	}
-	return color;
+	let body = document.getElementsByTagName("body")[0];
+	color = getComputedStyle(body).backgroundColor;
+	if (color == "rgba(0, 0, 0, 0)") {
+		return "#fff";
+	} else {
+		return color;
+	}
 }
 
 /** 
- * @returns Provided theme-color e.g. "#ffffff", "rgba(30, 30, 30, 0.9)"
+ * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
  */
 function getThemeColor() {
 	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
