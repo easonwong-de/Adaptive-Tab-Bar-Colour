@@ -14,7 +14,7 @@ const reservedColor = {
 	"www.youtube.com": "TAG: ytd-masthead",
 	"www.twitch.tv": "CLASS: top-nav__menu",
 	"www.apple.com": "TAG: nav",
-	"github.com": "IGNORE_THEME",
+	"github.com": "TAG: header",
 	"developer.mozilla.org": "IGNORE_THEME"
 };
 
@@ -35,8 +35,10 @@ function findColor() {
 //Updates color when user makes action
 //hopefully clicking a color scheme changing button
 document.onclick = findColor;
-document.onwheel = findColor; //experimental
-document.onscroll = findColor; //experimental
+//experimental
+//document.onwheel = findColor; 
+//document.onscroll = findColor;
+
 //Updates color when Dark Reader changes mode
 var ondarkreader = new MutationObserver(findColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
@@ -56,18 +58,20 @@ function findColorReserved() {
 		let tagName = reservedColor[host].replace("TAG: ", "");
 		let el_list = document.getElementsByTagName(tagName);
 		if (el_list.length == 0) return false;
-		let el = el_list[0];
-		response_color = window.getComputedStyle(el, null).getPropertyValue('background-color');
+		response_color = getColorFromElement(el_list[0]);
 	} else if (reservedColor[host].startsWith("CLASS: ")) {
 		let className = reservedColor[host].replace("CLASS: ", "");
 		let el_list = document.getElementsByClassName(className);
 		if (el_list.length == 0) return false;
-		let el = el_list[0];
-		response_color = window.getComputedStyle(el, null).getPropertyValue('background-color');
+		response_color = getColorFromElement(el_list[0]);
 	} else {
 		response_color = reservedColor[host];
 	}
-	return true;
+	if (response_color == "") {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 /**
@@ -82,7 +86,7 @@ function findColorUnreserved() {
 }
 
 //Remind background.js of the color
-chrome.runtime.onMessage.addListener(
+browser.runtime.onMessage.addListener(
 	function (request, sender, sendResponse) {
 		if (request.message == "remind_me") {
 			findColor();
@@ -96,18 +100,44 @@ chrome.runtime.onMessage.addListener(
  * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
  */
 function getComputedColor() {
-	let color = "";
-	for (let element = document.elementFromPoint(window.innerWidth / 2, 1); element; element = element.parentElement) {
-		color = getComputedStyle(element).backgroundColor;
-		if (color != "rgba(0, 0, 0, 0)") return color;
-	}
-	let body = document.getElementsByTagName("body")[0];
-	color = getComputedStyle(body).backgroundColor;
-	if (color == "rgba(0, 0, 0, 0)") {
-		return "#fff";
+	let header = getHeader();
+	let body = getBody();
+	if (header != null) {
+		return getColorFromElement(header);
+	} else if (body != null) {
+		return getColorFromElement(body);
 	} else {
-		return color;
+		return "";
 	}
+}
+
+/**
+ * @returns Presumably the header, null if transparent
+ */
+function getHeader() {
+	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
+		if (getColorFromElement(element) != "") {
+			return element;
+		}
+	}
+	return null;
+}
+
+/**
+ * @returns The body, null if cannot find one
+ */
+function getBody() {
+	let elements = document.getElementsByTagName("body");
+	if (elements.length == 0) return null;
+	return elements[0];
+}
+
+/**
+ * @param {element} element 
+ * @returns The color of the element, empty string if transparent
+ */
+function getColorFromElement(element) {
+	return getComputedStyle(element).backgroundColor.replace("rgba(0, 0, 0, 0)", "");
 }
 
 /** 
@@ -121,7 +151,6 @@ function getThemeColor() {
 		return headerTag.content;
 	}
 }
-
 
 /**
  * Deletes alpha value from rgba (String).

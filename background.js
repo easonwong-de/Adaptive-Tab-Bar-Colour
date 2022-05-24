@@ -141,10 +141,8 @@ function init() {
 }
 
 //Use port_ContentScript to speed things up
-let port_cs;
 browser.runtime.onConnect.addListener(function (port) {
-  port_cs = port;
-  port_cs.onMessage.addListener(function (msg, sender, sendResponse) {
+  port.onMessage.addListener(function (msg, sender, sendResponse) {
     changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
   });
 });
@@ -229,7 +227,7 @@ function updateEachWindow(tab) {
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
       changeFrameColorTo(windowId, "", null);
     } else {
-      chrome.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
+      browser.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
         if (response == undefined) {
           console.log("No connection to content script")
         }
