@@ -112,7 +112,7 @@ function getComputedColor() {
 }
 
 /**
- * @returns Presumably the header, null if transparent
+ * @returns The first opaque element 3 pixels below tab bar
  */
 function getHeader() {
 	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
@@ -144,7 +144,8 @@ function getColorFromElement(element) {
  * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
  */
 function getThemeColor() {
-	headerTag = document.querySelector('meta[name="theme-color"]'); //Get theme-color defined by the website html
+	//Get theme-color defined by the website html
+	headerTag = document.querySelector('meta[name="theme-color"]');
 	if (headerTag == null) {
 		return null;
 	} else {
