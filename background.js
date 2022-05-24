@@ -160,12 +160,12 @@ browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 chrome.runtime.onMessage.addListener(update); //When preferences changed
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update1); //When color scheme changes //causing bugs on FDE and FN
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update_when_follow_system); //When color scheme changes //causing bugs on FDE and FN
 
 update();
 
 var follow_system = false; //v1.4.7 temporary fix
-function update1() {
+function update_when_follow_system() {
   if (follow_system) update();
 }
 
