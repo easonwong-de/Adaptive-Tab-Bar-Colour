@@ -31,7 +31,7 @@ function changeColor() {
 }
 
 //if the popup is running this code
-if (custom == undefined) browser.theme.onUpdated.addListener(changeColor);
+if (custom == null) browser.theme.onUpdated.addListener(changeColor);
 
 //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
 
@@ -49,8 +49,8 @@ function load() {
 	browser.storage.local.get(function (pref) {
 		let scheme = pref.scheme;
 		let force = pref.force;
-		if (scheme == undefined || force == undefined) {
-			if (light_mode_match != null && light_mode_match.matches) {
+		if (scheme == null || force == null) {
+			if (light_mode_match()) {
 				scheme = "light";
 			} else {
 				scheme = "dark";
@@ -81,12 +81,12 @@ function load() {
 		let pref_custom = pref.custom;
 		let pref_light_color = pref.light_color;
 		let pref_dark_color = pref.dark_color;
-		if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined) {
+		if (pref_custom == null || pref_light_color == null || pref_dark_color == null) {
 			pref_custom = false;
 			pref_light_color = "#FFFFFF";
 			pref_dark_color = "#1C1B22";
 		}
-		if (custom != undefined) { //not popup
+		if (custom != null) { //not popup
 			custom.checked = pref_custom;
 			custom_options.hidden = !pref_custom;
 			light_color.value = pref_light_color;
@@ -150,7 +150,7 @@ force_mode.onclick = function () {
 	applySettings();
 };
 
-if (custom != undefined) custom.onclick = function () {
+if (custom != null) custom.onclick = function () {
 	if (custom.checked) {
 		browser.storage.local.set({ custom: true });
 		custom_options.hidden = false;
@@ -161,17 +161,17 @@ if (custom != undefined) custom.onclick = function () {
 	applySettings();
 };
 
-if (custom != undefined) light_color.addEventListener("change", function (event) {
+if (custom != null) light_color.addEventListener("change", function (event) {
 	browser.storage.local.set({ light_color: light_color.value });
 	applySettings();
 });
 
-if (custom != undefined) dark_color.addEventListener("change", function (event) {
+if (custom != null) dark_color.addEventListener("change", function (event) {
 	browser.storage.local.set({ dark_color: dark_color.value });
 	applySettings();
 });
 
-if (custom != undefined) custom_reset.onclick = function () {
+if (custom != null) custom_reset.onclick = function () {
 	browser.storage.local.set({
 		light_color: "#FFFFFF",
 		dark_color: "#1C1B22"
@@ -181,7 +181,7 @@ if (custom != undefined) custom_reset.onclick = function () {
 	applySettings();
 };
 
-if (custom_popup != undefined) custom_popup.onclick = () => {
+if (custom_popup != null) custom_popup.onclick = () => {
 	browser.runtime.openOptionsPage();
 };
 

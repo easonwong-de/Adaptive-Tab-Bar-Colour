@@ -117,17 +117,17 @@ function init() {
     pref_custom = pref.custom;
     pref_light_color = pref.light_color;
     pref_dark_color = pref.dark_color;
-    if (pref.last_version == undefined) { //updates from v1.3.1 to newer versions
+    if (pref.last_version == null) { //updates from v1.3.1 to newer versions
       browser.storage.local.set({ last_version: "v1.5.2", force: false });
     }
-    if (pref_custom == undefined || pref_light_color == undefined || pref_dark_color == undefined) { //added from v1.3
+    if (pref_custom == null || pref_light_color == null || pref_dark_color == null) { //added from v1.3
       browser.storage.local.set({
         custom: false,
         light_color: default_light_color,
         dark_color: default_dark_color
       });
     }
-    if (scheme == undefined || force == undefined) { //first time install
+    if (scheme == null || force == null) { //first time install
       if (light_mode_match()) { //Read present theme to select color scheme
         scheme = "light";
         browser.browserSettings.overrideContentColorScheme.set({ value: "light" });
@@ -239,7 +239,7 @@ function updateEachWindow(tab) {
       changeFrameColorTo(windowId, "", null);
     } else {
       browser.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
-        if (response == undefined) {
+        if (response == null) {
           console.log("No connection to content script")
         }
       });
@@ -370,29 +370,21 @@ function darkMode(color) {
 /**
  * Returns if a color is too bright.
  * 
- * @param {string} string The color to check (hex or rgb)
+ * @param {string} color The color to check (hex or rgb)
  * @returns {boolean} true if the color is bright
  */
-function tooBright(string) {
-  if (string.startsWith("#")) {
-    return hexBrightness(string) > 155;
-  } else {
-    return rgbBrightness(string) > 155;
-  }
+function tooBright(color) {
+  return rgbObjBrightness(anyToRgba(color)) > 155;
 }
 
 /**
  * Returns if a color is too dark.
  * 
- * @param {string} string The color to check (hex or rgb)
+ * @param {string} color The color to check (hex or rgb)
  * @returns {boolean} true if the color is dark
  */
-function tooDark(string) {
-  if (string.startsWith("#")) {
-    return hexBrightness(string) < 100;
-  } else {
-    return rgbBrightness(string) < 100;
-  }
+function tooDark(color) {
+  return rgbObjBrightness(anyToRgba(color)) < 100;
 }
 
 /**
@@ -403,12 +395,7 @@ function tooDark(string) {
  * @returns Dimmed or lightened color
  */
 function dimColor(color, dim) {
-  let color_obj;
-  if (color.startsWith("#")) {
-    color_obj = hexToRgb(color);
-  } else {
-    color_obj = rgbaToRgba(color);
-  }
+  let color_obj = anyToRgba(color);
   if (dim >= 0) {
     color_obj.r = color_obj.r + dim * (255 - color_obj.r);
     color_obj.g = color_obj.g + dim * (255 - color_obj.g);
@@ -422,28 +409,6 @@ function dimColor(color, dim) {
 }
 
 /**
- * Gets brightness value from color in rgb.
- * 
- * @param {string} rgba color in rgba
- * @returns brightness of the color
- */
-function rgbBrightness(rgba) {
-  rgbaObj = rgbaToRgba(rgba);
-  return rgbObjBrightness(rgbaObj);
-}
-
-/**
- * Gets brightness value from color in hex.
- * 
- * @param {string} hex color in hex
- * @returns brightness of the color
- */
-function hexBrightness(hex) {
-  rgb = hexToRgb(hex);
-  return rgbObjBrightness(rgb);
-}
-
-/**
  * Gets brightness value from rgb object.
  * 
  * @param {object} rgb color in object
@@ -451,6 +416,18 @@ function hexBrightness(hex) {
  */
 function rgbObjBrightness(rgb) {
   return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+}
+
+/**
+ * @param {string} color Color in string
+ * @returns Color in object
+ */
+function anyToRgba(color) {
+  if (string.startsWith("#")) {
+    return hexToRgb(color);
+  } else {
+    return rgbaToRgba(color);
+  }
 }
 
 /**
@@ -470,7 +447,8 @@ function hexToRgb(hex) {
   return result ? {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
+    b: parseInt(result[3], 16),
+    a: 1
   } : null;
 }
 
@@ -493,10 +471,10 @@ function rgbaToRgba(rgbaString) {
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
- function light_mode_match() {
-	if (light_mode_match_media != null && light_mode_match_media.matches){
-		return true;
-	} else {
-		return false;
-	}
+function light_mode_match() {
+  if (light_mode_match_media != null && light_mode_match_media.matches) {
+    return true;
+  } else {
+    return false;
+  }
 }
