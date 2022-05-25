@@ -206,7 +206,7 @@ function switchBodyToDark() {
 
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
 
-if (light_mode_match_media != null) light_mode_match_media.onchange = (e) => {
+if (light_mode_match_media != null) light_mode_match_media.onchange = () => {
 	if (color_scheme_system.checked) {
 		if (light_mode_match()) {
 			switchBodyToLight();

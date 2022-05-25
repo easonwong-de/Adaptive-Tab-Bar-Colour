@@ -100,9 +100,9 @@ browser.runtime.onMessage.addListener(
  * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
  */
 function getComputedColor() {
-	let color = "rgba(0, 0, 0, 0)";
+	let color = anyToRgba("rgba(0, 0, 0, 0)");
 	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
-		color = overlayColor(color, getColorFrom(element));
+		color = overlayColor(color, anyToRgba(getColorFrom(element)));
 	}
 	return color;
 }
@@ -118,42 +118,55 @@ function getColorFrom(element) {
 }
 
 /**
+ * @param {string} color Color in string
+ * @returns Color in object
+ */
+function anyToRgba(color) {
+	if (color.startsWith("#")) {
+		return hexToRgb(color);
+	} else {
+		return rgbaToRgba(color);
+	}
+}
+
+/**
  * Converts hex color (String) to rgb (Object).
  * @author TimDown stackoverflow.com
  * 
  * @param {string} hex color in hex
  * @returns color in object
  */
- function hexToRgb(hex) {
+function hexToRgb(hex) {
 	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
 	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 	hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-	  return r + r + g + g + b + b;
+		return r + r + g + g + b + b;
 	});
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	return result ? {
-	  r: parseInt(result[1], 16),
-	  g: parseInt(result[2], 16),
-	  b: parseInt(result[3], 16),
-	  a: 1
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16),
+		a: 1
 	} : null;
-  }
-  
-  /**
-   * Converts rgba (String) to rgba (Object).
-   * 
-   * @param {string} rgbaString color in rgb
-   * @returns color in object
-   */
-  function rgbaToRgba(rgbaString) {
-	var result = rgbaString.match(/\d+/g).map(Number);
+}
+
+/**
+ * Converts rgba/rgb (String) to rgba (Object).
+ * 
+ * @param {string} rgbaString color in rgba/rgb
+ * @returns color in object
+ */
+function rgbaToRgba(rgbaString) {
+	var result = rgbaString.match(/[.?\d]+/g).map(Number);
+	if (result.length == 3) result[3] = 1;
 	return result ? {
-	  r: result[0],
-	  g: result[1],
-	  b: result[2],
-	  a: result[3]
+		r: result[0],
+		g: result[1],
+		b: result[2],
+		a: result[3]
 	} : null;
-  }
+}
 
 /** 
  * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
@@ -176,12 +189,16 @@ function getThemeColor() {
  * @returns Result of the addition
  */
 function overlayColor(top, bottom) {
-	let a = (1 - top.a) * bottom.a + top.a
-	return {
-		r: ((1 - top.a) * bottom.a * bottom.r + top.a * top.r) / a,
-		g: ((1 - top.a) * bottom.a * bottom.g + top.a * top.g) / a,
-		b: ((1 - top.a) * bottom.a * bottom.b + top.a * top.b) / a,
-		a: a
+	let a = (1 - top.a) * bottom.a + top.a;
+	if (a == 0) {
+		return { r: 0, g: 0, b: 0, a: 0 };
+	} else {
+		return {
+			r: ((1 - top.a) * bottom.a * bottom.r + top.a * top.r) / a,
+			g: ((1 - top.a) * bottom.a * bottom.g + top.a * top.g) / a,
+			b: ((1 - top.a) * bottom.a * bottom.b + top.a * top.b) / a,
+			a: a
+		}
 	}
 }
 

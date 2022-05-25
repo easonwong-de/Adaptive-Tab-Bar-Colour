@@ -163,6 +163,7 @@ chrome.runtime.onMessage.addListener(update); //When preferences changed
 //window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update_when_follow_system); //When color scheme changes
 
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
+
 if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
 
 update();
@@ -423,7 +424,7 @@ function rgbObjBrightness(rgb) {
  * @returns Color in object
  */
 function anyToRgba(color) {
-  if (string.startsWith("#")) {
+  if (color.startsWith("#")) {
     return hexToRgb(color);
   } else {
     return rgbaToRgba(color);
@@ -453,19 +454,20 @@ function hexToRgb(hex) {
 }
 
 /**
- * Converts rgba (String) to rgba (Object).
+ * Converts rgba/rgb (String) to rgba (Object).
  * 
- * @param {string} rgbaString color in rgb
+ * @param {string} rgbaString color in rgba/rgb
  * @returns color in object
  */
-function rgbaToRgba(rgbaString) {
-  var result = rgbaString.match(/\d+/g).map(Number);
-  return result ? {
-    r: result[0],
-    g: result[1],
-    b: result[2],
-    a: result[3]
-  } : null;
+ function rgbaToRgba(rgbaString) {
+	var result = rgbaString.match(/[.?\d]+/g).map(Number);
+	if (result.length == 3) result[3] = 1;
+	return result ? {
+		r: result[0],
+		g: result[1],
+		b: result[2],
+		a: result[3]
+	} : null;
 }
 
 /**
