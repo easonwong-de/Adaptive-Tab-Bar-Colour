@@ -28,7 +28,6 @@ findColor();
 function findColor() {
 	Port = browser.runtime.connect();
 	if (!findColorReserved()) findColorUnreserved();
-	if (response_color.includes("rgba")) response_color = noAplphaValue(response_color);
 	if (!document.hidden) Port.postMessage({ color: response_color });
 }
 
@@ -104,7 +103,15 @@ function getComputedColor() {
 	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
 		color = overlayColor(color, anyToRgba(getColorFrom(element)));
 	}
-	return color;
+	if (color.a == 0) {
+		let body = document.getElementsByTagName("body")[0];
+		if (body == undefined) return "";
+		color = getColorFrom(body);
+		if (color.includes("rgba")) color = "";
+		return color;
+	} else {
+		return "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
+	}
 }
 
 /**
@@ -177,7 +184,9 @@ function getThemeColor() {
 	if (headerTag == null) {
 		return null;
 	} else {
-		return headerTag.content;
+		let result = headerTag.content;
+		if (result.includes("rgba")) result = noAplphaValue(result);
+		return result;
 	}
 }
 
