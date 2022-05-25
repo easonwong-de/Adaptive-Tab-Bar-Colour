@@ -14,7 +14,7 @@ const reservedColor = {
 	"www.youtube.com": "TAG: ytd-masthead",
 	"www.twitch.tv": "CLASS: top-nav__menu",
 	"www.apple.com": "TAG: nav",
-	"github.com": "TAG: header",
+	"github.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME"
 };
 
@@ -102,6 +102,7 @@ function getComputedColor() {
 	let color = anyToRgba("rgba(0, 0, 0, 0)");
 	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
 		color = overlayColor(color, anyToRgba(getColorFrom(element)));
+		console.log(getColorFrom(element));
 	}
 	if (color.a == 0) {
 		let body = document.getElementsByTagName("body")[0];
@@ -110,13 +111,14 @@ function getComputedColor() {
 		if (color.includes("rgba")) color = "";
 		return color;
 	} else {
-		return "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
+		console.log("Output: " + color.r + ", " + color.g + ", " + color.b + ", " + color.a);
+		return "rgb(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
 	}
 }
 
 /**
  * @param {element} element 
- * @returns The color of the element, transparent if null
+ * @returns The color of the element in string, transparent if null
  */
 function getColorFrom(element) {
 	let color = getComputedStyle(element).backgroundColor;
@@ -185,7 +187,7 @@ function getThemeColor() {
 		return null;
 	} else {
 		let result = headerTag.content;
-		if (result.includes("rgba")) result = noAplphaValue(result);
+		if (result.includes("rgba")) result = noAlphaValue(result);
 		return result;
 	}
 }
@@ -195,7 +197,7 @@ function getThemeColor() {
  * 
  * @param {object} top Color on top
  * @param {object} bottom Color underneath
- * @returns Result of the addition
+ * @returns Result of the addition in object
  */
 function overlayColor(top, bottom) {
 	let a = (1 - top.a) * bottom.a + top.a;
@@ -217,7 +219,7 @@ function overlayColor(top, bottom) {
  * @param {string} color color in rgba e.g. "rgba(33, 33, 33, 0.98)"
  * @returns color in rgb
  */
-function noAplphaValue(color) {
+function noAlphaValue(color) {
 	color = color.replace("rgba", "rgb");
 	color = color.slice(0, color.lastIndexOf(","));
 	color = color + ")";
