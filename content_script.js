@@ -42,6 +42,16 @@ function findColor() {
 var ondarkreader = new MutationObserver(findColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
+//Remind background.js of the color
+browser.runtime.onMessage.addListener(
+	function (request, sender, sendResponse) {
+		if (request.message == "remind_me") {
+			findColor();
+			sendResponse({});
+		}
+	}
+);
+
 /**
  * Sets response_color.
  * 
@@ -84,15 +94,20 @@ function findColorUnreserved() {
 	}
 }
 
-//Remind background.js of the color
-browser.runtime.onMessage.addListener(
-	function (request, sender, sendResponse) {
-		if (request.message == "remind_me") {
-			findColor();
-			sendResponse({});
-		}
+/** 
+ * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
+ */
+ function getThemeColor() {
+	//Get theme-color defined by the website html
+	headerTag = document.querySelector('meta[name="theme-color"]');
+	if (headerTag == null) {
+		return null;
+	} else {
+		let color = headerTag.content;
+		if (color.includes("rgba")) color = noAlphaValue(color);
+		return color;
 	}
-);
+}
 
 /**
  * @author emilio on GitHub
@@ -102,7 +117,6 @@ function getComputedColor() {
 	let color = anyToRgba("rgba(0, 0, 0, 0)");
 	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
 		color = overlayColor(color, anyToRgba(getColorFrom(element)));
-		console.log(getColorFrom(element));
 	}
 	if (color.a == 0) {
 		let body = document.getElementsByTagName("body")[0];
@@ -111,7 +125,6 @@ function getComputedColor() {
 		if (color.includes("rgba")) color = "";
 		return color;
 	} else {
-		console.log("Output: " + color.r + ", " + color.g + ", " + color.b + ", " + color.a);
 		return "rgb(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
 	}
 }
@@ -132,7 +145,7 @@ function getColorFrom(element) {
  */
 function anyToRgba(color) {
 	if (color.startsWith("#")) {
-		return hexToRgb(color);
+		return hexToRgba(color);
 	} else {
 		return rgbaToRgba(color);
 	}
@@ -145,7 +158,7 @@ function anyToRgba(color) {
  * @param {string} hex color in hex
  * @returns color in object
  */
-function hexToRgb(hex) {
+function hexToRgba(hex) {
 	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
 	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 	hex = hex.replace(shorthandRegex, function (m, r, g, b) {
@@ -175,21 +188,6 @@ function rgbaToRgba(rgbaString) {
 		b: result[2],
 		a: result[3]
 	} : null;
-}
-
-/** 
- * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
- */
-function getThemeColor() {
-	//Get theme-color defined by the website html
-	headerTag = document.querySelector('meta[name="theme-color"]');
-	if (headerTag == null) {
-		return null;
-	} else {
-		let result = headerTag.content;
-		if (result.includes("rgba")) result = noAlphaValue(result);
-		return result;
-	}
 }
 
 /**
