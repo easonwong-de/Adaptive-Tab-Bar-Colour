@@ -128,7 +128,7 @@ function init() {
       });
     }
     if (scheme == undefined || force == undefined) { //first time install
-      if (window.matchMedia("(prefers-color-scheme: light)").matches) { //Read present theme to select color scheme
+      if (light_mode_match()) { //Read present theme to select color scheme
         scheme = "light";
         browser.browserSettings.overrideContentColorScheme.set({ value: "light" });
       } else {
@@ -138,10 +138,10 @@ function init() {
       browser.storage.local.set({ scheme: scheme, force: false }).then(browser.runtime.openOptionsPage);
     }
     if (scheme == "system") { //added from v1.4
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        scheme = "dark";
-      } else {
+      if (light_mode_match()) {
         scheme = "light";
+      } else {
+        scheme = "dark";
       }
     }
     update();
@@ -160,7 +160,10 @@ browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 chrome.runtime.onMessage.addListener(update); //When preferences changed
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update_when_follow_system); //When color scheme changes //causing bugs on FDE and FN
+//window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update_when_follow_system); //When color scheme changes
+
+const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
+if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
 
 update();
 
@@ -184,10 +187,10 @@ function update() {
       browser.browserSettings.overrideContentColorScheme.set({ value: scheme });
       if (scheme == "system") {
         follow_system = true;
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          scheme = "dark";
-        } else {
+        if (light_mode_match()) {
           scheme = "light";
+        } else {
+          scheme = "dark";
         }
       } else {
         follow_system = false;
@@ -485,4 +488,15 @@ function rgbaToRgba(rgbaString) {
     b: result[2],
     a: result[3]
   } : null;
+}
+
+/**
+ * @returns true if in light mode, false if in dark mode or cannot detect
+ */
+ function light_mode_match() {
+	if (light_mode_match_media != null && light_mode_match_media.matches){
+		return true;
+	} else {
+		return false;
+	}
 }

@@ -50,7 +50,7 @@ function load() {
 		let scheme = pref.scheme;
 		let force = pref.force;
 		if (scheme == undefined || force == undefined) {
-			if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+			if (light_mode_match != null && light_mode_match.matches) {
 				scheme = "light";
 			} else {
 				scheme = "dark";
@@ -69,10 +69,10 @@ function load() {
 			color_scheme_no_dark.checked = true;
 			color_scheme_system.checked = false;
 		} else if (scheme == "system") {
-			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-				switchBodyToDark();
-			} else {
+			if (light_mode_match()) {
 				switchBodyToLight();
+			} else {
+				switchBodyToDark();
 			}
 			color_scheme_no_light.checked = false;
 			color_scheme_no_dark.checked = false;
@@ -128,10 +128,10 @@ color_scheme_system.addEventListener("input", function (event) {
 	if (color_scheme_system.checked) {
 		browser.storage.local.set({ scheme: "system" });
 		browser.browserSettings.overrideContentColorScheme.set({ value: "system" }).then(() => {
-			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-				switchBodyToDark();
-			} else {
+			if (light_mode_match()) {
 				switchBodyToLight();
+			} else {
+				switchBodyToDark();
 			}
 		});
 		color_scheme_no_light.checked = false;
@@ -204,12 +204,25 @@ function switchBodyToDark() {
 	force_mode_caption.innerHTML = "Allow light tab bar";
 }
 
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
+const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
+
+if (light_mode_match_media != null) light_mode_match_media.onchange = (e) => {
 	if (color_scheme_system.checked) {
-		if (e.matches) {
-			switchBodyToDark();
-		} else {
+		if (light_mode_match()) {
 			switchBodyToLight();
+		} else {
+			switchBodyToDark();
 		}
 	}
-});
+};
+
+/**
+ * @returns true if in light mode, false if in dark mode or cannot detect
+ */
+function light_mode_match() {
+	if (light_mode_match_media != null && light_mode_match_media.matches){
+		return true;
+	} else {
+		return false;
+	}
+}

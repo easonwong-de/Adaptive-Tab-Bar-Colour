@@ -34,8 +34,8 @@ function findColor() {
 
 //Updates color when user makes action
 //hopefully clicking a color scheme changing button
-document.onclick = findColor;
 //experimental
+//document.onclick = findColor;
 //document.onwheel = findColor; 
 //document.onscroll = findColor;
 
