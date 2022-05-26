@@ -3,7 +3,7 @@ let settings = document.getElementById("settings");
 let color_scheme_no_dark = document.getElementById("color_scheme_no_dark");
 let color_scheme_no_light = document.getElementById("color_scheme_no_light");
 let color_scheme_system = document.getElementById("color_scheme_system");
-let force_mode = document.getElementById("force_mode");
+let allow_dark_light = document.getElementById("force_mode");
 let force_mode_caption = document.getElementById("force_mode_caption");
 let custom = document.getElementById("custom");
 let body = document.getElementsByTagName("body")[0];
@@ -13,27 +13,32 @@ let dark_color = document.getElementById("dark_color");
 let custom_reset = document.getElementById("custom_reset");
 let custom_popup = document.getElementById("custom_popup");
 
+//Settings cache
+var pref_scheme;
+var pref_force;
+var pref_custom;
+var pref_light_color;
+var pref_dark_color;
+
 /**
- * Updates the background color of the popup.
+ * Loads preferences into cache.
+ * 
+ * @param {*} pref 
  */
-function changeColor() {
-	browser.theme.getCurrent().then(theme => {
-		body.style.backgroundColor = theme['colors']['popup'];
-		body.style.color = theme['colors']['popup_text'];
-		if (theme['colors']['popup_text'] == "rgb(0, 0, 0)") {
-			body.classList.add("light");
-			body.classList.remove("dark");
-		} else {
-			body.classList.add("dark");
-			body.classList.remove("light");
-		}
-	});
+function loadPref(pref) {
+	pref_scheme = pref.scheme;
+	pref_force = pref.force;
+	pref_custom = pref.custom;
+	pref_light_color = pref.light_color;
+	pref_dark_color = pref.dark_color;
+}
+
+function verifyPref() {
+	return pref_scheme != null && pref_force != null && pref_custom != null && pref_light_color != null && pref_dark_color != null;
 }
 
 //if the popup is running this code
-if (custom == null) browser.theme.onUpdated.addListener(changeColor);
-
-//browser.storage.local.set({force: true}); //v1.3.1 temporary fix
+if (popupDetected()) browser.theme.onUpdated.addListener(autoPopupColor);
 
 settings.hidden = true;
 loading.hidden = false;
@@ -46,103 +51,75 @@ browser.storage.onChanged.addListener(load);
  * Loads settings to options or popup page
  */
 function load() {
-	browser.storage.local.get(function (pref) {
-		let scheme = pref.scheme;
-		let force = pref.force;
-		if (scheme == null || force == null) {
-			if (light_mode_match()) {
-				scheme = "light";
-			} else {
-				scheme = "dark";
+	browser.storage.local.get(loadPref).then(() => {
+		if (verifyPref()) {
+			allow_dark_light.checked = !pref_force;
+			if (pref_scheme == "dark") {
+				color_scheme_no_light.checked = true;
+				color_scheme_no_dark.checked = false;
+				color_scheme_system.checked = false;
+			} else if (pref_scheme == "light") {
+				color_scheme_no_light.checked = false;
+				color_scheme_no_dark.checked = true;
+				color_scheme_system.checked = false;
+			} else if (pref_scheme == "system") {
+				color_scheme_no_light.checked = false;
+				color_scheme_no_dark.checked = false;
+				color_scheme_system.checked = true;
 			}
-			force = false;
-		}
-		force_mode.checked = !force;
-		if (scheme == "dark") {
-			switchBodyToDark();
-			color_scheme_no_light.checked = true;
-			color_scheme_no_dark.checked = false;
-			color_scheme_system.checked = false;
-		} else if (scheme == "light") {
-			switchBodyToLight();
-			color_scheme_no_light.checked = false;
-			color_scheme_no_dark.checked = true;
-			color_scheme_system.checked = false;
-		} else if (scheme == "system") {
-			if (light_mode_match()) {
-				switchBodyToLight();
+			if (popupDetected) {
+				autoPopupColor();
 			} else {
-				switchBodyToDark();
+				autoOptionsColor();
+				custom.checked = pref_custom;
+				custom_options.hidden = !pref_custom;
+				light_color.value = pref_light_color;
+				dark_color.value = pref_dark_color;
 			}
-			color_scheme_no_light.checked = false;
-			color_scheme_no_dark.checked = false;
-			color_scheme_system.checked = true;
+			loading.hidden = true;
+			settings.hidden = false;
+			applySettings();
 		}
-		let pref_custom = pref.custom;
-		let pref_light_color = pref.light_color;
-		let pref_dark_color = pref.dark_color;
-		if (pref_custom == null || pref_light_color == null || pref_dark_color == null) {
-			pref_custom = false;
-			pref_light_color = "#FFFFFF";
-			pref_dark_color = "#1C1B22";
-		}
-		if (custom != null) { //not popup
-			custom.checked = pref_custom;
-			custom_options.hidden = !pref_custom;
-			light_color.value = pref_light_color;
-			dark_color.value = pref_dark_color;
-		} else {
-			changeColor();
-		}
-		loading.hidden = true;
-		settings.hidden = false;
-		applySettings();
 	});
 }
 
 color_scheme_no_light.addEventListener("input", function (event) {
 	if (color_scheme_no_light.checked) {
-		browser.storage.local.set({ scheme: "dark" });
-		browser.browserSettings.overrideContentColorScheme.set({ value: "dark" });
-		switchBodyToDark();
-		color_scheme_no_light.checked = true;
 		color_scheme_no_dark.checked = false;
 		color_scheme_system.checked = false;
-		applySettings();
+		changeColorScheme("dark");
 	}
 });
 
 color_scheme_no_dark.addEventListener("input", function (event) {
 	if (color_scheme_no_dark.checked) {
-		browser.storage.local.set({ scheme: "light" });
-		browser.browserSettings.overrideContentColorScheme.set({ value: "light" });
-		switchBodyToLight();
 		color_scheme_no_light.checked = false;
-		color_scheme_no_dark.checked = true;
 		color_scheme_system.checked = false;
-		applySettings();
+		changeColorScheme("light");
 	}
 });
 
 color_scheme_system.addEventListener("input", function (event) {
 	if (color_scheme_system.checked) {
-		browser.storage.local.set({ scheme: "system" });
-		browser.browserSettings.overrideContentColorScheme.set({ value: "system" }).then(() => {
-			if (light_mode_match()) {
-				switchBodyToLight();
-			} else {
-				switchBodyToDark();
-			}
-		});
 		color_scheme_no_light.checked = false;
 		color_scheme_no_dark.checked = false;
-		color_scheme_system.checked = true;
-		applySettings();
+		changeColorScheme("system");
 	}
 });
 
-force_mode.onclick = function () {
-	if (force_mode.checked) {
+/**
+ * @param {*} pending_scheme the name of the scheme to change to
+ */
+function changeColorScheme(pending_scheme) {
+	pref_scheme = pending_scheme;
+	browser.storage.local.set({ scheme: pending_scheme });
+	browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+	autoPageColor();
+	applySettings();
+}
+
+allow_dark_light.onclick = function () {
+	if (allow_dark_light.checked) {
 		browser.storage.local.set({ force: false });
 	} else {
 		browser.storage.local.set({ force: true });
@@ -161,68 +138,97 @@ if (custom != null) custom.onclick = function () {
 	applySettings();
 };
 
-if (custom != null) light_color.addEventListener("change", function (event) {
-	browser.storage.local.set({ light_color: light_color.value });
-	applySettings();
-});
-
-if (custom != null) dark_color.addEventListener("change", function (event) {
-	browser.storage.local.set({ dark_color: dark_color.value });
-	applySettings();
-});
-
-if (custom != null) custom_reset.onclick = function () {
-	browser.storage.local.set({
-		light_color: "#FFFFFF",
-		dark_color: "#1C1B22"
+if (popupDetected) {
+	custom_popup.onclick = () => {
+		browser.runtime.openOptionsPage();
+	};
+} else {
+	light_color.addEventListener("change", function (event) {
+		browser.storage.local.set({ light_color: light_color.value });
+		applySettings();
 	});
-	light_color.value = "#FFFFFF";
-	dark_color.value = "#1C1B22";
-	applySettings();
-};
-
-if (custom_popup != null) custom_popup.onclick = () => {
-	browser.runtime.openOptionsPage();
-};
+	dark_color.addEventListener("change", function (event) {
+		browser.storage.local.set({ dark_color: dark_color.value });
+		applySettings();
+	});
+	custom_reset.onclick = function () {
+		browser.storage.local.set({
+			light_color: "#FFFFFF",
+			dark_color: "#1C1B22"
+		});
+		light_color.value = "#FFFFFF";
+		dark_color.value = "#1C1B22";
+		applySettings();
+	};
+}
 
 /**
  * Triggers color update.
  */
 function applySettings() {
-	chrome.runtime.sendMessage("apply_settings");
+	browser.runtime.sendMessage("apply_settings");
 }
 
-function switchBodyToLight() {
-	body.classList.add("light");
-	body.classList.remove("dark");
-	force_mode_caption.innerHTML = "Allow dark tab bar";
+/**
+ * Updates color of options page or popup
+ */
+function autoPageColor() {
+	if (popupDetected) {
+		autoPopupColor();
+	} else {
+		autoOptionsColor();
+	}
 }
 
-function switchBodyToDark() {
-	body.classList.add("dark");
-	body.classList.remove("light");
-	force_mode_caption.innerHTML = "Allow light tab bar";
+/**
+ * Updates popup's color depends on tab bar color.
+ */
+function autoPopupColor() {
+	browser.theme.getCurrent().then(theme => {
+		body.style.backgroundColor = theme['colors']['popup'];
+		body.style.color = theme['colors']['popup_text'];
+		if (theme['colors']['popup_text'] == "rgb(0, 0, 0)") {
+			body.classList.add("light");
+			body.classList.remove("dark");
+			force_mode_caption.innerHTML = "Allow dark tab bar";
+		} else {
+			body.classList.add("dark");
+			body.classList.remove("light");
+			force_mode_caption.innerHTML = "Allow light tab bar";
+		}
+	});
+}
+
+/**
+ * Updates options page's color depends on color scheme.
+ */
+function autoOptionsColor() {
+	if (pref_scheme == "light" || (pref_scheme == "system" && lightModeDetected())) {
+		body.classList.add("light");
+		body.classList.remove("dark");
+		force_mode_caption.innerHTML = "Allow dark tab bar";
+	} else {
+		body.classList.add("dark");
+		body.classList.remove("light");
+		force_mode_caption.innerHTML = "Allow light tab bar";
+	}
+}
+
+/**
+ * @returns true if the script is run by the popup
+ */
+function popupDetected() {
+	return (document.getElementById("custom") == null) ? true : false;
 }
 
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
-
 if (light_mode_match_media != null) light_mode_match_media.onchange = () => {
-	if (color_scheme_system.checked) {
-		if (light_mode_match()) {
-			switchBodyToLight();
-		} else {
-			switchBodyToDark();
-		}
-	}
+	if (color_scheme_system.checked) autoOptionsColor();
 };
 
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
-function light_mode_match() {
-	if (light_mode_match_media != null && light_mode_match_media.matches){
-		return true;
-	} else {
-		return false;
-	}
+function lightModeDetected() {
+	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
 }

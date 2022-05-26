@@ -95,11 +95,46 @@ const reservedColor = {
 //Settings cache
 var default_light_color = "#FFFFFF";
 var default_dark_color = "#1C1B22";
-var scheme;
-var force = false;
+var pref_scheme;
+var pref_force;
 var pref_custom;
 var pref_light_color;
 var pref_dark_color;
+var pref_last_version;
+
+var current_scheme;
+
+/**
+ * Loads preferences into cache.
+ */
+function loadPref(pref) {
+  pref_scheme = pref.scheme;
+  pref_force = pref.force;
+  pref_custom = pref.custom;
+  pref_light_color = pref.light_color;
+  pref_dark_color = pref.dark_color;
+  pref_last_version = pref.last_version;
+  if (pref_custom) {
+    default_light_color = pref_light_color;
+    default_dark_color = pref_dark_color;
+  } else {
+    default_light_color = "#FFFFFF";
+    default_dark_color = "#1C1B22";
+  }
+  switch (pref_scheme) {
+    case "light":
+      current_scheme = "light";
+      break;
+    case "dark":
+      current_scheme = "dark";
+      break;
+    case "system":
+      current_scheme = lightModeDetected ? "light" : "dark";
+      break;
+    default:
+      break;
+  }
+}
 
 //Fired when the extension is first installed
 //when the extension is updated to a new version
@@ -111,98 +146,60 @@ browser.runtime.onInstalled.addListener(init);
  */
 function init() {
   //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
-  browser.storage.local.get(function (pref) {
-    scheme = pref.scheme;
-    force = pref.force;
-    pref_custom = pref.custom;
-    pref_light_color = pref.light_color;
-    pref_dark_color = pref.dark_color;
-    if (pref.last_version == null) { //updates from v1.3.1 to newer versions
-      browser.storage.local.set({ last_version: "v1.5.2", force: false });
+  browser.storage.local.get(loadPref).then(() => {
+    let pending_scheme = pref_scheme;
+    let pending_force = pref_force;
+    let pending_custom = pref_custom;
+    let pending_light_color = pref_light_color;
+    let pending_dark_color = pref_dark_color;
+    let pending_last_version = pref_last_version;
+    if (pref_last_version == null) { //updates from v1.3.1 to newer versions
+      pending_last_version = "v1.5.3";
+      pending_force = false;
     }
     if (pref_custom == null || pref_light_color == null || pref_dark_color == null) { //added from v1.3
-      browser.storage.local.set({
-        custom: false,
-        light_color: default_light_color,
-        dark_color: default_dark_color
-      });
+      pending_custom = false;
+      pending_light_color = default_light_color;
+      pending_dark_color = default_dark_color;
     }
-    if (scheme == null || force == null) { //first time install
-      if (light_mode_match()) { //Read present theme to select color scheme
-        scheme = "light";
-        browser.browserSettings.overrideContentColorScheme.set({ value: "light" });
-      } else {
-        scheme = "dark";
-        browser.browserSettings.overrideContentColorScheme.set({ value: "dark" });
-      }
-      browser.storage.local.set({ scheme: scheme, force: false }).then(browser.runtime.openOptionsPage);
+    if (pref_scheme == null || pref_force == null) { //first time install
+      pending_scheme = lightModeDetected ? "light" : "dark";
+      pending_force = false;
+      browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
     }
-    if (scheme == "system") { //added from v1.4
-      if (light_mode_match()) {
-        scheme = "light";
-      } else {
-        scheme = "dark";
-      }
-    }
+    browser.storage.local.set({
+      scheme: pending_scheme,
+      force: pending_force,
+      custom: pending_custom,
+      light_color: pending_light_color,
+      dark_color: pending_dark_color,
+      last_version: pending_last_version
+    }).then(browser.runtime.openOptionsPage);
     update();
   });
 }
-
-//Use port_ContentScript to speed things up
-browser.runtime.onConnect.addListener(function (port) {
-  port.onMessage.addListener(function (msg, sender, sendResponse) {
-    changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
-  });
-});
 
 browser.tabs.onUpdated.addListener(update); //When new tab is opened / reloaded
 browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 chrome.runtime.onMessage.addListener(update); //When preferences changed
-//window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", update_when_follow_system); //When color scheme changes
 
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
-
 if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
+function update_when_follow_system() {
+  if (pref_scheme == "system") update();
+}
 
 update();
-
-var follow_system = false; //v1.4.7 temporary fix
-function update_when_follow_system() {
-  if (follow_system) update();
-}
 
 /**
  * Updates pref cache and triggers color change in all windows.
  */
 function update() {
-  //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
   chrome.tabs.query({ active: true, status: "complete" }, function (tabs) {
-    browser.storage.local.get(function (pref) {
-      scheme = pref.scheme;
-      force = pref.force;
-      pref_custom = pref.custom;
-      pref_light_color = pref.light_color;
-      pref_dark_color = pref.dark_color;
-      browser.browserSettings.overrideContentColorScheme.set({ value: scheme });
-      if (scheme == "system") {
-        follow_system = true;
-        if (light_mode_match()) {
-          scheme = "light";
-        } else {
-          scheme = "dark";
-        }
-      } else {
-        follow_system = false;
-      }
-      if (pref_custom) {
-        default_light_color = pref_light_color;
-        default_dark_color = pref_dark_color;
-      } else {
-        default_light_color = "#FFFFFF";
-        default_dark_color = "#1C1B22";
-      }
+    browser.storage.local.get(loadPref).then(() => {
+      browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
       tabs.forEach(updateEachWindow);
     });
   });
@@ -217,23 +214,23 @@ function updateEachWindow(tab) {
   let url = tab.url;
   let windowId = tab.windowId;
   if (url.startsWith("file:")) {
-    if (scheme == "dark") {
+    if (current_scheme == "dark") {
       changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
-    } else if (scheme == "light") {
+    } else if (current_scheme == "light") {
       changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
     }
   } else if (url.startsWith("moz-extension:")) {
-    if (scheme == "dark") {
+    if (current_scheme == "dark") {
       changeFrameColorTo(windowId, "rgb(50, 50, 50)", true);
-    } else if (scheme == "light") {
+    } else if (current_scheme == "light") {
       changeFrameColorTo(windowId, "rgb(236, 236, 236)", false);
     }
   } else {
     let key = getSearchKey(url);
     let reversed_scheme = "light";
-    if (scheme == "light") reversed_scheme = "dark";
-    if (reservedColor[scheme][key] != null) { //For prefered scheme there's a reserved color
-      changeFrameColorTo(windowId, reservedColor[scheme][key], scheme == "dark");
+    if (current_scheme == "light") reversed_scheme = "dark";
+    if (reservedColor[current_scheme][key] != null) { //For prefered scheme there's a reserved color
+      changeFrameColorTo(windowId, reservedColor[current_scheme][key], current_scheme == "dark");
     } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
       changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
@@ -241,12 +238,18 @@ function updateEachWindow(tab) {
     } else {
       browser.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
         if (response == null) {
-          console.log("No connection to content script")
+          console.error("No connection to content script")
         }
       });
     }
   }
 }
+
+browser.runtime.onConnect.addListener(function (port) {
+  port.onMessage.addListener(function (msg, sender, sendResponse) {
+    changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
+  });
+});
 
 /**
  * Changes tab bar to the appointed color (with windowId).
@@ -266,12 +269,12 @@ function updateEachWindow(tab) {
  * @param {boolean} dark_mode Toggle dark mode
  */
 function changeFrameColorTo(windowId, color, dark_mode) {
-  if (dark_mode == null) dark_mode = scheme == "dark";
+  if (dark_mode == null) dark_mode = current_scheme == "dark";
   if (color == "" || color == null) { //gonna reset
     if (dark_mode) {
       adaptive_themes['dark']['colors']['frame'] = default_dark_color;
       adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = dimColor(default_dark_color, 0.05);
       adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(default_dark_color, 0.05);
       adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(default_dark_color, 0.05);
       adaptive_themes['dark']['colors']['ntp_background'] = default_dark_color;
@@ -279,18 +282,18 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     } else {
       adaptive_themes['light']['colors']['frame'] = default_light_color;
       adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
-      adaptive_themes['light']['colors']['popup'] = default_light_color;
+      adaptive_themes['light']['colors']['popup'] = dimColor(default_light_color, -0.05);
       adaptive_themes['light']['colors']['toolbar_field'] = dimColor(default_light_color, -0.05);
       adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(default_light_color, -0.05);
       adaptive_themes['light']['colors']['ntp_background'] = default_light_color;
       applyTheme(windowId, adaptive_themes['light']);
     }
-  } else if (!force || (force && scheme == "dark" && dark_mode) || (force && scheme == "light" && !dark_mode)) { //normal coloring
+  } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //normal coloring
     if (dark_mode) {
       if (color == "DEFAULT") color = default_dark_color;
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
-      adaptive_themes['dark']['colors']['popup'] = color;
+      adaptive_themes['dark']['colors']['popup'] = dimColor(color, 0.05);
       adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(color, 0.05);
       adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(color, 0.05);
       applyTheme(windowId, adaptive_themes['dark']);
@@ -298,23 +301,23 @@ function changeFrameColorTo(windowId, color, dark_mode) {
       if (color == "DEFAULT") color = default_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
-      adaptive_themes['light']['colors']['popup'] = color;
+      adaptive_themes['light']['colors']['popup'] = dimColor(color, -0.05);
       adaptive_themes['light']['colors']['toolbar_field'] = dimColor(color, -0.05);
       adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(color, -0.05);
       applyTheme(windowId, adaptive_themes['light']);
     }
-  } else if (force) { //force coloring
-    if (scheme == "dark") {
+  } else if (pref_force) { //force coloring
+    if (current_scheme == "dark") {
       adaptive_themes['dark']['colors']['frame'] = default_dark_color;
       adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = default_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = dimColor(default_dark_color, 0.05);
       adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(default_dark_color, 0.05);
       adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(default_dark_color, 0.05);
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
       adaptive_themes['light']['colors']['frame'] = default_light_color;
       adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
-      adaptive_themes['light']['colors']['popup'] = default_light_color;
+      adaptive_themes['light']['colors']['popup'] = dimColor(default_light_color, -0.05);
       adaptive_themes['light']['colors']['toolbar_field'] = dimColor(default_light_color, -0.05);
       adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(default_light_color, -0.05);
       applyTheme(windowId, adaptive_themes['light']);
@@ -459,21 +462,21 @@ function hexToRgba(hex) {
  * @param {string} rgbaString color in rgba/rgb
  * @returns color in object
  */
- function rgbaToRgba(rgbaString) {
-	var result = rgbaString.match(/[.?\d]+/g).map(Number);
-	if (result.length == 3) result[3] = 1;
-	return result ? {
-		r: result[0],
-		g: result[1],
-		b: result[2],
-		a: result[3]
-	} : null;
+function rgbaToRgba(rgbaString) {
+  var result = rgbaString.match(/[.?\d]+/g).map(Number);
+  if (result.length == 3) result[3] = 1;
+  return result ? {
+    r: result[0],
+    g: result[1],
+    b: result[2],
+    a: result[3]
+  } : null;
 }
 
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
-function light_mode_match() {
+function lightModeDetected() {
   if (light_mode_match_media != null && light_mode_match_media.matches) {
     return true;
   } else {
