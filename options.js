@@ -67,7 +67,7 @@ function load() {
 				color_scheme_no_dark.checked = false;
 				color_scheme_system.checked = true;
 			}
-			if (popupDetected) {
+			if (popupDetected()) {
 				autoPopupColor();
 			} else {
 				autoOptionsColor();
@@ -138,7 +138,7 @@ if (custom != null) custom.onclick = () => {
 	applySettings();
 };
 
-if (popupDetected) {
+if (popupDetected()) {
 	custom_popup.onclick = () => {
 		browser.runtime.openOptionsPage();
 	};
@@ -173,7 +173,7 @@ function applySettings() {
  * Updates color of options page or popup
  */
 function autoPageColor() {
-	if (popupDetected) {
+	if (popupDetected()) {
 		autoPopupColor();
 	} else {
 		autoOptionsColor();

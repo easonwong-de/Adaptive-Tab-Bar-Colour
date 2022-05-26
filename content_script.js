@@ -44,7 +44,7 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 
 //Remind background.js of the color
 browser.runtime.onMessage.addListener(
-	function (request, sender, sendResponse) {
+	(request, sender, sendResponse) => {
 		if (request.message == "remind_me") {
 			findColor();
 			sendResponse({});
@@ -144,11 +144,7 @@ function getColorFrom(element) {
  * @returns Color in object
  */
 function anyToRgba(color) {
-	if (color.startsWith("#")) {
-		return hexToRgba(color);
-	} else {
-		return rgbaToRgba(color);
-	}
+	return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
 }
 
 /**
@@ -161,9 +157,7 @@ function anyToRgba(color) {
 function hexToRgba(hex) {
 	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
 	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-	hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-		return r + r + g + g + b + b;
-	});
+	hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	return result ? {
 		r: parseInt(result[1], 16),
