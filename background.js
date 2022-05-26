@@ -145,8 +145,8 @@ browser.runtime.onInstalled.addListener(init);
  * Initializes the settings, then opens options page.
  */
 function init() {
-  //browser.storage.local.set({force: true}); //v1.3.1 temporary fix
-  browser.storage.local.get(loadPref).then(() => {
+  browser.storage.local.get(pref => {
+    loadPref(pref);
     let pending_scheme = pref_scheme;
     let pending_force = pref_force;
     let pending_custom = pref_custom;
@@ -174,7 +174,8 @@ function init() {
       light_color: pending_light_color,
       dark_color: pending_dark_color,
       last_version: pending_last_version
-    }).then(browser.runtime.openOptionsPage);
+    });
+    browser.runtime.openOptionsPage();
     update();
   });
 }
@@ -183,7 +184,7 @@ browser.tabs.onUpdated.addListener(update); //When new tab is opened / reloaded
 browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
-chrome.runtime.onMessage.addListener(update); //When preferences changed
+browser.runtime.onMessage.addListener(update); //When preferences changed
 
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
 if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
@@ -197,12 +198,13 @@ update();
  * Updates pref cache and triggers color change in all windows.
  */
 function update() {
-  chrome.tabs.query({ active: true, status: "complete" }, function (tabs) {
-    browser.storage.local.get(loadPref).then(() => {
-      browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
-      tabs.forEach(updateEachWindow);
+  chrome.tabs.query({ active: true, status: "complete" }, tabs => {
+      browser.storage.local.get(pref => {
+        loadPref(pref);
+        browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
+        tabs.forEach(updateEachWindow);
+      });
     });
-  });
 }
 
 /**

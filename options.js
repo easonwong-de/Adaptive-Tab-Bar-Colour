@@ -37,8 +37,7 @@ function verifyPref() {
 	return pref_scheme != null && pref_force != null && pref_custom != null && pref_light_color != null && pref_dark_color != null;
 }
 
-//if the popup is running this code
-if (popupDetected()) browser.theme.onUpdated.addListener(autoPopupColor);
+browser.theme.onUpdated.addListener(autoPageColor);
 
 settings.hidden = true;
 loading.hidden = false;
@@ -51,7 +50,8 @@ browser.storage.onChanged.addListener(load);
  * Loads settings to options or popup page
  */
 function load() {
-	browser.storage.local.get(loadPref).then(() => {
+	browser.storage.local.get(pref => {
+		loadPref(pref);
 		if (verifyPref()) {
 			allow_dark_light.checked = !pref_force;
 			if (pref_scheme == "dark") {
@@ -83,7 +83,7 @@ function load() {
 	});
 }
 
-color_scheme_no_light.addEventListener("input", function (event) {
+color_scheme_no_light.addEventListener("input", () => {
 	if (color_scheme_no_light.checked) {
 		color_scheme_no_dark.checked = false;
 		color_scheme_system.checked = false;
@@ -91,7 +91,7 @@ color_scheme_no_light.addEventListener("input", function (event) {
 	}
 });
 
-color_scheme_no_dark.addEventListener("input", function (event) {
+color_scheme_no_dark.addEventListener("input", () => {
 	if (color_scheme_no_dark.checked) {
 		color_scheme_no_light.checked = false;
 		color_scheme_system.checked = false;
@@ -99,7 +99,7 @@ color_scheme_no_dark.addEventListener("input", function (event) {
 	}
 });
 
-color_scheme_system.addEventListener("input", function (event) {
+color_scheme_system.addEventListener("input", () => {
 	if (color_scheme_system.checked) {
 		color_scheme_no_light.checked = false;
 		color_scheme_no_dark.checked = false;
@@ -118,7 +118,7 @@ function changeColorScheme(pending_scheme) {
 	applySettings();
 }
 
-allow_dark_light.onclick = function () {
+allow_dark_light.onclick = () => {
 	if (allow_dark_light.checked) {
 		browser.storage.local.set({ force: false });
 	} else {
@@ -127,7 +127,7 @@ allow_dark_light.onclick = function () {
 	applySettings();
 };
 
-if (custom != null) custom.onclick = function () {
+if (custom != null) custom.onclick = () => {
 	if (custom.checked) {
 		browser.storage.local.set({ custom: true });
 		custom_options.hidden = false;
@@ -143,15 +143,15 @@ if (popupDetected) {
 		browser.runtime.openOptionsPage();
 	};
 } else {
-	light_color.addEventListener("change", function (event) {
+	light_color.addEventListener("change", () => {
 		browser.storage.local.set({ light_color: light_color.value });
 		applySettings();
 	});
-	dark_color.addEventListener("change", function (event) {
+	dark_color.addEventListener("change", () => {
 		browser.storage.local.set({ dark_color: dark_color.value });
 		applySettings();
 	});
-	custom_reset.onclick = function () {
+	custom_reset.onclick = () => {
 		browser.storage.local.set({
 			light_color: "#FFFFFF",
 			dark_color: "#1C1B22"
