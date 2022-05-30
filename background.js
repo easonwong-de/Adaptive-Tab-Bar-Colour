@@ -152,7 +152,7 @@ function init() {
     let pending_custom = pref_custom;
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
-    let pending_last_version = "v1.5.3";
+    let pending_last_version = "v1.5.4";
     if (pref_last_version == null) { //updates from v1.3.1 to newer versions
       pending_force = false;
     }
@@ -198,12 +198,12 @@ update();
  */
 function update() {
   chrome.tabs.query({ active: true, status: "complete" }, tabs => {
-      browser.storage.local.get(pref => {
-        loadPref(pref);
-        browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
-        tabs.forEach(updateEachWindow);
-      });
+    browser.storage.local.get(pref => {
+      loadPref(pref);
+      browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
+      tabs.forEach(updateEachWindow);
     });
+  });
 }
 
 /**
@@ -239,15 +239,15 @@ function updateEachWindow(tab) {
     } else {
       browser.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
         if (response == null) {
-          console.error("No connection to content script")
+          console.error("No connection to content script");
         }
       });
     }
   }
 }
 
-browser.runtime.onConnect.addListener(function (port) {
-  port.onMessage.addListener(function (msg, sender, sendResponse) {
+browser.runtime.onConnect.addListener(port => {
+  port.onMessage.addListener((msg, sender, sendResponse) => {
     changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
   });
 });
@@ -427,8 +427,8 @@ function rgbObjBrightness(rgb) {
  * @param {string} color Color in string
  * @returns Color in object
  */
- function anyToRgba(color) {
-	return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
+function anyToRgba(color) {
+  return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
 }
 
 /**
@@ -438,17 +438,17 @@ function rgbObjBrightness(rgb) {
  * @param {string} hex color in hex
  * @returns color in object
  */
- function hexToRgba(hex) {
-	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-	hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	return result ? {
-		r: parseInt(result[1], 16),
-		g: parseInt(result[2], 16),
-		b: parseInt(result[3], 16),
-		a: 1
-	} : null;
+function hexToRgba(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16),
+    a: 1
+  } : null;
 }
 
 /**
@@ -471,6 +471,6 @@ function rgbaToRgba(rgbaString) {
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
- function lightModeDetected() {
-	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+function lightModeDetected() {
+  return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
 }
