@@ -60,6 +60,27 @@ function dimColor(color, dim) {
 }
 
 /**
+* Add up colors
+* 
+* @param {object} top Color on top
+* @param {object} bottom Color underneath
+* @returns Result of the addition in object
+*/
+function overlayColor(top, bottom) {
+    let a = (1 - top.a) * bottom.a + top.a;
+    if (a == 0) {
+        return { r: 0, g: 0, b: 0, a: 0 };
+    } else {
+        return {
+            r: ((1 - top.a) * bottom.a * bottom.r + top.a * top.r) / a,
+            g: ((1 - top.a) * bottom.a * bottom.g + top.a * top.g) / a,
+            b: ((1 - top.a) * bottom.a * bottom.b + top.a * top.b) / a,
+            a: a
+        }
+    }
+}
+
+/**
  * Gets brightness value from rgb object.
  * 
  * @param {object} rgb color in object
@@ -112,27 +133,6 @@ function rgbaToRgba(rgbaString) {
         b: result[2],
         a: result[3]
     } : null;
-}
-
-/**
-* Add up colors
-* 
-* @param {object} top Color on top
-* @param {object} bottom Color underneath
-* @returns Result of the addition in object
-*/
-function overlayColor(top, bottom) {
-    let a = (1 - top.a) * bottom.a + top.a;
-    if (a == 0) {
-        return { r: 0, g: 0, b: 0, a: 0 };
-    } else {
-        return {
-            r: ((1 - top.a) * bottom.a * bottom.r + top.a * top.r) / a,
-            g: ((1 - top.a) * bottom.a * bottom.g + top.a * top.g) / a,
-            b: ((1 - top.a) * bottom.a * bottom.b + top.a * top.b) / a,
-            a: a
-        }
-    }
 }
 
 /**
