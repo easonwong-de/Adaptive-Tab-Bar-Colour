@@ -83,11 +83,11 @@ function overlayColor(top, bottom) {
 /**
  * Gets brightness value from rgb object.
  * 
- * @param {object} rgb color in object
+ * @param {object} color color in object
  * @returns brightness of the color
  */
-function rgbObjBrightness(rgb) {
-    return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+function rgbObjBrightness(color) {
+    return 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
 }
 
 /**

@@ -68,7 +68,7 @@ var adaptive_themes = {
 //url listed only in "light"/"dark" => only in light/dark mode
 //url listed in both => choose color scheme as needed
 //url listed as "DEFAULT" => use default_light/dark_color
-const reservedColor = {
+const reservedColor_bg = {
   "light": {
     "about:checkerboard": "DEFAULT",
     "about:debugging#": "rgb(249, 249, 250)",
@@ -189,6 +189,13 @@ browser.runtime.onMessage.addListener(update); //When preferences changed
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
 if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
 
+/**
+ * @returns true if in light mode, false if in dark mode or cannot detect
+ */
+function lightModeDetected() {
+  return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+}
+
 function update_when_follow_system() {
   if (pref_scheme == "system") update();
 }
@@ -232,14 +239,14 @@ function updateEachWindow(tab) {
     let key = getSearchKey(url);
     let reversed_scheme = "light";
     if (current_scheme == "light") reversed_scheme = "dark";
-    if (reservedColor[current_scheme][key] != null) { //For prefered scheme there's a reserved color
-      changeFrameColorTo(windowId, reservedColor[current_scheme][key], current_scheme == "dark");
-    } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
-      changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
+    if (reservedColor_bg[current_scheme][key] != null) { //For prefered scheme there's a reserved color
+      changeFrameColorTo(windowId, reservedColor_bg[current_scheme][key], current_scheme == "dark");
+    } else if (reservedColor_bg[reversed_scheme][key] != null) { //Site has reserved color in the other mode
+      changeFrameColorTo(windowId, reservedColor_bg[reversed_scheme][key], reversed_scheme == "dark");
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
       changeFrameColorTo(windowId, "", null);
     } else {
-      browser.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
+      browser.tabs.sendMessage(tab.id, { message: "remind_me" }, response => {
         if (response == null) {
           console.error("No connection to content script");
         }
@@ -272,6 +279,7 @@ browser.runtime.onConnect.addListener(port => {
  * @param {boolean} dark_mode Toggle dark mode
  */
 function changeFrameColorTo(windowId, color, dark_mode) {
+  console("change color");
   if (dark_mode == null) dark_mode = current_scheme == "dark";
   if (color == "" || color == null) { //gonna reset
     if (dark_mode) {
@@ -352,11 +360,4 @@ function getSearchKey(url) {
     key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
   }
   return key;
-}
-
-/**
- * @returns true if in light mode, false if in dark mode or cannot detect
- */
-function lightModeDetected() {
-  return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
 }
