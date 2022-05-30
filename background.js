@@ -185,8 +185,10 @@ browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 browser.runtime.onMessage.addListener(update); //When preferences changed
 
+//When system color scheme is changed
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
 if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
+
 function update_when_follow_system() {
   if (pref_scheme == "system") update();
 }
@@ -248,7 +250,7 @@ function updateEachWindow(tab) {
 
 browser.runtime.onConnect.addListener(port => {
   port.onMessage.addListener((msg, sender, sendResponse) => {
-    changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
+    changeFrameColorTo(sender.sender.tab.windowId, msg.color, isDarkMode(msg.color));
   });
 });
 
@@ -350,122 +352,6 @@ function getSearchKey(url) {
     key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
   }
   return key;
-}
-
-/** 
- * Returns if dark mode should be used considering the color.
- * 
- * @param {string} color The color to check (hex or rgb)
- * @returns {boolean} "true" => dark mode; "false" => light mode
-*/
-function darkMode(color) {
-  if (color == "" || color == null) {
-    return null;
-  } else {
-    if (tooBright(color)) {
-      return false;
-    } else if (tooDark(color)) {
-      return true;
-    } else {
-      return null;
-    }
-  }
-}
-
-/**
- * Returns if a color is too bright.
- * 
- * @param {string} color The color to check (hex or rgb)
- * @returns {boolean} true if the color is bright
- */
-function tooBright(color) {
-  return rgbObjBrightness(anyToRgba(color)) > 155;
-}
-
-/**
- * Returns if a color is too dark.
- * 
- * @param {string} color The color to check (hex or rgb)
- * @returns {boolean} true if the color is dark
- */
-function tooDark(color) {
-  return rgbObjBrightness(anyToRgba(color)) < 100;
-}
-
-/**
- * Dims or lightens color.
- * 
- * @param {string} color Color to process
- * @param {number} dim between -1.0 (dim) to 1.0 (light)
- * @returns Dimmed or lightened color
- */
-function dimColor(color, dim) {
-  let color_obj = anyToRgba(color);
-  if (dim >= 0) {
-    color_obj.r = color_obj.r + dim * (255 - color_obj.r);
-    color_obj.g = color_obj.g + dim * (255 - color_obj.g);
-    color_obj.b = color_obj.b + dim * (255 - color_obj.b);
-  } else {
-    color_obj.r = (dim + 1) * color_obj.r;
-    color_obj.g = (dim + 1) * color_obj.g;
-    color_obj.b = (dim + 1) * color_obj.b;
-  }
-  return "rgb(" + color_obj.r + ", " + color_obj.g + ", " + color_obj.b + ")";
-}
-
-/**
- * Gets brightness value from rgb object.
- * 
- * @param {object} rgb color in object
- * @returns brightness of the color
- */
-function rgbObjBrightness(rgb) {
-  return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
-}
-
-/**
- * @param {string} color Color in string
- * @returns Color in object
- */
-function anyToRgba(color) {
-  return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
-}
-
-/**
- * Converts hex color (String) to rgb (Object).
- * @author TimDown stackoverflow.com
- * 
- * @param {string} hex color in hex
- * @returns color in object
- */
-function hexToRgba(hex) {
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
-    a: 1
-  } : null;
-}
-
-/**
- * Converts rgba/rgb (String) to rgba (Object).
- * 
- * @param {string} rgbaString color in rgba/rgb
- * @returns color in object
- */
-function rgbaToRgba(rgbaString) {
-  var result = rgbaString.match(/[.?\d]+/g).map(Number);
-  if (result.length == 3) result[3] = 1;
-  return result ? {
-    r: result[0],
-    g: result[1],
-    b: result[2],
-    a: result[3]
-  } : null;
 }
 
 /**
