@@ -87,11 +87,7 @@ function findColorReserved() {
  * Sets response_color.
  */
 function findColorUnreserved() {
-	if (getThemeColor() == null) {
-		response_color = getComputedColor();
-	} else {
-		response_color = getThemeColor();
-	}
+	response_color = getThemeColor() ? getThemeColor() : getComputedColor();
 }
 
 /** 
