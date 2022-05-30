@@ -151,8 +151,8 @@ function anyToRgba(color) {
  * Converts hex color (String) to rgb (Object).
  * @author TimDown stackoverflow.com
  * 
- * @param {string} hex color in hex
- * @returns color in object
+ * @param {string} hex Color in hex
+ * @returns Color in object
  */
 function hexToRgba(hex) {
 	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")

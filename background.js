@@ -424,8 +424,8 @@ function dimColor(color, dim) {
 /**
  * Gets brightness value from rgb object.
  * 
- * @param {object} rgb color in object
- * @returns brightness of the color
+ * @param {object} rgb Color in object
+ * @returns Brightness of the color
  */
 function rgbObjBrightness(rgb) {
   return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
@@ -443,8 +443,8 @@ function rgbObjBrightness(rgb) {
  * Converts hex color (String) to rgb (Object).
  * @author TimDown stackoverflow.com
  * 
- * @param {string} hex color in hex
- * @returns color in object
+ * @param {string} hex Color in hex
+ * @returns Color in object
  */
  function hexToRgba(hex) {
 	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -462,8 +462,8 @@ function rgbObjBrightness(rgb) {
 /**
  * Converts rgba/rgb (String) to rgba (Object).
  * 
- * @param {string} rgbaString color in rgba/rgb
- * @returns color in object
+ * @param {string} rgbaString Color in rgba/rgb
+ * @returns Color in object
  */
 function rgbaToRgba(rgbaString) {
   var result = rgbaString.match(/[.?\d]+/g).map(Number);
