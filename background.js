@@ -39,7 +39,7 @@ var adaptive_themes = {
       ntp_background: "rgb(28, 27, 34)",
       toolbar_field: "rgb(39, 38, 45)",
       toolbar_field_focus: "rgb(39, 38, 45)",
-      ////Texts and icons
+      //Texts and icons
       toolbar_text: "rgb(255, 255, 255)",
       toolbar_field_text: "rgb(255, 255, 255)",
       popup_text: "rgb(225, 225, 225)",
