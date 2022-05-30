@@ -18,7 +18,7 @@ const reservedColor = {
 	"developer.mozilla.org": "IGNORE_THEME"
 };
 
-var Port;
+var port;
 
 findColor();
 
@@ -26,9 +26,9 @@ findColor();
  * Finds color and send to background.
  */
 function findColor() {
-	Port = browser.runtime.connect();
+	port = browser.runtime.connect();
 	if (!findColorReserved()) findColorUnreserved();
-	if (!document.hidden) Port.postMessage({ color: response_color });
+	if (!document.hidden) port.postMessage({ color: response_color });
 }
 
 //Updates color when user makes action

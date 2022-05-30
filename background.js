@@ -187,6 +187,14 @@ browser.runtime.onMessage.addListener(update); //When preferences changed
 
 const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
 if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
+
+/**
+ * @returns true if in light mode, false if in dark mode or cannot detect
+ */
+ function lightModeDetected() {
+	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+}
+
 function update_when_follow_system() {
   if (pref_scheme == "system") update();
 }
@@ -237,19 +245,19 @@ function updateEachWindow(tab) {
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
       changeFrameColorTo(windowId, "", null);
     } else {
-      browser.tabs.sendMessage(tab.id, { message: "remind_me" }, function (response) {
-        if (response == null) {
-          console.error("No connection to content script")
-        }
-      });
+      browser.tabs.sendMessage(tab.id, { message: "remind_me" }, response => {
+          if (response == null) {
+            console.error("No connection to content script");
+          }
+        });
     }
   }
 }
 
 browser.runtime.onConnect.addListener(function (port) {
-  port.onMessage.addListener(function (msg, sender, sendResponse) {
-    changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
-  });
+  port.onMessage.addListener((msg, sender, sendResponse) => {
+      changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
+    });
 });
 
 /**
@@ -466,11 +474,4 @@ function rgbaToRgba(rgbaString) {
     b: result[2],
     a: result[3]
   } : null;
-}
-
-/**
- * @returns true if in light mode, false if in dark mode or cannot detect
- */
- function lightModeDetected() {
-	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
 }
