@@ -117,19 +117,24 @@ color_scheme_system.addEventListener("input", () => {
 function changeColorScheme(pending_scheme) {
 	pref_scheme = pending_scheme;
 	browser.storage.local.set({ scheme: pending_scheme });
-	browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+	if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
 	autoPageColor();
 	applySettings();
 }
 
-allow_dark_light.onclick = () => {
-	if (allow_dark_light.checked) {
-		browser.storage.local.set({ force: false });
-	} else {
-		browser.storage.local.set({ force: true });
-	}
-	applySettings();
-};
+if (!firefoxAboveV95()) {
+	allow_dark_light.checked = false;
+	allow_dark_light.disabled = true;
+} else {
+	allow_dark_light.onclick = () => {
+		if (allow_dark_light.checked) {
+			browser.storage.local.set({ force: false });
+		} else {
+			browser.storage.local.set({ force: true });
+		}
+		applySettings();
+	};
+}
 
 dynamic.onclick = () => {
 	if (dynamic.checked) {
@@ -203,13 +208,16 @@ function autoPopupColor() {
 		if (theme['colors']['popup_text'] == "rgb(0, 0, 0)") {
 			body.classList.add("light");
 			body.classList.remove("dark");
-			force_mode_caption.innerHTML = "Allow dark tab bar";
 		} else {
 			body.classList.add("dark");
 			body.classList.remove("light");
-			force_mode_caption.innerHTML = "Allow light tab bar";
 		}
 	});
+	if (pref_scheme == "light" || (pref_scheme == "system" && lightModeDetected())) {
+		force_mode_caption.innerHTML = "Allow dark tab bar";
+	} else {
+		force_mode_caption.innerHTML = "Allow light tab bar";
+	}
 }
 
 /**
@@ -244,4 +252,18 @@ if (light_mode_match_media != null) light_mode_match_media.onchange = () => {
  */
 function lightModeDetected() {
 	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+}
+
+/**
+ * @returns true if Firefox 95.0 or later.
+ */
+function firefoxAboveV95() {
+	let str = navigator.userAgent;
+	let ind = str.lastIndexOf("Firefox");
+	if (ind != -1) {
+		str = str.substring(ind + 8);
+		return Number(str) >= 95;
+	} else {
+		return true; //default answer
+	}
 }

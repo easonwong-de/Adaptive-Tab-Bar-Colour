@@ -118,7 +118,7 @@ function getComputedColor() {
 	let color = anyToRgba("rgba(0, 0, 0, 0)");
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
-		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 5)
+		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 50)
 			color = overlayColor(color, anyToRgba(getColorFrom(element)));
 	}
 	if (color.a != 1) {

@@ -174,7 +174,10 @@ function init() {
     if (pref_scheme == null || pref_force == null) {
       pending_scheme = lightModeDetected() ? "light" : "dark";
       pending_force = false;
-      browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+      if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+    }
+    if (!firefoxAboveV95()) {
+      pending_force = true;
     }
     browser.storage.local.set({
       scheme: pending_scheme,
@@ -219,7 +222,7 @@ function update() {
   chrome.tabs.query({ active: true, status: "complete" }, tabs => {
     browser.storage.local.get(pref => {
       loadPref(pref);
-      browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
+      if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
       tabs.forEach(updateEachWindow);
     });
   });
@@ -483,4 +486,18 @@ function rgbaToRgba(rgbaString) {
     b: result[2],
     a: result[3]
   } : null;
+}
+
+/**
+ * @returns true if Firefox 95.0 or later.
+ */
+function firefoxAboveV95() {
+  let str = navigator.userAgent;
+  let ind = str.lastIndexOf("Firefox");
+  if (ind != -1) {
+    str = str.substring(ind + 8);
+    return Number(str) >= 95;
+  } else {
+    return true; //default answer
+  }
 }
