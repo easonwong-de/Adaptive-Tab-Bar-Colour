@@ -97,6 +97,7 @@ var default_light_color = "#FFFFFF";
 var default_dark_color = "#1C1B22";
 var pref_scheme;
 var pref_force;
+var pref_dynamic;
 var pref_custom;
 var pref_light_color;
 var pref_dark_color;
@@ -110,6 +111,7 @@ var current_scheme;
 function loadPref(pref) {
   pref_scheme = pref.scheme;
   pref_force = pref.force;
+  pref_dynamic = pref.dynamic;
   pref_custom = pref.custom;
   pref_light_color = pref.light_color;
   pref_dark_color = pref.dark_color;
@@ -149,19 +151,27 @@ function init() {
     loadPref(pref);
     let pending_scheme = pref_scheme;
     let pending_force = pref_force;
+    let pending_dynamic = pref.dynamic;
     let pending_custom = pref_custom;
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
-    let pending_last_version = "v1.5.4";
-    if (pref_last_version == null) { //updates from v1.3.1 to newer versions
+    let pending_last_version = [1, 5, 4];
+    //updates from v1.3.1 or earlier
+    if (pref_last_version == null) {
       pending_force = false;
     }
-    if (pref_custom == null || pref_light_color == null || pref_dark_color == null) { //added from v1.3
+    //updates from v1.5.3 or earlier
+    if (pref_dynamic == null) {
+      pending_dynamic = false;
+    }
+    //updates from v1.3 or earlier
+    if (pref_custom == null || pref_light_color == null || pref_dark_color == null) {
       pending_custom = false;
       pending_light_color = default_light_color;
       pending_dark_color = default_dark_color;
     }
-    if (pref_scheme == null || pref_force == null) { //first time install
+    //first time install
+    if (pref_scheme == null || pref_force == null) {
       pending_scheme = lightModeDetected() ? "light" : "dark";
       pending_force = false;
       browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
@@ -169,6 +179,7 @@ function init() {
     browser.storage.local.set({
       scheme: pending_scheme,
       force: pending_force,
+      dynamic: pending_dynamic,
       custom: pending_custom,
       light_color: pending_light_color,
       dark_color: pending_dark_color,
@@ -191,8 +202,8 @@ if (light_mode_match_media != null) light_mode_match_media.onchange = update_whe
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
- function lightModeDetected() {
-	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+function lightModeDetected() {
+  return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
 }
 
 function update_when_follow_system() {
@@ -206,12 +217,12 @@ update();
  */
 function update() {
   chrome.tabs.query({ active: true, status: "complete" }, tabs => {
-      browser.storage.local.get(pref => {
-        loadPref(pref);
-        browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
-        tabs.forEach(updateEachWindow);
-      });
+    browser.storage.local.get(pref => {
+      loadPref(pref);
+      browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
+      tabs.forEach(updateEachWindow);
     });
+  });
 }
 
 /**
@@ -245,20 +256,18 @@ function updateEachWindow(tab) {
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
       changeFrameColorTo(windowId, "", null);
     } else {
-      browser.tabs.sendMessage(tab.id, { message: "COLOR_REQUEST" }, response => {
-          if (response == null) {
-            console.error("No connection to content script.");
-          }
-        });
+      browser.tabs.sendMessage(tab.id, { reason: "COLOR_REQUEST", dynamic: pref_dynamic }, response => {
+        if (response == null) console.error("No connection to content script.");
+      });
     }
   }
 }
 
 browser.runtime.onConnect.addListener(port => {
-    port.onMessage.addListener((msg, sender, sendResponse) => {
-      changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
-    });
+  port.onMessage.addListener((msg, sender, sendResponse) => {
+    changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
   });
+});
 
 /**
  * Changes tab bar to the appointed color (with windowId).
@@ -435,8 +444,8 @@ function rgbObjBrightness(rgb) {
  * @param {string} color Color in string
  * @returns Color in object
  */
- function anyToRgba(color) {
-	return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
+function anyToRgba(color) {
+  return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
 }
 
 /**
@@ -446,17 +455,17 @@ function rgbObjBrightness(rgb) {
  * @param {string} hex Color in hex
  * @returns Color in object
  */
- function hexToRgba(hex) {
-	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-	hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	return result ? {
-		r: parseInt(result[1], 16),
-		g: parseInt(result[2], 16),
-		b: parseInt(result[3], 16),
-		a: 1
-	} : null;
+function hexToRgba(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16),
+    a: 1
+  } : null;
 }
 
 /**

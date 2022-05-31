@@ -8,7 +8,7 @@ reserved color is a color => it is the theme color
 reserved color is a IGNORE => use calculated color as theme color
 reserved color is a tag name => theme color is stored under that tag
 reserved color is a class name => theme color is stored under that class */
-const reservedColor = {
+const reservedColor_cs = {
 	"open.spotify.com": "rgb(0, 0, 0)",
 	"mail.google.com": "CLASS: wl",
 	"github.com": "IGNORE_THEME",
@@ -35,13 +35,6 @@ function sendColor() {
 	}
 }
 
-//experimental
-//Updates color when user makes action
-//hopefully clicking a color scheme changing button
-//document.onclick = findColor;
-//document.onwheel = findColor;
-//document.onscroll = findColor;
-
 //Updates color when Dark Reader changes mode
 var ondarkreader = new MutationObserver(findColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
@@ -49,9 +42,16 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 //Fired by update() from background.js
 browser.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
-		if (request.message == "COLOR_REQUEST") {
-			sendColor();
-			sendResponse("Color sended.");
+		sendColor();
+		sendResponse("Color sended.");
+		if (request.dynamic) {
+			document.onclick = findColor;
+			document.onwheel = findColor;
+			document.onscroll = findColor;
+		} else {
+			document.onclick = null;
+			document.onwheel = null;
+			document.onscroll = null;
 		}
 	}
 );
@@ -63,22 +63,23 @@ browser.runtime.onMessage.addListener(
  */
 function findColorReserved() {
 	let host = document.location.host; // e.g. "host" can be "www.irgendwas.com"
-	if (reservedColor[host] == null) {
+	if (reservedColor_cs[host] == null) {
 		return false;
-	} else if (reservedColor[host] == "IGNORE_THEME") {
+	} else if (reservedColor_cs[host] == "IGNORE_THEME") {
 		response_color = getComputedColor();
-	} else if (reservedColor[host].startsWith("TAG: ")) {
-		let tagName = reservedColor[host].replace("TAG: ", "");
+		return true;
+	} else if (reservedColor_cs[host].startsWith("TAG: ")) {
+		let tagName = reservedColor_cs[host].replace("TAG: ", "");
 		let el_list = document.getElementsByTagName(tagName);
 		if (el_list.length == 0) return false;
 		response_color = getColorFrom(el_list[0]);
-	} else if (reservedColor[host].startsWith("CLASS: ")) {
-		let className = reservedColor[host].replace("CLASS: ", "");
+	} else if (reservedColor_cs[host].startsWith("CLASS: ")) {
+		let className = reservedColor_cs[host].replace("CLASS: ", "");
 		let el_list = document.getElementsByClassName(className);
 		if (el_list.length == 0) return false;
 		response_color = getColorFrom(el_list[0]);
 	} else {
-		response_color = reservedColor[host];
+		response_color = reservedColor_cs[host];
 	}
 	if (response_color == "") {
 		return false;
@@ -97,7 +98,7 @@ function findColorUnreserved() {
 /** 
  * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
  */
- function getThemeColor() {
+function getThemeColor() {
 	//Get theme-color defined by the website html
 	headerTag = document.querySelector('meta[name="theme-color"]');
 	if (headerTag == null) {
@@ -116,12 +117,9 @@ function findColorUnreserved() {
 function getComputedColor() {
 	let color = anyToRgba("rgba(0, 0, 0, 0)");
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
-	console.log(" ");
 	for (element; element; element = element.parentElement) {
-		console.log(element);
-		console.log(getColorFrom(element));
-		color = overlayColor(color, anyToRgba(getColorFrom(element)));
-		console.log("=> rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")");
+		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 5)
+			color = overlayColor(color, anyToRgba(getColorFrom(element)));
 	}
 	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
@@ -132,7 +130,6 @@ function getComputedColor() {
 			color = body_color.includes("rgba") ? overlayColor(color, anyToRgba("#FFFFFF")) : overlayColor(color, anyToRgba(getColorFrom(body)));
 		}
 	}
-	console.log("Result: rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")");
 	return "rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")";
 }
 
