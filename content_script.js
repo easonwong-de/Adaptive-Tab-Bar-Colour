@@ -42,17 +42,18 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 //Fired by update() from background.js
 browser.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
-		sendColor();
-		sendResponse("Color sended.");
 		if (request.dynamic) {
+			findColor();
 			document.onclick = findColor;
 			document.onwheel = findColor;
 			document.onscroll = findColor;
 		} else {
+			sendColor();
 			document.onclick = null;
 			document.onwheel = null;
 			document.onscroll = null;
 		}
+		sendResponse("Color sended.");
 	}
 );
 

@@ -155,7 +155,7 @@ function init() {
     let pending_custom = pref_custom;
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
-    let pending_last_version = [1, 5, 4];
+    let pending_last_version = [1, 5, 5];
     //updates from v1.3.1 or earlier
     if (pref_last_version == null) {
       pending_force = false;
