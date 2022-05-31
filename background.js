@@ -171,7 +171,9 @@ function init() {
       pending_dark_color = default_dark_color;
     }
     //first time install
+    let first_time = false;
     if (pref_scheme == null || pref_force == null) {
+      first_time = true;
       pending_scheme = lightModeDetected() ? "light" : "dark";
       pending_force = false;
       if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
@@ -188,7 +190,7 @@ function init() {
       dark_color: pending_dark_color,
       last_version: pending_last_version
     });
-    browser.runtime.openOptionsPage();
+    if (first_time) browser.runtime.openOptionsPage();
     update();
   });
 }
