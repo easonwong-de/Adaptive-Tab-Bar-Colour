@@ -25,7 +25,7 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 ## Incompatible with
 
 <ol>
-	<li>Firefox under <a href="https://www.mozilla.org/en-US/firefox/95.0/releasenotes/">Version 95.0</a> (released on Dec, 2021)</li>
+	<li>Firefox under <a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version 58.0</a> (released on Jan, 2018)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
