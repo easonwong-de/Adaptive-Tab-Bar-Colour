@@ -11,10 +11,8 @@ reserved color is a class name => theme color is stored under that class */
 const reservedColor = {
 	"open.spotify.com": "rgb(0, 0, 0)",
 	"mail.google.com": "CLASS: wl",
-	"www.youtube.com": "TAG: ytd-masthead",
-	"www.twitch.tv": "CLASS: top-nav__menu",
-	"www.apple.com": "TAG: nav",
 	"github.com": "IGNORE_THEME",
+	"www.youtube.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME"
 };
 
@@ -26,14 +24,20 @@ findColor();
  * Finds color and send to background.
  */
 function findColor() {
-	port = browser.runtime.connect();
 	if (!findColorReserved()) findColorUnreserved();
-	if (!document.hidden) port.postMessage({ color: response_color });
+	sendColor();
 }
 
+function sendColor() {
+	if (!document.hidden) {
+		port = browser.runtime.connect();
+		port.postMessage({ color: response_color });
+	}
+}
+
+//experimental
 //Updates color when user makes action
 //hopefully clicking a color scheme changing button
-//experimental
 //document.onclick = findColor;
 //document.onwheel = findColor;
 //document.onscroll = findColor;
@@ -42,12 +46,12 @@ function findColor() {
 var ondarkreader = new MutationObserver(findColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
-//Remind background.js of the color
+//Fired by update() from background.js
 browser.runtime.onMessage.addListener(
 	(request, sender, sendResponse) => {
-		if (request.message == "remind_me") {
-			findColor();
-			sendResponse({});
+		if (request.message == "COLOR_REQUEST") {
+			sendColor();
+			sendResponse("Color sended.");
 		}
 	}
 );
@@ -111,18 +115,25 @@ function findColorUnreserved() {
  */
 function getComputedColor() {
 	let color = anyToRgba("rgba(0, 0, 0, 0)");
-	for (let element = document.elementFromPoint(window.innerWidth / 2, 3); element; element = element.parentElement) {
+	let element = document.elementFromPoint(window.innerWidth / 2, 3);
+	console.log(" ");
+	for (element; element; element = element.parentElement) {
+		console.log(element);
+		console.log(getColorFrom(element));
 		color = overlayColor(color, anyToRgba(getColorFrom(element)));
+		console.log("=> rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")");
 	}
-	if (color.a == 0) {
+	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
-		if (body == undefined) return "";
-		color = getColorFrom(body);
-		if (color.includes("rgba")) color = "";
-		return color;
-	} else {
-		return "rgb(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
+		if (body == undefined) {
+			color = overlayColor(color, anyToRgba("#FFFFFF"));
+		} else {
+			let body_color = getColorFrom(body);
+			color = body_color.includes("rgba") ? overlayColor(color, anyToRgba("#FFFFFF")) : overlayColor(color, anyToRgba(getColorFrom(body)));
+		}
 	}
+	console.log("Result: rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")");
+	return "rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")";
 }
 
 /**

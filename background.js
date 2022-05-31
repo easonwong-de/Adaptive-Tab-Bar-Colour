@@ -245,20 +245,20 @@ function updateEachWindow(tab) {
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
       changeFrameColorTo(windowId, "", null);
     } else {
-      browser.tabs.sendMessage(tab.id, { message: "remind_me" }, response => {
+      browser.tabs.sendMessage(tab.id, { message: "COLOR_REQUEST" }, response => {
           if (response == null) {
-            console.error("No connection to content script");
+            console.error("No connection to content script.");
           }
         });
     }
   }
 }
 
-browser.runtime.onConnect.addListener(function (port) {
-  port.onMessage.addListener((msg, sender, sendResponse) => {
+browser.runtime.onConnect.addListener(port => {
+    port.onMessage.addListener((msg, sender, sendResponse) => {
       changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
     });
-});
+  });
 
 /**
  * Changes tab bar to the appointed color (with windowId).
