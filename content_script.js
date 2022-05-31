@@ -9,7 +9,7 @@ reserved color is a IGNORE => use calculated color as theme color
 reserved color is a tag name => theme color is stored under that tag
 reserved color is a class name => theme color is stored under that class */
 const reservedColor_cs = {
-	"open.spotify.com": "rgb(0, 0, 0)",
+	"open.spotify.com": "#000000",
 	"mail.google.com": "CLASS: wl",
 	"github.com": "IGNORE_THEME",
 	"www.youtube.com": "IGNORE_THEME",
@@ -24,8 +24,10 @@ findColor();
  * Finds color and send to background.
  */
 function findColor() {
-	if (!findColorReserved()) findColorUnreserved();
-	sendColor();
+	if (document.fullscreenElement == null) {
+		if (!findColorReserved()) findColorUnreserved();
+		sendColor();
+	}
 }
 
 function sendColor() {
