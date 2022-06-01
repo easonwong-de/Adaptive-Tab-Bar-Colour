@@ -41,12 +41,7 @@ Beware of malicious web UI: Please distinguish between the browser’s UI and th
 <ol>
 	<li>Does not support CSS themes</li>
 	<li>The color of “about:devtools-toolbox” might bug in light mode</li>
-	<li>On Firefox Developer Edition and Firefox Nightly:
-		<ul>
-			<li>Falshes when opening windows with dark and light tab bar at the same time (Fix: turn off “Allow dark/light tab bar” or deselect “Follow System” in add-on’s preference page)</li>
-			<li>“Follow System” might not work</li>
-		</ul>
-	</li>
+	<li>“Follow System” may not work</li>
 </ol>
 <br>
 
