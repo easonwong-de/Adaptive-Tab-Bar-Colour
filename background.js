@@ -63,11 +63,11 @@ var adaptive_themes = {
   }
 };
 
-//Pages where content script can't be injected
-//other reserved color are in content_script.js
-//url listed only in "light"/"dark" => only in light/dark mode
-//url listed in both => choose color scheme as needed
-//url listed as "DEFAULT" => use default_light/dark_color
+/* Pages where content script can't be injected
+other reserved color are in content_script.js
+url listed only in "light"/"dark" => only use that color regardless of the color scheme
+url listed in both => choose color scheme as needed
+url listed as "DEFAULT" => use default_light/dark_color */
 const reservedColor = {
   "light": {
     "about:checkerboard": "DEFAULT",
@@ -208,7 +208,7 @@ if (light_mode_match_media != null) light_mode_match_media.onchange = update_whe
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
 function lightModeDetected() {
-  return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+  return light_mode_match_media != null && light_mode_match_media.matches;
 }
 
 function update_when_follow_system() {
@@ -221,7 +221,7 @@ update();
  * Updates pref cache and triggers color change in all windows.
  */
 function update() {
-  chrome.tabs.query({ active: true, status: "complete" }, tabs => {
+  browser.tabs.query({ active: true, status: "complete" }, tabs => {
     browser.storage.local.get(pref => {
       loadPref(pref);
       if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });

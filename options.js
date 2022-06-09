@@ -251,7 +251,7 @@ if (light_mode_match_media != null) light_mode_match_media.onchange = () => {
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
 function lightModeDetected() {
-	return (light_mode_match_media != null && light_mode_match_media.matches) ? true : false;
+	return light_mode_match_media != null && light_mode_match_media.matches;
 }
 
 /**
