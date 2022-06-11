@@ -13,7 +13,8 @@ const reservedColor_cs = {
 	"mail.google.com": "CLASS: wl",
 	"github.com": "IGNORE_THEME",
 	"www.youtube.com": "IGNORE_THEME",
-	"developer.mozilla.org": "IGNORE_THEME"
+	"developer.mozilla.org": "IGNORE_THEME",
+	"www.instagram.com": "IGNORE_THEME"
 };
 
 var port;
@@ -118,19 +119,19 @@ function getThemeColor() {
  * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
  */
 function getComputedColor() {
-	let color = anyToRgba("rgba(0, 0, 0, 0)");
+	let color = ANY_to_RGBA("rgba(0, 0, 0, 0)");
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
 		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 20)
-			color = overlayColor(color, anyToRgba(getColorFrom(element)));
+			color = overlayColor(color, ANY_to_RGBA(getColorFrom(element)));
 	}
 	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
-			color = overlayColor(color, anyToRgba("#FFFFFF"));
+			color = overlayColor(color, ANY_to_RGBA("#FFFFFF"));
 		} else {
 			let body_color = getColorFrom(body);
-			color = body_color.includes("rgba") ? overlayColor(color, anyToRgba("#FFFFFF")) : overlayColor(color, anyToRgba(getColorFrom(body)));
+			color = body_color.includes("rgba") ? overlayColor(color, ANY_to_RGBA("#FFFFFF")) : overlayColor(color, ANY_to_RGBA(getColorFrom(body)));
 		}
 	}
 	return "rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")";
@@ -150,28 +151,16 @@ function getColorFrom(element) {
  * @param {string} color Color in string
  * @returns Color in object
  */
-function anyToRgba(color) {
-	return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
-}
-
-/**
- * Converts hex color (String) to rgb (Object).
- * @author TimDown stackoverflow.com
- * 
- * @param {string} hex Color in hex
- * @returns Color in object
- */
-function hexToRgba(hex) {
-	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-	let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-	hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-	let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	return result ? {
-		r: parseInt(result[1], 16),
-		g: parseInt(result[2], 16),
-		b: parseInt(result[3], 16),
-		a: 1
-	} : null;
+function ANY_to_RGBA(color) {
+	if (color.startsWith("#")) {
+		return HEXA_to_RGBA(color);
+	} else if (color.startsWith("rgb")) {
+		return RGBA_to_RGBA(color);
+	} else if (color.startsWith("hsl")) {
+		return HSLA_to_RGBA(color);
+	} else {
+		return { r: 0, g: 0, b: 0, a: 0 };
+	}
 }
 
 /**
@@ -180,22 +169,119 @@ function hexToRgba(hex) {
  * @param {string} rgba color in rgba/rgb
  * @returns color in object
  */
-function rgbaToRgba(rgba) {
-	let result = rgba.match(/[.?\d]+/g).map(Number);
+function RGBA_to_RGBA(rgba) {
+	let result = [0, 0, 0, 0];
+	result = rgba.match(/[.?\d]+/g).map(Number);
 	if (result.length == 3) result[3] = 1;
-	return result ? {
+	return {
 		r: result[0],
 		g: result[1],
 		b: result[2],
 		a: result[3]
-	} : null;
+	};
 }
 
-/*function hslToRgba(hsl) {
-	let result = hsl.match(/[.?\d]+/g).map(Number);
-
+/**
+ * Converts hex(a) (String) to rgba (Object).
+ * @author Jon Kantner (modified by Eason Wong)
+ * 
+ * @param {string} hexa Color in hex(a)
+ * @returns Color in object
+ */
+function HEXA_to_RGBA(hexa) {
+	let r = "00", g = "00", b = "00", a = "00";
+	switch (hexa.length) {
+		case 4:
+			r = hexa[1] + hexa[1];
+			g = hexa[2] + hexa[2];
+			b = hexa[3] + hexa[3];
+			break;
+		case 5:
+			r = hexa[1] + hexa[1];
+			g = hexa[2] + hexa[2];
+			b = hexa[3] + hexa[3];
+			a = hexa[4] + hexa[4];
+			break;
+		case 7:
+			r = hexa[1] + hexa[2];
+			g = hexa[3] + hexa[4];
+			b = hexa[5] + hexa[6];
+			break;
+		case 9:
+			r = hexa[1] + hexa[2];
+			g = hexa[3] + hexa[4];
+			b = hexa[5] + hexa[6];
+			a = hexa[7] + hexa[8];
+			break;
+		default:
+			break;
+	}
+	return {
+		r: parseInt(r, 16),
+		g: parseInt(g, 16),
+		b: parseInt(b, 16),
+		a: parseInt(a, 16)
+	};
 }
-*/
+
+/**
+ * Converts hsl(a) (String) to rgba (Object).
+ * @author Jon Kantner (modified by Eason Wong)
+ * 
+ * @param {string} hsla Color in hsl(a)
+ * @returns Color in object
+ */
+function HSLA_to_RGBA(hsla) {
+	let sep = hsla.indexOf(",") > -1 ? "," : " ";
+	let hsla_param = hsla.split("(")[1].split(")")[0].split(sep);
+	// strip the slash if using space-separated syntax
+	if (hsla_param.indexOf("/") > -1)
+		hsla_param.splice(3, 1);
+	// must be fractions of 1
+	let h = hsla_param[0],
+		s = hsla_param[1].substring(0, hsla_param[1].length - 1) / 100,
+		l = hsla_param[2].substring(0, hsla_param[2].length - 1) / 100,
+		a = hsla_param[3] ? hsla_param[3] : 1;
+	// strip label and convert to degrees (if necessary)
+	if (h.indexOf("deg") > -1)
+		h = h.substring(0, h.length - 3);
+	else if (h.indexOf("rad") > -1)
+		h = Math.round(h.substring(0, h.length - 3) / (2 * Math.PI) * 360);
+	else if (h.indexOf("turn") > -1)
+		h = Math.round(h.substring(0, h.length - 4) * 360);
+	if (h >= 360)
+		h %= 360;
+	let c = (1 - Math.abs(2 * l - 1)) * s,
+		x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+		m = l - c / 2,
+		r = 0,
+		g = 0,
+		b = 0;
+	if (0 <= h && h < 60) {
+		r = c; g = x; b = 0;
+	} else if (60 <= h && h < 120) {
+		r = x; g = c; b = 0;
+	} else if (120 <= h && h < 180) {
+		r = 0; g = c; b = x;
+	} else if (180 <= h && h < 240) {
+		r = 0; g = x; b = c;
+	} else if (240 <= h && h < 300) {
+		r = x; g = 0; b = c;
+	} else if (300 <= h && h < 360) {
+		r = c; g = 0; b = x;
+	}
+	r = Math.round((r + m) * 255);
+	g = Math.round((g + m) * 255);
+	b = Math.round((b + m) * 255);
+	if (typeof a == "string" && a.indexOf("%") > -1)
+		a = a.substring(0, a.length - 1) / 100;
+	return {
+		r: r,
+		g: g,
+		b: b,
+		a: a / 1
+	};
+}
 
 /**
  * Add up colors

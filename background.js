@@ -270,7 +270,7 @@ function updateEachWindow(tab) {
 
 browser.runtime.onConnect.addListener(port => {
   port.onMessage.addListener((msg, sender, sendResponse) => {
-    changeFrameColorTo(sender.sender.tab.windowId, msg.color, darkMode(msg.color));
+    changeFrameColorTo(sender.sender.tab.windowId, msg.color, isDarkModeSuitable(msg.color));
   });
 });
 
@@ -380,7 +380,7 @@ function getSearchKey(url) {
  * @param {string} color The color to check (hex or rgb)
  * @returns {boolean} "true" => dark mode; "false" => light mode
 */
-function darkMode(color) {
+function isDarkModeSuitable(color) {
   if (color == "" || color == null) {
     return null;
   } else {
@@ -401,7 +401,7 @@ function darkMode(color) {
  * @returns {boolean} true if the color is bright
  */
 function tooBright(color) {
-  return rgbObjBrightness(anyToRgba(color)) > 155;
+  return rgbBrightness(ANY_to_RGBA(color)) > 155;
 }
 
 /**
@@ -411,7 +411,7 @@ function tooBright(color) {
  * @returns {boolean} true if the color is dark
  */
 function tooDark(color) {
-  return rgbObjBrightness(anyToRgba(color)) < 100;
+  return rgbBrightness(ANY_to_RGBA(color)) < 100;
 }
 
 /**
@@ -422,7 +422,7 @@ function tooDark(color) {
  * @returns Dimmed or lightened color
  */
 function dimColor(color, dim) {
-  let color_obj = anyToRgba(color);
+  let color_obj = ANY_to_RGBA(color);
   if (dim >= 0) {
     color_obj.r = color_obj.r + dim * (255 - color_obj.r);
     color_obj.g = color_obj.g + dim * (255 - color_obj.g);
@@ -441,7 +441,7 @@ function dimColor(color, dim) {
  * @param {object} rgb Color in object
  * @returns Brightness of the color
  */
-function rgbObjBrightness(rgb) {
+function rgbBrightness(rgb) {
   return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
 }
 
@@ -449,45 +449,136 @@ function rgbObjBrightness(rgb) {
  * @param {string} color Color in string
  * @returns Color in object
  */
-function anyToRgba(color) {
-  return color.startsWith("#") ? hexToRgba(color) : rgbaToRgba(color);
-}
-
-/**
- * Converts hex color (String) to rgb (Object).
- * @author TimDown stackoverflow.com
- * 
- * @param {string} hex Color in hex
- * @returns Color in object
- */
-function hexToRgba(hex) {
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16),
-    a: 1
-  } : null;
+function ANY_to_RGBA(color) {
+  if (color.startsWith("#")) {
+    return HEXA_to_RGBA(color);
+  } else if (color.startsWith("rgb")) {
+    return RGBA_to_RGBA(color);
+  } else if (color.startsWith("hsl")) {
+    return HSLA_to_RGBA(color);
+  } else {
+    return { r: 0, g: 0, b: 0, a: 0 };
+  }
 }
 
 /**
  * Converts rgba/rgb (String) to rgba (Object).
  * 
- * @param {string} rgbaString Color in rgba/rgb
- * @returns Color in object
+ * @param {string} rgba color in rgba/rgb
+ * @returns color in object
  */
-function rgbaToRgba(rgbaString) {
-  var result = rgbaString.match(/[.?\d]+/g).map(Number);
+function RGBA_to_RGBA(rgba) {
+  let result = [0, 0, 0, 0];
+  result = rgba.match(/[.?\d]+/g).map(Number);
   if (result.length == 3) result[3] = 1;
-  return result ? {
+  return {
     r: result[0],
     g: result[1],
     b: result[2],
     a: result[3]
-  } : null;
+  };
+}
+
+/**
+ * Converts hex(a) (String) to rgba (Object).
+ * @author Jon Kantner (modified by Eason Wong)
+ * 
+ * @param {string} hexa Color in hex(a)
+ * @returns Color in object
+ */
+function HEXA_to_RGBA(hexa) {
+  let r = "00", g = "00", b = "00", a = "00";
+  switch (hexa.length) {
+    case 4:
+      r = hexa[1] + hexa[1];
+      g = hexa[2] + hexa[2];
+      b = hexa[3] + hexa[3];
+      break;
+    case 5:
+      r = hexa[1] + hexa[1];
+      g = hexa[2] + hexa[2];
+      b = hexa[3] + hexa[3];
+      a = hexa[4] + hexa[4];
+      break;
+    case 7:
+      r = hexa[1] + hexa[2];
+      g = hexa[3] + hexa[4];
+      b = hexa[5] + hexa[6];
+      break;
+    case 9:
+      r = hexa[1] + hexa[2];
+      g = hexa[3] + hexa[4];
+      b = hexa[5] + hexa[6];
+      a = hexa[7] + hexa[8];
+      break;
+    default:
+      break;
+  }
+  return {
+    r: parseInt(r, 16),
+    g: parseInt(g, 16),
+    b: parseInt(b, 16),
+    a: parseInt(a, 16)
+  };
+}
+
+/**
+ * Converts hsl(a) (String) to rgba (Object).
+ * @author Jon Kantner (modified by Eason Wong)
+ * 
+ * @param {string} hsla Color in hsl(a)
+ * @returns Color in object
+ */
+function HSLA_to_RGBA(hsla) {
+  let sep = hsla.indexOf(",") > -1 ? "," : " ";
+  let hsla_param = hsla.split("(")[1].split(")")[0].split(sep);
+  // strip the slash if using space-separated syntax
+  if (hsla_param.indexOf("/") > -1)
+    hsla_param.splice(3, 1);
+  // must be fractions of 1
+  let h = hsla_param[0],
+    s = hsla_param[1].substring(0, hsla_param[1].length - 1) / 100,
+    l = hsla_param[2].substring(0, hsla_param[2].length - 1) / 100,
+    a = hsla_param[3] ? hsla_param[3] : 1;
+  // strip label and convert to degrees (if necessary)
+  if (h.indexOf("deg") > -1)
+    h = h.substring(0, h.length - 3);
+  else if (h.indexOf("rad") > -1)
+    h = Math.round(h.substring(0, h.length - 3) / (2 * Math.PI) * 360);
+  else if (h.indexOf("turn") > -1)
+    h = Math.round(h.substring(0, h.length - 4) * 360);
+  if (h >= 360)
+    h %= 360;
+  let c = (1 - Math.abs(2 * l - 1)) * s,
+    x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+    m = l - c / 2,
+    r = 0,
+    g = 0,
+    b = 0;
+  if (0 <= h && h < 60) {
+    r = c; g = x; b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x; g = c; b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0; g = c; b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0; g = x; b = c;
+  } else if (240 <= h && h < 300) {
+    r = x; g = 0; b = c;
+  } else if (300 <= h && h < 360) {
+    r = c; g = 0; b = x;
+  }
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+  if (typeof a == "string" && a.indexOf("%") > -1)
+    a = a.substring(0, a.length - 1) / 100;
+  return {
+    r: r,
+    g: g,
+    b: b,
+    a: a / 1
+  };
 }
 
 /**
