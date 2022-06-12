@@ -107,3 +107,10 @@ hr {
 	width: 1em;
 	vertical-align: middle;
 }
+
+textarea {
+	width: 50%;
+	resize: vertical;
+	vertical-align: top;
+	outline: none;
+}

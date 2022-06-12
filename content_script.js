@@ -2,23 +2,19 @@
 
 var response_color = "";
 
-/* darkMode: true => white text
-darkMode: false => balck text
-reserved color is a color => it is the theme color
-reserved color is a IGNORE => use calculated color as theme color
-reserved color is a tag name => theme color is stored under that tag
-reserved color is a class name => theme color is stored under that class */
-const reservedColor_cs = {
-	"open.spotify.com": "#000000",
-	"mail.google.com": "CLASS: wl",
-	"github.com": "IGNORE_THEME",
-	"www.youtube.com": "IGNORE_THEME",
+//preloads default color lookup table
+var reservedColor_cs = {
 	"developer.mozilla.org": "IGNORE_THEME",
-	"www.instagram.com": "IGNORE_THEME"
+	"github.com": "IGNORE_THEME",
+	"mail.google.com": "CLASS_wl",
+	"open.spotify.com": "#000000",
+	"www.instagram.com": "IGNORE_THEME",
+	"www.youtube.com": "IGNORE_THEME"
 };
 
 var port;
 
+//Send color to background as soon as page loads
 findColor();
 
 /**
@@ -31,6 +27,9 @@ function findColor() {
 	}
 }
 
+/**
+ * Sends color to background.
+ */
 function sendColor() {
 	if (!document.hidden) {
 		port = browser.runtime.connect();
@@ -43,20 +42,21 @@ var ondarkreader = new MutationObserver(findColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
 //Fired by update() from background.js
+//Loads newly applied settings
 browser.runtime.onMessage.addListener(
-	(request, sender, sendResponse) => {
-		if (request.dynamic) {
-			findColor();
+	(pref, sender, sendResponse) => {
+		if (pref.dynamic) {
 			document.onclick = findColor;
 			document.onwheel = findColor;
 			document.onscroll = findColor;
 		} else {
-			sendColor();
 			document.onclick = null;
 			document.onwheel = null;
 			document.onscroll = null;
 		}
-		sendResponse("Color sended.");
+		reservedColor_cs = pref.reservedColor_cs;
+		findColor();
+		sendResponse("Color sended to background.");
 	}
 );
 
@@ -72,24 +72,26 @@ function findColorReserved() {
 	} else if (reservedColor_cs[host] == "IGNORE_THEME") {
 		response_color = getComputedColor();
 		return true;
-	} else if (reservedColor_cs[host].startsWith("TAG: ")) {
-		let tagName = reservedColor_cs[host].replace("TAG: ", "");
+	} else if (reservedColor_cs[host].startsWith("TAG_")) {
+		let tagName = reservedColor_cs[host].replace("TAG_", "");
 		let el_list = document.getElementsByTagName(tagName);
-		if (el_list.length == 0) return false;
+		if (el_list.length == 0)
+			return false;
 		response_color = getColorFrom(el_list[0]);
-	} else if (reservedColor_cs[host].startsWith("CLASS: ")) {
-		let className = reservedColor_cs[host].replace("CLASS: ", "");
+	} else if (reservedColor_cs[host].startsWith("CLASS_")) {
+		let className = reservedColor_cs[host].replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
-		if (el_list.length == 0) return false;
+		if (el_list.length == 0)
+			return false;
 		response_color = getColorFrom(el_list[0]);
 	} else {
 		response_color = reservedColor_cs[host];
+		//Only hex color is accepted
+		let reg = /^#([0-9a-f]{3}){1,2}$/i;
+		return reg.test(response_color);
 	}
-	if (response_color == "") {
-		return false;
-	} else {
-		return true;
-	}
+	//response color can be transparent due to getColorFrom()
+	return response_color != "" && response_color != "rgba(0, 0, 0, 0)";
 }
 
 /**
@@ -189,7 +191,7 @@ function RGBA_to_RGBA(rgba) {
  * @returns Color in object
  */
 function HEXA_to_RGBA(hexa) {
-	let r = "00", g = "00", b = "00", a = "00";
+	let r = g = b = a = "00";
 	switch (hexa.length) {
 		case 4:
 			r = hexa[1] + hexa[1];

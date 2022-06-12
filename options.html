@@ -40,12 +40,12 @@
 				<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label>
 			</h4>
 			<h4><input id="dynamic" type="checkbox" />
-				<label for="dynamic" title="Updates tab bar color when scrolling">Dynamic color update</label>
+				<label for="dynamic" title="Updates tab bar color while scrolling">Dynamic color update</label>
 			</h4>
 		</div>
 		<div>
-			<h4><input id="custom" type="checkbox">
-				<label for="custom">More customizations</label>
+			<h4><input id="more_custom" type="checkbox">
+				<label for="more_custom">More customizations</label>
 			</h4>
 			<div id="custom_options" class="custom_options" hidden="true">
 				<div>
@@ -58,13 +58,20 @@
 					<input class="color" type="color" value="#1C1B22" id="dark_color">
 					<br><br>
 				</div>
-				<button type="button" id="custom_reset">Reset</button>
+				<button type="button" id="color_reset">Reset</button>
+				<br>
+				<div>
+					<textarea wrap="off" rows="10" id="lookup"></textarea>
+				</div>
+				<br>
+				<button type="button" id="lookup_reset">Reset</button>
 				<br>
 			</div>
 		</div>
 		<hr>
 		<div>
-			<p><a href="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/issues">Report an issue / submit a suggestion</a></p>
+			<p><a href="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/issues">Report an issue / submit a
+					suggestion</a></p>
 		</div>
 		<form action="https://www.paypal.com/donate" method="post" target="_blank">
 			<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />

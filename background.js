@@ -63,6 +63,39 @@ var adaptive_themes = {
   }
 };
 
+//Settings cache
+//Always synced with settings page
+var pref_scheme;
+var pref_force;
+var pref_dynamic;
+var pref_custom;
+var pref_light_color;
+var pref_dark_color;
+var pref_last_version;
+var pref_reservedColor_cs;
+
+//Default values
+const default_light_color = "#FFFFFF";
+const default_dark_color = "#1C1B22";
+/* reserved color is a color => the color is the theme color for the web
+reserved color is IGNORE_THEME => use calculated color as theme color
+reserved color is a tag name => theme color is stored under that tag
+reserved color is a class name => theme color is stored under that class */
+const default_reservedColor_cs = {
+  "developer.mozilla.org": "IGNORE_THEME",
+  "github.com": "IGNORE_THEME",
+  "mail.google.com": "CLASS_wl",
+  "open.spotify.com": "#000000",
+  "www.instagram.com": "IGNORE_THEME",
+  "www.youtube.com": "IGNORE_THEME"
+};
+
+//These prefs are controlled by other prefs
+var current_scheme;
+var current_light_color;
+var current_dark_color;
+var current_reservedColor_cs;
+
 /* Pages where content script can't be injected
 other reserved color are in content_script.js
 url listed only in "light"/"dark" => only use that color regardless of the color scheme
@@ -92,23 +125,15 @@ const reservedColor = {
   }
 }
 
-//Settings cache
-var default_light_color = "#FFFFFF";
-var default_dark_color = "#1C1B22";
-var pref_scheme;
-var pref_force;
-var pref_dynamic;
-var pref_custom;
-var pref_light_color;
-var pref_dark_color;
-var pref_last_version;
-
-var current_scheme;
+var aboveV95 = true;
+updateAboveV95();
 
 /**
  * Loads preferences into cache.
+ * Also modifies the "current" data.
  */
 function loadPref(pref) {
+  //loads prefs
   pref_scheme = pref.scheme;
   pref_force = pref.force;
   pref_dynamic = pref.dynamic;
@@ -116,12 +141,16 @@ function loadPref(pref) {
   pref_light_color = pref.light_color;
   pref_dark_color = pref.dark_color;
   pref_last_version = pref.last_version;
+  pref_reservedColor_cs = pref.reservedColor_cs;
+  //loads currents
   if (pref_custom) {
-    default_light_color = pref_light_color;
-    default_dark_color = pref_dark_color;
+    current_light_color = pref_light_color;
+    current_dark_color = pref_dark_color;
+    current_reservedColor_cs = pref_reservedColor_cs;
   } else {
-    default_light_color = "#FFFFFF";
-    default_dark_color = "#1C1B22";
+    current_light_color = default_light_color;
+    current_dark_color = default_dark_color;
+    current_reservedColor_cs = default_reservedColor_cs;
   }
   switch (pref_scheme) {
     case "light":
@@ -156,13 +185,18 @@ function init() {
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
     let pending_last_version = [1, 5, 7];
-    //updates from v1.3.1 or earlier
-    if (pref_last_version == null) {
-      pending_force = false;
+    let pending_reservedColor_cs = pref_reservedColor_cs;
+    //updates from v1.5.7 or earlier
+    if (pref_reservedColor_cs == null) {
+      pending_reservedColor_cs = default_reservedColor_cs;
     }
     //updates from v1.5.3 or earlier
     if (pref_dynamic == null) {
       pending_dynamic = false;
+    }
+    //updates from v1.3.1 or earlier
+    if (pref_last_version == null) {
+      pending_force = false;
     }
     //updates from v1.3 or earlier
     if (pref_custom == null || pref_light_color == null || pref_dark_color == null) {
@@ -171,14 +205,15 @@ function init() {
       pending_dark_color = default_dark_color;
     }
     //first time install
-    let first_time = false;
+    let firstTime = false;
     if (pref_scheme == null || pref_force == null) {
-      first_time = true;
+      firstTime = true;
       pending_scheme = lightModeDetected() ? "light" : "dark";
       pending_force = false;
-      if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+      if (aboveV95)
+        browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
     }
-    if (!firefoxAboveV95()) {
+    if (!aboveV95) {
       pending_force = true;
     }
     browser.storage.local.set({
@@ -188,9 +223,10 @@ function init() {
       custom: pending_custom,
       light_color: pending_light_color,
       dark_color: pending_dark_color,
-      last_version: pending_last_version
+      last_version: pending_last_version,
+      reservedColor_cs: pending_reservedColor_cs
     });
-    if (first_time) browser.runtime.openOptionsPage();
+    if (firstTime) browser.runtime.openOptionsPage();
     update();
   });
 }
@@ -224,7 +260,8 @@ function update() {
   browser.tabs.query({ active: true, status: "complete" }, tabs => {
     browser.storage.local.get(pref => {
       loadPref(pref);
-      if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
+      if (aboveV95)
+        browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
       tabs.forEach(updateEachWindow);
     });
   });
@@ -261,16 +298,21 @@ function updateEachWindow(tab) {
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
       changeFrameColorTo(windowId, "", null);
     } else {
-      browser.tabs.sendMessage(tab.id, { reason: "COLOR_REQUEST", dynamic: pref_dynamic }, response => {
+      browser.tabs.sendMessage(tab.id, {
+        reason: "COLOR_REQUEST",
+        dynamic: pref_dynamic,
+        reservedColor_cs: pref_reservedColor_cs
+      }, response => {
         if (response == null) console.error("No connection to content script.");
       });
     }
   }
 }
 
+//Recieves the color from content script
 browser.runtime.onConnect.addListener(port => {
-  port.onMessage.addListener((msg, sender, sendResponse) => {
-    changeFrameColorTo(sender.sender.tab.windowId, msg.color, isDarkModeSuitable(msg.color));
+  port.onMessage.addListener((message, sender, sendResponse) => {
+    changeFrameColorTo(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
   });
 });
 
@@ -295,25 +337,25 @@ function changeFrameColorTo(windowId, color, dark_mode) {
   if (dark_mode == null) dark_mode = current_scheme == "dark";
   if (color == "" || color == null) { //gonna reset
     if (dark_mode) {
-      adaptive_themes['dark']['colors']['frame'] = default_dark_color;
-      adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = dimColor(default_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(default_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(default_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['ntp_background'] = default_dark_color;
+      adaptive_themes['dark']['colors']['frame'] = current_dark_color;
+      adaptive_themes['dark']['colors']['frame_inactive'] = current_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = dimColor(current_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(current_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(current_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['ntp_background'] = current_dark_color;
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
-      adaptive_themes['light']['colors']['frame'] = default_light_color;
-      adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
-      adaptive_themes['light']['colors']['popup'] = dimColor(default_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(default_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(default_light_color, -0.05);
-      adaptive_themes['light']['colors']['ntp_background'] = default_light_color;
+      adaptive_themes['light']['colors']['frame'] = current_light_color;
+      adaptive_themes['light']['colors']['frame_inactive'] = current_light_color;
+      adaptive_themes['light']['colors']['popup'] = dimColor(current_light_color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(current_light_color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(current_light_color, -0.05);
+      adaptive_themes['light']['colors']['ntp_background'] = current_light_color;
       applyTheme(windowId, adaptive_themes['light']);
     }
   } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //normal coloring
     if (dark_mode) {
-      if (color == "DEFAULT") color = default_dark_color;
+      if (color == "DEFAULT") color = current_dark_color;
       adaptive_themes['dark']['colors']['frame'] = color;
       adaptive_themes['dark']['colors']['frame_inactive'] = color;
       adaptive_themes['dark']['colors']['popup'] = dimColor(color, 0.05);
@@ -321,7 +363,7 @@ function changeFrameColorTo(windowId, color, dark_mode) {
       adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(color, 0.05);
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
-      if (color == "DEFAULT") color = default_light_color;
+      if (color == "DEFAULT") color = current_light_color;
       adaptive_themes['light']['colors']['frame'] = color;
       adaptive_themes['light']['colors']['frame_inactive'] = color;
       adaptive_themes['light']['colors']['popup'] = dimColor(color, -0.05);
@@ -331,18 +373,18 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     }
   } else if (pref_force) { //force coloring
     if (current_scheme == "dark") {
-      adaptive_themes['dark']['colors']['frame'] = default_dark_color;
-      adaptive_themes['dark']['colors']['frame_inactive'] = default_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = dimColor(default_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(default_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(default_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['frame'] = current_dark_color;
+      adaptive_themes['dark']['colors']['frame_inactive'] = current_dark_color;
+      adaptive_themes['dark']['colors']['popup'] = dimColor(current_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(current_dark_color, 0.05);
+      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(current_dark_color, 0.05);
       applyTheme(windowId, adaptive_themes['dark']);
     } else {
-      adaptive_themes['light']['colors']['frame'] = default_light_color;
-      adaptive_themes['light']['colors']['frame_inactive'] = default_light_color;
-      adaptive_themes['light']['colors']['popup'] = dimColor(default_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(default_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(default_light_color, -0.05);
+      adaptive_themes['light']['colors']['frame'] = current_light_color;
+      adaptive_themes['light']['colors']['frame_inactive'] = current_light_color;
+      adaptive_themes['light']['colors']['popup'] = dimColor(current_light_color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(current_light_color, -0.05);
+      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(current_light_color, -0.05);
       applyTheme(windowId, adaptive_themes['light']);
     }
   }
@@ -487,7 +529,7 @@ function RGBA_to_RGBA(rgba) {
  * @returns Color in object
  */
 function HEXA_to_RGBA(hexa) {
-  let r = "00", g = "00", b = "00", a = "00";
+  let r = g = b = a = "00";
   switch (hexa.length) {
     case 4:
       r = hexa[1] + hexa[1];
@@ -582,15 +624,15 @@ function HSLA_to_RGBA(hsla) {
 }
 
 /**
- * @returns true if Firefox 95.0 or later.
+ * Checks if Firefox is v95.0 or later.
  */
-function firefoxAboveV95() {
+function updateAboveV95() {
   let str = navigator.userAgent;
   let ind = str.lastIndexOf("Firefox");
   if (ind != -1) {
     str = str.substring(ind + 8);
-    return Number(str) >= 95;
+    aboveV95 = Number(str) >= 95;
   } else {
-    return true; //default answer
+    aboveV95 = true; //default answer
   }
 }
