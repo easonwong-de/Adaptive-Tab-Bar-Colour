@@ -15,7 +15,8 @@ body {
 
 button {
 	padding: 0.5em 2em;
-	display: block;
+	margin-right: 0.5em;
+	display: inline-block;
 	border: none;
 	border-radius: 4px;
 	text-align: center;
@@ -109,9 +110,10 @@ hr {
 }
 
 textarea {
-	width: 60%;
+	width: 50%;
 	resize: vertical;
 	line-height: 2em;
+	font-size: 75%;
 	vertical-align: top;
 	padding: 1em;
 	outline: none;
