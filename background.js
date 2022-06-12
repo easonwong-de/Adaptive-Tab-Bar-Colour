@@ -184,7 +184,7 @@ function init() {
     let pending_custom = pref_custom;
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
-    let pending_last_version = [1, 5, 7];
+    let pending_last_version = [1, 6, 0];
     let pending_reservedColor_cs = pref_reservedColor_cs;
     //updates from v1.5.7 or earlier
     if (pref_reservedColor_cs == null) {
