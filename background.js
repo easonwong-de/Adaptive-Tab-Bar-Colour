@@ -301,7 +301,7 @@ function updateEachWindow(tab) {
       browser.tabs.sendMessage(tab.id, {
         reason: "COLOR_REQUEST",
         dynamic: pref_dynamic,
-        reservedColor_cs: pref_reservedColor_cs
+        reservedColor_cs: current_reservedColor_cs
       }, response => {
         if (response == null) console.error("No connection to content script.");
       });
