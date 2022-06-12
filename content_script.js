@@ -15,7 +15,7 @@ var reservedColor_cs = {
 var port;
 
 //Send color to background as soon as page loads
-findColor();
+//findColor();
 
 /**
  * Finds color and send to background.

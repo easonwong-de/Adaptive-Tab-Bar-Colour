@@ -174,7 +174,7 @@ dynamic.onclick = () => {
 
 
 if (popupDetected()) {
-	pp_more_custom.onclick = browser.runtime.openOptionsPage();
+	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
 	op_light_color.addEventListener("change", () => browser.storage.local.set({ light_color: op_light_color.value }));
 	op_dark_color.addEventListener("change", () => browser.storage.local.set({ dark_color: op_dark_color.value }));
