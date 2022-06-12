@@ -1,4 +1,4 @@
-//this script is shared by option page and popup
+//This script is shared by option page and popup
 
 let body = document.getElementsByTagName("body")[0];
 let loading = document.getElementById("loading");
