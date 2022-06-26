@@ -52,3 +52,13 @@ hr {
 	color: rgba(255, 255, 255, 0.10);
 	background-color: rgba(255, 255, 255, 0.10)
 }
+
+.light input {
+	accent-color: rgb(0, 0, 0);
+	opacity: 0.75;
+}
+
+.dark input {
+	accent-color: rgb(255, 255, 255);
+	opacity: 0.75;
+}

@@ -11,12 +11,35 @@ let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
 let op_more_custom = document.getElementById("more_custom");
 let op_custom_options = document.getElementById("custom_options");
+let op_custom_colors = document.getElementById("custom_colors");
 let op_light_color = document.getElementById("light_color");
 let op_dark_color = document.getElementById("dark_color");
-let op_color_reset = document.getElementById("color_reset");
-let op_lookup = document.getElementById("lookup");
-let op_lookup_reset = document.getElementById("lookup_reset");
+let op_reset_light = document.getElementById("reset_light_color");
+let op_reset_dark = document.getElementById("reset_dark_color");
+let op_save = document.getElementById("save");
+let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
+
+function generateRule(domain) {
+	let action = pref_reservedColor_cs[domain];
+	if (action == null) return null;
+	let part_1 = `<div><span><input type="text" value="${domain}"></span>`;
+	let part_2, part_3;
+	if (action == "IGNORE_THEME") {
+		part_2 = '<span><select><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
+		part_3 = '<span style="display: inline-block; width: 5em"></span><span><button title="delete">D</button></span></div>';
+	} else if (action.startsWith("TAG_")) {
+		part_2 = '<span><select><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
+		part_3 = `<span><input type="text" style="display: inline-block; width: 5em" value="${action.replace("TAG_", "")}"></span><span><button title="delete">D</button></span></div>`;
+	} else if (action.startsWith("CLASS_")) {
+		part_2 = '<span><select><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
+		part_3 = `<span><input type="text" style="display: inline-block; width: 5em" value="${action.replace("CLASS_", "")}"></span><span><button title="delete">D</button></span></div>`;
+	} else {
+		part_2 = '<span><select><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
+		part_3 = `<span><input type="color" value="${action}"></span><span><button title="delete">D</button></span></div>`;
+	}
+	return part_1 + part_2 + part_3;
+}
 
 //Settings cache
 var pref_scheme;
@@ -80,14 +103,17 @@ function load() {
 				op_custom_options.hidden = !pref_custom;
 				op_light_color.value = pref_light_color;
 				op_dark_color.value = pref_dark_color;
-				op_lookup.value = "";
+				op_custom_colors.innerHTML = "";
+				let domains = Object.keys(pref_reservedColor_cs);
+				domains.forEach(domain => op_custom_colors.innerHTML += generateRule(domain));
+				/* op_lookup.value = "";
 				let domains = Object.keys(pref_reservedColor_cs);
 				domains.forEach((domain, i) => {
 					op_lookup.value += domain + " " + pref_reservedColor_cs[domain];
 					if (i != domains.length - 1) {
 						op_lookup.value += "\r\n";
 					}
-				});
+				}); */
 			}
 			autoPageColor();
 			loading.hidden = true;
@@ -187,15 +213,15 @@ if (popupDetected()) {
 			op_custom_options.hidden = true;
 		}
 	};
-	op_color_reset.onclick = () => {
-		browser.storage.local.set({
-			light_color: "#FFFFFF",
-			dark_color: "#1C1B22"
-		});
+	op_reset_light.onclick = () => {
+		browser.storage.local.set({ light_color: "#FFFFFF" });
 		light_color.value = "#FFFFFF";
+	};
+	op_reset_dark.onclick = () => {
+		browser.storage.local.set({ dark_color: "#1C1B22" });
 		dark_color.value = "#1C1B22";
 	};
-	op_lookup.oninput = () => {
+	/* op_lookup.oninput = () => {
 		let pending_reservedColor_cs = {};
 		let lookup_items = op_lookup.value.split("\n");
 		lookup_items.forEach((entry) => {
@@ -219,7 +245,7 @@ if (popupDetected()) {
 			}
 		});
 		load();
-	};
+	}; */
 }
 
 /**

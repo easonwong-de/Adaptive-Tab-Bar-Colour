@@ -47,28 +47,29 @@
 			<h4><input id="more_custom" type="checkbox">
 				<label for="more_custom">More customizations</label>
 			</h4>
-			<div id="custom_options" class="custom_options" hidden="true">
+			<div id="custom_options" hidden="true">
 				<div>
-					<label>Default light color: </label>
-					<input class="color_picker" type="color" value="#FFFFFF" id="light_color">
-					<br><br>
+					<span style="display: inline-block; width: 20%">Default light color</span>
+					<span><select>
+							<option selected>specify a color</option>
+						</select></span>
+					<span><input class="color_picker" type="color" value="#FFFFFF" id="light_color"></span>
+					<span><button id="reset_light_color" title="reset">R</button></span>
 				</div>
 				<div>
-					<label>Default dark color: </label>
-					<input class="color_picker" type="color" value="#1C1B22" id="dark_color">
-					<br><br>
+					<span style="display: inline-block; width: 20%">Default dark color</span>
+					<span><select>
+							<option selected>specify a color</option>
+						</select>
+					</span>
+					<span><input type="color" value="#1C1B22" id="dark_color"></span>
+					<span><button id="reset_dark_color" title="reset">R</button></span>
 				</div>
-				<button type="button" title="This button actually does nothing, changes are saved automatically">Save</button>
-				<button type="button" id="color_reset">Reset</button>
-				<br><br>
+				<div id="custom_colors"></div>
 				<div>
-					<p>Custom lookup table: </p>
-					<textarea wrap="off" rows="8" id="lookup"></textarea>
+					<span><button id="save" title="save">S</button></span>
+					<span><button id="add" title="add a new rule">A</button></span>
 				</div>
-				<br>
-				<button type="button" title="This button actually does nothing, changes are saved automatically">Save</button>
-				<button type="button" id="lookup_reset">Reset</button>
-				<br><br>
 			</div>
 		</div>
 		<hr>
