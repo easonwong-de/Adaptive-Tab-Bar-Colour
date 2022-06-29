@@ -36,40 +36,53 @@
 				</div>
 			</h4>
 			<hr>
-			<h4><input id="force_mode" type="checkbox" />
+			<h4>
+				<input id="force_mode" type="checkbox" />
 				<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label>
 			</h4>
-			<h4><input id="dynamic" type="checkbox" />
+			<h4>
+				<input id="dynamic" type="checkbox" />
 				<label for="dynamic" title="Updates tab bar color while scrolling">Dynamic color update</label>
 			</h4>
-		</div>
-		<div>
-			<h4><input id="more_custom" type="checkbox">
+			<h4>
+				<input id="more_custom" type="checkbox">
 				<label for="more_custom">More customizations</label>
 			</h4>
-			<div id="custom_options" hidden="true">
-				<div>
-					<span style="display: inline-block; width: 20%">Default light color</span>
-					<span><select>
-							<option selected>specify a color</option>
-						</select></span>
-					<span><input class="color_picker" type="color" value="#FFFFFF" id="light_color"></span>
-					<span><button id="reset_light_color" title="reset">R</button></span>
-				</div>
-				<div>
-					<span style="display: inline-block; width: 20%">Default dark color</span>
-					<span><select>
+		</div>
+		<div id="custom_options" hidden="true">
+			<table id="custom_options_table">
+				<tr>
+					<td>Default light color</td>
+					<td>
+						<select>
 							<option selected>specify a color</option>
 						</select>
-					</span>
-					<span><input type="color" value="#1C1B22" id="dark_color"></span>
-					<span><button id="reset_dark_color" title="reset">R</button></span>
-				</div>
-				<div id="custom_colors"></div>
-				<div>
-					<span><button id="save" title="save">S</button></span>
-					<span><button id="add" title="add a new rule">A</button></span>
-				</div>
+					</td>
+					<td>
+						<input class="FiveEm" type="color" value="#FFFFFF" id="light_color">
+					</td>
+					<td>
+						<button id="reset_light_color" title="reset">R</button>
+					</td>
+				</tr>
+				<tr>
+					<td>Default dark color</td>
+					<td>
+						<select>
+							<option selected>specify a color</option>
+						</select>
+					</td>
+					<td>
+						<input class="FiveEm" type="color" value="#1C1B22" id="dark_color">
+					</td>
+					<td>
+						<button id="reset_dark_color" title="reset">R</button>
+					</td>
+				</tr>
+			</table>
+			<div style="padding: 4px;">
+				<span><button id="save" title="save">S</button></span>
+				<span><button id="add" title="add a new rule">A</button></span>
 			</div>
 		</div>
 		<hr>

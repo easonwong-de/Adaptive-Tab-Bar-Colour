@@ -13,17 +13,38 @@ body {
 	background-color: rgb(35, 34, 42);
 }
 
+div{
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+#custom_options{
+	margin-left: 4em;
+	margin-bottom: 2em;
+	width: 80%;
+}
+
+td{
+	padding: 2px;
+}
+
 button,
 select {
 	border: none;
 	border-radius: 4px;
-	text-align: center;
 	vertical-align: middle;
-	height: 1.5em;
+	height: 1.75em;
+}
+
+button{
+	width: 1.75em;
+	text-align: center;
 }
 
 select {
 	width: 12em;
+	vertical-align: middle;
+	padding-left: 0.25em;
 }
 
 .light button,
@@ -60,25 +81,6 @@ select {
 .dark select:active {
 	color: rgb(255, 255, 255);
 	background-color: rgb(91, 91, 102);
-}
-
-#custom_options {
-	margin-left: 4em;
-}
-
-#custom_colors {
-	margin: 0;
-	padding: 0;
-}
-
-#custom_options>div,
-#custom_colors>div {
-	margin-block: 1em;
-}
-
-#custom_options>div>span,
-#custom_colors>div>span {
-	margin-inline-end: 0.5em !important;
 }
 
 .light a:link,
@@ -126,17 +128,20 @@ hr {
 	background-color: rgb(78, 77, 84);
 }
 
+.FiveEm {
+	width: 5em;
+}
+
 input[type='color'] {
 	padding: 0;
 	border: none;
 	height: 1.5em;
-	width: 5em;
 	vertical-align: middle;
 }
 
 input[type='text'] {
-	height: 1.5em;
-	width: 20%;
+	height: 1.75em;
+	padding-left: 0.25em;
 	vertical-align: middle;
 	outline: none;
 	border-radius: 4px;

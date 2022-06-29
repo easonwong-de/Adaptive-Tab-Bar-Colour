@@ -11,7 +11,7 @@ let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
 let op_more_custom = document.getElementById("more_custom");
 let op_custom_options = document.getElementById("custom_options");
-let op_custom_colors = document.getElementById("custom_colors");
+let op_custom_options_table = document.getElementById("custom_options_table");
 let op_light_color = document.getElementById("light_color");
 let op_dark_color = document.getElementById("dark_color");
 let op_reset_light = document.getElementById("reset_light_color");
@@ -20,25 +20,26 @@ let op_save = document.getElementById("save");
 let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
 
-function generateRule(domain) {
+function generateTableRow(domain) {
 	let action = pref_reservedColor_cs[domain];
 	if (action == null) return null;
-	let part_1 = `<div><span><input type="text" value="${domain}"></span>`;
+	let part_1 = `<input type="text" value="${domain}">`;
 	let part_2, part_3;
+	let part_4 = '<button title="delete">D</button>';
 	if (action == "IGNORE_THEME") {
-		part_2 = '<span><select><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
-		part_3 = '<span style="display: inline-block; width: 5em"></span><span><button title="delete">D</button></span></div>';
+		part_2 = '<select><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>';
+		part_3 = '<span class="FiveEm"></span>';
 	} else if (action.startsWith("TAG_")) {
-		part_2 = '<span><select><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
-		part_3 = `<span><input type="text" style="display: inline-block; width: 5em" value="${action.replace("TAG_", "")}"></span><span><button title="delete">D</button></span></div>`;
+		part_2 = '<select><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option>';
+		part_3 = `<input type="text" class="FiveEm" value="${action.replace("TAG_", "")}">`;
 	} else if (action.startsWith("CLASS_")) {
-		part_2 = '<span><select><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
-		part_3 = `<span><input type="text" style="display: inline-block; width: 5em" value="${action.replace("CLASS_", "")}"></span><span><button title="delete">D</button></span></div>`;
+		part_2 = '<select><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option>';
+		part_3 = `<input type="text" class="FiveEm" value="${action.replace("CLASS_", "")}">`;
 	} else {
-		part_2 = '<span><select><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select></span>';
-		part_3 = `<span><input type="color" value="${action}"></span><span><button title="delete">D</button></span></div>`;
+		part_2 = '<select><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>';
+		part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 	}
-	return part_1 + part_2 + part_3;
+	return `<tr><td>${part_1}</td><td>${part_2}</td><td>${part_3}</td><td>${part_4}</td></tr>`;
 }
 
 //Settings cache
@@ -103,17 +104,16 @@ function load() {
 				op_custom_options.hidden = !pref_custom;
 				op_light_color.value = pref_light_color;
 				op_dark_color.value = pref_dark_color;
-				op_custom_colors.innerHTML = "";
-				let domains = Object.keys(pref_reservedColor_cs);
-				domains.forEach(domain => op_custom_colors.innerHTML += generateRule(domain));
-				/* op_lookup.value = "";
-				let domains = Object.keys(pref_reservedColor_cs);
-				domains.forEach((domain, i) => {
-					op_lookup.value += domain + " " + pref_reservedColor_cs[domain];
-					if (i != domains.length - 1) {
-						op_lookup.value += "\r\n";
+				try {
+					let table_rows = op_custom_options_table.rows;
+					for (let i = 0; i < table_rows.length; i++) {
+						if (i > 1) op_custom_options_table.deleteRow(i);
 					}
-				}); */
+					let domains = Object.keys(pref_reservedColor_cs);
+					domains.forEach(domain => op_custom_options_table.innerHTML += generateTableRow(domain));
+				} catch (error) {
+					document.documentElement.innerHTML += error;
+				}
 			}
 			autoPageColor();
 			loading.hidden = true;
