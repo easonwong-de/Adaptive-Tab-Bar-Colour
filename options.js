@@ -87,20 +87,11 @@ function load() {
 					if (i > 1) op_custom_options_table.deleteRow(i);
 				}
 				let domains = Object.keys(pref_reservedColor_cs);
-				domains.forEach((domain, i) => op_custom_options_table.innerHTML += generateTableRow(domain, i));
-				for (let i = 0; document.getElementById(`SEL_${i}`); i++) {
-					let select_menu = document.getElementById(`SEL_${i}`);
-					let operation = document.getElementById(`OPE_${i}`);
-					select_menu.onchange = () => {
-						switch (select_menu.selectedIndex) {
-							case 0: operation.innerHTML = `<input type="color" class="FiveEm" value="#FFFFFF">`; break;
-							case 1: operation.innerHTML = `<span class="FiveEm"></span>`; break;
-							case 2: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
-							case 3: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
-							default: break;
-						}
-					};
-				}
+				domains.forEach((domain, i) => {
+					let new_row = op_custom_options_table.insertRow(i + 2);
+					new_row.innerHTML += generateNewRow(domain, i);
+					addAction(i);
+				});
 			}
 			autoPageColor();
 			loading.hidden = true;
@@ -185,12 +176,27 @@ dynamic.onclick = () => {
 	}
 };
 
+function addAction(i) {
+	let select_menu = document.getElementById(`SEL_${i}`);
+	let operation = document.getElementById(`OPE_${i}`);
+	let delete_button = document.getElementById(`BUT_${i}`);
+	select_menu.onchange = () => {
+		switch (select_menu.selectedIndex) {
+			case 0: operation.innerHTML = `<input type="color" class="FiveEm" value="#FFFFFF">`; break;
+			case 1: operation.innerHTML = `<span class="FiveEm"></span>`; break;
+			case 2: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
+			case 3: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
+			default: break;
+		}
+	};
+	delete_button.onclick = () => {
+		delete_button.parentElement.parentElement.remove();
+	};
+}
 
 if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
-	op_light_color.addEventListener("change", () => browser.storage.local.set({ light_color: op_light_color.value }));
-	op_dark_color.addEventListener("change", () => browser.storage.local.set({ dark_color: op_dark_color.value }));
 	op_more_custom.onclick = () => {
 		if (op_more_custom.checked) {
 			browser.storage.local.set({ custom: true });
@@ -200,20 +206,32 @@ if (popupDetected()) {
 			op_custom_options.hidden = true;
 		}
 	};
+	op_light_color.addEventListener("change", () => browser.storage.local.set({ light_color: op_light_color.value }));
+	op_dark_color.addEventListener("change", () => browser.storage.local.set({ dark_color: op_dark_color.value }));
 	op_reset_light.onclick = () => {
 		browser.storage.local.set({ light_color: "#FFFFFF" });
-		light_color.value = "#FFFFFF";
+		op_light_color.value = "#FFFFFF";
 	};
 	op_reset_dark.onclick = () => {
 		browser.storage.local.set({ dark_color: "#1C1B22" });
-		dark_color.value = "#1C1B22";
+		op_dark_color.value = "#1C1B22";
 	};
+	op_add.onclick = () => {
+		let i = 0;
+		while (document.getElementById(`SEL_${i}`) != null) {
+			i++;
+		}
+		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
+		new_row.innerHTML = generateNewRow("", i);
+		addAction(i);
+	}
 }
 
-function generateTableRow(domain, i) {
-	let action = pref_reservedColor_cs[domain];
+function generateNewRow(domain, i) {
+	let action = "IGNORE_THEME";
+	if (domain != "") action = pref_reservedColor_cs[domain];
 	if (action == null) return null;
-	let part_1 = `<input type="text" value="${domain}">`;
+	let part_1 = `<input class="TenEm" type="text" value="${domain}">`;
 	let part_2, part_3;
 	let part_4 = `<button id="BUT_${i}" title="delete">D</button>`;
 	if (action == "IGNORE_THEME") {
@@ -229,7 +247,7 @@ function generateTableRow(domain, i) {
 		part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
 		part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 	}
-	return `<tr><td>${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td></tr>`;
+	return `<td>${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`;
 }
 
 /**

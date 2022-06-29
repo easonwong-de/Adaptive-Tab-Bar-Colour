@@ -28,6 +28,13 @@ td{
 	padding: 2px;
 }
 
+td.index{
+	font-family: monospace;
+	width: 1.75em;
+	height: 1.75em;
+	text-align: center;
+}
+
 button,
 select {
 	border: none;
@@ -130,6 +137,10 @@ hr {
 
 .FiveEm {
 	width: 5em;
+}
+
+.TenEm {
+	width: 10em;
 }
 
 input[type='color'] {
