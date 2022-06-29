@@ -127,6 +127,8 @@ function getComputedColor() {
 		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 20)
 			color = overlayColor(color, ANY_to_RGBA(getColorFrom(element)));
 	}
+	if (color.a == 0)
+		return "rgb(255, 255, 255)";
 	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
