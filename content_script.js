@@ -127,8 +127,6 @@ function getComputedColor() {
 		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 20)
 			color = overlayColor(color, ANY_to_RGBA(getColorFrom(element)));
 	}
-	if (color.a == 0)
-		return "rgb(255, 255, 255)";
 	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
@@ -297,7 +295,7 @@ function HSLA_to_RGBA(hsla) {
 function overlayColor(top, bottom) {
 	let a = (1 - top.a) * bottom.a + top.a;
 	if (a == 0) {
-		return { r: 0, g: 0, b: 0, a: 0 };
+		return { r: 255, g: 255, b: 255, a: 0 };
 	} else {
 		return {
 			r: ((1 - top.a) * bottom.a * bottom.r + top.a * top.r) / a,
