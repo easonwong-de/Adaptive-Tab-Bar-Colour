@@ -295,7 +295,8 @@ function HSLA_to_RGBA(hsla) {
 function overlayColor(top, bottom) {
 	let a = (1 - top.a) * bottom.a + top.a;
 	if (a == 0) {
-		return { r: 255, g: 255, b: 255, a: 0 };
+		// Firefox renders transparent background in this color
+		return { r: 236, g: 236, b: 236, a: 0 };
 	} else {
 		return {
 			r: ((1 - top.a) * bottom.a * bottom.r + top.a * top.r) / a,
