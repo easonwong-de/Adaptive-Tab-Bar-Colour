@@ -25,14 +25,9 @@ div{
 }
 
 td{
-	padding: 2px;
-}
-
-td.index{
-	font-family: monospace;
-	width: 1.75em;
-	height: 1.75em;
-	text-align: center;
+	padding-inline: 2px;
+	padding-block: 4px;
+	vertical-align: middle;
 }
 
 button,
@@ -48,8 +43,27 @@ button{
 	text-align: center;
 }
 
+svg{
+	display: block;
+	margin: auto;
+	width: 1em;
+	height: 1em;
+	fill: none;
+	stroke-width: 2px;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.light svg{
+	stroke: black;
+}
+
+.dark svg{
+	stroke: white;
+}
+
 select {
-	width: 12em;
+	width: 11em;
 	vertical-align: middle;
 	padding-left: 0.25em;
 }
@@ -136,11 +150,13 @@ hr {
 }
 
 .FiveEm {
-	width: 5em;
+	width: 5em !important; 
+	display: inline-block;
 }
 
 .TenEm {
-	width: 10em;
+	width: 10em !important;
+	display: inline-block;
 }
 
 input[type='color'] {
@@ -148,6 +164,7 @@ input[type='color'] {
 	border: none;
 	height: 1.5em;
 	vertical-align: middle;
+	cursor: pointer;
 }
 
 input[type='text'] {
@@ -159,6 +176,7 @@ input[type='text'] {
 	background-color: inherit;
 	color: inherit;
 	display: inline-block;
+	width: 100%;
 }
 
 .light input[type='text'] {

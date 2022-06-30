@@ -52,7 +52,7 @@
 		<div id="custom_options" hidden="true">
 			<table id="custom_options_table">
 				<tr>
-					<td class="TenEm">Default light color</td>
+					<td class="TenEm"><span style="height: 1.75em; display: inline-block;">Default light color</span></td>
 					<td>
 						<select>
 							<option selected>specify a color</option>
@@ -62,11 +62,16 @@
 						<input class="FiveEm" type="color" value="#FFFFFF" id="light_color">
 					</td>
 					<td>
-						<button id="reset_light_color" title="Reset">R</button>
+						<button id="reset_light_color" title="Reset">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+								<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+								<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+							</svg>
+						</button>
 					</td>
 				</tr>
 				<tr>
-					<td class="TenEm">Default dark color</td>
+					<td class="TenEm"><span style="height: 1.75em; display: inline-block;">Default dark color</span></td>
 					<td>
 						<select>
 							<option selected>specify a color</option>
@@ -76,13 +81,35 @@
 						<input class="FiveEm" type="color" value="#1C1B22" id="dark_color">
 					</td>
 					<td>
-						<button id="reset_dark_color" title="Reset">R</button>
+						<button id="reset_dark_color" title="Reset">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+								<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+								<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+							</svg>
+						</button>
 					</td>
 				</tr>
 			</table>
 			<div style="padding: 4px;">
-				<span><button id="reset_all" title="Restore initial state">R</button></span>
-				<span><button id="add" title="Add a new rule">A</button></span>
+				<span>
+					<button id="reset_all" title="Restore initial state">
+						<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none"
+							stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2">
+							</polygon>
+							<line x1="12" y1="8" x2="12" y2="12"></line>
+							<line x1="12" y1="16" x2="12.01" y2="16"></line>
+						</svg>
+					</button>
+				</span>
+				<span>
+					<button id="add" title="Add a new rule">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+							<line x1="12" y1="5" x2="12" y2="19"></line>
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+						</svg>
+					</button>
+				</span>
 			</div>
 		</div>
 		<hr>

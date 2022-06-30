@@ -250,7 +250,7 @@ function autoSaveSettings() {
 	for (let i = 2; i < all_table_rows.length; i++) {
 		let table_cells = all_table_rows[i].children;
 		let domain = table_cells[0].firstElementChild.value;
-		if (domain != "" && pending_reservedColor_cs[domain] == null) {
+		if (domain != "" && isNaN(domain) && pending_reservedColor_cs[domain] == null) {
 			let action;
 			switch (table_cells[1].firstElementChild.selectedIndex) {
 				case 0: action = table_cells[2].firstElementChild.value; break;
@@ -262,7 +262,7 @@ function autoSaveSettings() {
 			pending_reservedColor_cs[domain] = action;
 			if (table_cells[4] != null) table_cells[4].remove();
 		} else {
-			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = "!";
+			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
 		}
 	}
 	browser.storage.local.set({ reservedColor_cs: pending_reservedColor_cs });
@@ -283,7 +283,7 @@ function generateNewRow(domain, i) {
 	domain == "" ? domain = "example.com" : action = pref_reservedColor_cs[domain];
 	let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
 	let part_2, part_3;
-	let part_4 = `<button id="DEL_${i}" title="Delete">D</button>`;
+	let part_4 = `<button id="DEL_${i}" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
 	if (action == "IGNORE_THEME") {
 		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
 		part_3 = `<span class="FiveEm"></span>`;
