@@ -130,10 +130,10 @@ function getComputedColor() {
 	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
-			color = overlayColor(color, ANY_to_RGBA("#FFFFFF"));
+			color = overlayColor(color, ANY_to_RGBA("#ECECEC"));
 		} else {
 			let body_color = getColorFrom(body);
-			color = body_color.includes("rgba") ? overlayColor(color, ANY_to_RGBA("#FFFFFF")) : overlayColor(color, ANY_to_RGBA(getColorFrom(body)));
+			color = overlayColor(color, ANY_to_RGBA(body_color.includes("rgba") ? "#ECECEC" : getColorFrom(body)));
 		}
 	}
 	return "rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")";

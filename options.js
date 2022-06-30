@@ -1,5 +1,14 @@
 //This script is shared by option page and popup
 
+const default_reservedColor_cs = {
+	"developer.mozilla.org": "IGNORE_THEME",
+	"github.com": "IGNORE_THEME",
+	"mail.google.com": "CLASS_wl",
+	"open.spotify.com": "#000000",
+	"www.instagram.com": "IGNORE_THEME",
+	"www.youtube.com": "IGNORE_THEME"
+};
+
 let body = document.getElementsByTagName("body")[0];
 let loading = document.getElementById("loading");
 let settings = document.getElementById("settings");
@@ -16,6 +25,7 @@ let op_light_color = document.getElementById("light_color");
 let op_dark_color = document.getElementById("dark_color");
 let op_reset_light = document.getElementById("reset_light_color");
 let op_reset_dark = document.getElementById("reset_dark_color");
+let op_reset_all = document.getElementById("reset_all");
 let op_save = document.getElementById("save");
 let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
@@ -176,6 +186,11 @@ dynamic.onclick = () => {
 	}
 };
 
+/**
+ * Gives newly generated HTML elements actions.
+ * 
+ * @param {number} i The index number given to newly generated HTML elements.
+ */
 function addAction(i) {
 	let select_menu = document.getElementById(`SEL_${i}`);
 	let operation = document.getElementById(`OPE_${i}`);
@@ -216,6 +231,14 @@ if (popupDetected()) {
 		browser.storage.local.set({ dark_color: "#1C1B22" });
 		op_dark_color.value = "#1C1B22";
 	};
+	op_reset_all.onclick = () => {
+		try {
+			browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
+
+		} catch (error) {
+			document.getElementById("debug").value += error;
+		}
+	};
 	op_add.onclick = () => {
 		let i = 0;
 		while (document.getElementById(`SEL_${i}`) != null) {
@@ -224,16 +247,53 @@ if (popupDetected()) {
 		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
 		new_row.innerHTML = generateNewRow("", i);
 		addAction(i);
-	}
+	};
+	op_save.onclick = () => {
+		let pending_reservedColor_cs = pref_reservedColor_cs;
+		let all_table_rows = op_custom_options_table.firstElementChild.children;
+		for (let i = 2; i < all_table_rows.length; i++) {
+			let table_cells = all_table_rows[i].children;
+			let domain = table_cells[0].firstElementChild.value;
+			if (pref_reservedColor_cs[domain] == null) {
+				let action;
+				switch (table_cells[1].firstElementChild.selectedIndex) {
+					case 0: action = table_cells[2].firstElementChild.value; break;
+					case 1: action = "IGNORE_THEME"; break;
+					case 2: action = `CLASS_${table_cells[2].firstElementChild.value}`; break;
+					case 3: action = `TAG_${table_cells[2].firstElementChild.value}`; break;
+					default: break;
+				}
+				pending_reservedColor_cs[domain] = action;
+				if (table_cells[4] != null) table_cells[4].remove();
+			} else {
+				continue;
+			}
+		}
+		browser.storage.local.set({ reservedColor_cs: pending_reservedColor_cs });
+	};
 }
 
+/**
+ * Reads settings for a domain, generates new HTML elements and gives them ids.
+ * These HTML elements shall be inserted into op_custom_options_table using insertRow().
+ * Shall run addAtion() after inserting.
+ * 
+ * @param {*} domain Domain stored in the storage.
+ * @param {*} i Identical numbering of the elements.
+ * @returns 
+ */
 function generateNewRow(domain, i) {
-	let action = "IGNORE_THEME";
-	if (domain != "") action = pref_reservedColor_cs[domain];
+	let action = "#FFFFFF"; //default action for new settings row
 	if (action == null) return null;
-	let part_1 = `<input class="TenEm" type="text" value="${domain}">`;
-	let part_2, part_3;
-	let part_4 = `<button id="BUT_${i}" title="delete">D</button>`;
+	let part_1, part_2, part_3;
+	let part_4 = `<button id="BUT_${i}" title="Delete">D</button>`;
+	if (domain == "") {
+		part_4 += `<td>*</td>`;
+		domain = "example.com"
+	} else {
+		action = pref_reservedColor_cs[domain];
+	}
+	part_1 = `<input type="text" value="${domain}">`;
 	if (action == "IGNORE_THEME") {
 		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
 		part_3 = `<span class="FiveEm"></span>`;
@@ -247,7 +307,7 @@ function generateNewRow(domain, i) {
 		part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
 		part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 	}
-	return `<td>${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`;
+	return `<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`;
 }
 
 /**
