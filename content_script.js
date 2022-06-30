@@ -124,9 +124,12 @@ function getComputedColor() {
 	let color = ANY_to_RGBA("rgba(0, 0, 0, 0)");
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
-		if (element.offsetWidth / window.innerWidth >= 0.8 && element.offsetHeight >= 20)
+		//Only if the element is wide and thick enough will it be included in the calculation
+		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20)
 			color = overlayColor(color, ANY_to_RGBA(getColorFrom(element)));
 	}
+	//If the color is still not opaque, mix it with the color of the body
+	//If the body is not opaque, mix it with #ECECEC
 	if (color.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {

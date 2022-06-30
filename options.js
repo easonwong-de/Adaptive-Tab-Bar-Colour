@@ -93,7 +93,7 @@ function load() {
 				op_light_color.value = pref_light_color;
 				op_dark_color.value = pref_dark_color;
 				let table_rows = op_custom_options_table.rows;
-				for (let i = 0; i < table_rows.length; i++) {
+				for (let i = table_rows.length - 1; i >= 0; i--) {
 					if (i > 1) op_custom_options_table.deleteRow(i);
 				}
 				let domains = Object.keys(pref_reservedColor_cs);
@@ -192,9 +192,11 @@ dynamic.onclick = () => {
  * @param {number} i The index number given to newly generated HTML elements.
  */
 function addAction(i) {
+	let domain_field = document.getElementById(`DOM_${i}`);
 	let select_menu = document.getElementById(`SEL_${i}`);
 	let operation = document.getElementById(`OPE_${i}`);
-	let delete_button = document.getElementById(`BUT_${i}`);
+	let delete_button = document.getElementById(`DEL_${i}`);
+	domain_field.oninput = autoSaveSettings;
 	select_menu.onchange = () => {
 		switch (select_menu.selectedIndex) {
 			case 0: operation.innerHTML = `<input type="color" class="FiveEm" value="#FFFFFF">`; break;
@@ -203,10 +205,13 @@ function addAction(i) {
 			case 3: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
 			default: break;
 		}
+		autoSaveSettings();
 	};
 	delete_button.onclick = () => {
 		delete_button.parentElement.parentElement.remove();
+		autoSaveSettings();
 	};
+	operation.oninput = autoSaveSettings;
 }
 
 if (popupDetected()) {
@@ -221,56 +226,46 @@ if (popupDetected()) {
 			op_custom_options.hidden = true;
 		}
 	};
-	op_light_color.addEventListener("change", () => browser.storage.local.set({ light_color: op_light_color.value }));
-	op_dark_color.addEventListener("change", () => browser.storage.local.set({ dark_color: op_dark_color.value }));
-	op_reset_light.onclick = () => {
-		browser.storage.local.set({ light_color: "#FFFFFF" });
-		op_light_color.value = "#FFFFFF";
-	};
-	op_reset_dark.onclick = () => {
-		browser.storage.local.set({ dark_color: "#1C1B22" });
-		op_dark_color.value = "#1C1B22";
-	};
-	op_reset_all.onclick = () => {
-		try {
-			browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
-
-		} catch (error) {
-			document.getElementById("debug").value += error;
-		}
-	};
+	op_light_color.onchange = () => browser.storage.local.set({ light_color: op_light_color.value });
+	op_dark_color.onchange = () => browser.storage.local.set({ dark_color: op_dark_color.value });
+	op_reset_light.onclick = () => browser.storage.local.set({ light_color: "#FFFFFF" }).then(load);
+	op_reset_dark.onclick = () => browser.storage.local.set({ dark_color: "#1C1B22" }).then(load);
+	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
 	op_add.onclick = () => {
 		let i = 0;
-		while (document.getElementById(`SEL_${i}`) != null) {
-			i++;
-		}
+		while (document.getElementById(`DOM_${i}`) != null) i++;
 		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
 		new_row.innerHTML = generateNewRow("", i);
 		addAction(i);
+		autoSaveSettings();
 	};
-	op_save.onclick = () => {
-		let pending_reservedColor_cs = pref_reservedColor_cs;
-		let all_table_rows = op_custom_options_table.firstElementChild.children;
-		for (let i = 2; i < all_table_rows.length; i++) {
-			let table_cells = all_table_rows[i].children;
-			let domain = table_cells[0].firstElementChild.value;
-			if (pref_reservedColor_cs[domain] == null) {
-				let action;
-				switch (table_cells[1].firstElementChild.selectedIndex) {
-					case 0: action = table_cells[2].firstElementChild.value; break;
-					case 1: action = "IGNORE_THEME"; break;
-					case 2: action = `CLASS_${table_cells[2].firstElementChild.value}`; break;
-					case 3: action = `TAG_${table_cells[2].firstElementChild.value}`; break;
-					default: break;
-				}
-				pending_reservedColor_cs[domain] = action;
-				if (table_cells[4] != null) table_cells[4].remove();
-			} else {
-				continue;
+}
+
+/**
+ * Reads lookup table and stores data in storage.
+ */
+function autoSaveSettings() {
+	let pending_reservedColor_cs = {};
+	let all_table_rows = op_custom_options_table.firstElementChild.children;
+	for (let i = 2; i < all_table_rows.length; i++) {
+		let table_cells = all_table_rows[i].children;
+		let domain = table_cells[0].firstElementChild.value;
+		if (domain != "" && pending_reservedColor_cs[domain] == null) {
+			let action;
+			switch (table_cells[1].firstElementChild.selectedIndex) {
+				case 0: action = table_cells[2].firstElementChild.value; break;
+				case 1: action = "IGNORE_THEME"; break;
+				case 2: action = `CLASS_${table_cells[2].firstElementChild.value}`; break;
+				case 3: action = `TAG_${table_cells[2].firstElementChild.value}`; break;
+				default: break;
 			}
+			pending_reservedColor_cs[domain] = action;
+			if (table_cells[4] != null) table_cells[4].remove();
+		} else {
+			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = "!";
 		}
-		browser.storage.local.set({ reservedColor_cs: pending_reservedColor_cs });
-	};
+	}
+	browser.storage.local.set({ reservedColor_cs: pending_reservedColor_cs });
 }
 
 /**
@@ -283,17 +278,12 @@ if (popupDetected()) {
  * @returns 
  */
 function generateNewRow(domain, i) {
-	let action = "#FFFFFF"; //default action for new settings row
+	let action = "#ECECEC"; //default action for new settings row
 	if (action == null) return null;
-	let part_1, part_2, part_3;
-	let part_4 = `<button id="BUT_${i}" title="Delete">D</button>`;
-	if (domain == "") {
-		part_4 += `<td>*</td>`;
-		domain = "example.com"
-	} else {
-		action = pref_reservedColor_cs[domain];
-	}
-	part_1 = `<input type="text" value="${domain}">`;
+	domain == "" ? domain = "example.com" : action = pref_reservedColor_cs[domain];
+	let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
+	let part_2, part_3;
+	let part_4 = `<button id="DEL_${i}" title="Delete">D</button>`;
 	if (action == "IGNORE_THEME") {
 		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
 		part_3 = `<span class="FiveEm"></span>`;
