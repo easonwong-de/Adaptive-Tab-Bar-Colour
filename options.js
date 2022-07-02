@@ -218,13 +218,8 @@ if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
 	op_more_custom.onclick = () => {
-		if (op_more_custom.checked) {
-			browser.storage.local.set({ custom: true });
-			op_custom_options.hidden = false;
-		} else {
-			browser.storage.local.set({ custom: false });
-			op_custom_options.hidden = true;
-		}
+		browser.storage.local.set({ custom: op_more_custom.checked });
+		op_custom_options.hidden = !op_more_custom.checked;
 	};
 	op_light_color.onchange = () => browser.storage.local.set({ light_color: op_light_color.value });
 	op_dark_color.onchange = () => browser.storage.local.set({ dark_color: op_dark_color.value });
@@ -285,16 +280,22 @@ function generateNewRow(domain, i) {
 	let part_2, part_3;
 	let part_4 = `<button id="DEL_${i}" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
 	if (action == "IGNORE_THEME") {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
+		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 		part_3 = `<span class="FiveEm"></span>`;
 	} else if (action.startsWith("TAG_")) {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option>`;
+		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 		part_3 = `<input type="text" class="FiveEm" value="${action.replace("TAG_", "")}">`;
 	} else if (action.startsWith("CLASS_")) {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option>`;
+		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 		part_3 = `<input type="text" class="FiveEm" value="${action.replace("CLASS_", "")}">`;
+	} else if (action.startsWith("ID_")) {
+		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option selected>pick from id</option><option>pick from name</option></select>`;
+		part_3 = `<input type="text" class="FiveEm" value="${action.replace("ID_", "")}">`;
+	} else if (action.startsWith("NAME_")) {
+		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option selected>pick from name</option></select>`;
+		part_3 = `<input type="text" class="FiveEm" value="${action.replace("NAME_", "")}">`;
 	} else {
-		part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option></select>`;
+		part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 		part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 	}
 	return `<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`;

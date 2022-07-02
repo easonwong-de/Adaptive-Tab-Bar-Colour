@@ -1,6 +1,7 @@
 //Tells background.js what color to use
 
 var response_color = "";
+const TRANSPARENT = TRANSPARENT;
 
 //preloads default color lookup table
 var reservedColor_cs = {
@@ -73,17 +74,37 @@ function findColorReserved() {
 		response_color = getComputedColor();
 		return true;
 	} else if (reservedColor_cs[host].startsWith("TAG_")) {
-		let tagName = reservedColor_cs[host].replace("TAG_", "");
-		let el_list = document.getElementsByTagName(tagName);
+		let tag = reservedColor_cs[host].replace("TAG_", "");
+		let el_list = document.getElementsByTagName(tag);
 		if (el_list.length == 0)
 			return false;
 		response_color = getColorFrom(el_list[0]);
+		if (response_color == TRANSPARENT)
+			return false;
 	} else if (reservedColor_cs[host].startsWith("CLASS_")) {
 		let className = reservedColor_cs[host].replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
 		if (el_list.length == 0)
 			return false;
 		response_color = getColorFrom(el_list[0]);
+		if (response_color == TRANSPARENT)
+			return false;
+	} else if (reservedColor_cs[host].startsWith("ID_")) {
+		let id = reservedColor_cs[host].replace("ID_", "");
+		let el = document.getElementById(id);
+		if (el == null)
+			return false;
+		response_color = getColorFrom(el);
+		if (response_color == TRANSPARENT)
+			return false;
+	} else if (reservedColor_cs[host].startsWith("NAME_")) {
+		let name = reservedColor_cs[host].replace("NAME_", "");
+		let el_list = document.getElementsByName(name);
+		if (el_list.length == 0)
+			return false;
+		response_color = getColorFrom(el_list[0]);
+		if (response_color == TRANSPARENT)
+			return false;
 	} else {
 		response_color = reservedColor_cs[host];
 		//Only hex color is accepted
@@ -91,7 +112,7 @@ function findColorReserved() {
 		return reg.test(response_color);
 	}
 	//response color can be transparent due to getColorFrom()
-	return response_color != "" && response_color != "rgba(0, 0, 0, 0)";
+	return response_color != "" && response_color != TRANSPARENT;
 }
 
 /**
@@ -121,7 +142,7 @@ function getThemeColor() {
  * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
  */
 function getComputedColor() {
-	let color = ANY_to_RGBA("rgba(0, 0, 0, 0)");
+	let color = ANY_to_RGBA(TRANSPARENT);
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
 		//Only if the element is wide and thick enough will it be included in the calculation
@@ -148,7 +169,7 @@ function getComputedColor() {
  */
 function getColorFrom(element) {
 	let color = getComputedStyle(element).backgroundColor;
-	if (color == null) color = "rgba(0, 0, 0, 0)";
+	if (color == null) color = TRANSPARENT;
 	return color;
 }
 
