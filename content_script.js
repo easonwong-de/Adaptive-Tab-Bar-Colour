@@ -1,7 +1,7 @@
 //Tells background.js what color to use
 
 var response_color = "";
-const TRANSPARENT = TRANSPARENT;
+const TRANSPARENT = "rgba(0, 0, 0, 0)";
 
 //preloads default color lookup table
 var reservedColor_cs = {
@@ -173,20 +173,8 @@ function getColorFrom(element) {
 	return color;
 }
 
-/**
- * @param {string} color Color in string
- * @returns Color in object
- */
-function ANY_to_RGBA(color) {
-	if (color.startsWith("#")) {
-		return HEXA_to_RGBA(color);
-	} else if (color.startsWith("rgb")) {
-		return RGBA_to_RGBA(color);
-	} else if (color.startsWith("hsl")) {
-		return HSLA_to_RGBA(color);
-	} else {
-		return NAME_to_RGBA(color);
-	}
+function generateColorObj(params) {
+	
 }
 
 /**
@@ -205,131 +193,6 @@ function RGBA_to_RGBA(rgba) {
 		b: result[2],
 		a: result[3]
 	};
-}
-
-/**
- * Converts hex(a) (String) to rgba (Object).
- * @author Jon Kantner (modified by Eason Wong)
- * 
- * @param {string} hexa Color in hex(a)
- * @returns Color in object
- */
-function HEXA_to_RGBA(hexa) {
-	let r = g = b = a = "00";
-	switch (hexa.length) {
-		case 4:
-			r = hexa[1] + hexa[1];
-			g = hexa[2] + hexa[2];
-			b = hexa[3] + hexa[3];
-			break;
-		case 5:
-			r = hexa[1] + hexa[1];
-			g = hexa[2] + hexa[2];
-			b = hexa[3] + hexa[3];
-			a = hexa[4] + hexa[4];
-			break;
-		case 7:
-			r = hexa[1] + hexa[2];
-			g = hexa[3] + hexa[4];
-			b = hexa[5] + hexa[6];
-			break;
-		case 9:
-			r = hexa[1] + hexa[2];
-			g = hexa[3] + hexa[4];
-			b = hexa[5] + hexa[6];
-			a = hexa[7] + hexa[8];
-			break;
-		default:
-			break;
-	}
-	return {
-		r: parseInt(r, 16),
-		g: parseInt(g, 16),
-		b: parseInt(b, 16),
-		a: parseInt(a, 16)
-	};
-}
-
-/**
- * Converts hsl(a) (String) to rgba (Object).
- * @author Jon Kantner (modified by Eason Wong)
- * 
- * @param {string} hsla Color in hsl(a)
- * @returns Color in object
- */
-function HSLA_to_RGBA(hsla) {
-	let sep = hsla.indexOf(",") > -1 ? "," : " ";
-	let hsla_param = hsla.split("(")[1].split(")")[0].split(sep);
-	// strip the slash if using space-separated syntax
-	if (hsla_param.indexOf("/") > -1)
-		hsla_param.splice(3, 1);
-	// must be fractions of 1
-	let h = hsla_param[0],
-		s = hsla_param[1].substring(0, hsla_param[1].length - 1) / 100,
-		l = hsla_param[2].substring(0, hsla_param[2].length - 1) / 100,
-		a = hsla_param[3] ? hsla_param[3] : 1;
-	// strip label and convert to degrees (if necessary)
-	if (h.indexOf("deg") > -1)
-		h = h.substring(0, h.length - 3);
-	else if (h.indexOf("rad") > -1)
-		h = Math.round(h.substring(0, h.length - 3) / (2 * Math.PI) * 360);
-	else if (h.indexOf("turn") > -1)
-		h = Math.round(h.substring(0, h.length - 4) * 360);
-	if (h >= 360)
-		h %= 360;
-	let c = (1 - Math.abs(2 * l - 1)) * s,
-		x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-		m = l - c / 2,
-		r = 0,
-		g = 0,
-		b = 0;
-	if (0 <= h && h < 60) {
-		r = c; g = x; b = 0;
-	} else if (60 <= h && h < 120) {
-		r = x; g = c; b = 0;
-	} else if (120 <= h && h < 180) {
-		r = 0; g = c; b = x;
-	} else if (180 <= h && h < 240) {
-		r = 0; g = x; b = c;
-	} else if (240 <= h && h < 300) {
-		r = x; g = 0; b = c;
-	} else if (300 <= h && h < 360) {
-		r = c; g = 0; b = x;
-	}
-	r = Math.round((r + m) * 255);
-	g = Math.round((g + m) * 255);
-	b = Math.round((b + m) * 255);
-	if (typeof a == "string" && a.indexOf("%") > -1)
-		a = a.substring(0, a.length - 1) / 100;
-	return {
-		r: r,
-		g: g,
-		b: b,
-		a: a / 1
-	};
-}
-
-/**
- * Converts color name (String) to rgba (Object).
- * If the name is not a legit color name, returns TRANSPARENT.
- * @author Jon Kantner (modified by Eason Wong)
- * 
- * @param {string} name Color in name
- * @returns Color in object
- */
-function NAME_to_RGBA(name) {
-	// Create fake div
-	let fakeDiv = document.createElement("div");
-	fakeDiv.style.backgroundColor = name;
-	fakeDiv.style.display = "none";
-	document.body.appendChild(fakeDiv);
-	// Get color of div
-	let cs = window.getComputedStyle(fakeDiv),
-		pv = cs.backgroundColor
-	// Remove div after obtaining desired color value
-	document.body.removeChild(fakeDiv);
-
-	return pv;
 }
 
 /**
@@ -352,17 +215,4 @@ function overlayColor(top, bottom) {
 			a: a
 		}
 	}
-}
-
-/**
- * Deletes alpha value from rgba (String).
- * 
- * @param {string} color color in rgba e.g. "rgba(33, 33, 33, 0.98)"
- * @returns color in rgb
- */
-function noAlphaValue(color) {
-	color = color.replace("rgba", "rgb");
-	color = color.slice(0, color.lastIndexOf(","));
-	color = color + ")";
-	return color;
 }

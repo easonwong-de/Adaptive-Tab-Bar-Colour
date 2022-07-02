@@ -312,9 +312,20 @@ function updateEachWindow(tab) {
 //Recieves the color from content script
 browser.runtime.onConnect.addListener(port => {
   port.onMessage.addListener((message, sender, sendResponse) => {
+    let color_obj = ANY_to_RGBA(message.color);
+    //unfinished
     changeFrameColorTo(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
   });
 });
+
+/**
+ * Converts color in object "r, g, b" to text "rgb(xxx)".
+ * @param {*} color Color in object.
+ * @returns Color in text.
+ */
+function colorObjToText(color) {
+  return "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
+}
 
 /**
  * Changes tab bar to the appointed color (with windowId).
@@ -419,7 +430,7 @@ function getSearchKey(url) {
 /** 
  * Returns if dark mode should be used considering the color.
  * 
- * @param {string} color The color to check (hex or rgb)
+ * @param {string} color The color to check
  * @returns {boolean} "true" => dark mode; "false" => light mode
 */
 function isDarkModeSuitable(color) {
@@ -480,11 +491,11 @@ function dimColor(color, dim) {
 /**
  * Gets brightness value from rgb object.
  * 
- * @param {object} rgb Color in object
+ * @param {object} color Color in object
  * @returns Brightness of the color
  */
-function rgbBrightness(rgb) {
-  return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+function rgbBrightness(color) {
+  return 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
 }
 
 /**
@@ -631,19 +642,19 @@ function HSLA_to_RGBA(hsla) {
  * @param {string} name Color in name
  * @returns Color in object
  */
- function NAME_to_RGBA(name) {
-	// Create fake div
-	let fakeDiv = document.createElement("div");
-	fakeDiv.style.backgroundColor = name;
-	fakeDiv.style.display = "none";
-	document.body.appendChild(fakeDiv);
-	// Get color of div
-	let cs = window.getComputedStyle(fakeDiv),
-		pv = cs.backgroundColor
-	// Remove div after obtaining desired color value
-	document.body.removeChild(fakeDiv);
+function NAME_to_RGBA(name) {
+  // Create fake div
+  let fakeDiv = document.createElement("div");
+  fakeDiv.style.backgroundColor = name;
+  fakeDiv.style.display = "none";
+  document.body.appendChild(fakeDiv);
+  // Get color of div
+  let cs = window.getComputedStyle(fakeDiv),
+    pv = cs.backgroundColor
+  // Remove div after obtaining desired color value
+  document.body.removeChild(fakeDiv);
 
-	return pv;
+  return pv;
 }
 
 /**
