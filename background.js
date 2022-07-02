@@ -499,7 +499,7 @@ function ANY_to_RGBA(color) {
   } else if (color.startsWith("hsl")) {
     return HSLA_to_RGBA(color);
   } else {
-    return { r: 0, g: 0, b: 0, a: 0 };
+    return NAME_to_RGBA(color);
   }
 }
 
@@ -621,6 +621,29 @@ function HSLA_to_RGBA(hsla) {
     b: b,
     a: a / 1
   };
+}
+
+/**
+ * Converts color name (String) to rgba (Object).
+ * If the name is not a legit color name, returns TRANSPARENT.
+ * @author Jon Kantner (modified by Eason Wong)
+ * 
+ * @param {string} name Color in name
+ * @returns Color in object
+ */
+ function NAME_to_RGBA(name) {
+	// Create fake div
+	let fakeDiv = document.createElement("div");
+	fakeDiv.style.backgroundColor = name;
+	fakeDiv.style.display = "none";
+	document.body.appendChild(fakeDiv);
+	// Get color of div
+	let cs = window.getComputedStyle(fakeDiv),
+		pv = cs.backgroundColor
+	// Remove div after obtaining desired color value
+	document.body.removeChild(fakeDiv);
+
+	return pv;
 }
 
 /**
