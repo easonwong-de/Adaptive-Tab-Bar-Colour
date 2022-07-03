@@ -13,6 +13,16 @@ body {
 	background-color: rgb(35, 34, 42);
 }
 
+h4{
+	display: flex;
+	align-items: center;
+}
+
+label{
+	display: inline-block;
+	margin-inline: 0.5em;
+}
+
 div{
 	white-space: nowrap;
 	overflow: hidden;
@@ -30,6 +40,11 @@ td{
 	vertical-align: middle;
 }
 
+span{
+	vertical-align: middle;
+	padding-inline: 0.25em;
+}
+
 button,
 select {
 	border: none;
@@ -41,25 +56,6 @@ select {
 button{
 	width: 1.75em;
 	text-align: center;
-}
-
-svg{
-	display: block;
-	margin: auto;
-	width: 1em;
-	height: 1em;
-	fill: none;
-	stroke-width: 2px;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-}
-
-.light svg{
-	stroke: black;
-}
-
-.dark svg{
-	stroke: white;
 }
 
 select {
@@ -102,6 +98,25 @@ select {
 .dark select:active {
 	color: rgb(255, 255, 255);
 	background-color: rgb(91, 91, 102);
+}
+
+svg{
+	display: block;
+	margin: auto;
+	width: 1em;
+	height: 1em;
+	fill: none;
+	stroke-width: 2px;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.light svg{
+	stroke: black;
+}
+
+.dark svg{
+	stroke: white;
 }
 
 .light a:link,
@@ -159,6 +174,11 @@ hr {
 	display: inline-block;
 }
 
+input[type='range'] {
+	margin-inline: 0.5em;
+	width: 6em;
+}
+
 input[type='color'] {
 	padding: 0;
 	border: none;
@@ -188,11 +208,13 @@ input[type='text'] {
 }
 
 .light input[type='checkbox'],
-.light input[type='radio'] {
+.light input[type='radio'],
+.light input[type='range'] {
 	accent-color: rgb(34, 100, 216);
 }
 
 .dark input[type='checkbox'],
-.dark input[type='radio'] {
+.dark input[type='radio'],
+.dark input[type='range'] {
 	accent-color: rgb(98, 218, 251);
 }

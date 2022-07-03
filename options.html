@@ -44,6 +44,16 @@
 				<input id="dynamic" type="checkbox" />
 				<label for="dynamic" title="Updates tab bar color while scrolling">Dynamic color update</label>
 			</h4>
+			<hr>
+			<h4>
+				<label for="tabbar_color">Tab bar color offset</label>
+				<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0">
+			</h4>
+			<h4>
+				<label for="popup_color">Pop-up color offset</label>
+				<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05">
+			</h4>
+			<hr>
 			<h4>
 				<input id="more_custom" type="checkbox">
 				<label for="more_custom">More customizations</label>
@@ -52,7 +62,7 @@
 		<div id="custom_options" hidden="true">
 			<table id="custom_options_table">
 				<tr>
-					<td class="TenEm"><span style="height: 1.75em; display: inline-block;">Default light color</span></td>
+					<td class="TenEm"><span>Default light color</span></td>
 					<td>
 						<select>
 							<option selected>specify a color</option>
@@ -71,7 +81,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="TenEm"><span style="height: 1.75em; display: inline-block;">Default dark color</span></td>
+					<td class="TenEm"><span>Default dark color</span></td>
 					<td>
 						<select>
 							<option selected>specify a color</option>

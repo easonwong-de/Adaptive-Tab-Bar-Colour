@@ -18,6 +18,8 @@ let color_scheme_system = document.getElementById("color_scheme_system");
 let allow_dark_light = document.getElementById("force_mode");
 let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
+let op_tabbar_color = document.getElementById("tabbar_color");
+let op_popup_color = document.getElementById("popup_color");
 let op_more_custom = document.getElementById("more_custom");
 let op_custom_options = document.getElementById("custom_options");
 let op_custom_options_table = document.getElementById("custom_options_table");
@@ -34,6 +36,8 @@ let pp_more_custom = document.getElementById("custom_popup");
 var pref_scheme;
 var pref_force;
 var pref_dynamic;
+var pref_tabbar_color;
+var pref_popup_color;
 var pref_custom;
 var pref_light_color;
 var pref_dark_color;
@@ -46,6 +50,8 @@ function loadPref(pref) {
 	pref_scheme = pref.scheme;
 	pref_force = pref.force;
 	pref_dynamic = pref.dynamic;
+	pref_tabbar_color = pref.tabbar_color;
+	pref_popup_color = pref.popup_color;
 	pref_custom = pref.custom;
 	pref_light_color = pref.light_color;
 	pref_dark_color = pref.dark_color;
@@ -59,6 +65,8 @@ function loadPref(pref) {
 function verifyPref() {
 	return pref_scheme != null
 		&& pref_force != null
+		&& pref_tabbar_color != null
+		&& pref_popup_color != null
 		&& pref_custom != null
 		&& pref_light_color != null
 		&& pref_dark_color != null
@@ -88,6 +96,8 @@ function load() {
 			color_scheme_light.checked = pref_scheme == "light";
 			color_scheme_system.checked = pref_scheme == "system";
 			if (!popupDetected()) { //when the script is run by option page
+				op_tabbar_color.value = pref_tabbar_color;
+				op_popup_color.value = pref_popup_color;
 				op_more_custom.checked = pref_custom;
 				op_custom_options.hidden = !pref_custom;
 				op_light_color.value = pref_light_color;
@@ -217,6 +227,12 @@ function addAction(i) {
 if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
+	op_tabbar_color.oninput = () => {
+		browser.storage.local.set({ tabbar_color: Number(op_tabbar_color.value) });
+	};
+	op_popup_color.oninput = () => {
+		browser.storage.local.set({ popup_color: Number(op_popup_color.value) });
+	};
 	op_more_custom.onclick = () => {
 		browser.storage.local.set({ custom: op_more_custom.checked });
 		op_custom_options.hidden = !op_more_custom.checked;
@@ -266,7 +282,7 @@ function autoSaveSettings() {
 /**
  * Reads settings for a domain, generates new HTML elements and gives them ids.
  * These HTML elements shall be inserted into op_custom_options_table using insertRow().
- * Shall run addAtion() after inserting.
+ * Shall run addAction() after inserting.
  * 
  * @param {*} domain Domain stored in the storage.
  * @param {*} i Identical numbering of the elements.

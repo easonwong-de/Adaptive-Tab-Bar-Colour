@@ -68,11 +68,13 @@ var adaptive_themes = {
 var pref_scheme;
 var pref_force;
 var pref_dynamic;
+var pref_tabbar_color;
+var pref_popup_color;
 var pref_custom;
 var pref_light_color;
 var pref_dark_color;
-var pref_last_version;
 var pref_reservedColor_cs;
+var pref_last_version;
 
 //Default values
 const default_light_color = "#FFFFFF";
@@ -137,11 +139,13 @@ function loadPref(pref) {
   pref_scheme = pref.scheme;
   pref_force = pref.force;
   pref_dynamic = pref.dynamic;
+  pref_tabbar_color = pref.tabbar_color;
+  pref_popup_color = pref.popup_color;
   pref_custom = pref.custom;
   pref_light_color = pref.light_color;
   pref_dark_color = pref.dark_color;
-  pref_last_version = pref.last_version;
   pref_reservedColor_cs = pref.reservedColor_cs;
+  pref_last_version = pref.last_version;
   //loads currents
   if (pref_custom) {
     current_light_color = ANY_to_OBJ(pref_light_color);
@@ -181,11 +185,18 @@ function init() {
     let pending_scheme = pref_scheme;
     let pending_force = pref_force;
     let pending_dynamic = pref.dynamic;
+    let pending_tabbar_color = pref_tabbar_color;
+    let pending_popup_color = pref_popup_color;
     let pending_custom = pref_custom;
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
-    let pending_last_version = [1, 6, 2];
     let pending_reservedColor_cs = pref_reservedColor_cs;
+    let pending_last_version = [1, 6, 2];
+    //updates from v1.6.2 or earlier
+    if (pref_tabbar_color == null || pref_popup_color == null) {
+      pending_tabbar_color = 0;
+      pending_popup_color = 0.05;
+    }
     //updates from v1.5.7 or earlier
     if (pref_reservedColor_cs == null) {
       pending_reservedColor_cs = default_reservedColor_cs;
@@ -220,11 +231,13 @@ function init() {
       scheme: pending_scheme,
       force: pending_force,
       dynamic: pending_dynamic,
+      tabbar_color: pending_tabbar_color,
+      popup_color: pending_popup_color,
       custom: pending_custom,
       light_color: pending_light_color,
       dark_color: pending_dark_color,
-      last_version: pending_last_version,
-      reservedColor_cs: pending_reservedColor_cs
+      reservedColor_cs: pending_reservedColor_cs,
+      last_version: pending_last_version
     });
     if (firstTime) browser.runtime.openOptionsPage();
     update();
@@ -295,7 +308,7 @@ function updateEachWindow(tab) {
       changeFrameColorTo(windowId, ANY_to_OBJ(reservedColor[current_scheme][key]), current_scheme == "dark");
     } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
       changeFrameColorTo(windowId, ANY_to_OBJ(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
-    } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
+    } else if (url.startsWith("about:")) {
       changeFrameColorTo(windowId, null, null);
     } else {
       browser.tabs.sendMessage(tab.id, {
@@ -356,26 +369,26 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     dark_mode = current_scheme == "dark";
   if (color == null) { //Gonna reset
     if (dark_mode) {
-      changeThemePara(current_dark_color, "dark");
+      changeThemePara(current_dark_color, "dark", true);
       applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      changeThemePara(current_light_color, "light");
+      changeThemePara(current_light_color, "light", true);
       applyTheme(windowId, adaptive_themes["light"]);
     }
   } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //Normal coloring
     if (dark_mode) {
-      changeThemePara(color, "dark");
+      changeThemePara(color, "dark", false);
       applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      changeThemePara(color, "light");
+      changeThemePara(color, "light", false);
       applyTheme(windowId, adaptive_themes["light"]);
     }
   } else if (pref_force) { //Force Coloring
     if (current_scheme == "dark") {
-      changeThemePara(current_dark_color, "dark");
+      changeThemePara(current_dark_color, "dark", false);
       applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      changeThemePara(current_light_color, "light");
+      changeThemePara(current_light_color, "light", false);
       applyTheme(windowId, adaptive_themes["light"]);
     }
   }
@@ -386,22 +399,27 @@ function changeFrameColorTo(windowId, color, dark_mode) {
  * 
  * @param {object} color Desired color to apply.
  * @param {string} color_scheme Color scheme, "dark" or "light".
+ * @param {boolean} change_ntp_bg Determines if to change color of New Tap Page.
  */
-function changeThemePara(color, color_scheme) {
+function changeThemePara(color, color_scheme, change_ntp_bg) {
   if (color_scheme == "dark") {
-    adaptive_themes["dark"]["colors"]["frame"] = dimColor(color, 0);
-    adaptive_themes["dark"]["colors"]["frame_inactive"] = dimColor(color, 0);
-    adaptive_themes["dark"]["colors"]["popup"] = dimColor(color, 0.05);
-    adaptive_themes["dark"]["colors"]["toolbar_field"] = dimColor(color, 0.05);
-    adaptive_themes["dark"]["colors"]["toolbar_field_focus"] = dimColor(color, 0.05);
-    adaptive_themes["dark"]["colors"]["ntp_background"] = dimColor(color, 0);
+    let frame_color = dimColor(color, pref_tabbar_color);
+    let popup_color = dimColor(color, pref_popup_color);
+    adaptive_themes["dark"]["colors"]["frame"] = frame_color;
+    adaptive_themes["dark"]["colors"]["frame_inactive"] = frame_color;
+    adaptive_themes["dark"]["colors"]["popup"] = popup_color;
+    adaptive_themes["dark"]["colors"]["toolbar_field"] = popup_color;
+    adaptive_themes["dark"]["colors"]["toolbar_field_focus"] = popup_color;
+    if (change_ntp_bg) adaptive_themes["dark"]["colors"]["ntp_background"] = generateColorString(color);
   } else {
-    adaptive_themes["light"]["colors"]["frame"] = dimColor(color, 0);
-    adaptive_themes["light"]["colors"]["frame_inactive"] = dimColor(color, 0);
-    adaptive_themes["light"]["colors"]["popup"] = dimColor(color, -0.05);
-    adaptive_themes["light"]["colors"]["toolbar_field"] = dimColor(color, -0.05);
-    adaptive_themes["light"]["colors"]["toolbar_field_focus"] = dimColor(color, -0.05);
-    adaptive_themes["light"]["colors"]["ntp_background"] = dimColor(color, 0);
+    let frame_color = dimColor(color, -pref_tabbar_color);
+    let popup_color = dimColor(color, -pref_popup_color);
+    adaptive_themes["light"]["colors"]["frame"] = frame_color;
+    adaptive_themes["light"]["colors"]["frame_inactive"] = frame_color;
+    adaptive_themes["light"]["colors"]["popup"] = popup_color;
+    adaptive_themes["light"]["colors"]["toolbar_field"] = popup_color;
+    adaptive_themes["light"]["colors"]["toolbar_field_focus"] = popup_color;
+    if (change_ntp_bg) adaptive_themes["light"]["colors"]["ntp_background"] = generateColorString(color);
   }
 }
 
