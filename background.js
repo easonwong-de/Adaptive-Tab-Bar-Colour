@@ -126,7 +126,7 @@ const reservedColor = {
 }
 
 var aboveV95 = true;
-updateAboveV95();
+updateVersionStatus95();
 
 /**
  * Loads preferences into cache.
@@ -144,12 +144,12 @@ function loadPref(pref) {
   pref_reservedColor_cs = pref.reservedColor_cs;
   //loads currents
   if (pref_custom) {
-    current_light_color = pref_light_color;
-    current_dark_color = pref_dark_color;
+    current_light_color = ANY_to_OBJ(pref_light_color);
+    current_dark_color = ANY_to_OBJ(pref_dark_color);
     current_reservedColor_cs = pref_reservedColor_cs;
   } else {
-    current_light_color = default_light_color;
-    current_dark_color = default_dark_color;
+    current_light_color = ANY_to_OBJ(default_light_color);
+    current_dark_color = ANY_to_OBJ(default_dark_color);
     current_reservedColor_cs = default_reservedColor_cs;
   }
   switch (pref_scheme) {
@@ -277,26 +277,26 @@ function updateEachWindow(tab) {
   let windowId = tab.windowId;
   if (url.startsWith("file:")) {
     if (current_scheme == "dark") {
-      changeFrameColorTo(windowId, "rgb(56, 56, 61)", true);
+      changeFrameColorTo(windowId, { r: 56, g: 56, b: 61, a: 1 }, true);
     } else if (current_scheme == "light") {
-      changeFrameColorTo(windowId, "rgb(249, 249, 250)", false);
+      changeFrameColorTo(windowId, { r: 249, g: 249, b: 250, a: 1 }, false);
     }
   } else if (url.startsWith("moz-extension:")) {
     if (current_scheme == "dark") {
-      changeFrameColorTo(windowId, "rgb(50, 50, 50)", true);
+      changeFrameColorTo(windowId, { r: 50, g: 50, b: 50, a: 1 }, true);
     } else if (current_scheme == "light") {
-      changeFrameColorTo(windowId, "rgb(236, 236, 236)", false);
+      changeFrameColorTo(windowId, { r: 236, g: 236, b: 236, a: 1 }, false);
     }
   } else {
     let key = getSearchKey(url);
     let reversed_scheme = "light";
     if (current_scheme == "light") reversed_scheme = "dark";
     if (reservedColor[current_scheme][key] != null) { //For prefered scheme there's a reserved color
-      changeFrameColorTo(windowId, reservedColor[current_scheme][key], current_scheme == "dark");
+      changeFrameColorTo(windowId, ANY_to_OBJ(reservedColor[current_scheme][key]), current_scheme == "dark");
     } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
-      changeFrameColorTo(windowId, reservedColor[reversed_scheme][key], reversed_scheme == "dark");
+      changeFrameColorTo(windowId, ANY_to_OBJ(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
     } else if (url.startsWith("about:") || url.startsWith("addons.mozilla.org")) {
-      changeFrameColorTo(windowId, "", null);
+      changeFrameColorTo(windowId, null, null);
     } else {
       browser.tabs.sendMessage(tab.id, {
         reason: "COLOR_REQUEST",
@@ -307,108 +307,6 @@ function updateEachWindow(tab) {
       });
     }
   }
-}
-
-//Recieves the color from content script
-browser.runtime.onConnect.addListener(port => {
-  port.onMessage.addListener((message, sender, sendResponse) => {
-    let color_obj = ANY_to_RGBA(message.color);
-    //unfinished
-    changeFrameColorTo(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
-  });
-});
-
-/**
- * Converts color in object "r, g, b" to text "rgb(xxx)".
- * @param {*} color Color in object.
- * @returns Color in text.
- */
-function colorObjToText(color) {
-  return "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
-}
-
-/**
- * Changes tab bar to the appointed color (with windowId).
- * 
- * "force" and "scheme" come from preferences.
- * 
- * force: false => normal;
- * force: true, scheme: dark, darkMode: true => normal;
- * force: true, scheme: light, darkMode: false => normal;
- * force: true, scheme: dark, darkMode: false => dark;
- * force: true, scheme: light, darkMode: true => light;
- * 
- * if color is empty, then roll back to default color.
- * 
- * @param {number} windowId The ID of the window
- * @param {string} color The color to change to
- * @param {boolean} dark_mode Toggle dark mode
- */
-function changeFrameColorTo(windowId, color, dark_mode) {
-  if (dark_mode == null) dark_mode = current_scheme == "dark";
-  if (color == "" || color == null) { //gonna reset
-    if (dark_mode) {
-      adaptive_themes['dark']['colors']['frame'] = current_dark_color;
-      adaptive_themes['dark']['colors']['frame_inactive'] = current_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = dimColor(current_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(current_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(current_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['ntp_background'] = current_dark_color;
-      applyTheme(windowId, adaptive_themes['dark']);
-    } else {
-      adaptive_themes['light']['colors']['frame'] = current_light_color;
-      adaptive_themes['light']['colors']['frame_inactive'] = current_light_color;
-      adaptive_themes['light']['colors']['popup'] = dimColor(current_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(current_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(current_light_color, -0.05);
-      adaptive_themes['light']['colors']['ntp_background'] = current_light_color;
-      applyTheme(windowId, adaptive_themes['light']);
-    }
-  } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //normal coloring
-    if (dark_mode) {
-      if (color == "DEFAULT") color = current_dark_color;
-      adaptive_themes['dark']['colors']['frame'] = color;
-      adaptive_themes['dark']['colors']['frame_inactive'] = color;
-      adaptive_themes['dark']['colors']['popup'] = dimColor(color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(color, 0.05);
-      applyTheme(windowId, adaptive_themes['dark']);
-    } else {
-      if (color == "DEFAULT") color = current_light_color;
-      adaptive_themes['light']['colors']['frame'] = color;
-      adaptive_themes['light']['colors']['frame_inactive'] = color;
-      adaptive_themes['light']['colors']['popup'] = dimColor(color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(color, -0.05);
-      applyTheme(windowId, adaptive_themes['light']);
-    }
-  } else if (pref_force) { //force coloring
-    if (current_scheme == "dark") {
-      adaptive_themes['dark']['colors']['frame'] = current_dark_color;
-      adaptive_themes['dark']['colors']['frame_inactive'] = current_dark_color;
-      adaptive_themes['dark']['colors']['popup'] = dimColor(current_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field'] = dimColor(current_dark_color, 0.05);
-      adaptive_themes['dark']['colors']['toolbar_field_focus'] = dimColor(current_dark_color, 0.05);
-      applyTheme(windowId, adaptive_themes['dark']);
-    } else {
-      adaptive_themes['light']['colors']['frame'] = current_light_color;
-      adaptive_themes['light']['colors']['frame_inactive'] = current_light_color;
-      adaptive_themes['light']['colors']['popup'] = dimColor(current_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field'] = dimColor(current_light_color, -0.05);
-      adaptive_themes['light']['colors']['toolbar_field_focus'] = dimColor(current_light_color, -0.05);
-      applyTheme(windowId, adaptive_themes['light']);
-    }
-  }
-}
-
-/**
- * Applies theme to certain window.
- * 
- * @param {number} windowId The ID of the target window
- * @param {object} theme The theme to apply
- */
-function applyTheme(windowId, theme) {
-  browser.theme.update(windowId, theme);
 }
 
 /**
@@ -427,240 +325,183 @@ function getSearchKey(url) {
   return key;
 }
 
-/** 
- * Returns if dark mode should be used considering the color.
+//Recieves the color from content script
+browser.runtime.onConnect.addListener(port => {
+  port.onMessage.addListener((message, sender, sendResponse) => {
+    changeFrameColorTo(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
+  });
+});
+
+/**
+ * Changes tab bar to the appointed color (with windowId).
  * 
- * @param {string} color The color to check
- * @returns {boolean} "true" => dark mode; "false" => light mode
-*/
-function isDarkModeSuitable(color) {
-  if (color == "" || color == null) {
-    return null;
-  } else {
-    if (tooBright(color)) {
-      return false;
-    } else if (tooDark(color)) {
-      return true;
+ * "force" and "scheme" come from preferences.
+ * 
+ * force: false => normal;
+ * force: true, scheme: dark, darkMode: true => normal;
+ * force: true, scheme: light, darkMode: false => normal;
+ * force: true, scheme: dark, darkMode: false => dark;
+ * force: true, scheme: light, darkMode: true => light;
+ * 
+ * if color is empty, then roll back to default color.
+ * 
+ * @param {number} windowId The ID of the window.
+ * @param {object} color The color to change to, in rgb object.
+ * @param {boolean} dark_mode Decides text color.
+ */
+function changeFrameColorTo(windowId, color, dark_mode) {
+  //dark_mode is null means the color is not bright nor dark
+  //Then choose text color following the setting
+  if (dark_mode == null)
+    dark_mode = current_scheme == "dark";
+  if (color == null) { //Gonna reset
+    if (dark_mode) {
+      changeThemePara(current_dark_color, "dark");
+      applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      return null;
+      changeThemePara(current_light_color, "light");
+      applyTheme(windowId, adaptive_themes["light"]);
+    }
+  } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //Normal coloring
+    if (dark_mode) {
+      changeThemePara(color, "dark");
+      applyTheme(windowId, adaptive_themes["dark"]);
+    } else {
+      changeThemePara(color, "light");
+      applyTheme(windowId, adaptive_themes["light"]);
+    }
+  } else if (pref_force) { //Force Coloring
+    if (current_scheme == "dark") {
+      changeThemePara(current_dark_color, "dark");
+      applyTheme(windowId, adaptive_themes["dark"]);
+    } else {
+      changeThemePara(current_light_color, "light");
+      applyTheme(windowId, adaptive_themes["light"]);
     }
   }
 }
 
 /**
- * Returns if a color is too bright.
+ * Adjusts the parameters in adaptive_themes.
  * 
- * @param {string} color The color to check (hex or rgb)
- * @returns {boolean} true if the color is bright
+ * @param {object} color Desired color to apply.
+ * @param {string} color_scheme Color scheme, "dark" or "light".
  */
-function tooBright(color) {
-  return rgbBrightness(ANY_to_RGBA(color)) > 155;
+function changeThemePara(color, color_scheme) {
+  if (color_scheme == "dark") {
+    adaptive_themes["dark"]["colors"]["frame"] = dimColor(color, 0);
+    adaptive_themes["dark"]["colors"]["frame_inactive"] = dimColor(color, 0);
+    adaptive_themes["dark"]["colors"]["popup"] = dimColor(color, 0.05);
+    adaptive_themes["dark"]["colors"]["toolbar_field"] = dimColor(color, 0.05);
+    adaptive_themes["dark"]["colors"]["toolbar_field_focus"] = dimColor(color, 0.05);
+    adaptive_themes["dark"]["colors"]["ntp_background"] = dimColor(color, 0);
+  } else {
+    adaptive_themes["light"]["colors"]["frame"] = dimColor(color, 0);
+    adaptive_themes["light"]["colors"]["frame_inactive"] = dimColor(color, 0);
+    adaptive_themes["light"]["colors"]["popup"] = dimColor(color, -0.05);
+    adaptive_themes["light"]["colors"]["toolbar_field"] = dimColor(color, -0.05);
+    adaptive_themes["light"]["colors"]["toolbar_field_focus"] = dimColor(color, -0.05);
+    adaptive_themes["light"]["colors"]["ntp_background"] = dimColor(color, 0);
+  }
 }
 
 /**
- * Returns if a color is too dark.
+ * Applies theme to certain window.
  * 
- * @param {string} color The color to check (hex or rgb)
- * @returns {boolean} true if the color is dark
+ * @param {number} windowId The ID of the target window
+ * @param {object} theme The theme to apply
  */
-function tooDark(color) {
-  return rgbBrightness(ANY_to_RGBA(color)) < 100;
+function applyTheme(windowId, theme) {
+  browser.theme.update(windowId, theme);
+}
+
+/** 
+ * Returns if dark mode should be used considering the color.
+ * 
+ * @param {object} color The color to check, in rgb object.
+ * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
+*/
+function isDarkModeSuitable(color) {
+  let brightness = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
+  if (brightness > 155) {
+    return false;
+  } else if (brightness < 100) {
+    return true;
+  } else {
+    return null;
+  }
 }
 
 /**
  * Dims or lightens color.
  * 
- * @param {string} color Color to process
- * @param {number} dim between -1.0 (dim) to 1.0 (light)
- * @returns Dimmed or lightened color
+ * @param {object} color Color to process, in rgb object.
+ * @param {number} dim between -1.0 (dim) to 1.0 (light).
+ * @returns Dimmed or lightened color string.
  */
 function dimColor(color, dim) {
-  let color_obj = ANY_to_RGBA(color);
-  if (dim >= 0) {
-    color_obj.r = color_obj.r + dim * (255 - color_obj.r);
-    color_obj.g = color_obj.g + dim * (255 - color_obj.g);
-    color_obj.b = color_obj.b + dim * (255 - color_obj.b);
+  let result = Object.assign({}, color);
+  if (dim > 0) {
+    result.r = color.r + dim * (255 - color.r);
+    result.g = color.g + dim * (255 - color.g);
+    result.b = color.b + dim * (255 - color.b);
+  } else if (dim < 0) {
+    result.r = (dim + 1) * color.r;
+    result.g = (dim + 1) * color.g;
+    result.b = (dim + 1) * color.b;
+  }
+  return generateColorString(result);
+}
+
+/**
+ * 
+ * @param {object} color Color in rgb object.
+ * @returns "rgb(xxx)" string, floor rounded.
+ */
+function generateColorString(color) {
+  return "rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")";
+}
+
+/**
+ * Converts any color to rgba object.
+ * @author JayB (modified by Eason Wong)
+ * 
+ * @param {string} color Color to convert.
+ * @returns Color in rgba object.
+ */
+function ANY_to_OBJ(color) {
+  if (color == "DEFAULT") {
+    return null;
   } else {
-    color_obj.r = (dim + 1) * color_obj.r;
-    color_obj.g = (dim + 1) * color_obj.g;
-    color_obj.b = (dim + 1) * color_obj.b;
+    var canvas = document.createElement("canvas").getContext("2d");
+    canvas.fillStyle = color
+    let color_temp = canvas.fillStyle;
+    if (color_temp.startsWith("#")) {
+      let r = color_temp[1] + color_temp[2];
+      let g = color_temp[3] + color_temp[4];
+      let b = color_temp[5] + color_temp[6];
+      return {
+        r: parseInt(r, 16),
+        g: parseInt(g, 16),
+        b: parseInt(b, 16),
+        a: 1
+      };
+    } else {
+      let result = color_temp.match(/[.?\d]+/g).map(Number);
+      return {
+        r: result[0],
+        g: result[1],
+        b: result[2],
+        a: result[3]
+      };
+    }
   }
-  return "rgb(" + color_obj.r + ", " + color_obj.g + ", " + color_obj.b + ")";
-}
-
-/**
- * Gets brightness value from rgb object.
- * 
- * @param {object} color Color in object
- * @returns Brightness of the color
- */
-function rgbBrightness(color) {
-  return 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
-}
-
-/**
- * @param {string} color Color in string
- * @returns Color in object
- */
-function ANY_to_RGBA(color) {
-  if (color.startsWith("#")) {
-    return HEXA_to_RGBA(color);
-  } else if (color.startsWith("rgb")) {
-    return RGBA_to_RGBA(color);
-  } else if (color.startsWith("hsl")) {
-    return HSLA_to_RGBA(color);
-  } else {
-    return NAME_to_RGBA(color);
-  }
-}
-
-/**
- * Converts rgba/rgb (String) to rgba (Object).
- * 
- * @param {string} rgba color in rgba/rgb
- * @returns color in object
- */
-function RGBA_to_RGBA(rgba) {
-  let result = [0, 0, 0, 0];
-  result = rgba.match(/[.?\d]+/g).map(Number);
-  if (result.length == 3) result[3] = 1;
-  return {
-    r: result[0],
-    g: result[1],
-    b: result[2],
-    a: result[3]
-  };
-}
-
-/**
- * Converts hex(a) (String) to rgba (Object).
- * @author Jon Kantner (modified by Eason Wong)
- * 
- * @param {string} hexa Color in hex(a)
- * @returns Color in object
- */
-function HEXA_to_RGBA(hexa) {
-  let r = g = b = a = "00";
-  switch (hexa.length) {
-    case 4:
-      r = hexa[1] + hexa[1];
-      g = hexa[2] + hexa[2];
-      b = hexa[3] + hexa[3];
-      break;
-    case 5:
-      r = hexa[1] + hexa[1];
-      g = hexa[2] + hexa[2];
-      b = hexa[3] + hexa[3];
-      a = hexa[4] + hexa[4];
-      break;
-    case 7:
-      r = hexa[1] + hexa[2];
-      g = hexa[3] + hexa[4];
-      b = hexa[5] + hexa[6];
-      break;
-    case 9:
-      r = hexa[1] + hexa[2];
-      g = hexa[3] + hexa[4];
-      b = hexa[5] + hexa[6];
-      a = hexa[7] + hexa[8];
-      break;
-    default:
-      break;
-  }
-  return {
-    r: parseInt(r, 16),
-    g: parseInt(g, 16),
-    b: parseInt(b, 16),
-    a: parseInt(a, 16)
-  };
-}
-
-/**
- * Converts hsl(a) (String) to rgba (Object).
- * @author Jon Kantner (modified by Eason Wong)
- * 
- * @param {string} hsla Color in hsl(a)
- * @returns Color in object
- */
-function HSLA_to_RGBA(hsla) {
-  let sep = hsla.indexOf(",") > -1 ? "," : " ";
-  let hsla_param = hsla.split("(")[1].split(")")[0].split(sep);
-  // strip the slash if using space-separated syntax
-  if (hsla_param.indexOf("/") > -1)
-    hsla_param.splice(3, 1);
-  // must be fractions of 1
-  let h = hsla_param[0],
-    s = hsla_param[1].substring(0, hsla_param[1].length - 1) / 100,
-    l = hsla_param[2].substring(0, hsla_param[2].length - 1) / 100,
-    a = hsla_param[3] ? hsla_param[3] : 1;
-  // strip label and convert to degrees (if necessary)
-  if (h.indexOf("deg") > -1)
-    h = h.substring(0, h.length - 3);
-  else if (h.indexOf("rad") > -1)
-    h = Math.round(h.substring(0, h.length - 3) / (2 * Math.PI) * 360);
-  else if (h.indexOf("turn") > -1)
-    h = Math.round(h.substring(0, h.length - 4) * 360);
-  if (h >= 360)
-    h %= 360;
-  let c = (1 - Math.abs(2 * l - 1)) * s,
-    x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-    m = l - c / 2,
-    r = 0,
-    g = 0,
-    b = 0;
-  if (0 <= h && h < 60) {
-    r = c; g = x; b = 0;
-  } else if (60 <= h && h < 120) {
-    r = x; g = c; b = 0;
-  } else if (120 <= h && h < 180) {
-    r = 0; g = c; b = x;
-  } else if (180 <= h && h < 240) {
-    r = 0; g = x; b = c;
-  } else if (240 <= h && h < 300) {
-    r = x; g = 0; b = c;
-  } else if (300 <= h && h < 360) {
-    r = c; g = 0; b = x;
-  }
-  r = Math.round((r + m) * 255);
-  g = Math.round((g + m) * 255);
-  b = Math.round((b + m) * 255);
-  if (typeof a == "string" && a.indexOf("%") > -1)
-    a = a.substring(0, a.length - 1) / 100;
-  return {
-    r: r,
-    g: g,
-    b: b,
-    a: a / 1
-  };
-}
-
-/**
- * Converts color name (String) to rgba (Object).
- * If the name is not a legit color name, returns TRANSPARENT.
- * @author Jon Kantner (modified by Eason Wong)
- * 
- * @param {string} name Color in name
- * @returns Color in object
- */
-function NAME_to_RGBA(name) {
-  // Create fake div
-  let fakeDiv = document.createElement("div");
-  fakeDiv.style.backgroundColor = name;
-  fakeDiv.style.display = "none";
-  document.body.appendChild(fakeDiv);
-  // Get color of div
-  let cs = window.getComputedStyle(fakeDiv),
-    pv = cs.backgroundColor
-  // Remove div after obtaining desired color value
-  document.body.removeChild(fakeDiv);
-
-  return pv;
 }
 
 /**
  * Checks if Firefox is v95.0 or later.
  */
-function updateAboveV95() {
+function updateVersionStatus95() {
   let str = navigator.userAgent;
   let ind = str.lastIndexOf("Firefox");
   if (ind != -1) {

@@ -1,7 +1,7 @@
-//Tells background.js what color to use
+//Sends color in RGB object (no transparent) to background.js
 
-var response_color = "";
-const TRANSPARENT = "rgba(0, 0, 0, 0)";
+const TRANSPARENT = { r: 0, g: 0, b: 0, a: 0 };
+var RESPONSE_COLOR = Object.assign({}, TRANSPARENT);
 
 //preloads default color lookup table
 var reservedColor_cs = {
@@ -34,7 +34,7 @@ function findColor() {
 function sendColor() {
 	if (!document.hidden) {
 		port = browser.runtime.connect();
-		port.postMessage({ color: response_color });
+		port.postMessage({ color: RESPONSE_COLOR });
 	}
 }
 
@@ -62,150 +62,122 @@ browser.runtime.onMessage.addListener(
 );
 
 /**
- * Sets response_color.
+ * Sets RESPONSE_COLOR with the help of reserved color list.
  * 
- * @returns true if a reserved color for the URl can be found
+ * @returns True if a legal reserved color for the webpage can be found.
  */
 function findColorReserved() {
-	let host = document.location.host; // e.g. "host" can be "www.irgendwas.com"
-	if (reservedColor_cs[host] == null) {
+	let host = document.location.host;
+	//"host" can be "www.irgendwas.com"
+	let hostAction = reservedColor_cs[host];
+	if (hostAction == null) {
 		return false;
-	} else if (reservedColor_cs[host] == "IGNORE_THEME") {
-		response_color = getComputedColor();
+	} else if (hostAction == "IGNORE_THEME") {
+		findComputedColor();
 		return true;
-	} else if (reservedColor_cs[host].startsWith("TAG_")) {
-		let tag = reservedColor_cs[host].replace("TAG_", "");
+	} else if (hostAction.startsWith("TAG_")) {
+		let tag = hostAction.replace("TAG_", "");
 		let el_list = document.getElementsByTagName(tag);
-		if (el_list.length == 0)
-			return false;
-		response_color = getColorFrom(el_list[0]);
-		if (response_color == TRANSPARENT)
-			return false;
-	} else if (reservedColor_cs[host].startsWith("CLASS_")) {
-		let className = reservedColor_cs[host].replace("CLASS_", "");
+		RESPONSE_COLOR = getColorFrom(el_list[0]);
+	} else if (hostAction.startsWith("CLASS_")) {
+		let className = hostAction.replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
-		if (el_list.length == 0)
-			return false;
-		response_color = getColorFrom(el_list[0]);
-		if (response_color == TRANSPARENT)
-			return false;
-	} else if (reservedColor_cs[host].startsWith("ID_")) {
-		let id = reservedColor_cs[host].replace("ID_", "");
+		RESPONSE_COLOR = getColorFrom(el_list[0]);
+	} else if (hostAction.startsWith("ID_")) {
+		let id = hostAction.replace("ID_", "");
 		let el = document.getElementById(id);
-		if (el == null)
-			return false;
-		response_color = getColorFrom(el);
-		if (response_color == TRANSPARENT)
-			return false;
-	} else if (reservedColor_cs[host].startsWith("NAME_")) {
-		let name = reservedColor_cs[host].replace("NAME_", "");
+		RESPONSE_COLOR = getColorFrom(el);
+	} else if (hostAction.startsWith("NAME_")) {
+		let name = hostAction.replace("NAME_", "");
 		let el_list = document.getElementsByName(name);
-		if (el_list.length == 0)
-			return false;
-		response_color = getColorFrom(el_list[0]);
-		if (response_color == TRANSPARENT)
-			return false;
+		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else {
-		response_color = reservedColor_cs[host];
-		//Only hex color is accepted
-		let reg = /^#([0-9a-f]{3}){1,2}$/i;
-		return reg.test(response_color);
+		RESPONSE_COLOR = ANY_to_OBJ(hostAction);
 	}
-	//response color can be transparent due to getColorFrom()
-	return response_color != "" && response_color != TRANSPARENT;
+	//Return ture if reponse color is legal and can be sent to background.js
+	return RESPONSE_COLOR != null && RESPONSE_COLOR.a == 1;
 }
 
 /**
- * Sets response_color.
+ * Sets RESPONSE_COLOR using findThemeColor() and findComputedColor().
  */
 function findColorUnreserved() {
-	response_color = getThemeColor() ? getThemeColor() : getComputedColor();
+	if (!findThemeColor()) findComputedColor();
 }
 
 /** 
- * @returns Provided theme-color e.g. "#ffffff", "rgba(33, 33, 33, 0.98)"
+ * Sets RESPONSE_COLOR using theme-color defined by the website HTML.
+ * 
+ * @returns False if no legal theme-color can be found.
  */
-function getThemeColor() {
-	//Get theme-color defined by the website html
-	headerTag = document.querySelector('meta[name="theme-color"]');
-	if (headerTag == null) {
-		return null;
+function findThemeColor() {
+	headerTag = document.querySelector(`meta[name="theme-color"]`);
+	if (headerTag != null) {
+		RESPONSE_COLOR = ANY_to_OBJ(headerTag.content);
+		//Return true if it is legal and can be sent to background.js
+		//Otherwise, return false and trigger getComputedColor()
+		return RESPONSE_COLOR.a == 1;
 	} else {
-		let color = headerTag.content;
-		if (color.includes("rgba")) color = noAlphaValue(color);
-		return color;
+		return false;
 	}
 }
 
 /**
- * @author emilio on GitHub
- * @returns Background color of the element of the top e.g. "rgb(30, 30, 30)"
+ * Sets REPONSE_COLOR using web elements.
+ * 
+ * @author emilio on GitHub (modified by Eason Wong)
  */
-function getComputedColor() {
-	let color = ANY_to_RGBA(TRANSPARENT);
+function findComputedColor() {
+	let color_temp0 = Object.assign({}, TRANSPARENT);
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
+		//If the color is already opaque, intercept the loop
+		if (color_temp0.a == 1)
+			break;
 		//Only if the element is wide and thick enough will it be included in the calculation
-		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20)
-			color = overlayColor(color, ANY_to_RGBA(getColorFrom(element)));
-	}
-	//If the color is still not opaque, mix it with the color of the body
-	//If the body is not opaque, mix it with #ECECEC
-	if (color.a != 1) {
-		let body = document.getElementsByTagName("body")[0];
-		if (body == undefined) {
-			color = overlayColor(color, ANY_to_RGBA("#ECECEC"));
-		} else {
-			let body_color = getColorFrom(body);
-			color = overlayColor(color, ANY_to_RGBA(body_color.includes("rgba") ? "#ECECEC" : getColorFrom(body)));
+		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20) {
+			let color_temp1 = getColorFrom(element);
+			//If the element is tranparen, just skip
+			if (color_temp1 == TRANSPARENT) continue;
+			color_temp0 = overlayColor(color_temp0, color_temp1);
 		}
 	}
-	return "rgb(" + Math.floor(color.r) + ", " + Math.floor(color.g) + ", " + Math.floor(color.b) + ")";
+	//If the color is still not opaque, overlay it over the webpage body
+	//If the body is not opaque, overlay it over rgb(236, 236, 236)
+	//On Firefox Nightly it should be rgb(255, 255, 255)
+	if (color_temp0.a != 1) {
+		let body = document.getElementsByTagName("body")[0];
+		if (body == undefined) {
+			color_temp0 = overlayColor(color_temp0, { r: 236, g: 236, b: 236, a: 1 });
+		} else {
+			let body_color = getColorFrom(body);
+			color_temp0 = overlayColor(color_temp0, body_color.a == 1 ? getColorFrom(body) : { r: 236, g: 236, b: 236, a: 1 });
+		}
+	}
+	RESPONSE_COLOR = Object.assign({}, color_temp0);
 }
 
 /**
- * @param {element} element 
- * @returns The color of the element in string, transparent if null
+ * @param {HTMLElement} element The element to get color from.
+ * @returns The color of the element in object, transparent if null.
  */
 function getColorFrom(element) {
+	if (element == null) return TRANSPARENT;
 	let color = getComputedStyle(element).backgroundColor;
-	if (color == null) color = TRANSPARENT;
-	return color;
-}
-
-function generateColorObj(params) {
-	
+	return (color == null || color == "") ? TRANSPARENT : ANY_to_OBJ(color);
 }
 
 /**
- * Converts rgba/rgb (String) to rgba (Object).
+ * Overlays one color over another.
  * 
- * @param {string} rgba color in rgba/rgb
- * @returns color in object
- */
-function RGBA_to_RGBA(rgba) {
-	let result = [0, 0, 0, 0];
-	result = rgba.match(/[.?\d]+/g).map(Number);
-	if (result.length == 3) result[3] = 1;
-	return {
-		r: result[0],
-		g: result[1],
-		b: result[2],
-		a: result[3]
-	};
-}
-
-/**
- * Add up colors
- * 
- * @param {object} top Color on top
- * @param {object} bottom Color underneath
- * @returns Result of the addition in object
+ * @param {object} top Color on top.
+ * @param {object} bottom Color underneath.
+ * @returns Result of the addition in object.
  */
 function overlayColor(top, bottom) {
 	let a = (1 - top.a) * bottom.a + top.a;
 	if (a == 0) {
-		// Firefox renders transparent background in this color
+		// Firefox renders transparent background in rgb(236, 236, 236)
 		return { r: 236, g: 236, b: 236, a: 0 };
 	} else {
 		return {
@@ -214,5 +186,37 @@ function overlayColor(top, bottom) {
 			b: ((1 - top.a) * bottom.a * bottom.b + top.a * top.b) / a,
 			a: a
 		}
+	}
+}
+
+/**
+ * Converts any color to rgba object.
+ * @author JayB (modified by Eason Wong)
+ * 
+ * @param {string} color Color to convert.
+ * @returns Color in rgba object.
+ */
+function ANY_to_OBJ(color) {
+	var canvas = document.createElement("canvas").getContext("2d");
+	canvas.fillStyle = color
+	let color_temp = canvas.fillStyle;
+	if (color_temp.startsWith("#")) {
+		let r = color_temp[1] + color_temp[2];
+		let g = color_temp[3] + color_temp[4];
+		let b = color_temp[5] + color_temp[6];
+		return {
+			r: parseInt(r, 16),
+			g: parseInt(g, 16),
+			b: parseInt(b, 16),
+			a: 1
+		};
+	} else {
+		let result = color_temp.match(/[.?\d]+/g).map(Number);
+		return {
+			r: result[0],
+			g: result[1],
+			b: result[2],
+			a: result[3]
+		};
 	}
 }

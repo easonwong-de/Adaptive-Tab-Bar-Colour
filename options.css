@@ -169,7 +169,7 @@ input[type='color'] {
 
 input[type='text'] {
 	height: 1.75em;
-	padding-left: 0.25em;
+	padding-inline: 0.25em;
 	vertical-align: middle;
 	outline: none;
 	border-radius: 4px;
