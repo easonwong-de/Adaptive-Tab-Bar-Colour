@@ -83,14 +83,14 @@ const default_dark_color = "#1C1B22";
 reserved color is IGNORE_THEME => use calculated color as theme color
 reserved color is a tag name => theme color is stored under that tag
 reserved color is a class name => theme color is stored under that class */
-const default_reservedColor_cs = {
+const default_reservedColor_cs = Object.freeze({
   "developer.mozilla.org": "IGNORE_THEME",
   "github.com": "IGNORE_THEME",
   "mail.google.com": "CLASS_wl",
   "open.spotify.com": "#000000",
   "www.instagram.com": "IGNORE_THEME",
   "www.youtube.com": "IGNORE_THEME"
-};
+});
 
 //These prefs are controlled by other prefs
 var current_scheme;

@@ -1,13 +1,13 @@
 //This script is shared by option page and popup
 
-const default_reservedColor_cs = {
+const default_reservedColor_cs = Object.freeze({
 	"developer.mozilla.org": "IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "CLASS_wl",
 	"open.spotify.com": "#000000",
 	"www.instagram.com": "IGNORE_THEME",
 	"www.youtube.com": "IGNORE_THEME"
-};
+});
 
 let body = document.getElementsByTagName("body")[0];
 let loading = document.getElementById("loading");
@@ -103,9 +103,8 @@ function load() {
 				op_light_color.value = pref_light_color;
 				op_dark_color.value = pref_dark_color;
 				let table_rows = op_custom_options_table.rows;
-				for (let i = table_rows.length - 1; i >= 0; i--) {
-					if (i > 1) op_custom_options_table.deleteRow(i);
-				}
+				for (let i = table_rows.length - 1; i > 1; i--)
+					op_custom_options_table.deleteRow(i);
 				let domains = Object.keys(pref_reservedColor_cs);
 				domains.forEach((domain, i) => {
 					let new_row = op_custom_options_table.insertRow(i + 2);
@@ -244,7 +243,7 @@ if (popupDetected()) {
 	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
 	op_add.onclick = () => {
 		let i = 0;
-		while (document.getElementById(`DOM_${i}`) != null) i++;
+		while (document.getElementById(`DOM_${i}`) != null) i++; //finds an unoccupied index
 		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
 		new_row.innerHTML = generateNewRow("", i);
 		addAction(i);
@@ -280,12 +279,12 @@ function autoSaveSettings() {
 }
 
 /**
- * Reads settings for a domain, generates new HTML elements and gives them ids.
+ * Reads settings for a domain, generates new HTML elements and gives them id-s.
  * These HTML elements shall be inserted into op_custom_options_table using insertRow().
  * Shall run addAction() after inserting.
  * 
  * @param {*} domain Domain stored in the storage.
- * @param {*} i Identical numbering of the elements.
+ * @param {*} i Special numbering of the elements.
  * @returns 
  */
 function generateNewRow(domain, i) {

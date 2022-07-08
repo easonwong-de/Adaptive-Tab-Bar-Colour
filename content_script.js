@@ -1,6 +1,6 @@
 //Sends color in RGB object (no transparent) to background.js
 
-const TRANSPARENT = { r: 0, g: 0, b: 0, a: 0 };
+const TRANSPARENT = Object.freeze({ r: 0, g: 0, b: 0, a: 0 });
 var RESPONSE_COLOR = Object.assign({}, TRANSPARENT);
 
 //preloads default color lookup table
