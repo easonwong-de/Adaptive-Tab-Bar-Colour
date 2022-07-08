@@ -138,7 +138,7 @@ function findComputedColor() {
 		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20) {
 			let color_temp1 = getColorFrom(element);
 			//If the element is tranparen, just skip
-			if (color_temp1 == TRANSPARENT) continue;
+			if (Object.is(color_temp1, TRANSPARENT)) continue;
 			color_temp0 = overlayColor(color_temp0, color_temp1);
 		}
 	}
@@ -154,7 +154,7 @@ function findComputedColor() {
 			color_temp0 = overlayColor(color_temp0, body_color.a == 1 ? getColorFrom(body) : { r: 236, g: 236, b: 236, a: 1 });
 		}
 	}
-	RESPONSE_COLOR = Object.assign({}, color_temp0);
+	Object.assign(RESPONSE_COLOR, color_temp0);
 }
 
 /**
@@ -162,9 +162,9 @@ function findComputedColor() {
  * @returns The color of the element in object, transparent if null.
  */
 function getColorFrom(element) {
-	if (element == null) return TRANSPARENT;
+	if (element == null) return Object.create(TRANSPARENT);
 	let color = getComputedStyle(element).backgroundColor;
-	return (color == null || color == "") ? TRANSPARENT : ANY_to_OBJ(color);
+	return (color == null || color == "") ? Object.create(TRANSPARENT) : ANY_to_OBJ(color);
 }
 
 /**
