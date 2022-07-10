@@ -20,6 +20,7 @@ findColor();
  * Finds color and send to background.
  */
 function findColor() {
+	RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 	if (document.fullscreenElement == null) {
 		if (!findColorReserved()) findColorUnreserved();
 		if (!document.hidden) sendColor();
@@ -143,10 +144,10 @@ function findComputedColor() {
 	if (RESPONSE_COLOR.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
-			RESPONSE_COLOR = null;
+			RESPONSE_COLOR = "DEFAULT";
 		} else {
 			let body_color = getColorFrom(body);
-			RESPONSE_COLOR = body_color.a == 1 ? overlayColor(RESPONSE_COLOR, body_color) : null;
+			RESPONSE_COLOR = body_color.a == 1 ? overlayColor(RESPONSE_COLOR, body_color) : "DEFAULT";
 		}
 	}
 }
@@ -230,17 +231,4 @@ function cc(target, source) {
 	target.g = source.g;
 	target.b = source.b;
 	target.a = source.a;
-}
-
-/**
- * Compares colors (vergleichen den Farben)
- * 
- * @param {Object} color_1 Color object 1.
- * @param {Object} color_2 Color object 2.
- */
-function vf(color_1, color_2) {
-	return color_1.r == color_2.r
-		&& color_1.g == color_2.g
-		&& color_1.b == color_2.b
-		&& color_1.a == color_2.a;
 }

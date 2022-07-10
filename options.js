@@ -164,7 +164,9 @@ color_scheme_system.addEventListener("input", () => {
 });
 
 /**
- * @param {*} pending_scheme the name of the scheme to change to
+ * Sets the color scheme, and updates appearance of option page.
+ * 
+ * @param {*} pending_scheme the name of the scheme to change to.
  */
 function changeColorScheme(pending_scheme) {
 	pref_scheme = pending_scheme;

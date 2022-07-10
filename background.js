@@ -368,7 +368,7 @@ function changeFrameColorTo(windowId, color, dark_mode) {
   //Then choose text color following the setting
   if (dark_mode == null)
     dark_mode = current_scheme == "dark";
-  if (color == null) { //Gonna reset
+  if (color == null || color == "DEFAULT") { //Gonna reset
     if (dark_mode) {
       changeThemePara(current_dark_color, "dark", true);
       applyTheme(windowId, adaptive_themes["dark"]);
@@ -400,7 +400,7 @@ function changeFrameColorTo(windowId, color, dark_mode) {
  * 
  * @param {object} color Desired color to apply.
  * @param {string} color_scheme Color scheme, "dark" or "light".
- * @param {boolean} change_ntp_bg Determines if to change color of New Tap Page.
+ * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
  */
 function changeThemePara(color, color_scheme, change_ntp_bg) {
   if (color_scheme == "dark") {
@@ -442,7 +442,7 @@ function applyTheme(windowId, theme) {
  * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
 */
 function isDarkModeSuitable(color) {
-  if (color == null) return null;
+  if (color == null || color == "DEFAULT") return null;
   let brightness = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
   if (brightness > 155) {
     return false;
