@@ -19,16 +19,18 @@
 		<div>
 			<h4>
 				<input id="color_scheme_no_dark" type="radio" />
-				<label for="color_scheme_no_dark">Prefer Light Mode</label>
+				<label for="color_scheme_no_dark" title="Use light color scheme for browser">Prefer Light Mode</label>
 			</h4>
 			<h4>
 				<input id="color_scheme_no_light" type="radio" />
-				<label for="color_scheme_no_light">Prefer Dark Mode</label>
+				<label for="color_scheme_no_light" title="Use dark color scheme for browser">Prefer Dark Mode</label>
 			</h4>
 			<h4>
 				<input id="color_scheme_system" type="radio" />
 				<div style="display: inline-block; vertical-align: middle;">
-					<label for="color_scheme_system">Follow System <br>
+					<label for="color_scheme_system"
+						title="Use system color scheme for browser. Stopped working since Firefox 101.0">Follow System
+						<br>
 						<div style="font-weight:normal">
 							<small>stop working since Firefox 101.0</small>
 						</div>
@@ -36,27 +38,32 @@
 				</div>
 			</h4>
 			<hr>
-			<h4>
+			<h4 title="Allow tab bar to turn bright">
 				<input id="force_mode" type="checkbox" />
-				<label id="force_mode_caption" for="force_mode">Allow bright tab bar</label>
+				<label id="force_mode_caption" for="force_mode">Allow light tab bar</label>
 			</h4>
-			<h4>
+			<h4 title="Updates tab bar color while scrolling">
 				<input id="dynamic" type="checkbox" />
-				<label for="dynamic" title="Updates tab bar color while scrolling">Dynamic color update</label>
+				<label for="dynamic">Dynamic color update</label>
 			</h4>
 			<hr>
-			<h4>
-				<label for="tabbar_color">Tab bar color offset</label>
+			<h4 title="Set tab bar color offset">
+				<label for="tabbar_color" class="TenEm">Tab bar color offset</label>
 				<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0">
 			</h4>
-			<h4>
-				<label for="popup_color">Pop-up color offset</label>
+			<h4
+				title="Set tool bar color offset. Use the same value as tab bar color offset to prevent color transitioning">
+				<label for="toolbar_color" class="TenEm">Toolbar color offset</label>
+				<input type="range" id="toolbar_color" min="0" max="0.2" step="0.05" value="0">
+			</h4>
+			<h4 title="Set pop-up and URL field color offset">
+				<label for="popup_color" class="TenEm">URL field color offset</label>
 				<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05">
 			</h4>
 			<hr>
 			<h4>
 				<input id="more_custom" type="checkbox">
-				<label for="more_custom">More customizations</label>
+				<label for="more_custom">Set color for specific domains</label>
 			</h4>
 		</div>
 		<div id="custom_options" hidden="true">
@@ -102,7 +109,7 @@
 			</table>
 			<div style="padding: 4px;">
 				<span>
-					<button id="reset_all" title="Restore initial state">
+					<button id="reset_all" title="Restore initial state / Reset all rules">
 						<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none"
 							stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2">

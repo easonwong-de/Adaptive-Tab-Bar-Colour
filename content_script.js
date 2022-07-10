@@ -9,7 +9,9 @@ var reservedColor_cs = {
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "CLASS_wl",
 	"open.spotify.com": "#000000",
+	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
+	"www.spiegel.de": "IGNORE_THEME",
 	"www.youtube.com": "IGNORE_THEME"
 };
 
@@ -193,6 +195,7 @@ function overlayColor(top, bottom) {
  */
 function rgba(color) {
 	if (typeof color == "string") {
+		if (color == "DEFAULT") return null;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = color;
 		let color_temp = canvas.fillStyle;

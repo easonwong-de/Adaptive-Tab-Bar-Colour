@@ -69,6 +69,7 @@ var pref_scheme;
 var pref_force;
 var pref_dynamic;
 var pref_tabbar_color;
+var pref_toolbar_color;
 var pref_popup_color;
 var pref_custom;
 var pref_light_color;
@@ -88,7 +89,9 @@ const default_reservedColor_cs = Object.freeze({
   "github.com": "IGNORE_THEME",
   "mail.google.com": "CLASS_wl",
   "open.spotify.com": "#000000",
+  "www.bbc.com": "IGNORE_THEME",
   "www.instagram.com": "IGNORE_THEME",
+  "www.spiegel.de": "IGNORE_THEME",
   "www.youtube.com": "IGNORE_THEME"
 });
 
@@ -141,6 +144,7 @@ function loadPref(pref) {
   pref_force = pref.force;
   pref_dynamic = pref.dynamic;
   pref_tabbar_color = pref.tabbar_color;
+  pref_toolbar_color = pref.toolbar_color;
   pref_popup_color = pref.popup_color;
   pref_custom = pref.custom;
   pref_light_color = pref.light_color;
@@ -187,12 +191,17 @@ function init() {
     let pending_force = pref_force;
     let pending_dynamic = pref.dynamic;
     let pending_tabbar_color = pref_tabbar_color;
+    let pending_toolbar_color = pref_toolbar_color;
     let pending_popup_color = pref_popup_color;
     let pending_custom = pref_custom;
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 2];
+    let pending_last_version = [1, 6, 3];
+    //updates from v1.6.3 or earlier
+    if (pref_toolbar_color == null) {
+      pending_toolbar_color = 0;
+    }
     //updates from v1.6.2 or earlier
     if (pref_tabbar_color == null || pref_popup_color == null) {
       pending_tabbar_color = 0;
@@ -233,6 +242,7 @@ function init() {
       force: pending_force,
       dynamic: pending_dynamic,
       tabbar_color: pending_tabbar_color,
+      toolbar_color: pending_toolbar_color,
       popup_color: pending_popup_color,
       custom: pending_custom,
       light_color: pending_light_color,
@@ -405,20 +415,27 @@ function changeFrameColorTo(windowId, color, dark_mode) {
 function changeThemePara(color, color_scheme, change_ntp_bg) {
   if (color_scheme == "dark") {
     let frame_color = dimColor(color, pref_tabbar_color);
+    let toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
     let popup_color = dimColor(color, pref_popup_color);
     let ntp_color = dimColor(color, 0);
     adaptive_themes["dark"]["colors"]["frame"] = frame_color;
     adaptive_themes["dark"]["colors"]["frame_inactive"] = frame_color;
     adaptive_themes["dark"]["colors"]["popup"] = popup_color;
+    adaptive_themes["dark"]["colors"]["toolbar"] = toolbar_color;
+    adaptive_themes["dark"]["colors"]["toolbar_bottom_separator"] = toolbar_color;
     adaptive_themes["dark"]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes["dark"]["colors"]["toolbar_field_focus"] = popup_color;
     if (change_ntp_bg) adaptive_themes["dark"]["colors"]["ntp_background"] = ntp_color;
   } else {
     let frame_color = dimColor(color, -pref_tabbar_color);
     let popup_color = dimColor(color, -pref_popup_color);
+    let toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
+    let ntp_color = dimColor(color, 0);
     adaptive_themes["light"]["colors"]["frame"] = frame_color;
     adaptive_themes["light"]["colors"]["frame_inactive"] = frame_color;
     adaptive_themes["light"]["colors"]["popup"] = popup_color;
+    adaptive_themes["light"]["colors"]["toolbar"] = toolbar_color;
+    adaptive_themes["light"]["colors"]["toolbar_bottom_separator"] = toolbar_color;
     adaptive_themes["light"]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes["light"]["colors"]["toolbar_field_focus"] = popup_color;
     if (change_ntp_bg) adaptive_themes["light"]["colors"]["ntp_background"] = ntp_color;
@@ -487,15 +504,14 @@ function generateColorString(color) {
  * Converts any color to rgba object.
  * @author JayB (modified by Eason Wong)
  * 
- * @param {string} color Color to convert.
- * @returns Color in rgba object.
+ * @param {string | Number[]} color Color to convert.
+ * @returns Color in rgba object. Pure black if invalid.
  */
 function rgba(color) {
-  if (color == "DEFAULT") {
-    return null;
-  } else {
+  if (typeof color == "string") {
+    if (color == "DEFAULT") return null;
     var canvas = document.createElement("canvas").getContext("2d");
-    canvas.fillStyle = color
+    canvas.fillStyle = color;
     let color_temp = canvas.fillStyle;
     if (color_temp.startsWith("#")) {
       let r = color_temp[1] + color_temp[2];
@@ -516,6 +532,8 @@ function rgba(color) {
         a: result[3]
       };
     }
+  } else {
+    return { r: color[0], g: color[1], b: color[2], a: color[3] };
   }
 }
 

@@ -12,15 +12,16 @@
 	</div>
 	<div id="settings" hidden="true">
 		<div>
-			<label for="color_scheme_no_dark">
+			<label for="color_scheme_no_dark" title="Use light color scheme for browser">
 				<input id="color_scheme_no_dark" type="radio" />
 				<span>Prefer Light Mode</span>
 			</label>
-			<label for="color_scheme_no_light">
+			<label for="color_scheme_no_light" title="Use dark color scheme for browser">
 				<input id="color_scheme_no_light" type="radio" />
 				<span>Prefer Dark Mode</span>
 			</label>
-			<label for="color_scheme_system">
+			<label for="color_scheme_system"
+				title="Use system color scheme for browser. Stopped working since Firefox 101.0">
 				<input id="color_scheme_system" type="radio" />
 				<div style="display: inline-block; vertical-align: middle;">
 					<span>Follow System
@@ -30,7 +31,7 @@
 				</div>
 			</label>
 			<hr>
-			<label for="force_mode">
+			<label for="force_mode" title="Allow tab bar to turn bright">
 				<input id="force_mode" type="checkbox" />
 				<span id="force_mode_caption">Allow light tab bar</span>
 			</label>
@@ -40,9 +41,7 @@
 			</label>
 		</div>
 		<div>
-			<label id="custom_popup">
-				More settings…
-			</label>
+			<label id="custom_popup" title="Open option page">More settings…</label>
 		</div>
 	</div>
 	<script type="text/javascript" src="../options.js"></script>

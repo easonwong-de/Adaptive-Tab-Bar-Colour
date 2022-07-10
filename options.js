@@ -5,7 +5,9 @@ const default_reservedColor_cs = Object.freeze({
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "CLASS_wl",
 	"open.spotify.com": "#000000",
+	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
+	"www.spiegel.de": "IGNORE_THEME",
 	"www.youtube.com": "IGNORE_THEME"
 });
 
@@ -19,6 +21,7 @@ let allow_dark_light = document.getElementById("force_mode");
 let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
 let op_tabbar_color = document.getElementById("tabbar_color");
+let op_toolbar_color = document.getElementById("toolbar_color");
 let op_popup_color = document.getElementById("popup_color");
 let op_more_custom = document.getElementById("more_custom");
 let op_custom_options = document.getElementById("custom_options");
@@ -37,6 +40,7 @@ var pref_scheme;
 var pref_force;
 var pref_dynamic;
 var pref_tabbar_color;
+var pref_toolbar_color;
 var pref_popup_color;
 var pref_custom;
 var pref_light_color;
@@ -51,6 +55,7 @@ function loadPref(pref) {
 	pref_force = pref.force;
 	pref_dynamic = pref.dynamic;
 	pref_tabbar_color = pref.tabbar_color;
+	pref_toolbar_color = pref.toolbar_color;
 	pref_popup_color = pref.popup_color;
 	pref_custom = pref.custom;
 	pref_light_color = pref.light_color;
@@ -66,6 +71,7 @@ function verifyPref() {
 	return pref_scheme != null
 		&& pref_force != null
 		&& pref_tabbar_color != null
+		&& pref_toolbar_color != null
 		&& pref_popup_color != null
 		&& pref_custom != null
 		&& pref_light_color != null
@@ -97,6 +103,7 @@ function load() {
 			color_scheme_system.checked = pref_scheme == "system";
 			if (!popupDetected()) { //when the script is run by option page
 				op_tabbar_color.value = pref_tabbar_color;
+				op_toolbar_color.value = pref_toolbar_color;
 				op_popup_color.value = pref_popup_color;
 				op_more_custom.checked = pref_custom;
 				op_custom_options.hidden = !pref_custom;
@@ -231,6 +238,9 @@ if (popupDetected()) {
 	op_tabbar_color.oninput = () => {
 		browser.storage.local.set({ tabbar_color: Number(op_tabbar_color.value) });
 	};
+	op_toolbar_color.oninput = () => {
+		browser.storage.local.set({ toolbar_color: Number(op_toolbar_color.value) });
+	};
 	op_popup_color.oninput = () => {
 		browser.storage.local.set({ popup_color: Number(op_popup_color.value) });
 	};
@@ -349,8 +359,10 @@ function autoPopupColor() {
 	});
 	if (pref_scheme == "light" || (pref_scheme == "system" && lightModeDetected())) {
 		force_mode_caption.innerHTML = "Allow dark tab bar";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn dark";
 	} else {
 		force_mode_caption.innerHTML = "Allow light tab bar";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn bright";
 	}
 }
 
@@ -362,10 +374,12 @@ function autoOptionsColor() {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		force_mode_caption.innerHTML = "Allow dark tab bar";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn dark";
 	} else {
 		body.classList.add("dark");
 		body.classList.remove("light");
 		force_mode_caption.innerHTML = "Allow light tab bar";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn bright";
 	}
 }
 

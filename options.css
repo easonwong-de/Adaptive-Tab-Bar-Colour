@@ -13,34 +13,35 @@ body {
 	background-color: rgb(35, 34, 42);
 }
 
-h4{
+h4 {
 	display: flex;
 	align-items: center;
+	width: fit-content;
 }
 
-label{
+label {
 	display: inline-block;
 	margin-inline: 0.5em;
 }
 
-div{
+div {
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-#custom_options{
+#custom_options {
 	margin-left: 4em;
 	margin-bottom: 2em;
 	width: 80%;
 }
 
-td{
+td {
 	padding-inline: 2px;
 	padding-block: 4px;
 	vertical-align: middle;
 }
 
-span{
+span {
 	vertical-align: middle;
 	padding-inline: 0.25em;
 }
@@ -53,7 +54,7 @@ select {
 	height: 1.75em;
 }
 
-button{
+button {
 	width: 1.75em;
 	text-align: center;
 }
@@ -100,7 +101,7 @@ select {
 	background-color: rgb(91, 91, 102);
 }
 
-svg{
+svg {
 	display: block;
 	margin: auto;
 	width: 1em;
@@ -111,11 +112,11 @@ svg{
 	stroke-linejoin: round;
 }
 
-.light svg{
+.light svg {
 	stroke: black;
 }
 
-.dark svg{
+.dark svg {
 	stroke: white;
 }
 
@@ -165,7 +166,7 @@ hr {
 }
 
 .FiveEm {
-	width: 5em !important; 
+	width: 5em !important;
 	display: inline-block;
 }
 
@@ -175,7 +176,7 @@ hr {
 }
 
 input[type='range'] {
-	margin-inline: 0.5em;
+	margin-inline: 1em;
 	width: 6em;
 }
 
