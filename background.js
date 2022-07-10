@@ -111,7 +111,8 @@ const reservedColor = {
     "about:performance": "DEFAULT",
     "about:plugins": "DEFAULT",
     "about:processes": "rgb(239, 239, 242)",
-    "about:sync-log": "DEFAULT"
+    "about:sync-log": "DEFAULT",
+    "accounts.firefox.com": "rgb(250, 250, 251)"
   },
   "dark": {
     "about:debugging#": "DEFAULT",
@@ -148,12 +149,12 @@ function loadPref(pref) {
   pref_last_version = pref.last_version;
   //loads currents
   if (pref_custom) {
-    current_light_color = ANY_to_OBJ(pref_light_color);
-    current_dark_color = ANY_to_OBJ(pref_dark_color);
+    current_light_color = rgba(pref_light_color);
+    current_dark_color = rgba(pref_dark_color);
     current_reservedColor_cs = pref_reservedColor_cs;
   } else {
-    current_light_color = ANY_to_OBJ(default_light_color);
-    current_dark_color = ANY_to_OBJ(default_dark_color);
+    current_light_color = rgba(default_light_color);
+    current_dark_color = rgba(default_dark_color);
     current_reservedColor_cs = default_reservedColor_cs;
   }
   switch (pref_scheme) {
@@ -270,7 +271,7 @@ update();
  * Updates pref cache and triggers color change in all windows.
  */
 function update() {
-  browser.tabs.query({ active: true, status: "complete" }, tabs => {
+  browser.tabs.query({ active: true }, tabs => {
     browser.storage.local.get(pref => {
       loadPref(pref);
       if (aboveV95)
@@ -305,9 +306,9 @@ function updateEachWindow(tab) {
     let reversed_scheme = "light";
     if (current_scheme == "light") reversed_scheme = "dark";
     if (reservedColor[current_scheme][key] != null) { //For prefered scheme there's a reserved color
-      changeFrameColorTo(windowId, ANY_to_OBJ(reservedColor[current_scheme][key]), current_scheme == "dark");
+      changeFrameColorTo(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
     } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
-      changeFrameColorTo(windowId, ANY_to_OBJ(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
+      changeFrameColorTo(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
     } else if (url.startsWith("about:")) {
       changeFrameColorTo(windowId, null, null);
     } else {
@@ -405,12 +406,13 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
   if (color_scheme == "dark") {
     let frame_color = dimColor(color, pref_tabbar_color);
     let popup_color = dimColor(color, pref_popup_color);
+    let ntp_color = dimColor(color, 0);
     adaptive_themes["dark"]["colors"]["frame"] = frame_color;
     adaptive_themes["dark"]["colors"]["frame_inactive"] = frame_color;
     adaptive_themes["dark"]["colors"]["popup"] = popup_color;
     adaptive_themes["dark"]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes["dark"]["colors"]["toolbar_field_focus"] = popup_color;
-    if (change_ntp_bg) adaptive_themes["dark"]["colors"]["ntp_background"] = generateColorString(color);
+    if (change_ntp_bg) adaptive_themes["dark"]["colors"]["ntp_background"] = ntp_color;
   } else {
     let frame_color = dimColor(color, -pref_tabbar_color);
     let popup_color = dimColor(color, -pref_popup_color);
@@ -419,7 +421,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes["light"]["colors"]["popup"] = popup_color;
     adaptive_themes["light"]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes["light"]["colors"]["toolbar_field_focus"] = popup_color;
-    if (change_ntp_bg) adaptive_themes["light"]["colors"]["ntp_background"] = generateColorString(color);
+    if (change_ntp_bg) adaptive_themes["light"]["colors"]["ntp_background"] = ntp_color;
   }
 }
 
@@ -440,6 +442,7 @@ function applyTheme(windowId, theme) {
  * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
 */
 function isDarkModeSuitable(color) {
+  if (color == null) return null;
   let brightness = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
   if (brightness > 155) {
     return false;
@@ -487,7 +490,7 @@ function generateColorString(color) {
  * @param {string} color Color to convert.
  * @returns Color in rgba object.
  */
-function ANY_to_OBJ(color) {
+function rgba(color) {
   if (color == "DEFAULT") {
     return null;
   } else {
