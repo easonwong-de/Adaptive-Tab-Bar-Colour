@@ -22,8 +22,8 @@ findColor();
  * Finds color and send to background.
  */
 function findColor() {
-	RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 	if (document.fullscreenElement == null) {
+		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
 		if (!document.hidden) sendColor();
 	}
