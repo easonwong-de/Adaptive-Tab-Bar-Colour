@@ -61,7 +61,7 @@ var adaptive_themes = {
       tab_loading: "rgba(0, 0, 0, 0)",
     }
   },
-  "darknoise": {
+  "darknoise": { //For image viewer
     colors: {
       //Theme colors
       frame: "rgb(33, 33, 33)",
