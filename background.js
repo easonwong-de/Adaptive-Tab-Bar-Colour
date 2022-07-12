@@ -376,10 +376,9 @@ function updateEachWindow(tab) {
       }
     }
   } else {
-    //When visiting normal websites, pdf viewer (content script blocked), or local files
+    //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
     let key = getSearchKey(url);
-    let reversed_scheme = "light";
-    if (current_scheme == "light") reversed_scheme = "dark";
+    let reversed_scheme = current_scheme == "light" ? "dark" : "light";
     if (reservedColor[current_scheme][key] != null) { //For prefered scheme there's a reserved color
       changeFrameColorTo(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
     } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
@@ -393,7 +392,8 @@ function updateEachWindow(tab) {
         reservedColor_cs: current_reservedColor_cs
       }, response => {
         if (response == null) {
-          if (url.endsWith(".pdf")) { //When viewing a pdf file, Firefox blocks content script
+          if (url.endsWith(".pdf")) {
+            //When viewing a pdf file, Firefox blocks content script
             console.log(url + "\nMight be pdf viewer.");
             if (current_scheme == "dark") {
               changeFrameColorTo(windowId, rgba([56, 56, 61, 1]), true);
@@ -401,6 +401,7 @@ function updateEachWindow(tab) {
               changeFrameColorTo(windowId, rgba([249, 249, 250, 1]), false);
             }
           } else if (tab.favIconUrl == "chrome://global/skin/icons/info.svg") {
+            //Content script is also blocked on website that failed to load
             console.log(url + "\nTab failed to load.");
             changeFrameColorTo(windowId, "DEFAULT");
           } else {
@@ -450,11 +451,13 @@ browser.runtime.onConnect.addListener(port => {
  * 
  * @param {number} windowId The ID of the window.
  * @param {object | string} color The color to change to in rgb object or command string.
+ * Command strings are: "DEFAULT", "DARKNOISE", and "PLAINTEXT"
  * @param {boolean} dark_mode Decides text color. Leaves "null" to let add-on prefs decide.
  */
 function changeFrameColorTo(windowId, color, dark_mode) {
   //dark_mode is null means the color is not bright nor dark
-  //Then choose text color following the setting
+  //Then set dark_color following the setting
+  //dark_color decides text color
   if (dark_mode == null) dark_mode = current_scheme == "dark";
   if (color == "DARKNOISE") { //Image viewer
     changeThemePara(rgba([33, 33, 33, 1]), "darknoise", false);
@@ -497,8 +500,8 @@ function changeFrameColorTo(windowId, color, dark_mode) {
 /**
  * Adjusts the parameters in adaptive_themes.
  * 
- * @param {object} color Desired color to apply.
- * @param {string} color_scheme Color scheme, "dark" or "light".
+ * @param {object} color Color of the frame.
+ * @param {string} color_scheme Color scheme, "dark", "light", or "darknoise".
  * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
  */
 function changeThemePara(color, color_scheme, change_ntp_bg) {

@@ -16,7 +16,7 @@ var reservedColor_cs = {
 };
 
 //Send color to background as soon as page loads
-findColor();
+findColor_delay();
 
 /**
  * Finds color and send to background.
@@ -25,11 +25,13 @@ function findColor() {
 	if (document.fullscreenElement == null) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (!document.hidden) sendColor();
+		console.log(document.visibilityState);
+		if (document.visibilityState == "visible") sendColor();
 	}
 }
 
 function findColor_delay() {
+	console.log("===");
 	setTimeout(findColor, 0);
 	setTimeout(findColor, 250);
 	setTimeout(findColor, 500);
@@ -64,7 +66,7 @@ browser.runtime.onMessage.addListener(
 			document.onscroll = null;
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
-		findColor();
+		findColor_delay();
 		sendResponse("Color sended to background.");
 	}
 );
