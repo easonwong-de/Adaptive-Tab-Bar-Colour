@@ -132,7 +132,11 @@ function findThemeColor() {
 		RESPONSE_COLOR = "PLAINTEXT";
 		return true;
 	} else {
-		let headerTag = document.querySelector(`meta[name="theme-color"]`);
+		const colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+		let headerTag = document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colorScheme})"]`);
+		if (typeof headerTag === "undefined") {
+			headerTag = document.querySelector(`meta[name="theme-color"]`);
+		}
 		if (headerTag != null) {
 			RESPONSE_COLOR = rgba(headerTag.content);
 			//Return true if it is legal and can be sent to background.js
