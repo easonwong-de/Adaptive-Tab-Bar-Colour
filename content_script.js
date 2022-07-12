@@ -104,7 +104,7 @@ function findColorUnreserved() {
 }
 
 /** 
- * Sets RESPONSE_COLOR using theme-color defined by the website HTML.
+ * Sets RESPONSE_COLOR using theme-color defined by the website HTML, or preset color for image / plain text viewer.
  * 
  * @returns False if no legal theme-color can be found.
  */
