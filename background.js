@@ -403,7 +403,7 @@ function updateEachWindow(tab) {
           } else if (tab.favIconUrl == "chrome://global/skin/icons/info.svg") {
             console.log(url + "\nTab failed to load.");
             changeFrameColorTo(windowId, "DEFAULT");
-          }else {
+          } else {
             console.error(url + "\nNo connection to content script.");
           }
         }

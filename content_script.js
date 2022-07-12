@@ -29,6 +29,14 @@ function findColor() {
 	}
 }
 
+function findColor_delay() {
+	setTimeout(findColor, 0);
+	setTimeout(findColor, 250);
+	setTimeout(findColor, 500);
+	setTimeout(findColor, 750);
+	setTimeout(findColor, 1000);
+}
+
 /**
  * Sends color to background.
  */
@@ -37,7 +45,7 @@ function sendColor() {
 }
 
 //Updates color when Dark Reader changes mode
-var ondarkreader = new MutationObserver(findColor);
+var ondarkreader = new MutationObserver(findColor_delay);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
 //Fired by update() from background.js
@@ -45,11 +53,13 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
-			document.onclick = findColor;
+			document.onclick = findColor_delay;
+			document.onkeydown = findColor_delay;
 			document.onwheel = findColor;
 			document.onscroll = findColor;
 		} else {
 			document.onclick = null;
+			document.onkeydown = null;
 			document.onwheel = null;
 			document.onscroll = null;
 		}
