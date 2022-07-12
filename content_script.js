@@ -109,14 +109,26 @@ function findColorUnreserved() {
  * @returns False if no legal theme-color can be found.
  */
 function findThemeColor() {
-	headerTag = document.querySelector(`meta[name="theme-color"]`);
-	if (headerTag != null) {
-		RESPONSE_COLOR = rgba(headerTag.content);
-		//Return true if it is legal and can be sent to background.js
-		//Otherwise, return false and trigger getComputedColor()
-		return RESPONSE_COLOR.a == 1;
+	if (getComputedStyle(document.documentElement).backgroundImage == "url(\"chrome://global/skin/media/imagedoc-darknoise.png\")") {
+		//Image viewer
+		//Firefox chooses imagedoc-darknoise.png as the background of image viewer
+		RESPONSE_COLOR = "DARKNOISE";
+		return true;
+	} else if (document.getElementsByTagName("link").length > 0
+		&& document.getElementsByTagName("link")[0].href == "resource://content-accessible/plaintext.css") {
+		//Plain text viewer
+		RESPONSE_COLOR = "PLAINTEXT";
+		return true;
 	} else {
-		return false;
+		let headerTag = document.querySelector(`meta[name="theme-color"]`);
+		if (headerTag != null) {
+			RESPONSE_COLOR = rgba(headerTag.content);
+			//Return true if it is legal and can be sent to background.js
+			//Otherwise, return false and trigger getComputedColor()
+			return RESPONSE_COLOR.a == 1;
+		} else {
+			return false;
+		}
 	}
 }
 
@@ -195,7 +207,7 @@ function overlayColor(top, bottom) {
  */
 function rgba(color) {
 	if (typeof color == "string") {
-		if (color == "DEFAULT") return null;
+		if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT") return color;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = color;
 		let color_temp = canvas.fillStyle;

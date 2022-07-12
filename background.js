@@ -60,6 +60,44 @@ var adaptive_themes = {
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
+  },
+  "darknoise": {
+    colors: {
+      //Theme colors
+      frame: "rgb(33, 33, 33)",
+      frame_inactive: "rgb(33, 33, 33)",
+      popup: "rgb(44, 44, 44)",
+      ntp_background: "rgb(33, 33, 33)",
+      toolbar_field: "rgb(44, 44, 44)",
+      toolbar_field_focus: "rgb(44, 44, 44)",
+      //Texts and icons
+      toolbar_text: "rgb(255, 255, 255)",
+      toolbar_field_text: "rgb(255, 255, 255)",
+      popup_text: "rgb(225, 225, 225)",
+      ntp_text: "rgb(255, 255, 255)",
+      tab_background_text: "rgb(225, 225, 225)",
+      icons: "rgb(225, 225, 225)",
+      //Hovered and active
+      tab_selected: "rgba(255, 255, 255, 0.15)",
+      button_background_active: "rgba(255, 255, 255, 0.15)",
+      button_background_hover: "rgba(255, 255, 255, 0.10)",
+      toolbar_field_border_focus: "rgb(70, 118, 160)",
+      //Hidden
+      toolbar: "rgba(0, 0, 0, 0)",
+      tab_line: "rgba(0, 0, 0, 0)",
+      popup_border: "rgba(0, 0, 0, 0)",
+      sidebar_border: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_top_separator: "rgba(0, 0, 0, 0)",
+      tab_loading: "rgba(0, 0, 0, 0)",
+    },
+    images: {
+      additional_backgrounds: ["images/imagedoc-darknoise.png"]
+    },
+    properties: {
+      additional_backgrounds_alignment: ["left bottom"],
+      additional_backgrounds_tiling: ["repeat"]
+    }
   }
 };
 
@@ -80,6 +118,7 @@ var pref_last_version;
 //Default values
 const default_light_color = "#FFFFFF";
 const default_dark_color = "#1C1B22";
+
 /* reserved color is a color => the color is the theme color for the web
 reserved color is IGNORE_THEME => use calculated color as theme color
 reserved color is a tag name => theme color is stored under that tag
@@ -105,7 +144,8 @@ var current_reservedColor_cs;
 other reserved color are in content_script.js
 url listed only in "light"/"dark" => only use that color regardless of the color scheme
 url listed in both => choose color scheme as needed
-url listed as "DEFAULT" => use default_light/dark_color */
+url listed as "DEFAULT" => use default_light/dark_color
+url listed as "DARKNOISE" => use "darknoise" theme */
 const reservedColor = {
   "light": {
     "about:checkerboard": "DEFAULT",
@@ -115,19 +155,29 @@ const reservedColor = {
     "about:plugins": "DEFAULT",
     "about:processes": "rgb(239, 239, 242)",
     "about:sync-log": "DEFAULT",
-    "accounts.firefox.com": "rgb(250, 250, 251)"
+    "accounts-static.cdn.mozilla.net": "DEFAULT",
+    "accounts.firefox.com": "rgb(251, 251, 254)",
+    "addons.cdn.mozilla.net": "DEFAULT",
+    "content.cdn.mozilla.net": "DEFAULT",
+    "discovery.addons.mozilla.org": "rgb(236, 236, 236)",
+    "install.mozilla.org": "DEFAULT",
+    "support.mozilla.org": "rgb(255, 255, 255)"
   },
   "dark": {
     "about:debugging#": "DEFAULT",
     "about:devtools-toolbox": "rgb(12, 12, 13)",
-    "about:logo": "rgb(33, 33, 33)",
+    "about:logo": "DARKNOISE",
     "about:mozilla": "rgb(143, 15, 7)",
     "about:performance": "rgb(35, 34, 42)",
     "about:plugins": "rgb(43, 42, 50)",
     "about:privatebrowsing": "rgb(37, 0, 62)",
     "about:processes": "rgb(43, 42, 50)",
     "about:sync-log": "rgb(30, 30, 30)",
-    "addons.mozilla.org": "rgb(32, 18, 58)"
+    "accounts-static.cdn.mozilla.net": "DEFAULT",
+    "addons.mozilla.org": "rgb(32, 18, 58)",
+    "addons.cdn.mozilla.net": "DEFAULT",
+    "content.cdn.mozilla.net": "DEFAULT",
+    "install.mozilla.org": "DEFAULT"
   }
 }
 
@@ -189,7 +239,7 @@ function init() {
     loadPref(pref);
     let pending_scheme = pref_scheme;
     let pending_force = pref_force;
-    let pending_dynamic = pref.dynamic;
+    let pending_dynamic = pref_dynamic;
     let pending_tabbar_color = pref_tabbar_color;
     let pending_toolbar_color = pref_toolbar_color;
     let pending_popup_color = pref_popup_color;
@@ -197,7 +247,7 @@ function init() {
     let pending_light_color = pref_light_color;
     let pending_dark_color = pref_dark_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 3];
+    let pending_last_version = [1, 6, 4];
     //updates from v1.6.3 or earlier
     if (pref_toolbar_color == null) {
       pending_toolbar_color = 0;
@@ -299,19 +349,34 @@ function update() {
 function updateEachWindow(tab) {
   let url = tab.url;
   let windowId = tab.windowId;
-  if (url.startsWith("file:")) {
+  if (url.startsWith("moz-extension:")) {
+    //When visiting add-on settings page (content script blocked)
     if (current_scheme == "dark") {
-      changeFrameColorTo(windowId, { r: 56, g: 56, b: 61, a: 1 }, true);
+      changeFrameColorTo(windowId, rgba([50, 50, 50, 1]), true);
     } else if (current_scheme == "light") {
-      changeFrameColorTo(windowId, { r: 249, g: 249, b: 250, a: 1 }, false);
+      changeFrameColorTo(windowId, rgba([236, 236, 236, 1]), false);
     }
-  } else if (url.startsWith("moz-extension:")) {
+  } else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
+    //When visiting internal files (content script blocked)
     if (current_scheme == "dark") {
-      changeFrameColorTo(windowId, { r: 50, g: 50, b: 50, a: 1 }, true);
+      if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
+        changeFrameColorTo(windowId, rgba([50, 50, 50, 1]), true);
+      } else if (url.endsWith(".png") || url.endsWith(".css")) {
+        changeFrameColorTo(windowId, "DARKNOISE");
+      } else {
+        changeFrameColorTo(windowId, rgba([30, 30, 30, 1]), true);
+      }
     } else if (current_scheme == "light") {
-      changeFrameColorTo(windowId, { r: 236, g: 236, b: 236, a: 1 }, false);
+      if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
+        changeFrameColorTo(windowId, rgba([236, 236, 236, 1]), false);
+      } else if (url.endsWith(".png") || url.endsWith(".css")) {
+        changeFrameColorTo(windowId, "DARKNOISE");
+      } else {
+        changeFrameColorTo(windowId, rgba([255, 255, 255, 1]), false);
+      }
     }
   } else {
+    //When visiting normal websites, pdf viewer (content script blocked), or local files
     let key = getSearchKey(url);
     let reversed_scheme = "light";
     if (current_scheme == "light") reversed_scheme = "dark";
@@ -320,14 +385,25 @@ function updateEachWindow(tab) {
     } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
       changeFrameColorTo(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
     } else if (url.startsWith("about:")) {
-      changeFrameColorTo(windowId, null, null);
+      changeFrameColorTo(windowId, "DEFAULT");
     } else {
       browser.tabs.sendMessage(tab.id, {
         reason: "COLOR_REQUEST",
         dynamic: pref_dynamic,
         reservedColor_cs: current_reservedColor_cs
       }, response => {
-        if (response == null) console.error("No connection to content script.");
+        if (response == null) {
+          if (url.endsWith(".pdf")) { //When viewing a pdf file, Firefox blocks content script
+            console.log(url + "\nMight be pdf viewer.");
+            if (current_scheme == "dark") {
+              changeFrameColorTo(windowId, rgba([56, 56, 61, 1]), true);
+            } else if (current_scheme == "light") {
+              changeFrameColorTo(windowId, rgba([249, 249, 250, 1]), false);
+            }
+          } else {
+            console.error(url + "\nNo connection to content script.");
+          }
+        }
       });
     }
   }
@@ -370,15 +446,25 @@ browser.runtime.onConnect.addListener(port => {
  * if color is empty, then roll back to default color.
  * 
  * @param {number} windowId The ID of the window.
- * @param {object} color The color to change to, in rgb object.
- * @param {boolean} dark_mode Decides text color.
+ * @param {object | string} color The color to change to in rgb object or command string.
+ * @param {boolean} dark_mode Decides text color. Leaves "null" to let add-on prefs decide.
  */
 function changeFrameColorTo(windowId, color, dark_mode) {
   //dark_mode is null means the color is not bright nor dark
   //Then choose text color following the setting
-  if (dark_mode == null)
-    dark_mode = current_scheme == "dark";
-  if (color == null || color == "DEFAULT") { //Gonna reset
+  if (dark_mode == null) dark_mode = current_scheme == "dark";
+  if (color == "DARKNOISE") { //Image viewer
+    changeThemePara(rgba([33, 33, 33, 1]), "darknoise", false);
+    applyTheme(windowId, adaptive_themes["darknoise"]);
+  } else if (color == "PLAINTEXT") { //Plain text viewer
+    if (dark_mode) {
+      changeThemePara(rgba([50, 50, 50, 1]), "dark", false);
+      applyTheme(windowId, adaptive_themes["dark"]);
+    } else {
+      changeThemePara(rgba([236, 236, 236, 1]), "light", false);
+      applyTheme(windowId, adaptive_themes["light"]);
+    }
+  } else if (color == null || color == "DEFAULT") { //Gonna reset
     if (dark_mode) {
       changeThemePara(current_dark_color, "dark", true);
       applyTheme(windowId, adaptive_themes["dark"]);
@@ -413,33 +499,29 @@ function changeFrameColorTo(windowId, color, dark_mode) {
  * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
  */
 function changeThemePara(color, color_scheme, change_ntp_bg) {
+  let frame_color, toolbar_color, popup_color, ntp_color;
   if (color_scheme == "dark") {
-    let frame_color = dimColor(color, pref_tabbar_color);
-    let toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
-    let popup_color = dimColor(color, pref_popup_color);
-    let ntp_color = dimColor(color, 0);
-    adaptive_themes["dark"]["colors"]["frame"] = frame_color;
-    adaptive_themes["dark"]["colors"]["frame_inactive"] = frame_color;
-    adaptive_themes["dark"]["colors"]["popup"] = popup_color;
-    adaptive_themes["dark"]["colors"]["toolbar"] = toolbar_color;
-    adaptive_themes["dark"]["colors"]["toolbar_bottom_separator"] = toolbar_color;
-    adaptive_themes["dark"]["colors"]["toolbar_field"] = popup_color;
-    adaptive_themes["dark"]["colors"]["toolbar_field_focus"] = popup_color;
-    if (change_ntp_bg) adaptive_themes["dark"]["colors"]["ntp_background"] = ntp_color;
-  } else {
-    let frame_color = dimColor(color, -pref_tabbar_color);
-    let popup_color = dimColor(color, -pref_popup_color);
-    let toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
-    let ntp_color = dimColor(color, 0);
-    adaptive_themes["light"]["colors"]["frame"] = frame_color;
-    adaptive_themes["light"]["colors"]["frame_inactive"] = frame_color;
-    adaptive_themes["light"]["colors"]["popup"] = popup_color;
-    adaptive_themes["light"]["colors"]["toolbar"] = toolbar_color;
-    adaptive_themes["light"]["colors"]["toolbar_bottom_separator"] = toolbar_color;
-    adaptive_themes["light"]["colors"]["toolbar_field"] = popup_color;
-    adaptive_themes["light"]["colors"]["toolbar_field_focus"] = popup_color;
-    if (change_ntp_bg) adaptive_themes["light"]["colors"]["ntp_background"] = ntp_color;
+    frame_color = dimColor(color, pref_tabbar_color);
+    toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
+    popup_color = dimColor(color, pref_popup_color);
+    ntp_color = dimColor(color, 0);
+  } else if (color_scheme == "light") {
+    frame_color = dimColor(color, -pref_tabbar_color);
+    popup_color = dimColor(color, -pref_popup_color);
+    toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
+    ntp_color = dimColor(color, 0);
+  } else if (color_scheme == "darknoise") {
+    popup_color = dimColor(color, pref_popup_color);
+    toolbar_color = "rgba(0, 0, 0, 0)";
   }
+  adaptive_themes[color_scheme]["colors"]["frame"] = frame_color;
+  adaptive_themes[color_scheme]["colors"]["frame_inactive"] = frame_color;
+  adaptive_themes[color_scheme]["colors"]["popup"] = popup_color;
+  adaptive_themes[color_scheme]["colors"]["toolbar"] = toolbar_color;
+  adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = toolbar_color;
+  adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
+  adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
+  if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
 }
 
 /**
@@ -459,7 +541,7 @@ function applyTheme(windowId, theme) {
  * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
 */
 function isDarkModeSuitable(color) {
-  if (color == null || color == "DEFAULT") return null;
+  if (color == null || typeof color != "object") return null;
   let brightness = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
   if (brightness > 155) {
     return false;
@@ -509,7 +591,7 @@ function generateColorString(color) {
  */
 function rgba(color) {
   if (typeof color == "string") {
-    if (color == "DEFAULT") return null;
+    if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT") return color;
     var canvas = document.createElement("canvas").getContext("2d");
     canvas.fillStyle = color;
     let color_temp = canvas.fillStyle;
