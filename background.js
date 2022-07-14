@@ -25,7 +25,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(0,0,0, .2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
@@ -56,7 +56,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(255,255,255,0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
@@ -87,7 +87,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(255,255,255,0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     },
@@ -525,7 +525,6 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
   adaptive_themes[color_scheme]["colors"]["frame_inactive"] = frame_color;
   adaptive_themes[color_scheme]["colors"]["popup"] = popup_color;
   adaptive_themes[color_scheme]["colors"]["toolbar"] = toolbar_color;
-  adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = toolbar_color;
   adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
   adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
   if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
