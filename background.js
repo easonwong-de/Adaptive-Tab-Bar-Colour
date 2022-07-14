@@ -644,4 +644,5 @@ function updateVersionStatus95() {
   } else {
     aboveV95 = true; //default answer
   }
+  return aboveV95;
 }
