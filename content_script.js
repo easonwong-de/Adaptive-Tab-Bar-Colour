@@ -16,7 +16,7 @@ var reservedColor_cs = {
 };
 
 //Send color to background as soon as page loads
-findColor_delay();
+findColor();
 
 /**
  * Finds color and send to background.
