@@ -392,7 +392,7 @@ function updateEachWindow(tab) {
         reservedColor_cs: current_reservedColor_cs
       }, response => {
         if (response == null) {
-          if (url.endsWith(".pdf")) {
+          if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
             //When viewing a pdf file, Firefox blocks content script
             console.log(url + "\nMight be pdf viewer.");
             if (current_scheme == "dark") {
