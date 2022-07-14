@@ -17,12 +17,12 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 <img src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/pictures/ATBC_showcase_5.jpg" width="600">
 <br>
 
-## Works well with
+## Works Well With
 
 <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on “use system color scheme”)  
 <br>
 
-## Incompatible with
+## Incompatible With
 
 <ol>
 	<li>Firefox under <a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version 58.0</a> (released on Jan, 2018)</li>
