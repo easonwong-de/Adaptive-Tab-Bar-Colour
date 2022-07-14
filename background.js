@@ -110,14 +110,22 @@ var pref_tabbar_color;
 var pref_toolbar_color;
 var pref_popup_color;
 var pref_custom;
-var pref_light_color;
-var pref_dark_color;
+var pref_light_home_color;
+var pref_dark_home_color;
 var pref_reservedColor_cs;
 var pref_last_version;
 
+//These prefs are controlled by other prefs
+var current_scheme;
+var current_light_home_color;
+var current_dark_home_color;
+var current_reservedColor_cs;
+
 //Default values
-const default_light_color = "#FFFFFF";
-const default_dark_color = "#1C1B22";
+const default_light_color = rgba("#FFFFFF");
+const default_dark_color = rgba("#1C1B22");
+const default_light_home_color = rgba("#FFFFFF");
+const default_dark_home_color = rgba("#2B2A33");
 
 /* reserved color is a color => the color is the theme color for the web
 reserved color is IGNORE_THEME => use calculated color as theme color
@@ -133,12 +141,6 @@ const default_reservedColor_cs = Object.freeze({
   "www.spiegel.de": "IGNORE_THEME",
   "www.youtube.com": "IGNORE_THEME"
 });
-
-//These prefs are controlled by other prefs
-var current_scheme;
-var current_light_color;
-var current_dark_color;
-var current_reservedColor_cs;
 
 /* Pages where content script can't be injected
 other reserved color are in content_script.js
@@ -181,8 +183,7 @@ const reservedColor = {
   }
 }
 
-var aboveV95 = true;
-updateVersionStatus95();
+var aboveV95 = updateVersionStatus95();
 
 /**
  * Loads preferences into cache.
@@ -197,18 +198,18 @@ function loadPref(pref) {
   pref_toolbar_color = pref.toolbar_color;
   pref_popup_color = pref.popup_color;
   pref_custom = pref.custom;
-  pref_light_color = pref.light_color;
-  pref_dark_color = pref.dark_color;
+  pref_light_home_color = pref.light_color;
+  pref_dark_home_color = pref.dark_color;
   pref_reservedColor_cs = pref.reservedColor_cs;
   pref_last_version = pref.last_version;
   //loads currents
   if (pref_custom) {
-    current_light_color = rgba(pref_light_color);
-    current_dark_color = rgba(pref_dark_color);
+    current_light_home_color = rgba(pref_light_home_color);
+    current_dark_home_color = rgba(pref_dark_home_color);
     current_reservedColor_cs = pref_reservedColor_cs;
   } else {
-    current_light_color = rgba(default_light_color);
-    current_dark_color = rgba(default_dark_color);
+    current_light_home_color = rgba(default_light_home_color);
+    current_dark_home_color = rgba(default_dark_home_color);
     current_reservedColor_cs = default_reservedColor_cs;
   }
   switch (pref_scheme) {
@@ -244,10 +245,14 @@ function init() {
     let pending_toolbar_color = pref_toolbar_color;
     let pending_popup_color = pref_popup_color;
     let pending_custom = pref_custom;
-    let pending_light_color = pref_light_color;
-    let pending_dark_color = pref_dark_color;
+    let pending_light_home_color = pref_light_home_color;
+    let pending_dark_home_color = pref_dark_home_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 4];
+    let pending_last_version = [1, 6, 5];
+    //updates from v1.6.4 or earlier
+    if (pref_last_version < [1, 6, 5] && pref_dark_home_color.toUpperCase() == "#1C1B22") {
+      pending_dark_home_color = default_dark_home_color;
+    }
     //updates from v1.6.3 or earlier
     if (pref_toolbar_color == null) {
       pending_toolbar_color = 0;
@@ -270,10 +275,10 @@ function init() {
       pending_force = false;
     }
     //updates from v1.3 or earlier
-    if (pref_custom == null || pref_light_color == null || pref_dark_color == null) {
+    if (pref_custom == null || pref_light_home_color == null || pref_dark_home_color == null) {
       pending_custom = false;
-      pending_light_color = default_light_color;
-      pending_dark_color = default_dark_color;
+      pending_light_home_color = default_light_home_color;
+      pending_dark_home_color = default_dark_home_color;
     }
     //first time install
     let firstTime = false;
@@ -295,8 +300,8 @@ function init() {
       toolbar_color: pending_toolbar_color,
       popup_color: pending_popup_color,
       custom: pending_custom,
-      light_color: pending_light_color,
-      dark_color: pending_dark_color,
+      light_color: pending_light_home_color,
+      dark_color: pending_dark_home_color,
       reservedColor_cs: pending_reservedColor_cs,
       last_version: pending_last_version
     });
@@ -375,6 +380,8 @@ function updateEachWindow(tab) {
         changeFrameColorTo(windowId, rgba([255, 255, 255, 1]), false);
       }
     }
+  } else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
+    changeFrameColorTo(windowId, "HOME");
   } else {
     //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
     let key = getSearchKey(url);
@@ -459,7 +466,15 @@ function changeFrameColorTo(windowId, color, dark_mode) {
   //Then set dark_color following the setting
   //dark_color decides text color
   if (dark_mode == null) dark_mode = current_scheme == "dark";
-  if (color == "DARKNOISE") { //Image viewer
+  if (color == "HOME") {
+    if (dark_mode) {
+      changeThemePara(current_dark_home_color, "dark", true);
+      applyTheme(windowId, adaptive_themes["dark"]);
+    } else {
+      changeThemePara(current_light_home_color, "light", true);
+      applyTheme(windowId, adaptive_themes["light"]);
+    }
+  } else if (color == "DARKNOISE") { //Image viewer
     changeThemePara(rgba([33, 33, 33, 1]), "darknoise", false);
     applyTheme(windowId, adaptive_themes["darknoise"]);
   } else if (color == "PLAINTEXT") { //Plain text viewer
@@ -472,10 +487,10 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     }
   } else if (color == null || color == "DEFAULT") { //Gonna reset
     if (dark_mode) {
-      changeThemePara(current_dark_color, "dark", true);
+      changeThemePara(default_dark_color, "dark", false);
       applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      changeThemePara(current_light_color, "light", true);
+      changeThemePara(default_light_color, "light", false);
       applyTheme(windowId, adaptive_themes["light"]);
     }
   } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //Normal coloring
@@ -488,10 +503,10 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     }
   } else if (pref_force) { //Force Coloring
     if (current_scheme == "dark") {
-      changeThemePara(current_dark_color, "dark", false);
+      changeThemePara(current_dark_home_color, "dark", false);
       applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      changeThemePara(current_light_color, "light", false);
+      changeThemePara(current_light_home_color, "light", false);
       applyTheme(windowId, adaptive_themes["light"]);
     }
   }

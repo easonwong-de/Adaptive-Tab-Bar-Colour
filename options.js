@@ -43,8 +43,8 @@ var pref_tabbar_color;
 var pref_toolbar_color;
 var pref_popup_color;
 var pref_custom;
-var pref_light_color;
-var pref_dark_color;
+var pref_light_home_color;
+var pref_dark_home_color;
 var pref_reservedColor_cs;
 
 /**
@@ -58,8 +58,8 @@ function loadPref(pref) {
 	pref_toolbar_color = pref.toolbar_color;
 	pref_popup_color = pref.popup_color;
 	pref_custom = pref.custom;
-	pref_light_color = pref.light_color;
-	pref_dark_color = pref.dark_color;
+	pref_light_home_color = pref.light_color;
+	pref_dark_home_color = pref.dark_color;
 	pref_reservedColor_cs = pref.reservedColor_cs;
 	return true;
 }
@@ -74,8 +74,8 @@ function verifyPref() {
 		&& pref_toolbar_color != null
 		&& pref_popup_color != null
 		&& pref_custom != null
-		&& pref_light_color != null
-		&& pref_dark_color != null
+		&& pref_light_home_color != null
+		&& pref_dark_home_color != null
 		&& pref_reservedColor_cs != null;
 }
 
@@ -107,8 +107,8 @@ function load() {
 				op_popup_color.value = pref_popup_color;
 				op_more_custom.checked = pref_custom;
 				op_custom_options.hidden = !pref_custom;
-				op_light_color.value = pref_light_color;
-				op_dark_color.value = pref_dark_color;
+				op_light_color.value = pref_light_home_color;
+				op_dark_color.value = pref_dark_home_color;
 				let table_rows = op_custom_options_table.rows;
 				for (let i = table_rows.length - 1; i > 1; i--)
 					op_custom_options_table.deleteRow(i);
@@ -251,7 +251,7 @@ if (popupDetected()) {
 	op_light_color.onchange = () => browser.storage.local.set({ light_color: op_light_color.value });
 	op_dark_color.onchange = () => browser.storage.local.set({ dark_color: op_dark_color.value });
 	op_reset_light.onclick = () => browser.storage.local.set({ light_color: "#FFFFFF" }).then(load);
-	op_reset_dark.onclick = () => browser.storage.local.set({ dark_color: "#1C1B22" }).then(load);
+	op_reset_dark.onclick = () => browser.storage.local.set({ dark_color: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
 	op_add.onclick = () => {
 		let i = 0;
