@@ -25,18 +25,8 @@ function findColor() {
 	if (document.fullscreenElement == null) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		console.log(document.visibilityState);
 		if (document.visibilityState == "visible") sendColor();
 	}
-}
-
-function findColor_delay() {
-	console.log("===");
-	setTimeout(findColor, 0);
-	setTimeout(findColor, 250);
-	setTimeout(findColor, 500);
-	setTimeout(findColor, 750);
-	setTimeout(findColor, 1000);
 }
 
 /**
@@ -47,7 +37,7 @@ function sendColor() {
 }
 
 //Updates color when Dark Reader changes mode
-var ondarkreader = new MutationObserver(findColor_delay);
+var ondarkreader = new MutationObserver(findColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
 //Fired by update() from background.js
@@ -55,18 +45,18 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
-			document.onclick = findColor_delay;
-			document.onkeydown = findColor_delay;
+			document.onclick = findColor;
+			//document.onkeydown = findColor;
 			document.onwheel = findColor;
 			document.onscroll = findColor;
 		} else {
 			document.onclick = null;
-			document.onkeydown = null;
+			//document.onkeydown = null;
 			document.onwheel = null;
 			document.onscroll = null;
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
-		findColor_delay();
+		findColor();
 		sendResponse("Color sended to background.");
 	}
 );
