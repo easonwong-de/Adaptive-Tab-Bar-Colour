@@ -248,9 +248,9 @@ function init() {
     let pending_light_home_color = pref_light_home_color;
     let pending_dark_home_color = pref_dark_home_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 5];
+    let pending_last_version = [1, 6, 4, 1];
     //updates from v1.6.4 or earlier
-    if (pref_last_version < [1, 6, 5] && pref_dark_home_color.toUpperCase() == "#1C1B22") {
+    if (pref_last_version < [1, 6, 4, 1] && pref_dark_home_color.toUpperCase() == "#1C1B22") {
       pending_dark_home_color = default_dark_home_color;
     }
     //updates from v1.6.3 or earlier
