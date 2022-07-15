@@ -25,7 +25,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(0,0,0, .2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
@@ -56,7 +56,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(255,255,255,0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
@@ -87,7 +87,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
+      toolbar_bottom_separator: "rgba(255,255,255,0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     },
@@ -108,6 +108,7 @@ var pref_force;
 var pref_dynamic;
 var pref_tabbar_color;
 var pref_toolbar_color;
+var pref_separator_opacity;
 var pref_popup_color;
 var pref_custom;
 var pref_light_home_color;
@@ -196,6 +197,7 @@ function loadPref(pref) {
   pref_dynamic = pref.dynamic;
   pref_tabbar_color = pref.tabbar_color;
   pref_toolbar_color = pref.toolbar_color;
+  pref_separator_opacity = pref.separator_opacity;
   pref_popup_color = pref.popup_color;
   pref_custom = pref.custom;
   pref_light_home_color = pref.light_color;
@@ -243,6 +245,7 @@ function init() {
     let pending_dynamic = pref_dynamic;
     let pending_tabbar_color = pref_tabbar_color;
     let pending_toolbar_color = pref_toolbar_color;
+    let pending_separator_opacity = pref_separator_opacity;
     let pending_popup_color = pref_popup_color;
     let pending_custom = pref_custom;
     let pending_light_home_color = pref_light_home_color;
@@ -256,6 +259,9 @@ function init() {
     //updates from v1.6.3 or earlier
     if (pref_toolbar_color == null) {
       pending_toolbar_color = 0;
+    }
+    if (pref_separator_opacity == null) {
+      pending_separator_opacity = .2;
     }
     //updates from v1.6.2 or earlier
     if (pref_tabbar_color == null || pref_popup_color == null) {
@@ -298,6 +304,7 @@ function init() {
       dynamic: pending_dynamic,
       tabbar_color: pending_tabbar_color,
       toolbar_color: pending_toolbar_color,
+      separator_opacity: pending_separator_opacity,
       popup_color: pending_popup_color,
       custom: pending_custom,
       light_color: pending_light_home_color,
@@ -520,27 +527,30 @@ function changeFrameColorTo(windowId, color, dark_mode) {
  * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
  */
 function changeThemePara(color, color_scheme, change_ntp_bg) {
-  let frame_color, toolbar_color, popup_color, ntp_color;
+  let frame_color, toolbar_color, popup_color, ntp_color, separator_color;
   if (color_scheme == "dark") {
     frame_color = dimColor(color, pref_tabbar_color);
     toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
+    separator_color = dimColor(color, pref_separator_opacity);
     popup_color = dimColor(color, pref_popup_color);
     ntp_color = dimColor(color, 0);
   } else if (color_scheme == "light") {
     frame_color = dimColor(color, -pref_tabbar_color);
     popup_color = dimColor(color, -pref_popup_color);
+    separator_color = dimColor(color, -pref_separator_opacity);
     toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
     ntp_color = dimColor(color, 0);
   } else if (color_scheme == "darknoise") {
     frame_color = "rgb(33, 33, 33)";
     popup_color = dimColor(color, pref_popup_color);
+    separator_color = dimColor(color, pref_separator_opacity);
     toolbar_color = "rgba(0, 0, 0, 0)";
   }
   adaptive_themes[color_scheme]["colors"]["frame"] = frame_color;
   adaptive_themes[color_scheme]["colors"]["frame_inactive"] = frame_color;
   adaptive_themes[color_scheme]["colors"]["popup"] = popup_color;
   adaptive_themes[color_scheme]["colors"]["toolbar"] = toolbar_color;
-  adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = toolbar_color;
+  adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = separator_color;
   adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
   adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
   if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
