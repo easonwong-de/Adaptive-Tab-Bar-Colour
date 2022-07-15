@@ -25,7 +25,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(0,0,0, .2)",
+      toolbar_bottom_separator: "rgba(0, 0, 0, 0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
@@ -56,7 +56,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(255,255,255,0.2)",
+      toolbar_bottom_separator: "rgba(255, 255, 255, 0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     }
@@ -87,7 +87,7 @@ var adaptive_themes = {
       tab_line: "rgba(0, 0, 0, 0)",
       popup_border: "rgba(0, 0, 0, 0)",
       sidebar_border: "rgba(0, 0, 0, 0)",
-      toolbar_bottom_separator: "rgba(255,255,255,0.2)",
+      toolbar_bottom_separator: "rgba(255, 255, 255, 0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
     },
@@ -123,10 +123,10 @@ var current_dark_home_color;
 var current_reservedColor_cs;
 
 //Default values
-const default_light_color = rgba("#FFFFFF");
-const default_dark_color = rgba("#1C1B22");
-const default_light_home_color = rgba("#FFFFFF");
-const default_dark_home_color = rgba("#2B2A33");
+const default_light_color = "#FFFFFF";
+const default_dark_color = "#1C1B22";
+const default_light_home_color = "#FFFFFF";
+const default_dark_home_color = "#2B2A33";
 
 /* reserved color is a color => the color is the theme color for the web
 reserved color is IGNORE_THEME => use calculated color as theme color
@@ -251,7 +251,11 @@ function init() {
     let pending_light_home_color = pref_light_home_color;
     let pending_dark_home_color = pref_dark_home_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 4, 1];
+    let pending_last_version = [1, 6, 5];
+    //updates from v1.6.5 or earlier
+    if (pref_separator_opacity == null) {
+      pending_separator_opacity = 0;
+    }
     //updates from v1.6.4 or earlier
     if (pref_last_version < [1, 6, 4, 1] && pref_dark_home_color.toUpperCase() == "#1C1B22") {
       pending_dark_home_color = default_dark_home_color;
@@ -259,9 +263,6 @@ function init() {
     //updates from v1.6.3 or earlier
     if (pref_toolbar_color == null) {
       pending_toolbar_color = 0;
-    }
-    if (pref_separator_opacity == null) {
-      pending_separator_opacity = .2;
     }
     //updates from v1.6.2 or earlier
     if (pref_tabbar_color == null || pref_popup_color == null) {
@@ -494,10 +495,10 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     }
   } else if (color == null || color == "DEFAULT") { //Gonna reset
     if (dark_mode) {
-      changeThemePara(default_dark_color, "dark", false);
+      changeThemePara(rgba(default_dark_color), "dark", false);
       applyTheme(windowId, adaptive_themes["dark"]);
     } else {
-      changeThemePara(default_light_color, "light", false);
+      changeThemePara(rgba(default_light_color), "light", false);
       applyTheme(windowId, adaptive_themes["light"]);
     }
   } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //Normal coloring
