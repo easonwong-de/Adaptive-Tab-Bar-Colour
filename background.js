@@ -532,19 +532,19 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
   if (color_scheme == "dark") {
     frame_color = dimColor(color, pref_tabbar_color);
     toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
-    separator_color = dimColor(color, pref_separator_opacity);
+    separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
     popup_color = dimColor(color, pref_popup_color);
     ntp_color = dimColor(color, 0);
   } else if (color_scheme == "light") {
     frame_color = dimColor(color, -pref_tabbar_color);
     popup_color = dimColor(color, -pref_popup_color);
-    separator_color = dimColor(color, -pref_separator_opacity);
+    separator_color = dimColor(color, -pref_separator_opacity - pref_toolbar_color);
     toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
     ntp_color = dimColor(color, 0);
   } else if (color_scheme == "darknoise") {
     frame_color = "rgb(33, 33, 33)";
     popup_color = dimColor(color, pref_popup_color);
-    separator_color = dimColor(color, pref_separator_opacity);
+    separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
     toolbar_color = "rgba(0, 0, 0, 0)";
   }
   adaptive_themes[color_scheme]["colors"]["frame"] = frame_color;
