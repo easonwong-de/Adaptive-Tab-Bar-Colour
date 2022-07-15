@@ -531,19 +531,20 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
   let frame_color, toolbar_color, popup_color, ntp_color, separator_color;
   if (color_scheme == "dark") {
     frame_color = dimColor(color, pref_tabbar_color);
+    popup_color = dimColor(color, pref_popup_color);
     toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
     separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
-    popup_color = dimColor(color, pref_popup_color);
     ntp_color = dimColor(color, 0);
   } else if (color_scheme == "light") {
     frame_color = dimColor(color, -pref_tabbar_color);
     popup_color = dimColor(color, -pref_popup_color);
-    separator_color = dimColor(color, -pref_separator_opacity - pref_toolbar_color);
     toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
+    separator_color = dimColor(color, -pref_separator_opacity - pref_toolbar_color);
     ntp_color = dimColor(color, 0);
   } else if (color_scheme == "darknoise") {
     frame_color = "rgb(33, 33, 33)";
     popup_color = dimColor(color, pref_popup_color);
+    toolbar_color = "rgba(0, 0, 0, 0)";
     separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
     toolbar_color = "rgba(0, 0, 0, 0)";
   }
