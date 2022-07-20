@@ -28,6 +28,9 @@ var adaptive_themes = {
       toolbar_bottom_separator: "rgba(0, 0, 0, 0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
+    },
+    properties: {
+      color_scheme: "system"
     }
   },
   "dark": {
@@ -59,6 +62,9 @@ var adaptive_themes = {
       toolbar_bottom_separator: "rgba(255, 255, 255, 0.2)",
       toolbar_top_separator: "rgba(0, 0, 0, 0)",
       tab_loading: "rgba(0, 0, 0, 0)",
+    },
+    properties: {
+      color_scheme: "system"
     }
   },
   "darknoise": { //For image viewer
@@ -96,7 +102,8 @@ var adaptive_themes = {
     },
     properties: {
       additional_backgrounds_alignment: ["left bottom"],
-      additional_backgrounds_tiling: ["repeat"]
+      additional_backgrounds_tiling: ["repeat"],
+      color_scheme: "system"
     }
   }
 };
