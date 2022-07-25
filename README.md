@@ -40,8 +40,7 @@ Beware of malicious web UI: Please distinguish between the browser’s UI and th
 ## Known Issues  
 <ol>
 	<li>Might not support CSS themes</li>
-	<li>The color of “about:devtools-toolbox” might bug in light mode</li>
-	<li>“Follow System” does not work with the latest version of Firefox</li>
+	<li>“about:devtools-toolbox” might not have the correct color scheme</li>
 </ol>
 <br>
 
