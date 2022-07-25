@@ -34,7 +34,7 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 <br>
 
 ## Safety Warning
-Beware of malicious web UI: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to u/KazaHesto on Reddit)  
+Beware of malicious web UI: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)  
 <br>
 
 ## Known Issues  
