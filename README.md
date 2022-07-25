@@ -30,6 +30,8 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/midnight-lizard-quantum/">Midnight Lizard</a></li>
 </ol> 
 <br>
 
