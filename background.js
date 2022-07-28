@@ -258,7 +258,7 @@ function init() {
     let pending_light_home_color = pref_light_home_color;
     let pending_dark_home_color = pref_dark_home_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 6];
+    let pending_last_version = [1, 6, 7];
     //updates from v1.6.5 or earlier
     if (pref_separator_opacity == null) {
       pending_separator_opacity = 0;
@@ -422,7 +422,7 @@ function updateEachWindow(tab) {
             } else if (current_scheme == "light") {
               changeFrameColorTo(windowId, rgba([249, 249, 250, 1]), false);
             }
-          } else if (tab.favIconUrl == "chrome://global/skin/icons/info.svg") {
+          } else if (tab.favIconUrl.startsWith("chrome:")) {
             //Content script is also blocked on website that failed to load
             console.log(url + "\nTab failed to load.");
             changeFrameColorTo(windowId, "DEFAULT");
