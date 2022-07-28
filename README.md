@@ -30,18 +30,19 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/midnight-lizard-quantum/">Midnight Lizard</a></li>
 </ol> 
 <br>
 
 ## Safety Warning
-Beware of malicious web UI: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to u/KazaHesto on Reddit)  
+Beware of malicious web UI: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)  
 <br>
 
 ## Known Issues  
 <ol>
 	<li>Might not support CSS themes</li>
-	<li>The color of “about:devtools-toolbox” might bug in light mode</li>
-	<li>“Follow System” does not work with the latest version of Firefox</li>
+	<li>“about:devtools-toolbox” might not have the correct color scheme</li>
 </ol>
 <br>
 
