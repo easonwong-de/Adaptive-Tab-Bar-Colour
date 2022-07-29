@@ -158,6 +158,7 @@ url listed as "DEFAULT" => use default_light/dark_color
 url listed as "DARKNOISE" => use "darknoise" theme */
 const reservedColor = {
   "light": {
+    "about:blank": "rgb(236, 236, 236)",
     "about:checkerboard": "DEFAULT",
     "about:debugging#": "rgb(249, 249, 250)",
     "about:devtools-toolbox": "rgb(249, 249, 250)",
@@ -174,6 +175,7 @@ const reservedColor = {
     "support.mozilla.org": "rgb(255, 255, 255)"
   },
   "dark": {
+    "about:blank": "rgb(50, 50, 50)",
     "about:debugging#": "DEFAULT",
     "about:devtools-toolbox": "rgb(12, 12, 13)",
     "about:logo": "DARKNOISE",
@@ -584,13 +586,7 @@ function applyTheme(windowId, theme) {
 function isDarkModeSuitable(color) {
   if (color == null || typeof color != "object") return null;
   let brightness = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
-  if (brightness > 155) {
-    return false;
-  } else if (brightness < 100) {
-    return true;
-  } else {
-    return null;
-  }
+  return brightness < 128; //For good contrast, colors' brightness should differ at least for 50%
 }
 
 /**
