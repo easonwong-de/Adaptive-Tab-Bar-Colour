@@ -574,7 +574,10 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
  * @param {object} theme The theme to apply
  */
 function applyTheme(windowId, theme) {
-  browser.theme.update(windowId, theme);
+  browser.theme.getCurrent().then(curent_theme => {
+    if (curent_theme["colors"] == null || curent_theme["colors"]["frame"] != theme["colors"]["frame"])
+      browser.theme.update(windowId, theme);
+  });
 }
 
 /** 

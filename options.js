@@ -123,20 +123,6 @@ function load() {
 					new_row.innerHTML += generateNewRow(domain, i);
 					addAction(i);
 				});
-			} else { //run by pop-up
-				browser.tabs.query({ active: true, currentWindow: true }, tabs => {
-					let url = tabs[0].url;
-					let id = tabs[0].id;
-					if (url.startsWith("http:") || url.startsWith("https:")) {
-						browser.tabs.executeScript(id, { file: "content_script.js" }).then(info => {
-							pp_info_display.innerText = info ? info : "An error occurred";
-						});
-					} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
-						pp_info_display.innerText = "Tab bar color for home page can be configured in settings";
-					} else {
-						pp_info_display.innerText = "This page is protected by browser";
-					}
-				});
 			}
 			autoPageColor();
 			loading.hidden = true;
@@ -368,6 +354,20 @@ function autoPageColor() {
  * Updates popup's color depends on tab bar color.
  */
 function autoPopupColor() {
+	//Sets text in info box
+	browser.tabs.query({ active: true, currentWindow: true }, tabs => {
+		let url = tabs[0].url;
+		let id = tabs[0].id;
+		if (url.startsWith("http:") || url.startsWith("https:")) {
+			browser.tabs.executeScript(id, { file: "content_script.js" }).then(info => {
+				pp_info_display.innerHTML = info ? info : "An error occurred";
+			});
+		} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
+			pp_info_display.innerHTML = "Tab bar color for home page can be configured in settings";
+		} else {
+			pp_info_display.innerHTML = "This page is protected by browser";
+		}
+	});
 	browser.theme.getCurrent().then(theme => {
 		body.style.backgroundColor = theme[`colors`][`popup`];
 		body.style.color = theme[`colors`][`popup_text`];

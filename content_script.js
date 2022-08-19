@@ -77,30 +77,30 @@ function findColorReserved() {
 		return false;
 	} else if (hostAction == "IGNORE_THEME") {
 		findComputedColor();
-		info = "Theme color is ignored";
+		info = `<span class="tip">User settings</span> Theme color defined by the website is ignored`;
 		return true;
 	} else if (hostAction.startsWith("TAG_")) {
-		info = "Color is picked from an HTML element with the tag: " + tag;
+		info = `<span class="tip">User settings</span> Color is picked from an HTML element with the tag: ${tag}`;
 		let tag = hostAction.replace("TAG_", "");
 		let el_list = document.getElementsByTagName(tag);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else if (hostAction.startsWith("CLASS_")) {
-		info = "Color is picked from an HTML element under a class: " + className;
+		info = `<span class="tip">User settings</span> Color is picked from an HTML element under a class: ${className}`;
 		let className = hostAction.replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else if (hostAction.startsWith("ID_")) {
-		info = "Color is picked from an HTML element with the ID: " + id;
+		info = `<span class="tip">User settings</span> Color is picked from an HTML element with the ID: ${id}`;
 		let id = hostAction.replace("ID_", "");
 		let el = document.getElementById(id);
 		RESPONSE_COLOR = getColorFrom(el);
 	} else if (hostAction.startsWith("NAME_")) {
-		info = "Color is picked from an HTML element with a name: " + name;
+		info = `<span class="tip">User settings</span> Color is picked from an HTML element with a name: ${name}`;
 		let name = hostAction.replace("NAME_", "");
 		let el_list = document.getElementsByName(name);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else {
-		info = "Color is specified in the settings";
+		info = `<span class="tip">User settings</span> Color is specified in the settings`;
 		RESPONSE_COLOR = rgba(hostAction);
 	}
 	//Return ture if reponse color is legal and can be sent to background.js
