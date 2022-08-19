@@ -35,6 +35,7 @@ let op_reset_all = document.getElementById("reset_all");
 let op_save = document.getElementById("save");
 let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
+let pp_info_display = document.getElementById("info_display");
 
 //Settings cache
 var pref_scheme;
@@ -121,6 +122,20 @@ function load() {
 					let new_row = op_custom_options_table.insertRow(i + 2);
 					new_row.innerHTML += generateNewRow(domain, i);
 					addAction(i);
+				});
+			} else { //run by pop-up
+				browser.tabs.query({ active: true, currentWindow: true }, tabs => {
+					let url = tabs[0].url;
+					let id = tabs[0].id;
+					if (url.startsWith("http:") || url.startsWith("https:")) {
+						browser.tabs.executeScript(id, { file: "content_script.js" }).then(info => {
+							pp_info_display.innerText = info ? info : "An error occurred";
+						});
+					} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
+						pp_info_display.innerText = "Tab bar color for home page can be configured in settings";
+					} else {
+						pp_info_display.innerText = "This page is protected by browser";
+					}
 				});
 			}
 			autoPageColor();

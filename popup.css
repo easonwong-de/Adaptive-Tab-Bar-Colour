@@ -1,4 +1,5 @@
 body {
+	width: 20em !important;
 	margin: 0;
 	padding: 8px;
 }
@@ -13,12 +14,12 @@ body {
 	background-color: rgb(28, 27, 34);
 }
 
+p,
 label {
 	text-align: left;
 	display: block;
 	margin: 0;
 	padding: 0.5em;
-	padding-right: 5em;
 	border-radius: 4px;
 }
 
@@ -36,6 +37,18 @@ label {
 
 .dark label:active {
 	background-color: rgba(255, 255, 255, 0.26);
+}
+
+p {
+	margin-block-end: 5px;
+}
+
+.light p {
+	border: 1px solid rgba(0, 0, 0, 0.13);
+}
+
+.dark p {
+	border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 hr {

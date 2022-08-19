@@ -15,6 +15,9 @@ var reservedColor_cs = {
 	"www.youtube.com": "IGNORE_THEME"
 };
 
+//This will be displayed in the pop-up
+var info = "CONTENT_SCRIPT";
+
 //Send color to background as soon as page loads
 findColor();
 
@@ -74,24 +77,30 @@ function findColorReserved() {
 		return false;
 	} else if (hostAction == "IGNORE_THEME") {
 		findComputedColor();
+		info = "Theme color is ignored";
 		return true;
 	} else if (hostAction.startsWith("TAG_")) {
+		info = "Color is picked from an HTML element with the tag: " + tag;
 		let tag = hostAction.replace("TAG_", "");
 		let el_list = document.getElementsByTagName(tag);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else if (hostAction.startsWith("CLASS_")) {
+		info = "Color is picked from an HTML element under a class: " + className;
 		let className = hostAction.replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else if (hostAction.startsWith("ID_")) {
+		info = "Color is picked from an HTML element with the ID: " + id;
 		let id = hostAction.replace("ID_", "");
 		let el = document.getElementById(id);
 		RESPONSE_COLOR = getColorFrom(el);
 	} else if (hostAction.startsWith("NAME_")) {
+		info = "Color is picked from an HTML element with a name: " + name;
 		let name = hostAction.replace("NAME_", "");
 		let el_list = document.getElementsByName(name);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
 	} else {
+		info = "Color is specified in the settings";
 		RESPONSE_COLOR = rgba(hostAction);
 	}
 	//Return ture if reponse color is legal and can be sent to background.js
@@ -102,7 +111,7 @@ function findColorReserved() {
  * Sets RESPONSE_COLOR using findThemeColor() and findComputedColor().
  */
 function findColorUnreserved() {
-	if (!findThemeColor()) findComputedColor();
+	findThemeColor() ? info = "Using theme color defined by the website" : findComputedColor();
 }
 
 /** 
@@ -163,10 +172,19 @@ function findComputedColor() {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
 			RESPONSE_COLOR = "DEFAULT";
+			info = "No color is available, fallback to default color";
 		} else {
 			let body_color = getColorFrom(body);
-			RESPONSE_COLOR = body_color.a == 1 ? overlayColor(RESPONSE_COLOR, body_color) : "DEFAULT";
+			if (body_color.a == 1) {
+				RESPONSE_COLOR = overlayColor(RESPONSE_COLOR, body_color);
+				info = "Color is successfully picked from the website";
+			} else {
+				RESPONSE_COLOR = "DEFAULT";
+				info = "No color is available, fallback to default color";
+			}
 		}
+	} else {
+		info = "Color is successfully picked from the website";
 	}
 }
 
@@ -251,3 +269,6 @@ function cc(target, source) {
 	target.b = source.b;
 	target.a = source.a;
 }
+
+//Passes coloring info to pop-up
+info;
