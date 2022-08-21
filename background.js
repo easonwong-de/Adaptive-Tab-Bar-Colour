@@ -371,7 +371,7 @@ function update() {
 function updateEachWindow(tab) {
   let url = tab.url;
   let windowId = tab.windowId;
-  if (url.startsWith("moz-extension:")) {
+  if (url.startsWith("moz-extension:") || url.startsWith("view-source:")) {
     //When visiting add-on settings page (content script blocked)
     if (current_scheme == "dark") {
       changeFrameColorTo(windowId, rgba([50, 50, 50, 1]), true);
