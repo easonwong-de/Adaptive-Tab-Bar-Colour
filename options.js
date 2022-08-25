@@ -359,9 +359,13 @@ function autoPopupColor() {
 		let url = tabs[0].url;
 		let id = tabs[0].id;
 		if (url.startsWith("http:") || url.startsWith("https:")) {
-			browser.tabs.executeScript(id, { file: "content_script.js" }).then(info => {
-				pp_info_display.innerHTML = info ? info : "An error occurred";
-			});
+			browser.tabs.sendMessage(id, {
+				reason: "INFO_REQUEST",
+				dynamic: pref_dynamic,
+				reservedColor_cs: pref_reservedColor_cs
+			  }, info => {
+				  pp_info_display.innerHTML = info ? info : "An error occurred";
+			  });
 		} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
 			pp_info_display.innerHTML = "Tab bar color for home page can be configured in settings";
 		} else {

@@ -49,18 +49,16 @@ browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
 			document.onclick = findColor;
-			//document.onkeydown = findColor;
 			document.onwheel = findColor;
 			document.onscroll = findColor;
 		} else {
 			document.onclick = null;
-			//document.onkeydown = null;
 			document.onwheel = null;
 			document.onscroll = null;
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
 		findColor();
-		sendResponse("Color sended to background.");
+		sendResponse(info);
 	}
 );
 
@@ -80,28 +78,28 @@ function findColorReserved() {
 		info = `Theme color defined by the website is ignored`;
 		return true;
 	} else if (hostAction.startsWith("TAG_")) {
-		info = `Color is picked from an HTML element with the tag: ${tag}`;
 		let tag = hostAction.replace("TAG_", "");
 		let el_list = document.getElementsByTagName(tag);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
+		info = `Color is picked from an HTML element with the tag: ${tag}`;
 	} else if (hostAction.startsWith("CLASS_")) {
-		info = `Color is picked from an HTML element under a class: ${className}`;
 		let className = hostAction.replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
+		info = `Color is picked from an HTML element under a class: ${className}`;
 	} else if (hostAction.startsWith("ID_")) {
-		info = `Color is picked from an HTML element with the ID: ${id}`;
 		let id = hostAction.replace("ID_", "");
 		let el = document.getElementById(id);
 		RESPONSE_COLOR = getColorFrom(el);
+		info = `Color is picked from an HTML element with the ID: ${id}`;
 	} else if (hostAction.startsWith("NAME_")) {
-		info = `Color is picked from an HTML element with a name: ${name}`;
 		let name = hostAction.replace("NAME_", "");
 		let el_list = document.getElementsByName(name);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
+		info = `Color is picked from an HTML element with a name: ${name}`;
 	} else {
-		info = `Color is specified in the settings`;
 		RESPONSE_COLOR = rgba(hostAction);
+		info = `Color is specified in the settings`;
 	}
 	//Return ture if reponse color is legal and can be sent to background.js
 	return RESPONSE_COLOR != null && RESPONSE_COLOR.a == 1;

@@ -260,7 +260,7 @@ function init() {
     let pending_light_home_color = pref_light_home_color;
     let pending_dark_home_color = pref_dark_home_color;
     let pending_reservedColor_cs = pref_reservedColor_cs;
-    let pending_last_version = [1, 6, 8];
+    let pending_last_version = [1, 6, 9];
     //updates from v1.6.5 or earlier
     if (pref_separator_opacity == null) {
       pending_separator_opacity = 0;
