@@ -48,6 +48,7 @@ var pref_custom;
 var pref_light_home_color;
 var pref_dark_home_color;
 var pref_reservedColor_cs;
+var current_reservedColor_cs;
 
 /**
  * Loads preferences into cache.
@@ -387,6 +388,7 @@ function autoPopupColor() {
 							} else if (pp_info_action.innerText = "Ignore theme color") {
 								pref_reservedColor_cs[domain] = "IGNORE_THEME";
 							}
+							current_reservedColor_cs = pref_reservedColor_cs;
 							browser.storage.local.set({
 								custom: true,
 								reservedColor_cs: pref_reservedColor_cs
