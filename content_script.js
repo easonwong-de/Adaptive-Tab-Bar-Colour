@@ -75,7 +75,10 @@ function findColorReserved() {
 		return false;
 	} else if (hostAction == "IGNORE_THEME") {
 		findComputedColor();
-		info = `Theme color defined by the website is ignored`;
+		info = `Theme color defined by the website is ignored
+		<label id="info_action" title="Use theme color defined by the website">
+		<span>Use theme color</span>
+		</label>`;
 		return true;
 	} else if (hostAction.startsWith("TAG_")) {
 		let tag = hostAction.replace("TAG_", "");
@@ -109,7 +112,10 @@ function findColorReserved() {
  * Sets RESPONSE_COLOR using findThemeColor() and findComputedColor().
  */
 function findColorUnreserved() {
-	findThemeColor() ? info = "Using theme color defined by the website" : findComputedColor();
+	findThemeColor() ? info = `Using theme color defined by the website
+		<label id="info_action" title="Ignore theme color defined by the website">
+		<span>Ignore theme color</span>
+		</label>` : findComputedColor();
 }
 
 /** 

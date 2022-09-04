@@ -14,7 +14,7 @@ body {
 	background-color: rgb(28, 27, 34);
 }
 
-p,
+#info_display,
 label {
 	text-align: left;
 	display: block;
@@ -28,7 +28,7 @@ label {
 }
 
 .light label:active {
-	background-color: rgba(0, 0, 0, 0.26);
+	background-color: rgba(0, 0, 0, 0.25);
 }
 
 .dark label:hover {
@@ -36,7 +36,35 @@ label {
 }
 
 .dark label:active {
-	background-color: rgba(255, 255, 255, 0.26);
+	background-color: rgba(255, 255, 255, 0.25);
+}
+
+#info_action {
+	margin-top: 0.5em;
+}
+
+.light #info_action {
+	background-color: rgba(0, 0, 0, 0.15);
+}
+
+.light #info_action:hover {
+	background-color: rgba(0, 0, 0, 0.20);
+}
+
+.light #info_action:active {
+	background-color: rgba(0, 0, 0, 0.35);
+}
+
+.dark #info_action {
+	background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark #info_action:hover {
+	background-color: rgba(255, 255, 255, 0.20);
+}
+
+.dark #info_action:active {
+	background-color: rgba(255, 255, 255, 0.35);
 }
 
 .tip {
@@ -48,24 +76,24 @@ label {
 	border-radius: 5px;
 }
 
-.light .tip{
+.light .tip {
 	background-color: rgba(0, 0, 0, 0.13);
 }
 
-.dark .tip{
+.dark .tip {
 	background-color: rgba(255, 255, 255, 0.10);
 }
 
-p {
+#info_display {
 	margin-block-end: 5px;
 	line-height: 1.2em;
 }
 
-.light p {
+.light #info_display {
 	border: 1px solid rgba(0, 0, 0, 0.13);
 }
 
-.dark p {
+.dark #info_display {
 	border: 1px solid rgba(255, 255, 255, 0.10);
 }
 

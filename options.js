@@ -64,6 +64,11 @@ function loadPref(pref) {
 	pref_light_home_color = pref.light_color;
 	pref_dark_home_color = pref.dark_color;
 	pref_reservedColor_cs = pref.reservedColor_cs;
+	if (pref_custom) {
+		current_reservedColor_cs = pref_reservedColor_cs;
+	} else {
+		current_reservedColor_cs = default_reservedColor_cs;
+	}
 	return true;
 }
 
@@ -86,13 +91,20 @@ function verifyPref() {
 settings.hidden = true;
 loading.hidden = false;
 
-load();
+popupDetected() ? load_lite() : load();
 
 browser.theme.onUpdated.addListener(autoPageColor);
 //Load prefs when popup is opened
 document.addEventListener("pageshow", load);
 //Sync prefs on option page and popup
-browser.storage.onChanged.addListener(load_lite);
+//Technically it might cause dead loop, but onChanged will not be triggered when same pref is set
+browser.storage.onChanged.addListener(() => {
+	if (!popupDetected()) {
+		document.hasFocus() ? load_lite() : load();
+	} else {
+		applySettings();
+	}
+});
 
 /**
  * Loads all prefs
@@ -250,7 +262,7 @@ if (popupDetected()) {
 		browser.storage.local.set({ popup_color: Number(op_popup_color.value) });
 	};
 	op_separator_opacity.oninput = () => {
-		browser.storage.local.set({ separator_opacity: Number(op_separator_opacity.value) })
+		browser.storage.local.set({ separator_opacity: Number(op_separator_opacity.value) });
 	}
 	op_more_custom.onclick = () => {
 		browser.storage.local.set({ custom: op_more_custom.checked });
@@ -357,15 +369,34 @@ function autoPopupColor() {
 	//Sets text in info box
 	browser.tabs.query({ active: true, currentWindow: true }, tabs => {
 		let url = tabs[0].url;
+		let domain = url.split(/\/|\?/)[2];
 		let id = tabs[0].id;
 		if (url.startsWith("http:") || url.startsWith("https:")) {
 			browser.tabs.sendMessage(id, {
 				reason: "INFO_REQUEST",
 				dynamic: pref_dynamic,
-				reservedColor_cs: pref_reservedColor_cs
-			  }, info => {
-				  pp_info_display.innerHTML = info ? info : "An error occurred";
-			  });
+				reservedColor_cs: current_reservedColor_cs
+			}, info => {
+				if (info) {
+					pp_info_display.innerHTML = info;
+					let pp_info_action = document.getElementById("info_action");
+					if (pp_info_action) {
+						pp_info_action.onclick = () => {
+							if (pp_info_action.innerText == "Use theme color") {
+								delete pref_reservedColor_cs[domain];
+							} else if (pp_info_action.innerText = "Ignore theme color") {
+								pref_reservedColor_cs[domain] = "IGNORE_THEME";
+							}
+							browser.storage.local.set({
+								custom: true,
+								reservedColor_cs: pref_reservedColor_cs
+							});
+						}
+					}
+				} else {
+					pp_info_display.innerHTML = "An error occurred";
+				}
+			});
 		} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
 			pp_info_display.innerHTML = "Tab bar color for home page can be configured in settings";
 		} else {
