@@ -19,12 +19,22 @@ var reservedColor_cs = {
 var info = "CONTENT_SCRIPT";
 
 //Send color to background as soon as page loads
-findColor();
+findAndSendColor();
+
+/**
+ * Finds color.
+ */
+function findColor() {
+	if (document.fullscreenElement == null) {
+		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
+		if (!findColorReserved()) findColorUnreserved();
+	}
+}
 
 /**
  * Finds color and send to background.
  */
-function findColor() {
+function findAndSendColor() {
 	if (document.fullscreenElement == null) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
@@ -40,7 +50,7 @@ function sendColor() {
 }
 
 //Updates color when Dark Reader changes mode
-var ondarkreader = new MutationObserver(findColor);
+var ondarkreader = new MutationObserver(findAndSendColor);
 ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
 
 //Fired by update() from background.js
@@ -48,16 +58,20 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
-			document.onclick = findColor;
-			document.onwheel = findColor;
-			document.onscroll = findColor;
+			document.onclick = findAndSendColor;
+			document.onwheel = findAndSendColor;
+			document.onscroll = findAndSendColor;
 		} else {
 			document.onclick = null;
 			document.onwheel = null;
 			document.onscroll = null;
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
-		findColor();
+		if (pref.reason == "INFO_REQUEST") {
+			findColor();
+		} else {
+			findAndSendColor();
+		}
 		sendResponse(info);
 	}
 );

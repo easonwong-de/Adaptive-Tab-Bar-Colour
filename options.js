@@ -405,10 +405,10 @@ function autoPopupColor() {
 			pp_info_display.innerHTML = "This page is protected by browser";
 		}
 	});
-	browser.theme.getCurrent().then(theme => {
-		body.style.backgroundColor = theme[`colors`][`popup`];
-		body.style.color = theme[`colors`][`popup_text`];
-		if (theme[`colors`][`popup_text`] == "rgb(0, 0, 0)") {
+	browser.theme.getCurrent().then(current_theme => {
+		body.style.backgroundColor = current_theme[`colors`][`popup`];
+		body.style.color = current_theme[`colors`][`popup_text`];
+		if (current_theme[`colors`][`popup_text`] == "rgb(0, 0, 0)") {
 			body.classList.add("light");
 			body.classList.remove("dark");
 		} else {
