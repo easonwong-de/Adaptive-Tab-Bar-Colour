@@ -409,7 +409,7 @@ function autoPopupColor() {
 				} else if (tabs[0].favIconUrl && tabs[0].favIconUrl.startsWith("chrome:")) {
 					pp_info_display.innerHTML = "This page is protected by browser";
 				} else {
-					pp_info_display.innerHTML = "An error occurred";
+					pp_info_display.innerHTML = "An error occurred, using default color";
 				}
 			});
 		} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {

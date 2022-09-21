@@ -431,6 +431,7 @@ function updateEachWindow(tab) {
                         changeFrameColorTo(windowId, "DEFAULT");
                     } else {
                         console.error(url + "\nNo connection to content script.");
+                        if (tab.status == "complete") changeFrameColorTo(windowId, "DEFAULT");
                     }
                 }
             });
