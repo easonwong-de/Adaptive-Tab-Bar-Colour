@@ -195,6 +195,8 @@ const reservedColor = Object.freeze({
 
 var aboveV95 = updateVersionStatus95();
 
+var current_frame_color = "*PLACEHOLDER";
+
 /**
  * Loads preferences into cache.
  * Also modifies the "current" data.
@@ -591,7 +593,11 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
  * @param {object} theme The theme to apply
  */
 function applyTheme(windowId, theme) {
-    browser.theme.update(windowId, theme);
+    if (current_frame_color != theme["colors"]["frame"]) {
+        browser.theme.update(windowId, theme);
+        console.log(current_frame_color);
+        current_frame_color = theme["colors"]["frame"];
+    }
 }
 
 /** 
