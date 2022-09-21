@@ -186,8 +186,8 @@ const reservedColor = Object.freeze({
         "about:processes": "rgb(43, 42, 50)",
         "about:sync-log": "rgb(30, 30, 30)",
         "accounts-static.cdn.mozilla.net": "DEFAULT",
-        "addons.mozilla.org": "rgb(32, 18, 58)",
         "addons.cdn.mozilla.net": "DEFAULT",
+        "addons.mozilla.org": "rgb(32, 18, 58)",
         "content.cdn.mozilla.net": "DEFAULT",
         "install.mozilla.org": "DEFAULT"
     }
@@ -260,7 +260,7 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 10];
+        let pending_last_version = [1, 6, 11];
         //updates from v1.6.5 or earlier
         if (pref_separator_opacity == null) {
             pending_separator_opacity = 0;
@@ -415,16 +415,17 @@ function updateEachWindow(tab) {
                 dynamic: pref_dynamic,
                 reservedColor_cs: current_reservedColor_cs
             }, response => {
-                if (response == null) {
-                    if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+                if (!response) {
+                    if (url.startsWith("data:image")) {
+                        //Content script is blocked on data:pages
+                        //Viewing an image on data:image
+                        console.log(url + "\nMight be image viewer.");
+                        changeFrameColorTo(windowId, "DARKNOISE");
+                    } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
                         //When viewing a pdf file, Firefox blocks content script
                         console.log(url + "\nMight be pdf viewer.");
-                        if (current_scheme == "dark") {
-                            changeFrameColorTo(windowId, rgba([56, 56, 61, 1]), true);
-                        } else if (current_scheme == "light") {
-                            changeFrameColorTo(windowId, rgba([249, 249, 250, 1]), false);
-                        }
-                    } else if (tab.favIconUrl.startsWith("chrome:")) {
+                        changeFrameColorTo(windowId, "PDFVIEWER");
+                    } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
                         //Content script is also blocked on website that failed to load
                         console.log(url + "\nTab failed to load.");
                         changeFrameColorTo(windowId, "DEFAULT");
@@ -484,6 +485,7 @@ function changeFrameColorTo(windowId, color, dark_mode) {
     //dark_color decides text color
     if (dark_mode == null) dark_mode = current_scheme == "dark";
     if (color == "HOME") {
+        //Home page and new tab
         if (dark_mode) {
             changeThemePara(current_dark_home_color, "dark", true);
             applyTheme(windowId, adaptive_themes["dark"]);
@@ -491,10 +493,12 @@ function changeFrameColorTo(windowId, color, dark_mode) {
             changeThemePara(current_light_home_color, "light", true);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (color == "DARKNOISE") { //Image viewer
+    } else if (color == "DARKNOISE") {
+        //Image viewer
         changeThemePara(rgba([33, 33, 33, 1]), "darknoise", false);
         applyTheme(windowId, adaptive_themes["darknoise"]);
-    } else if (color == "PLAINTEXT") { //Plain text viewer
+    } else if (color == "PLAINTEXT") {
+        //Plain text viewer
         if (dark_mode) {
             changeThemePara(rgba([50, 50, 50, 1]), "dark", false);
             applyTheme(windowId, adaptive_themes["dark"]);
@@ -502,7 +506,17 @@ function changeFrameColorTo(windowId, color, dark_mode) {
             changeThemePara(rgba([236, 236, 236, 1]), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (color == null || color == "DEFAULT") { //Gonna reset
+    } else if (color == "PDFVIEWER") {
+        //PDF viewer
+        if (dark_mode) {
+            changeThemePara(rgba([56, 56, 61, 1]), "dark", false);
+            applyTheme(windowId, adaptive_themes["dark"]);
+        } else {
+            changeThemePara(rgba([249, 249, 250, 1]), "light", false);
+            applyTheme(windowId, adaptive_themes["light"]);
+        }
+    } else if (color == null || color == "DEFAULT") {
+        //Reset to default color
         if (dark_mode) {
             changeThemePara(rgba(default_dark_color), "dark", false);
             applyTheme(windowId, adaptive_themes["dark"]);
@@ -510,7 +524,8 @@ function changeFrameColorTo(windowId, color, dark_mode) {
             changeThemePara(rgba(default_light_color), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) { //Normal coloring
+    } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) {
+        //Normal coloring
         if (dark_mode) {
             changeThemePara(color, "dark", false);
             applyTheme(windowId, adaptive_themes["dark"]);
@@ -518,7 +533,8 @@ function changeFrameColorTo(windowId, color, dark_mode) {
             changeThemePara(color, "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (pref_force) { //Force Coloring
+    } else if (pref_force) {
+        //Force coloring (use default color)
         if (current_scheme == "dark") {
             changeThemePara(current_dark_home_color, "dark", false);
             applyTheme(windowId, adaptive_themes["dark"]);

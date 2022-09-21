@@ -8,7 +8,15 @@ const default_reservedColor_cs = Object.freeze({
 	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME",
-	"www.youtube.com": "IGNORE_THEME"
+	"www.youtube.com": "IGNORE_THEME",
+	"accounts-static.cdn.mozilla.net": "DEFAULT",
+	"accounts.firefox.com": "PROTECTED",
+	"addons.cdn.mozilla.net": "PROTECTED",
+	"addons.mozilla.org": "PROTECTED",
+	"content.cdn.mozilla.net": "PROTECTED",
+	"discovery.addons.mozilla.org": "PROTECTED",
+	"install.mozilla.org": "PROTECTED",
+	"support.mozilla.org": "PROTECTED"
 });
 
 let body = document.getElementsByTagName("body")[0];
@@ -372,14 +380,15 @@ function autoPopupColor() {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
 		let id = tabs[0].id;
-		if (url.startsWith("http:") || url.startsWith("https:")) {
+		if (((url.startsWith("http:") || url.startsWith("https:")) && default_reservedColor_cs[domain] != "PROTECTED")
+			|| url.startsWith("file:")) {
 			browser.tabs.sendMessage(id, {
 				reason: "INFO_REQUEST",
 				dynamic: pref_dynamic,
 				reservedColor_cs: current_reservedColor_cs
-			}, info => {
-				if (info) {
-					pp_info_display.innerHTML = info;
+			}, RESPONSE_INFO => {
+				if (RESPONSE_INFO) {
+					pp_info_display.innerHTML = RESPONSE_INFO;
 					let pp_info_action = document.getElementById("info_action");
 					if (pp_info_action) {
 						pp_info_action.onclick = () => {
@@ -395,6 +404,10 @@ function autoPopupColor() {
 							});
 						}
 					}
+				} else if (url.endsWith(".pdf") || tabs[0].title.endsWith(".pdf")) {
+					pp_info_display.innerHTML = "Using color for PDF viewer";
+				} else if (tabs[0].favIconUrl && tabs[0].favIconUrl.startsWith("chrome:")) {
+					pp_info_display.innerHTML = "This page is protected by browser";
 				} else {
 					pp_info_display.innerHTML = "An error occurred";
 				}

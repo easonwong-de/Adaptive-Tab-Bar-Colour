@@ -3,6 +3,9 @@
 
 var RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 
+//This will be displayed in the pop-up
+var RESPONSE_INFO = "*PLACEHOLDER";
+
 //preloads default color lookup table
 var reservedColor_cs = {
 	"developer.mozilla.org": "IGNORE_THEME",
@@ -14,9 +17,6 @@ var reservedColor_cs = {
 	"www.spiegel.de": "IGNORE_THEME",
 	"www.youtube.com": "IGNORE_THEME"
 };
-
-//This will be displayed in the pop-up
-var info = "CONTENT_SCRIPT";
 
 //Send color to background as soon as page loads
 findAndSendColor();
@@ -38,15 +38,9 @@ function findAndSendColor() {
 	if (document.fullscreenElement == null) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (document.visibilityState == "visible") sendColor();
+		if (document.visibilityState == "visible")
+			browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
 	}
-}
-
-/**
- * Sends color to background.
- */
-function sendColor() {
-	browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
 }
 
 //Updates color when Dark Reader changes mode
@@ -69,10 +63,11 @@ browser.runtime.onMessage.addListener(
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
 		if (pref.reason == "INFO_REQUEST") {
 			findColor();
-		} else {
+			sendResponse(RESPONSE_INFO);
+		} else if (pref.reason == "COLOR_REQUEST") {
 			findAndSendColor();
+			sendResponse(RESPONSE_COLOR);
 		}
-		sendResponse(info);
 	}
 );
 
@@ -89,34 +84,34 @@ function findColorReserved() {
 		return false;
 	} else if (hostAction == "IGNORE_THEME") {
 		findComputedColor();
-		info = `Theme color defined by the website is ignored
-		<label id="info_action" title="Use theme color defined by the website">
-		<span>Use theme color</span>
-		</label>`;
+		RESPONSE_INFO = `Theme color defined by the website is ignored
+			<label id="info_action" title="Use theme color defined by the website">
+			<span>Use theme color</span>
+			</label>`;
 		return true;
 	} else if (hostAction.startsWith("TAG_")) {
 		let tag = hostAction.replace("TAG_", "");
 		let el_list = document.getElementsByTagName(tag);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
-		info = `Color is picked from an HTML element with the tag: ${tag}`;
+		RESPONSE_INFO = `Color is picked from an HTML element with the tag: ${tag}`;
 	} else if (hostAction.startsWith("CLASS_")) {
 		let className = hostAction.replace("CLASS_", "");
 		let el_list = document.getElementsByClassName(className);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
-		info = `Color is picked from an HTML element under a class: ${className}`;
+		RESPONSE_INFO = `Color is picked from an HTML element under a class: ${className}`;
 	} else if (hostAction.startsWith("ID_")) {
 		let id = hostAction.replace("ID_", "");
 		let el = document.getElementById(id);
 		RESPONSE_COLOR = getColorFrom(el);
-		info = `Color is picked from an HTML element with the ID: ${id}`;
+		RESPONSE_INFO = `Color is picked from an HTML element with the ID: ${id}`;
 	} else if (hostAction.startsWith("NAME_")) {
 		let name = hostAction.replace("NAME_", "");
 		let el_list = document.getElementsByName(name);
 		RESPONSE_COLOR = getColorFrom(el_list[0]);
-		info = `Color is picked from an HTML element with a name: ${name}`;
+		RESPONSE_INFO = `Color is picked from an HTML element with a name: ${name}`;
 	} else {
 		RESPONSE_COLOR = rgba(hostAction);
-		info = `Color is specified in the settings`;
+		RESPONSE_INFO = `Color is specified in the settings`;
 	}
 	//Return ture if reponse color is legal and can be sent to background.js
 	return RESPONSE_COLOR != null && RESPONSE_COLOR.a == 1;
@@ -126,10 +121,7 @@ function findColorReserved() {
  * Sets RESPONSE_COLOR using findThemeColor() and findComputedColor().
  */
 function findColorUnreserved() {
-	findThemeColor() ? info = `Using theme color defined by the website
-		<label id="info_action" title="Ignore theme color defined by the website">
-		<span>Ignore theme color</span>
-		</label>` : findComputedColor();
+	if (!findThemeColor()) findComputedColor();
 }
 
 /** 
@@ -138,25 +130,42 @@ function findColorUnreserved() {
  * @returns False if no legal theme-color can be found.
  */
 function findThemeColor() {
-	if (getComputedStyle(document.documentElement).backgroundImage == "url(\"chrome://global/skin/media/imagedoc-darknoise.png\")") {
+	if (getComputedStyle(document.documentElement).backgroundImage == `url("chrome://global/skin/media/imagedoc-darknoise.png")`) {
 		//Image viewer
 		//Firefox chooses imagedoc-darknoise.png as the background of image viewer
+		//Doesn't work with images on data:image url
 		RESPONSE_COLOR = "DARKNOISE";
+		RESPONSE_INFO = `Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background`;
 		return true;
 	} else if (document.getElementsByTagName("link").length > 0
 		&& document.getElementsByTagName("link")[0].href == "resource://content-accessible/plaintext.css") {
 		//Plain text viewer
-		RESPONSE_COLOR = "PLAINTEXT";
-		return true;
+		//Firefox seems to have blocked content script when viewing plain text online
+		//Thus this may only works for viewing local text file
+		if (getColorFrom(document.body).a != 1) {
+			RESPONSE_COLOR = "PLAINTEXT";
+			RESPONSE_INFO = `Using color from <b>resource://content-accessible/plaintext.css</b>`;
+			return true;
+		} else {
+			return false;
+		}
 	} else {
 		let colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 		let headerTag = document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colorScheme})"]`);
 		if (headerTag == null) headerTag = document.querySelector(`meta[name="theme-color"]`);
 		if (headerTag != null) {
 			RESPONSE_COLOR = rgba(headerTag.content);
-			//Return true if it is legal and can be sent to background.js
+			//Return true if it is legal (opaque) and can be sent to background.js
 			//Otherwise, return false and trigger getComputedColor()
-			return RESPONSE_COLOR.a == 1;
+			if (RESPONSE_COLOR.a == 1) {
+				RESPONSE_INFO = `Using theme color defined by the website
+					<label id="info_action" title="Ignore theme color defined by the website">
+					<span>Ignore theme color</span>
+					</label>`;
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -190,19 +199,19 @@ function findComputedColor() {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
 			RESPONSE_COLOR = "DEFAULT";
-			info = "No color is available, fallback to default color";
+			RESPONSE_INFO = "No color is available, fallback to default color";
 		} else {
 			let body_color = getColorFrom(body);
 			if (body_color.a == 1) {
 				RESPONSE_COLOR = overlayColor(RESPONSE_COLOR, body_color);
-				info = "Color is successfully picked from the website";
+				RESPONSE_INFO = "Color is successfully picked from the web page";
 			} else {
 				RESPONSE_COLOR = "DEFAULT";
-				info = "No color is available, fallback to default color";
+				RESPONSE_INFO = "No color is available, fallback to default color";
 			}
 		}
 	} else {
-		info = "Color is successfully picked from the website";
+		RESPONSE_INFO = "Color is successfully picked from the web page";
 	}
 }
 
@@ -289,4 +298,4 @@ function cc(target, source) {
 }
 
 //Passes coloring info to pop-up
-info;
+RESPONSE_INFO;
