@@ -595,7 +595,6 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
 function applyTheme(windowId, theme) {
     if (current_frame_color != theme["colors"]["frame"]) {
         browser.theme.update(windowId, theme);
-        console.log(current_frame_color);
         current_frame_color = theme["colors"]["frame"];
     }
 }
