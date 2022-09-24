@@ -196,6 +196,9 @@ const reservedColor = Object.freeze({
 var aboveV95 = updateVersionStatus95();
 
 var current_frame_color = "*PLACEHOLDER";
+var current_popup_color = "*PLACEHOLDER";
+var current_toolbar_color = "*PLACEHOLDER";
+var current_sline_color = "*PLACEHOLDER";
 
 /**
  * Loads preferences into cache.
@@ -262,7 +265,7 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 11];
+        let pending_last_version = [1, 6, 12];
         //updates from v1.6.5 or earlier
         if (pref_separator_opacity == null) {
             pending_separator_opacity = 0;
@@ -375,16 +378,12 @@ function updateEachWindow(tab) {
     let windowId = tab.windowId;
     if (url.startsWith("moz-extension:") || url.startsWith("view-source:")) {
         //When visiting add-on settings page (content script blocked)
-        if (current_scheme == "dark") {
-            changeFrameColorTo(windowId, rgba([50, 50, 50, 1]), true);
-        } else if (current_scheme == "light") {
-            changeFrameColorTo(windowId, rgba([236, 236, 236, 1]), false);
-        }
+        changeFrameColorTo(windowId, "PLAINTEXT");
     } else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
         //When visiting internal files (content script blocked)
         if (current_scheme == "dark") {
             if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
-                changeFrameColorTo(windowId, rgba([50, 50, 50, 1]), true);
+                changeFrameColorTo(windowId, "PLAINTEXT");
             } else if (url.endsWith(".png") || url.endsWith(".css")) {
                 changeFrameColorTo(windowId, "DARKNOISE");
             } else {
@@ -392,14 +391,14 @@ function updateEachWindow(tab) {
             }
         } else if (current_scheme == "light") {
             if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
-                changeFrameColorTo(windowId, rgba([236, 236, 236, 1]), false);
+                changeFrameColorTo(windowId, "PLAINTEXT");
             } else if (url.endsWith(".png") || url.endsWith(".css")) {
                 changeFrameColorTo(windowId, "DARKNOISE");
             } else {
                 changeFrameColorTo(windowId, rgba([255, 255, 255, 1]), false);
             }
         }
-    } else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
+    } else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
         changeFrameColorTo(windowId, "HOME");
     } else {
         //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
@@ -593,9 +592,15 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
  * @param {object} theme The theme to apply
  */
 function applyTheme(windowId, theme) {
-    if (current_frame_color != theme["colors"]["frame"]) {
+    if (current_frame_color != theme["colors"]["frame"]
+        || current_popup_color != theme["colors"]["popup"]
+        || current_toolbar_color != theme["colors"]["toolbar"]
+        || current_sline_color != theme["colors"]["toolbar_bottom_separator"]) {
         browser.theme.update(windowId, theme);
         current_frame_color = theme["colors"]["frame"];
+        current_popup_color = theme["colors"]["popup"];
+        current_toolbar_color = theme["colors"]["toolbar"];
+        current_sline_color = theme["colors"]["toolbar_bottom_separator"];
     }
 }
 

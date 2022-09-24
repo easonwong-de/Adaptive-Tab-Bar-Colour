@@ -8,8 +8,11 @@ const default_reservedColor_cs = Object.freeze({
 	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME",
-	"www.youtube.com": "IGNORE_THEME",
-	"accounts-static.cdn.mozilla.net": "DEFAULT",
+	"www.youtube.com": "IGNORE_THEME"
+});
+
+const protected_domains = Object.freeze({
+	"accounts-static.cdn.mozilla.net": "PROTECTED",
 	"accounts.firefox.com": "PROTECTED",
 	"addons.cdn.mozilla.net": "PROTECTED",
 	"addons.mozilla.org": "PROTECTED",
@@ -380,7 +383,7 @@ function autoPopupColor() {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
 		let id = tabs[0].id;
-		if (((url.startsWith("http:") || url.startsWith("https:")) && default_reservedColor_cs[domain] != "PROTECTED")
+		if (((url.startsWith("http:") || url.startsWith("https:")) && protected_domains[domain] != "PROTECTED")
 			|| url.startsWith("file:")) {
 			browser.tabs.sendMessage(id, {
 				reason: "INFO_REQUEST",
@@ -402,6 +405,7 @@ function autoPopupColor() {
 								custom: true,
 								reservedColor_cs: pref_reservedColor_cs
 							});
+							load_lite();
 						}
 					}
 				} else if (url.endsWith(".pdf") || tabs[0].title.endsWith(".pdf")) {
@@ -412,7 +416,7 @@ function autoPopupColor() {
 					pp_info_display.innerHTML = "An error occurred, using default color";
 				}
 			});
-		} else if (url.startsWith("about:home") || url.startsWith("about:newtab")) {
+		} else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
 			pp_info_display.innerHTML = "Tab bar color for home page can be configured in settings";
 		} else {
 			pp_info_display.innerHTML = "This page is protected by browser";
