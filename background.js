@@ -5,6 +5,7 @@ var adaptive_themes = {
             frame: "rgb(255, 255, 255)",
             frame_inactive: "rgb(255, 255, 255)",
             popup: "rgb(255, 255, 255)",
+            sidebar: "rgb(255, 255, 255)",
             ntp_background: "rgb(255, 255, 255)",
             toolbar_field: "rgb(242, 242, 242)",
             toolbar_field_focus: "rgb(242, 242, 242)",
@@ -12,6 +13,7 @@ var adaptive_themes = {
             toolbar_text: "rgb(0, 0, 0)",
             toolbar_field_text: "rgba(0, 0, 0)",
             popup_text: "rgb(0, 0, 0)",
+            sidebar_text: "rgb(0, 0, 0)",
             ntp_text: "rgb(0, 0, 0)",
             tab_background_text: "rgb(30, 30, 30)",
             icons: "rgb(30, 30, 30)",
@@ -39,6 +41,7 @@ var adaptive_themes = {
             frame: "rgb(28, 27, 34)",
             frame_inactive: "rgb(28, 27, 34)",
             popup: "rgb(28, 27, 34)",
+            sidebar: "rgb(28, 27, 34)",
             ntp_background: "rgb(28, 27, 34)",
             toolbar_field: "rgb(39, 38, 45)",
             toolbar_field_focus: "rgb(39, 38, 45)",
@@ -46,6 +49,7 @@ var adaptive_themes = {
             toolbar_text: "rgb(255, 255, 255)",
             toolbar_field_text: "rgb(255, 255, 255)",
             popup_text: "rgb(225, 225, 225)",
+            sidebar_text: "rgb(225, 225, 225)",
             ntp_text: "rgb(255, 255, 255)",
             tab_background_text: "rgb(225, 225, 225)",
             icons: "rgb(225, 225, 225)",
@@ -73,6 +77,7 @@ var adaptive_themes = {
             frame: "rgb(33, 33, 33)",
             frame_inactive: "rgb(33, 33, 33)",
             popup: "rgb(44, 44, 44)",
+            sidebar: "rgb(44, 44, 44)",
             ntp_background: "rgb(33, 33, 33)",
             toolbar_field: "rgb(44, 44, 44)",
             toolbar_field_focus: "rgb(44, 44, 44)",
@@ -80,6 +85,7 @@ var adaptive_themes = {
             toolbar_text: "rgb(255, 255, 255)",
             toolbar_field_text: "rgb(255, 255, 255)",
             popup_text: "rgb(225, 225, 225)",
+            sidebar_text: "rgb(225, 225, 225)",
             ntp_text: "rgb(255, 255, 255)",
             tab_background_text: "rgb(225, 225, 225)",
             icons: "rgb(225, 225, 225)",
@@ -578,6 +584,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes[color_scheme]["colors"]["frame"] = frame_color;
     adaptive_themes[color_scheme]["colors"]["frame_inactive"] = frame_color;
     adaptive_themes[color_scheme]["colors"]["popup"] = popup_color;
+    adaptive_themes[color_scheme]["colors"]["sidebar"] = popup_color;
     adaptive_themes[color_scheme]["colors"]["toolbar"] = toolbar_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = separator_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
