@@ -110,10 +110,10 @@ document.addEventListener("pageshow", load);
 //Sync prefs on option page and popup
 //Technically it might cause dead loop, but onChanged will not be triggered when same pref is set
 browser.storage.onChanged.addListener(() => {
-	if (!popupDetected()) {
-		document.hasFocus() ? load_lite() : load();
-	} else {
+	if (popupDetected()) {
 		applySettings();
+	} else {
+		document.hasFocus() ? load_lite() : load();
 	}
 });
 
@@ -143,8 +143,8 @@ function load() {
 				let domains = Object.keys(pref_reservedColor_cs);
 				domains.forEach((domain, i) => {
 					let new_row = op_custom_options_table.insertRow(i + 2);
-					generateNewRow(domain, i).then(newRow => {
-						new_row.innerHTML += newRow;
+					generateNewRow(domain, i).then(new_row_HTML => {
+						new_row.innerHTML += new_row_HTML;
 						addAction(i);
 					});
 				});
@@ -255,11 +255,11 @@ function addAction(i) {
 		}
 		autoSaveSettings();
 	};
+	operation.oninput = autoSaveSettings;
 	delete_button.onclick = () => {
 		delete_button.parentElement.parentElement.remove();
 		autoSaveSettings();
 	};
-	operation.oninput = autoSaveSettings;
 }
 
 if (popupDetected()) {
@@ -290,8 +290,8 @@ if (popupDetected()) {
 		let i = 0;
 		while (document.getElementById(`DOM_${i}`) != null) i++; //finds an unoccupied index
 		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
-		generateNewRow("", i).then(newRow => {
-			new_row.innerHTML = newRow;
+		generateNewRow("", i).then(new_row_HTML => {
+			new_row.innerHTML = new_row_HTML;
 			addAction(i);
 			autoSaveSettings();
 		});
@@ -306,7 +306,8 @@ function autoSaveSettings() {
 	let all_table_rows = op_custom_options_table.firstElementChild.children;
 	for (let i = 2; i < all_table_rows.length; i++) {
 		let table_cells = all_table_rows[i].children;
-		let domain = table_cells[0].firstElementChild.value;
+		let domain = table_cells[0].firstElementChild.title;
+		if (!domain) domain = table_cells[0].firstElementChild.value;
 		if (domain != "" && isNaN(domain) && pending_reservedColor_cs[domain] == null) {
 			let action;
 			switch (table_cells[1].firstElementChild.selectedIndex) {
@@ -335,10 +336,10 @@ function autoSaveSettings() {
  * @returns 
  */
 function generateNewRow(domain, i) {
-	if (domain.startsWith("ADDON_")) {
+	if (domain.startsWith("Add-on ID: ")) {
 		return new Promise(resolve => {
-			browser.management.get(domain.replace("ADDON_", "")).then(addon => {
-				let part_1 = `<p id="DOM_${i}">${addon.name}</p>`;
+			browser.management.get(domain.replace("Add-on ID: ", "")).then(addon => {
+				let part_1 = `<span id="DOM_${i}" title="${domain}">${addon.name}</span>`;
 				let part_2 = `<select id="SEL_${i}"><option selected>specify a color</option></select>`;
 				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColor_cs[domain]}">`;
 				let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
@@ -346,10 +347,6 @@ function generateNewRow(domain, i) {
 			});
 		})
 	} else {
-		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
-		let part_2 = ``;
-		let part_3 = ``;
-		let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
 		let action;
 		if (domain === "") {
 			domain = "example.com";
@@ -357,6 +354,10 @@ function generateNewRow(domain, i) {
 		} else {
 			action = pref_reservedColor_cs[domain];
 		}
+		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
+		let part_2 = ``;
+		let part_3 = ``;
+		let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
 		if (action == "IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<span class="FiveEm"></span>`;
@@ -446,34 +447,37 @@ function autoPopupColor() {
 					if (addon.type === "extension" && addon.hostPermissions) {
 						for (host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-								if (current_reservedColor_cs[`ADDON_${addon.id}`]) {
+								if (current_reservedColor_cs[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = `Using specified color for pages related to <b>${addon.name}</b>
-									<label id="info_action" title="Use default color for pages related to ${addon.name}">
-									<span>Use default color</span>
-									</label>`;
+										<label id="info_action" title="Use default color">
+										<span>Use default color</span>
+										</label>`;
 									document.getElementById("info_action").onclick = () => {
-										delete pref_reservedColor_cs[`ADDON_${addon.id}`];
+										delete pref_reservedColor_cs[`Add-on ID: ${addon.id}`];
 										current_reservedColor_cs = pref_reservedColor_cs;
 										browser.storage.local.set({
 											custom: true,
 											reservedColor_cs: pref_reservedColor_cs
+										}).then(() => {
+											load_lite();
 										});
-										load_lite();
 									}
 								} else {
-									pp_info_display.innerHTML = `Using default color for pages related to <b>${addon.name}</b>
-									<label id="info_action" title="Open settings and specify a color to pages related to ${addon.name}">
-									<span>Open settings</span>
-									</label>`;
+									pp_info_display.innerHTML = `Click “Specify a color” to open settings 
+										and specify tab bar color for pages related to <b>${addon.name}</b>
+										<label id="info_action" title="Open settings and specify a color to pages related to ${addon.name}">
+										<span>Specify a color</span>
+										</label>`;
 									document.getElementById("info_action").onclick = () => {
-										pref_reservedColor_cs[`ADDON_${addon.id}`] = "#333333";
+										pref_reservedColor_cs[`Add-on ID: ${addon.id}`] = "#333333";
 										current_reservedColor_cs = pref_reservedColor_cs;
 										browser.storage.local.set({
 											custom: true,
 											reservedColor_cs: pref_reservedColor_cs
+										}).then(() => {
+											load_lite();
+											browser.runtime.openOptionsPage();
 										});
-										load_lite();
-										browser.runtime.openOptionsPage();
 									}
 								}
 								breakLoop = true;

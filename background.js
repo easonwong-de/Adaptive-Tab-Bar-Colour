@@ -200,11 +200,6 @@ const reservedColor = Object.freeze({
 
 var aboveV95 = updateVersionStatus95();
 
-var current_frame_color = "*PLACEHOLDER";
-var current_popup_color = "*PLACEHOLDER";
-var current_toolbar_color = "*PLACEHOLDER";
-var current_sline_color = "*PLACEHOLDER";
-
 /**
  * Loads preferences into cache.
  * Also modifies the "current" data.
@@ -404,8 +399,11 @@ function updateEachWindow(tab) {
                 setFrameColor(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
             } else if (url.startsWith("about:")) {
                 setFrameColor(windowId, "DEFAULT");
+            } else if (key.startsWith("Add-on ID: ") && current_reservedColor_cs[key]) {
+                let frameColor = rgba(current_reservedColor_cs[key]);
+                setFrameColor(windowId, frameColor, isDarkModeSuitable(frameColor));
             } else if (url.startsWith("moz-extension:")) {
-                setFrameColor(windowId, "SYSTEM");
+                setFrameColor(windowId, "ADDON");
             } else {
                 browser.tabs.sendMessage(tab.id, {
                     reason: "COLOR_REQUEST",
@@ -441,7 +439,7 @@ function updateEachWindow(tab) {
  * Gets the search key for reservedColor (_cs).
  * 
  * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas"
- * @returns e.g. "about:page", "addons.mozilla.org", "ATBC@EasonWong"
+ * @returns e.g. "about:page", "addons.mozilla.org", "Add-on ID: ATBC@EasonWong"
  */
 function getSearchKey(url) {
     if (url.startsWith("about:")) {
@@ -455,7 +453,7 @@ function getSearchKey(url) {
                     if (addon.type === "extension" && addon.hostPermissions) {
                         for (host of addon.hostPermissions) {
                             if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-                                resolve(`ADDON_${addon.id}`);
+                                resolve(`Add-on ID: ${addon.id}`);
                                 breakLoop = true;
                                 break;
                             }
@@ -529,6 +527,15 @@ function setFrameColor(windowId, color, dark_mode) {
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
             changeThemePara(rgba([255, 255, 255, 1]), "light", false);
+            applyTheme(windowId, adaptive_themes["light"]);
+        }
+    } else if (color == "ADDON") {
+        //Add-on page
+        if (dark_mode) {
+            changeThemePara(rgba([50, 50, 50, 1]), "dark", false);
+            applyTheme(windowId, adaptive_themes["dark"]);
+        } else {
+            changeThemePara(rgba([236, 236, 236, 1]), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (color == "PDFVIEWER") {
@@ -616,16 +623,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
  * @param {object} theme The theme to apply
  */
 function applyTheme(windowId, theme) {
-    if (current_frame_color != theme["colors"]["frame"]
-        || current_popup_color != theme["colors"]["popup"]
-        || current_toolbar_color != theme["colors"]["toolbar"]
-        || current_sline_color != theme["colors"]["toolbar_bottom_separator"]) {
-        browser.theme.update(windowId, theme);
-        current_frame_color = theme["colors"]["frame"];
-        current_popup_color = theme["colors"]["popup"];
-        current_toolbar_color = theme["colors"]["toolbar"];
-        current_sline_color = theme["colors"]["toolbar_bottom_separator"];
-    }
+    browser.theme.update(windowId, theme);
 }
 
 /** 
