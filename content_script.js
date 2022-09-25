@@ -14,8 +14,7 @@ var reservedColor_cs = {
 	"open.spotify.com": "#000000",
 	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME",
-	"www.youtube.com": "IGNORE_THEME"
+	"www.spiegel.de": "IGNORE_THEME"
 };
 
 //Send color to background as soon as page loads

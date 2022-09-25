@@ -7,8 +7,7 @@ const default_reservedColor_cs = Object.freeze({
 	"open.spotify.com": "#000000",
 	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME",
-	"www.youtube.com": "IGNORE_THEME"
+	"www.spiegel.de": "IGNORE_THEME"
 });
 
 const protected_domains = Object.freeze({
@@ -144,8 +143,10 @@ function load() {
 				let domains = Object.keys(pref_reservedColor_cs);
 				domains.forEach((domain, i) => {
 					let new_row = op_custom_options_table.insertRow(i + 2);
-					new_row.innerHTML += generateNewRow(domain, i);
-					addAction(i);
+					generateNewRow(domain, i).then(newRow => {
+						new_row.innerHTML += newRow;
+						addAction(i);
+					});
 				});
 			}
 			autoPageColor();
@@ -289,9 +290,11 @@ if (popupDetected()) {
 		let i = 0;
 		while (document.getElementById(`DOM_${i}`) != null) i++; //finds an unoccupied index
 		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
-		new_row.innerHTML = generateNewRow("", i);
-		addAction(i);
-		autoSaveSettings();
+		generateNewRow("", i).then(newRow => {
+			new_row.innerHTML = newRow;
+			addAction(i);
+			autoSaveSettings();
+		});
 	};
 }
 
@@ -316,7 +319,7 @@ function autoSaveSettings() {
 			pending_reservedColor_cs[domain] = action;
 			if (table_cells[4] != null) table_cells[4].remove();
 		} else {
-			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
 		}
 	}
 	browser.storage.local.set({ reservedColor_cs: pending_reservedColor_cs });
@@ -332,32 +335,49 @@ function autoSaveSettings() {
  * @returns 
  */
 function generateNewRow(domain, i) {
-	let action = "#ECECEC"; //default action for new settings row
-	if (action == null) return null;
-	domain == "" ? domain = "example.com" : action = pref_reservedColor_cs[domain];
-	let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
-	let part_2, part_3;
-	let part_4 = `<button id="DEL_${i}" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
-	if (action == "IGNORE_THEME") {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
-		part_3 = `<span class="FiveEm"></span>`;
-	} else if (action.startsWith("TAG_")) {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
-		part_3 = `<input type="text" class="FiveEm" value="${action.replace("TAG_", "")}">`;
-	} else if (action.startsWith("CLASS_")) {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
-		part_3 = `<input type="text" class="FiveEm" value="${action.replace("CLASS_", "")}">`;
-	} else if (action.startsWith("ID_")) {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option selected>pick from id</option><option>pick from name</option></select>`;
-		part_3 = `<input type="text" class="FiveEm" value="${action.replace("ID_", "")}">`;
-	} else if (action.startsWith("NAME_")) {
-		part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option selected>pick from name</option></select>`;
-		part_3 = `<input type="text" class="FiveEm" value="${action.replace("NAME_", "")}">`;
+	if (domain.startsWith("ADDON_")) {
+		return new Promise(resolve => {
+			browser.management.get(domain.replace("ADDON_", "")).then(addon => {
+				let part_1 = `<p id="DOM_${i}">${addon.name}</p>`;
+				let part_2 = `<select id="SEL_${i}"><option selected>specify a color</option></select>`;
+				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColor_cs[domain]}">`;
+				let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
+				resolve(`<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`);
+			});
+		})
 	} else {
-		part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
-		part_3 = `<input type="color" class="FiveEm" value="${action}">`;
+		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
+		let part_2 = ``;
+		let part_3 = ``;
+		let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
+		let action;
+		if (domain === "") {
+			domain = "example.com";
+			action = "#ECECEC";
+		} else {
+			action = pref_reservedColor_cs[domain];
+		}
+		if (action == "IGNORE_THEME") {
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_3 = `<span class="FiveEm"></span>`;
+		} else if (action.startsWith("TAG_")) {
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_3 = `<input type="text" class="FiveEm" value="${action.replace("TAG_", "")}">`;
+		} else if (action.startsWith("CLASS_")) {
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_3 = `<input type="text" class="FiveEm" value="${action.replace("CLASS_", "")}">`;
+		} else if (action.startsWith("ID_")) {
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option selected>pick from id</option><option>pick from name</option></select>`;
+			part_3 = `<input type="text" class="FiveEm" value="${action.replace("ID_", "")}">`;
+		} else if (action.startsWith("NAME_")) {
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option selected>pick from name</option></select>`;
+			part_3 = `<input type="text" class="FiveEm" value="${action.replace("NAME_", "")}">`;
+		} else {
+			part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_3 = `<input type="color" class="FiveEm" value="${action}">`;
+		}
+		return Promise.resolve(`<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`);
 	}
-	return `<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`;
 }
 
 /**
@@ -418,14 +438,60 @@ function autoPopupColor() {
 			});
 		} else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
 			pp_info_display.innerHTML = "Tab bar color for home page can be configured in settings";
+		} else if (url.startsWith("moz-extension:")) {
+			let uuid = url.split(/\/|\?/)[2];
+			browser.management.getAll().then(addon_list => {
+				let breakLoop = false;
+				for (addon of addon_list) {
+					if (addon.type === "extension" && addon.hostPermissions) {
+						for (host of addon.hostPermissions) {
+							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
+								if (current_reservedColor_cs[`ADDON_${addon.id}`]) {
+									pp_info_display.innerHTML = `Using specified color for pages related to <b>${addon.name}</b>
+									<label id="info_action" title="Use default color for pages related to ${addon.name}">
+									<span>Use default color</span>
+									</label>`;
+									document.getElementById("info_action").onclick = () => {
+										delete pref_reservedColor_cs[`ADDON_${addon.id}`];
+										current_reservedColor_cs = pref_reservedColor_cs;
+										browser.storage.local.set({
+											custom: true,
+											reservedColor_cs: pref_reservedColor_cs
+										});
+										load_lite();
+									}
+								} else {
+									pp_info_display.innerHTML = `Using default color for pages related to <b>${addon.name}</b>
+									<label id="info_action" title="Open settings and specify a color to pages related to ${addon.name}">
+									<span>Open settings</span>
+									</label>`;
+									document.getElementById("info_action").onclick = () => {
+										pref_reservedColor_cs[`ADDON_${addon.id}`] = "#333333";
+										current_reservedColor_cs = pref_reservedColor_cs;
+										browser.storage.local.set({
+											custom: true,
+											reservedColor_cs: pref_reservedColor_cs
+										});
+										load_lite();
+										browser.runtime.openOptionsPage();
+									}
+								}
+								breakLoop = true;
+								break;
+							}
+						}
+					}
+					if (breakLoop) break;
+				}
+			});
 		} else {
 			pp_info_display.innerHTML = "This page is protected by browser";
 		}
 	});
 	browser.theme.getCurrent().then(current_theme => {
-		body.style.backgroundColor = current_theme[`colors`][`popup`];
-		body.style.color = current_theme[`colors`][`popup_text`];
-		if (current_theme[`colors`][`popup_text`] == "rgb(0, 0, 0)") {
+		body.style.backgroundColor = current_theme["colors"]["popup"];
+		body.style.color = current_theme["colors"]["popup_text"];
+		if (current_theme["colors"]["popup_text"] == "rgb(0, 0, 0)") {
 			body.classList.add("light");
 			body.classList.remove("dark");
 		} else {
@@ -466,8 +532,9 @@ function popupDetected() {
 	return document.getElementById("more_custom") == null;
 }
 
-const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
-if (light_mode_match_media != null) light_mode_match_media.onchange = () => {
+//Light Mode Match Media on option page
+const lightMMM_p = window.matchMedia("(prefers-color-scheme: light)");
+if (lightMMM_p != null) lightMMM_p.onchange = () => {
 	if (color_scheme_system.checked) autoOptionsColor();
 };
 
@@ -475,7 +542,7 @@ if (light_mode_match_media != null) light_mode_match_media.onchange = () => {
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
 function lightModeDetected() {
-	return light_mode_match_media != null && light_mode_match_media.matches;
+	return lightMMM_p != null && lightMMM_p.matches;
 }
 
 /**

@@ -14,7 +14,8 @@
     "tabs",
     "theme",
     "storage",
-    "browserSettings"
+    "browserSettings",
+    "management"
   ],
   "background": {
     "scripts": [

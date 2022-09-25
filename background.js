@@ -152,8 +152,7 @@ const default_reservedColor_cs = Object.freeze({
     "open.spotify.com": "#000000",
     "www.bbc.com": "IGNORE_THEME",
     "www.instagram.com": "IGNORE_THEME",
-    "www.spiegel.de": "IGNORE_THEME",
-    "www.youtube.com": "IGNORE_THEME"
+    "www.spiegel.de": "IGNORE_THEME"
 });
 
 /* Pages where content script can't be injected
@@ -344,18 +343,17 @@ browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
 browser.runtime.onMessage.addListener(update); //When preferences changed
 
-const light_mode_match_media = window.matchMedia("(prefers-color-scheme: light)");
-if (light_mode_match_media != null) light_mode_match_media.onchange = update_when_follow_system;
+//Light Mode Match Media
+const lightMMM = window.matchMedia("(prefers-color-scheme: light)");
+if (lightMMM) lightMMM.onchange = () => {
+    if (pref_scheme == "system") update();
+};
 
 /**
- * @returns true if in light mode, false if in dark mode or cannot detect
+ * @returns true if in light mode, false if in dark mode or cannot detect.
  */
 function lightModeDetected() {
-    return light_mode_match_media != null && light_mode_match_media.matches;
-}
-
-function update_when_follow_system() {
-    if (pref_scheme == "system") update();
+    return lightMMM && lightMMM.matches;
 }
 
 update();
@@ -382,90 +380,100 @@ function update() {
 function updateEachWindow(tab) {
     let url = tab.url;
     let windowId = tab.windowId;
-    if (url.startsWith("moz-extension:") || url.startsWith("view-source:")) {
-        //When visiting add-on settings page (content script blocked)
-        changeFrameColorTo(windowId, "PLAINTEXT");
+    if (url.startsWith("view-source:")) {
+        //When visiting internal files (content script blocked)
+        setFrameColor(windowId, "PLAINTEXT");
     } else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
         //When visiting internal files (content script blocked)
-        if (current_scheme == "dark") {
-            if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
-                changeFrameColorTo(windowId, "PLAINTEXT");
-            } else if (url.endsWith(".png") || url.endsWith(".css")) {
-                changeFrameColorTo(windowId, "DARKNOISE");
-            } else {
-                changeFrameColorTo(windowId, rgba([30, 30, 30, 1]), true);
-            }
-        } else if (current_scheme == "light") {
-            if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
-                changeFrameColorTo(windowId, "PLAINTEXT");
-            } else if (url.endsWith(".png") || url.endsWith(".css")) {
-                changeFrameColorTo(windowId, "DARKNOISE");
-            } else {
-                changeFrameColorTo(windowId, rgba([255, 255, 255, 1]), false);
-            }
+        if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
+            setFrameColor(windowId, "PLAINTEXT");
+        } else if (url.endsWith(".png") || url.endsWith(".css")) {
+            setFrameColor(windowId, "DARKNOISE");
+        } else {
+            setFrameColor(windowId, "SYSTEM");
         }
     } else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
-        changeFrameColorTo(windowId, "HOME");
+        setFrameColor(windowId, "HOME");
     } else {
         //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
-        let key = getSearchKey(url);
-        let reversed_scheme = current_scheme == "light" ? "dark" : "light";
-        if (reservedColor[current_scheme][key] != null) { //For prefered scheme there's a reserved color
-            changeFrameColorTo(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
-        } else if (reservedColor[reversed_scheme][key] != null) { //Site has reserved color in the other mode
-            changeFrameColorTo(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
-        } else if (url.startsWith("about:")) {
-            changeFrameColorTo(windowId, "DEFAULT");
-        } else {
-            browser.tabs.sendMessage(tab.id, {
-                reason: "COLOR_REQUEST",
-                dynamic: pref_dynamic,
-                reservedColor_cs: current_reservedColor_cs
-            }, response => {
-                if (!response) {
-                    if (url.startsWith("data:image")) {
-                        //Content script is blocked on data:pages
-                        //Viewing an image on data:image
-                        console.log(url + "\nMight be image viewer.");
-                        changeFrameColorTo(windowId, "DARKNOISE");
-                    } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-                        //When viewing a pdf file, Firefox blocks content script
-                        console.log(url + "\nMight be pdf viewer.");
-                        changeFrameColorTo(windowId, "PDFVIEWER");
-                    } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
-                        //Content script is also blocked on website that failed to load
-                        console.log(url + "\nTab failed to load.");
-                        changeFrameColorTo(windowId, "DEFAULT");
-                    } else {
-                        console.error(url + "\nNo connection to content script.");
-                        if (tab.status == "complete") changeFrameColorTo(windowId, "DEFAULT");
+        getSearchKey(url).then(key => {
+            let reversed_scheme = current_scheme == "light" ? "dark" : "light";
+            if (reservedColor[current_scheme][key]) { //For prefered scheme there's a reserved color
+                setFrameColor(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
+            } else if (reservedColor[reversed_scheme][key]) { //Site has reserved color in the other mode
+                setFrameColor(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
+            } else if (url.startsWith("about:")) {
+                setFrameColor(windowId, "DEFAULT");
+            } else if (url.startsWith("moz-extension:")) {
+                setFrameColor(windowId, "SYSTEM");
+            } else {
+                browser.tabs.sendMessage(tab.id, {
+                    reason: "COLOR_REQUEST",
+                    dynamic: pref_dynamic,
+                    reservedColor_cs: current_reservedColor_cs
+                }, response => {
+                    if (!response) {
+                        if (url.startsWith("data:image")) {
+                            //Content script is blocked on data:pages
+                            //Viewing an image on data:image
+                            console.log(url + "\nMight be image viewer.");
+                            setFrameColor(windowId, "DARKNOISE");
+                        } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+                            //When viewing a pdf file, Firefox blocks content script
+                            console.log(url + "\nMight be pdf viewer.");
+                            setFrameColor(windowId, "PDFVIEWER");
+                        } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
+                            //Content script is also blocked on website that failed to load
+                            console.log(url + "\nTab failed to load.");
+                            setFrameColor(windowId, "DEFAULT");
+                        } else {
+                            console.error(url + "\nNo connection to content script.");
+                            if (tab.status == "complete") setFrameColor(windowId, "DEFAULT");
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
 }
 
 /**
- * Gets the key word to search in reservedColor.
+ * Gets the search key for reservedColor (_cs).
  * 
- * @param {string} url an URL
- * @returns e.g. "about:blank", "addons.mozilla.org"
+ * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas"
+ * @returns e.g. "about:page", "addons.mozilla.org", "ATBC@EasonWong"
  */
 function getSearchKey(url) {
-    let key = "";
     if (url.startsWith("about:")) {
-        key = url.split(/\/|\?/)[0]; //e.g. key can be "about:blank"
+        return Promise.resolve(url.split(/\/|\?/)[0]); //e.g. "about:page"
+    } else if (url.startsWith("moz-extension:")) {
+        let uuid = url.split(/\/|\?/)[2];
+        return new Promise(resolve => {
+            browser.management.getAll().then(addon_list => {
+                let breakLoop = false;
+                for (addon of addon_list) {
+                    if (addon.type === "extension" && addon.hostPermissions) {
+                        for (host of addon.hostPermissions) {
+                            if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
+                                resolve(`ADDON_${addon.id}`);
+                                breakLoop = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (breakLoop) break;
+                }
+            });
+        });
     } else {
-        key = url.split(/\/|\?/)[2]; // e.g. key can be "addons.mozilla.org"
+        return Promise.resolve(url.split(/\/|\?/)[2]); // e.g. "addons.mozilla.org"
     }
-    return key;
 }
 
 //Recieves the color from content script
 browser.runtime.onConnect.addListener(port => {
     port.onMessage.addListener((message, sender, sendResponse) => {
-        changeFrameColorTo(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
+        setFrameColor(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
     });
 });
 
@@ -487,7 +495,7 @@ browser.runtime.onConnect.addListener(port => {
  * Command strings are: "DEFAULT", "DARKNOISE", and "PLAINTEXT"
  * @param {boolean} dark_mode Decides text color. Leaves "null" to let add-on prefs decide.
  */
-function changeFrameColorTo(windowId, color, dark_mode) {
+function setFrameColor(windowId, color, dark_mode) {
     //dark_mode is null means the color is not bright nor dark
     //Then set dark_color following the setting
     //dark_color decides text color
@@ -514,6 +522,15 @@ function changeFrameColorTo(windowId, color, dark_mode) {
             changeThemePara(rgba([236, 236, 236, 1]), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
+    } else if (color == "SYSTEM") {
+        //Internal page
+        if (dark_mode) {
+            changeThemePara(rgba([30, 30, 30, 1]), "dark", false);
+            applyTheme(windowId, adaptive_themes["dark"]);
+        } else {
+            changeThemePara(rgba([255, 255, 255, 1]), "light", false);
+            applyTheme(windowId, adaptive_themes["light"]);
+        }
     } else if (color == "PDFVIEWER") {
         //PDF viewer
         if (dark_mode) {
@@ -523,7 +540,7 @@ function changeFrameColorTo(windowId, color, dark_mode) {
             changeThemePara(rgba([249, 249, 250, 1]), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (color == null || color == "DEFAULT") {
+    } else if (!color || color == "DEFAULT") {
         //Reset to default color
         if (dark_mode) {
             changeThemePara(rgba(default_dark_color), "dark", false);
