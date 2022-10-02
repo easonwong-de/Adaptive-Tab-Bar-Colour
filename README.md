@@ -1,4 +1,4 @@
-![Icon](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/images/ATBC_128.png)
+![Icon](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/images/ATBC_128.png)  
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-color)
 ![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-color)
 ![Mozilla Add-on Version](https://img.shields.io/amo/v/adaptive-tab-bar-color)
