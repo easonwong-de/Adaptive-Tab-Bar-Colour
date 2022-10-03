@@ -265,7 +265,7 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 12];
+        let pending_last_version = [1, 6, 13];
         //updates from v1.6.5 or earlier
         if (pref_separator_opacity == null) {
             pending_separator_opacity = 0;
@@ -593,10 +593,10 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
         separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
         ntp_color = dimColor(color, 0);
     } else if (color_scheme == "light") {
-        frame_color = dimColor(color, -pref_tabbar_color);
-        popup_color = dimColor(color, -pref_popup_color);
-        toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color);
-        separator_color = dimColor(color, -pref_separator_opacity - pref_toolbar_color);
+        frame_color = dimColor(color, -pref_tabbar_color * 1.5);
+        popup_color = dimColor(color, -pref_popup_color * 1.5);
+        toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color * 1.5);
+        separator_color = dimColor(color, (-pref_separator_opacity - pref_toolbar_color) * 1.5);
         ntp_color = dimColor(color, 0);
     } else if (color_scheme == "darknoise") {
         frame_color = "rgb(33, 33, 33)";
@@ -614,6 +614,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
     if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
+    adaptive_themes[color_scheme]["properties"]["color_scheme"] = pref_scheme;
 }
 
 /**
