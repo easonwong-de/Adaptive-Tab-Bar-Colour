@@ -12,24 +12,21 @@ Change the color of Firefox tab bar to match the website theme
 <br>
 
 ## What Does The Add-on Do
-Every time you switch tabs, this add-on changes the tab bar color of your Firefox browser to match the theme color of the website you are viewing – just like how macOS Safari tints its tab bar.  
+Every time you open, close, or switch tabs, this add-on changes the color of your Firefox browser UI to match the theme color of the website you are viewing – just like how macOS Safari tints its tab bar.  
 
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="600">
-
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="600">
-
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="600">
-
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="600">
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="600">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="600">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="600">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="600">  
 <br>
 
 ## Works Well With
 
-<a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a> (recommend turning on “use system color scheme”)  
+<a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a>  
 <br>
 
 ## Incompatible With
-
+This add-on takes control of browser’s UI color and color scheme settings. Any add-on that makes changes to them is incompatible.  
 <ol>
 	<li>Firefox under <a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version 58.0</a> (released on Jan, 2018)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
@@ -41,13 +38,16 @@ Every time you switch tabs, this add-on changes the tab bar color of your Firefo
 </ol> 
 <br>
 
+## For CSS Theme Enjoyers
+A CSS theme can work with [ATBC](## "Adaptive Tab Bar Color"), if system color variables are being used. <a href="https://github.com/YS-Wong/WhiteSurFirefoxThemeMacOS">This</a> is an example of a [ATBC](## "Adaptive Tab Bar Color")-compatible CSS theme.  
+<br>
+
 ## Safety Warning
 Beware of malicious web UI: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)  
 <br>
 
-## Known Issues  
+## Known Issue(s)  
 <ol>
-	<li>Might not support CSS themes</li>
 	<li>“about:devtools-toolbox” might not have the correct color scheme</li>
 </ol>
 <br>
