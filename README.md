@@ -35,11 +35,11 @@ This add-on takes control of browser’s UI color and color scheme settings. Any
 	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/midnight-lizard-quantum/">Midnight Lizard</a></li>
-</ol> 
+</ol>
 <br>
 
 ## For CSS Theme Enjoyers
-A CSS theme can work with [ATBC](## "Adaptive Tab Bar Color"), if system color variables are being used. <a href="https://github.com/YS-Wong/WhiteSurFirefoxThemeMacOS">This</a> is an example of a [ATBC](## "Adaptive Tab Bar Color")-compatible CSS theme.  
+A CSS theme can work with [ATBC](## "Adaptive Tab Bar Color"), when system color variables are being used. <a href="https://github.com/YS-Wong/WhiteSurFirefoxThemeMacOS">This</a> is an example of an [ATBC](## "Adaptive Tab Bar Color")-compatible CSS theme.  
 <br>
 
 ## Safety Warning
