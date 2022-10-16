@@ -40,6 +40,8 @@ This add-on takes control of browser’s UI color and color scheme settings. Any
 
 ## For CSS Theme Enjoyers
 A CSS theme can work with [ATBC](## "Adaptive Tab Bar Color"), when system color variables are being used. <a href="https://github.com/YS-Wong/WhiteSurFirefoxThemeMacOS">This</a> is an example of an [ATBC](## "Adaptive Tab Bar Color")-compatible CSS theme.  
+
+<img width="45%" src="https://raw.githubusercontent.com/YS-Wong/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png"><img width="45%" src="https://raw.githubusercontent.com/YS-Wong/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png">
 <br>
 
 ## Safety Warning
