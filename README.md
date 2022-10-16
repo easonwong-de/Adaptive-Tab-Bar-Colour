@@ -14,10 +14,10 @@ Change the color of Firefox tab bar to match the website theme
 ## What Does The Add-on Do
 Every time you open, close, or switch tabs, this add-on changes the color of your Firefox browser UI to match the theme color of the website you are viewing – just like how macOS Safari tints its tab bar.  
 
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="600">  
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="600">  
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="600">  
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="600">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="80%">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="80%">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="80%">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="80%">  
 <br>
 
 ## Works Well With
