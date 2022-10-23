@@ -34,6 +34,8 @@ let op_tabbar_color = document.getElementById("tabbar_color");
 let op_toolbar_color = document.getElementById("toolbar_color");
 let op_separator_opacity = document.getElementById("separator_opacity");
 let op_popup_color = document.getElementById("popup_color");
+let op_sidebar_color = document.getElementById("sidebar_color");
+let op_sidebar_border_color = document.getElementById("sidebar_border_color");
 let op_more_custom = document.getElementById("more_custom");
 let op_custom_options = document.getElementById("custom_options");
 let op_custom_options_table = document.getElementById("custom_options_table");
@@ -53,7 +55,10 @@ var pref_force;
 var pref_dynamic;
 var pref_tabbar_color;
 var pref_toolbar_color;
+var pref_separator_opacity;
 var pref_popup_color;
+var pref_sidebar_color;
+var pref_sidebar_border_color;
 var pref_custom;
 var pref_light_home_color;
 var pref_dark_home_color;
@@ -70,6 +75,8 @@ function loadPref(pref) {
 	pref_tabbar_color = pref.tabbar_color;
 	pref_toolbar_color = pref.toolbar_color;
 	pref_popup_color = pref.popup_color;
+	pref_sidebar_color = pref.sidebar_color;
+	pref_sidebar_border_color = pref.sidebar_border_color;
 	pref_separator_opacity = pref.separator_opacity;
 	pref_custom = pref.custom;
 	pref_light_home_color = pref.light_color;
@@ -91,8 +98,10 @@ function verifyPref() {
 		&& pref_force != null
 		&& pref_tabbar_color != null
 		&& pref_toolbar_color != null
-		&& pref_popup_color != null
 		&& pref_separator_opacity != null
+		&& pref_popup_color != null
+		&& pref_sidebar_color != null
+		&& pref_sidebar_border_color != null
 		&& pref_custom != null
 		&& pref_light_home_color != null
 		&& pref_dark_home_color != null
@@ -131,8 +140,10 @@ function load() {
 			if (!popupDetected()) { //when the script is run by option page
 				op_tabbar_color.value = pref_tabbar_color;
 				op_toolbar_color.value = pref_toolbar_color;
-				op_popup_color.value = pref_popup_color;
 				op_separator_opacity.value = pref_separator_opacity;
+				op_popup_color.value = pref_popup_color;
+				op_sidebar_color.value = pref_sidebar_color;
+				op_sidebar_border_color.value = pref_sidebar_border_color;
 				op_more_custom.checked = pref_custom;
 				op_custom_options.hidden = !pref_custom;
 				op_light_color.value = pref_light_home_color;
@@ -273,6 +284,12 @@ if (popupDetected()) {
 	};
 	op_popup_color.oninput = () => {
 		browser.storage.local.set({ popup_color: Number(op_popup_color.value) });
+	};
+	op_sidebar_color.oninput = () => {
+		browser.storage.local.set({ sidebar_color: Number(op_sidebar_color.value) });
+	};
+	op_sidebar_border_color.oninput = () => {
+		browser.storage.local.set({ sidebar_border_color: Number(op_sidebar_border_color.value) });
 	};
 	op_separator_opacity.oninput = () => {
 		browser.storage.local.set({ separator_opacity: Number(op_separator_opacity.value) });

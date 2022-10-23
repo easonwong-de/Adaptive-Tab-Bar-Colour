@@ -51,13 +51,15 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
-			document.onclick = findAndSendColor;
-			document.onwheel = findAndSendColor;
-			document.onscroll = findAndSendColor;
+			document.addEventListener("click", findAndSendColor);
+			document.addEventListener("scroll", findAndSendColor);
+			document.addEventListener("pageshow", findAndSendColor);
+			document.addEventListener("resize", findAndSendColor);
 		} else {
-			document.onclick = null;
-			document.onwheel = null;
-			document.onscroll = null;
+			document.removeEventListener("click", findAndSendColor);
+			document.removeEventListener("scroll", findAndSendColor);
+			document.removeEventListener("pageshow", findAndSendColor);
+			document.removeEventListener("resize", findAndSendColor);
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
 		if (pref.reason == "INFO_REQUEST") {

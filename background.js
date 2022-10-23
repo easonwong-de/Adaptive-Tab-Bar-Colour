@@ -123,6 +123,8 @@ var pref_tabbar_color;
 var pref_toolbar_color;
 var pref_separator_opacity;
 var pref_popup_color;
+var pref_sidebar_color;
+var pref_sidebar_border_color;
 var pref_custom;
 var pref_light_home_color;
 var pref_dark_home_color;
@@ -213,6 +215,8 @@ function loadPref(pref) {
     pref_toolbar_color = pref.toolbar_color;
     pref_separator_opacity = pref.separator_opacity;
     pref_popup_color = pref.popup_color;
+    pref_sidebar_color = pref.sidebar_color;
+    pref_sidebar_border_color = pref.sidebar_border_color;
     pref_custom = pref.custom;
     pref_light_home_color = pref.light_color;
     pref_dark_home_color = pref.dark_color;
@@ -261,11 +265,18 @@ function init() {
         let pending_toolbar_color = pref_toolbar_color;
         let pending_separator_opacity = pref_separator_opacity;
         let pending_popup_color = pref_popup_color;
+        let pending_sidebar_color = pref_sidebar_color;
+        let pending_sidebar_border_color = pref_sidebar_border_color;
         let pending_custom = pref_custom;
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 13];
+        let pending_last_version = [1, 6, 14];
+        //updates from v1.6.13 or earlier
+        if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
+            pending_sidebar_color = 0;
+            pending_sidebar_border_color = 0;
+        }
         //updates from v1.6.5 or earlier
         if (pref_separator_opacity == null) {
             pending_separator_opacity = 0;
@@ -321,6 +332,8 @@ function init() {
             toolbar_color: pending_toolbar_color,
             separator_opacity: pending_separator_opacity,
             popup_color: pending_popup_color,
+            sidebar_color: pending_sidebar_color,
+            sidebar_border_color: pending_sidebar_border_color,
             custom: pending_custom,
             light_color: pending_light_home_color,
             dark_color: pending_dark_home_color,
@@ -585,22 +598,28 @@ function setFrameColor(windowId, color, dark_mode) {
  * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
  */
 function changeThemePara(color, color_scheme, change_ntp_bg) {
-    let frame_color, toolbar_color, popup_color, ntp_color, separator_color;
+    let frame_color, toolbar_color, popup_color, sidebar_color, sidebar_border_color, ntp_color, separator_color;
     if (color_scheme == "dark") {
         frame_color = dimColor(color, pref_tabbar_color);
         popup_color = dimColor(color, pref_popup_color);
+        sidebar_color = dimColor(color, pref_sidebar_color);
+        sidebar_border_color = dimColor(color, pref_sidebar_color + pref_sidebar_border_color);
         toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, pref_toolbar_color);
         separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
         ntp_color = dimColor(color, 0);
     } else if (color_scheme == "light") {
         frame_color = dimColor(color, -pref_tabbar_color * 1.5);
         popup_color = dimColor(color, -pref_popup_color * 1.5);
+        sidebar_color = dimColor(color, -pref_sidebar_color * 1.5);
+        sidebar_border_color = dimColor(color, (-pref_sidebar_color - pref_sidebar_border_color) * 1.5);
         toolbar_color = pref_toolbar_color == pref_tabbar_color ? "rgba(0, 0, 0, 0)" : dimColor(color, -pref_toolbar_color * 1.5);
         separator_color = dimColor(color, (-pref_separator_opacity - pref_toolbar_color) * 1.5);
         ntp_color = dimColor(color, 0);
     } else if (color_scheme == "darknoise") {
         frame_color = "rgb(33, 33, 33)";
         popup_color = dimColor(color, pref_popup_color);
+        sidebar_color = dimColor(color, pref_sidebar_color);
+        sidebar_border_color = dimColor(color, pref_sidebar_color + pref_sidebar_border_color);
         toolbar_color = "rgba(0, 0, 0, 0)";
         separator_color = dimColor(color, pref_separator_opacity + pref_toolbar_color);
         toolbar_color = "rgba(0, 0, 0, 0)";
@@ -608,7 +627,8 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes[color_scheme]["colors"]["frame"] = frame_color;
     adaptive_themes[color_scheme]["colors"]["frame_inactive"] = frame_color;
     adaptive_themes[color_scheme]["colors"]["popup"] = popup_color;
-    adaptive_themes[color_scheme]["colors"]["sidebar"] = popup_color;
+    adaptive_themes[color_scheme]["colors"]["sidebar"] = sidebar_color;
+    adaptive_themes[color_scheme]["colors"]["sidebar_border"] = sidebar_border_color;
     adaptive_themes[color_scheme]["colors"]["toolbar"] = toolbar_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = separator_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
