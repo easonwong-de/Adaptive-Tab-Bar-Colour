@@ -165,7 +165,6 @@ url listed as "DEFAULT" => use default_light/dark_color
 url listed as "DARKNOISE" => use "darknoise" theme */
 const reservedColor = Object.freeze({
     "light": {
-        "about:blank": "rgb(236, 236, 236)",
         "about:checkerboard": "DEFAULT",
         "about:debugging#": "rgb(249, 249, 250)",
         "about:devtools-toolbox": "rgb(249, 249, 250)",
@@ -182,7 +181,6 @@ const reservedColor = Object.freeze({
         "support.mozilla.org": "rgb(255, 255, 255)"
     },
     "dark": {
-        "about:blank": "rgb(50, 50, 50)",
         "about:debugging#": "DEFAULT",
         "about:devtools-toolbox": "rgb(12, 12, 13)",
         "about:logo": "DARKNOISE",
@@ -271,7 +269,7 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 14];
+        let pending_last_version = [1, 6, 15];
         //updates from v1.6.13 or earlier
         if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
             pending_sidebar_color = 0;
