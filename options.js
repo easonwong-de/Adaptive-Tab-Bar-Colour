@@ -4,10 +4,22 @@ const default_reservedColor_cs = Object.freeze({
 	"developer.mozilla.org": "IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "CLASS_wl",
+	"matters.news": "IGNORE_THEME",
 	"open.spotify.com": "#000000",
 	"www.bbc.com": "IGNORE_THEME",
 	"www.instagram.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME"
+});
+
+const recommendedColor_addon = Object.freeze({
+	"uBlock0@raymondhill.net": "#1b1a23",
+	"adguardadblocker@adguard.com": "#131313",
+	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": "#fffffe",
+	"enhancerforyoutube@maximerf.addons.mozilla.org": "#282a2d",
+	"languagetool-webextension@languagetool.org": "#111113",
+	"sponsorBlocker@ajay.app": "#323232",
+	"tongwen@softcup": "#fffffe",
+	"{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": "#fffffe"
 });
 
 const protected_domains = Object.freeze({
@@ -358,7 +370,7 @@ function generateNewRow(domain, i) {
 				let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
 				resolve(`<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`);
 			});
-		})
+		});
 	} else {
 		let action;
 		if (domain === "") {
@@ -471,8 +483,19 @@ function autoPopupColor() {
 										browser.storage.local.set({
 											custom: true,
 											reservedColor_cs: pref_reservedColor_cs
-										}).then(() => {
-											load_lite();
+										});
+									}
+								} else if (recommendedColor_addon[addon.id]) {
+									pp_info_display.innerHTML = `Use recommended color for pages related to <b>${addon.name}</b>
+										<label id="info_action" title="Use recommended color">
+										<span>Use recommended color</span>
+										</label>`;
+									document.getElementById("info_action").onclick = () => {
+										pref_reservedColor_cs[`Add-on ID: ${addon.id}`] = recommendedColor_addon[addon.id];
+										current_reservedColor_cs = pref_reservedColor_cs;
+										browser.storage.local.set({
+											custom: true,
+											reservedColor_cs: pref_reservedColor_cs
 										});
 									}
 								} else {
@@ -487,10 +510,7 @@ function autoPopupColor() {
 										browser.storage.local.set({
 											custom: true,
 											reservedColor_cs: pref_reservedColor_cs
-										}).then(() => {
-											load_lite();
-											browser.runtime.openOptionsPage();
-										});
+										}).then(() => browser.runtime.openOptionsPage());
 									}
 								}
 								breakLoop = true;

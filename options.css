@@ -173,6 +173,9 @@ hr {
 .TenEm {
 	width: 10em !important;
 	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 input[type='range'] {
