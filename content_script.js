@@ -51,15 +51,25 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
-			document.addEventListener("click", findAndSendColor);
-			document.addEventListener("scroll", findAndSendColor);
+			document.addEventListener("animationend", findAndSendColor);
+			document.addEventListener("animationcancel", findAndSendColor);
 			document.addEventListener("pageshow", findAndSendColor);
+			document.addEventListener("click", findAndSendColor);
 			document.addEventListener("resize", findAndSendColor);
+			document.addEventListener("scroll", findAndSendColor);
+			document.addEventListener("transitionend", findAndSendColor);
+			document.addEventListener("transitioncancel", findAndSendColor);
+			document.addEventListener("visibilitychange", findAndSendColor);
 		} else {
+			document.removeEventListener("animationend", findAndSendColor);
+			document.removeEventListener("animationcancel", findAndSendColor);
 			document.removeEventListener("click", findAndSendColor);
-			document.removeEventListener("scroll", findAndSendColor);
 			document.removeEventListener("pageshow", findAndSendColor);
 			document.removeEventListener("resize", findAndSendColor);
+			document.removeEventListener("scroll", findAndSendColor);
+			document.removeEventListener("transitionend", findAndSendColor);
+			document.removeEventListener("transitioncancel", findAndSendColor);
+			document.removeEventListener("visibilitychange", findAndSendColor);
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
 		if (pref.reason == "INFO_REQUEST") {
