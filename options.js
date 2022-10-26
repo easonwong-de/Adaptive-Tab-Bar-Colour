@@ -119,11 +119,8 @@ document.addEventListener("pageshow", load);
 //Sync prefs on option page and popup
 //Technically it might cause dead loop, but onChanged will not be triggered when same pref is set
 browser.storage.onChanged.addListener(() => {
-	if (popupDetected()) {
-		applySettings();
-	} else {
-		document.hasFocus() ? load_lite() : load();
-	}
+	if (!popupDetected()) document.hasFocus() ? load_lite() : load();
+	applySettings();
 });
 
 /**
@@ -163,7 +160,6 @@ function load() {
 			autoPageColor();
 			loading.hidden = true;
 			settings.hidden = false;
-			applySettings();
 		}
 	});
 }
@@ -182,7 +178,6 @@ function load_lite() {
 			autoPageColor();
 			loading.hidden = true;
 			settings.hidden = false;
-			applySettings();
 		}
 	});
 }
@@ -238,6 +233,7 @@ if (!firefoxAboveV95()) {
 }
 
 dynamic.onclick = () => {
+	pref_dynamic = dynamic.checked;
 	if (dynamic.checked) {
 		browser.storage.local.set({ dynamic: true });
 	} else {
