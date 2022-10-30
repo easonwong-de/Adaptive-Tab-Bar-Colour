@@ -145,7 +145,7 @@ function load() {
 			dynamic.checked = pref_dynamic;
 			color_scheme_dark.checked = pref_scheme == "dark";
 			color_scheme_light.checked = pref_scheme == "light";
-			color_scheme_system.checked = pref_scheme == "system";
+			color_scheme_system.checked = pref_scheme == "auto" || pref_scheme == "system";
 			if (!popupDetected()) { //when the script is run by option page
 				op_tabbar_color.value = pref_tabbar_color;
 				op_toolbar_color.value = pref_toolbar_color;
@@ -186,7 +186,7 @@ function load_lite() {
 			dynamic.checked = pref_dynamic;
 			color_scheme_dark.checked = pref_scheme == "dark";
 			color_scheme_light.checked = pref_scheme == "light";
-			color_scheme_system.checked = pref_scheme == "system";
+			color_scheme_system.checked = pref_scheme == "auto" || pref_scheme == "system";
 			autoPageColor();
 			loading.hidden = true;
 			settings.hidden = false;
@@ -214,7 +214,7 @@ color_scheme_system.addEventListener("input", () => {
 	if (color_scheme_system.checked) {
 		color_scheme_dark.checked = false;
 		color_scheme_light.checked = false;
-		changeColorScheme("system");
+		changeColorScheme("auto");
 	}
 });
 
@@ -536,7 +536,7 @@ function autoPopupColor() {
 			body.classList.remove("light");
 		}
 	});
-	if (pref_scheme == "light" || (pref_scheme == "system" && lightModeDetected())) {
+	if (pref_scheme == "light" || ((pref_scheme == "auto" || pref_scheme == "system") && lightModeDetected())) {
 		force_mode_caption.innerHTML = "Allow dark tab bar";
 		force_mode_caption.parentElement.title = "Allow tab bar to turn dark";
 	} else {
@@ -549,7 +549,7 @@ function autoPopupColor() {
  * Updates option page's color depends on color scheme.
  */
 function autoOptionsColor() {
-	if (pref_scheme == "light" || (pref_scheme == "system" && lightModeDetected())) {
+	if (pref_scheme == "light" || ((pref_scheme == "auto" || pref_scheme == "system") && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		force_mode_caption.innerHTML = "Allow dark tab bar";

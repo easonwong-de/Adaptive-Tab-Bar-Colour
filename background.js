@@ -32,7 +32,7 @@ var adaptive_themes = {
             tab_loading: "rgba(0, 0, 0, 0)",
         },
         properties: {
-            color_scheme: "system"
+            color_scheme: "auto"
         }
     },
     "dark": {
@@ -68,7 +68,7 @@ var adaptive_themes = {
             tab_loading: "rgba(0, 0, 0, 0)",
         },
         properties: {
-            color_scheme: "system"
+            color_scheme: "auto"
         }
     },
     "darknoise": { //For image viewer
@@ -109,7 +109,7 @@ var adaptive_themes = {
         properties: {
             additional_backgrounds_alignment: ["left bottom"],
             additional_backgrounds_tiling: ["repeat"],
-            color_scheme: "system"
+            color_scheme: "auto"
         }
     }
 };
@@ -151,7 +151,7 @@ const default_reservedColor_cs = Object.freeze({
     "developer.mozilla.org": "IGNORE_THEME",
     "github.com": "IGNORE_THEME",
     "mail.google.com": "CLASS_wl",
-	"matters.news": "IGNORE_THEME",
+    "matters.news": "IGNORE_THEME",
     "open.spotify.com": "#000000",
     "www.bbc.com": "IGNORE_THEME",
     "www.instagram.com": "IGNORE_THEME",
@@ -238,6 +238,9 @@ function loadPref(pref) {
         case "dark":
             current_scheme = "dark";
             break;
+        case "auto":
+            current_scheme = lightModeDetected() ? "light" : "dark";
+            break;
         case "system":
             current_scheme = lightModeDetected() ? "light" : "dark";
             break;
@@ -270,7 +273,11 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 15];
+        let pending_last_version = [1, 6, 16];
+        //updates from v1.6.15 or earlier
+        if (pref_scheme == "system") {
+            pref_scheme = "auto";
+        }
         //updates from v1.6.13 or earlier
         if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
             pending_sidebar_color = 0;
@@ -353,7 +360,7 @@ browser.runtime.onMessage.addListener(update); //When preferences changed
 //Light Mode Match Media
 const lightMMM = window.matchMedia("(prefers-color-scheme: light)");
 if (lightMMM) lightMMM.onchange = () => {
-    if (pref_scheme == "system") update();
+    if (pref_scheme == "auto" || pref_scheme == "system") update();
 };
 
 /**
