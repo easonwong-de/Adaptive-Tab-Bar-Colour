@@ -222,3 +222,8 @@ input[type='text'] {
 .dark input[type='range'] {
 	accent-color: rgb(98, 218, 251);
 }
+
+div.sponsor {
+	display: flex;
+	gap: 0.5em;
+}

@@ -276,7 +276,7 @@ function init() {
         let pending_last_version = [1, 6, 16];
         //updates from v1.6.15 or earlier
         if (pref_scheme == "system") {
-            pref_scheme = "auto";
+            pending_scheme = pref_scheme = "auto";
         }
         //updates from v1.6.13 or earlier
         if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
