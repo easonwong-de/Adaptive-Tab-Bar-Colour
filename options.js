@@ -143,9 +143,9 @@ function load() {
 		if (loadPref(pref) && verifyPref()) {
 			allow_dark_light.checked = !pref_force;
 			dynamic.checked = pref_dynamic;
-			color_scheme_dark.checked = pref_scheme == "dark";
-			color_scheme_light.checked = pref_scheme == "light";
-			color_scheme_system.checked = pref_scheme == "auto" || pref_scheme == "system";
+			color_scheme_dark.checked = pref_scheme === "dark";
+			color_scheme_light.checked = pref_scheme === "light";
+			color_scheme_system.checked = pref_scheme === "system";
 			if (!popupDetected()) { //when the script is run by option page
 				op_tabbar_color.value = pref_tabbar_color;
 				op_toolbar_color.value = pref_toolbar_color;
@@ -184,9 +184,9 @@ function load_lite() {
 		if (loadPref(pref) && verifyPref()) {
 			allow_dark_light.checked = !pref_force;
 			dynamic.checked = pref_dynamic;
-			color_scheme_dark.checked = pref_scheme == "dark";
-			color_scheme_light.checked = pref_scheme == "light";
-			color_scheme_system.checked = pref_scheme == "auto" || pref_scheme == "system";
+			color_scheme_dark.checked = pref_scheme === "dark";
+			color_scheme_light.checked = pref_scheme === "light";
+			color_scheme_system.checked = pref_scheme === "system";
 			autoPageColor();
 			loading.hidden = true;
 			settings.hidden = false;
@@ -214,7 +214,7 @@ color_scheme_system.addEventListener("input", () => {
 	if (color_scheme_system.checked) {
 		color_scheme_dark.checked = false;
 		color_scheme_light.checked = false;
-		changeColorScheme("auto");
+		changeColorScheme("system");
 	}
 });
 
@@ -226,12 +226,12 @@ color_scheme_system.addEventListener("input", () => {
 function changeColorScheme(pending_scheme) {
 	pref_scheme = pending_scheme;
 	browser.storage.local.set({ scheme: pending_scheme });
-	if (firefoxAboveV95()) browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+	setBrowserColorScheme(pending_scheme);
 	autoPageColor();
 }
 
 //If it's below v95.0, grey out "allow..." option
-if (!firefoxAboveV95()) {
+if (checkVersion() < 95) {
 	allow_dark_light.checked = false;
 	allow_dark_light.disabled = true;
 } else {
@@ -383,7 +383,7 @@ function generateNewRow(domain, i) {
 		let part_2 = ``;
 		let part_3 = ``;
 		let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
-		if (action == "IGNORE_THEME") {
+		if (action === "IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<span class="FiveEm"></span>`;
 		} else if (action.startsWith("TAG_")) {
@@ -441,7 +441,7 @@ function autoPopupColor() {
 					let pp_info_action = document.getElementById("info_action");
 					if (pp_info_action) {
 						pp_info_action.onclick = () => {
-							if (pp_info_action.innerText == "Use theme color") {
+							if (pp_info_action.innerText === "Use theme color") {
 								delete pref_reservedColor_cs[domain];
 							} else if (pp_info_action.innerText = "Ignore theme color") {
 								pref_reservedColor_cs[domain] = "IGNORE_THEME";
@@ -528,7 +528,7 @@ function autoPopupColor() {
 	browser.theme.getCurrent().then(current_theme => {
 		body.style.backgroundColor = current_theme["colors"]["popup"];
 		body.style.color = current_theme["colors"]["popup_text"];
-		if (current_theme["colors"]["popup_text"] == "rgb(0, 0, 0)") {
+		if (current_theme["colors"]["popup_text"] === "rgb(0, 0, 0)") {
 			body.classList.add("light");
 			body.classList.remove("dark");
 		} else {
@@ -536,7 +536,7 @@ function autoPopupColor() {
 			body.classList.remove("light");
 		}
 	});
-	if (pref_scheme == "light" || ((pref_scheme == "auto" || pref_scheme == "system") && lightModeDetected())) {
+	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
 		force_mode_caption.innerHTML = "Allow dark tab bar";
 		force_mode_caption.parentElement.title = "Allow tab bar to turn dark";
 	} else {
@@ -549,7 +549,7 @@ function autoPopupColor() {
  * Updates option page's color depends on color scheme.
  */
 function autoOptionsColor() {
-	if (pref_scheme == "light" || ((pref_scheme == "auto" || pref_scheme == "system") && lightModeDetected())) {
+	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		force_mode_caption.innerHTML = "Allow dark tab bar";
@@ -570,8 +570,8 @@ function popupDetected() {
 }
 
 //Light Mode Match Media on option page
-const lightMMM_p = window.matchMedia("(prefers-color-scheme: light)");
-if (lightMMM_p != null) lightMMM_p.onchange = () => {
+const lightModeDetection_p = window.matchMedia("(prefers-color-scheme: light)");
+if (lightModeDetection_p) lightModeDetection_p.onchange = () => {
 	if (color_scheme_system.checked) autoOptionsColor();
 };
 
@@ -579,19 +579,30 @@ if (lightMMM_p != null) lightMMM_p.onchange = () => {
  * @returns true if in light mode, false if in dark mode or cannot detect
  */
 function lightModeDetected() {
-	return lightMMM_p != null && lightMMM_p.matches;
+	return lightModeDetection_p && lightModeDetection_p.matches;
 }
 
 /**
- * @returns true if Firefox 95.0 or later.
+ * @returns Firefox version. 999 if cannot be found.
  */
-function firefoxAboveV95() {
-	let str = navigator.userAgent;
-	let ind = str.lastIndexOf("Firefox");
+function checkVersion() {
+	let userAgent = navigator.userAgent;
+	let version = 999;
+	let ind = userAgent.lastIndexOf("Firefox");
 	if (ind != -1) {
-		str = str.substring(ind + 8);
-		return Number(str) >= 95;
-	} else {
-		return true; //default answer
+		version = userAgent.substring(ind + 8);
 	}
+	return version;
+}
+
+/**
+ * Overrides content color scheme.
+ * @param {string} scheme "light", "dark", or "system". Converts "system" to "auto" if above v106.
+ */
+function setBrowserColorScheme(scheme) {
+	let version = checkVersion();
+	let pending_scheme = scheme;
+	if (version >= 95) browser.browserSettings.overrideContentColorScheme.set({
+		value: (pending_scheme === "system" && version >= 106) ? "auto" : pending_scheme
+	});
 }

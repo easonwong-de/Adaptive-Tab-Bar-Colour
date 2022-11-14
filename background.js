@@ -199,8 +199,6 @@ const reservedColor = Object.freeze({
     }
 });
 
-var aboveV95 = updateVersionStatus95();
-
 /**
  * Loads preferences into cache.
  * Also modifies the "current" data.
@@ -238,9 +236,6 @@ function loadPref(pref) {
         case "dark":
             current_scheme = "dark";
             break;
-        case "auto":
-            current_scheme = lightModeDetected() ? "light" : "dark";
-            break;
         case "system":
             current_scheme = lightModeDetected() ? "light" : "dark";
             break;
@@ -274,10 +269,6 @@ function init() {
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
         let pending_last_version = [1, 6, 16];
-        //updates from v1.6.15 or earlier
-        if (pref_scheme == "system") {
-            pending_scheme = pref_scheme = "auto";
-        }
         //updates from v1.6.13 or earlier
         if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
             pending_sidebar_color = 0;
@@ -318,18 +309,15 @@ function init() {
             pending_light_home_color = default_light_home_color;
             pending_dark_home_color = default_dark_home_color;
         }
-        //first time install
         let firstTime = false;
+        //first time install
         if (pref_scheme == null || pref_force == null) {
             firstTime = true;
             pending_scheme = lightModeDetected() ? "light" : "dark";
             pending_force = false;
-            if (aboveV95)
-                browser.browserSettings.overrideContentColorScheme.set({ value: pending_scheme });
+            setBrowserColorScheme(pending_scheme);
         }
-        if (!aboveV95) {
-            pending_force = true;
-        }
+        if (checkVersion() < 95) pending_force = true;
         browser.storage.local.set({
             scheme: pending_scheme,
             force: pending_force,
@@ -358,16 +346,16 @@ browser.windows.onFocusChanged.addListener(update); //When new window is opened
 browser.runtime.onMessage.addListener(update); //When preferences changed
 
 //Light Mode Match Media
-const lightMMM = window.matchMedia("(prefers-color-scheme: light)");
-if (lightMMM) lightMMM.onchange = () => {
-    if (pref_scheme == "auto" || pref_scheme == "system") update();
+const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
+if (lightModeDetection) lightModeDetection.onchange = () => {
+    if (pref_scheme == "system") update();
 };
 
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect.
  */
 function lightModeDetected() {
-    return lightMMM && lightMMM.matches;
+    return lightModeDetection && lightModeDetection.matches;
 }
 
 update();
@@ -379,8 +367,7 @@ function update() {
     browser.tabs.query({ active: true }, tabs => {
         browser.storage.local.get(pref => {
             loadPref(pref);
-            if (aboveV95)
-                browser.browserSettings.overrideContentColorScheme.set({ value: pref_scheme });
+            setBrowserColorScheme(pref_scheme);
             tabs.forEach(updateEachWindow);
         });
     });
@@ -640,7 +627,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
     if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
-    adaptive_themes[color_scheme]["properties"]["color_scheme"] = pref_scheme;
+    adaptive_themes[color_scheme]["properties"]["color_scheme"] = (pref_scheme === "system" && checkVersion() >= 106) ? "auto" : pref_scheme;
 }
 
 /**
@@ -724,16 +711,26 @@ function rgba(color) {
 }
 
 /**
- * Checks if Firefox is v95.0 or later.
+ * @returns Firefox version. 999 if cannot be found.
  */
-function updateVersionStatus95() {
-    let str = navigator.userAgent;
-    let ind = str.lastIndexOf("Firefox");
+function checkVersion() {
+    let userAgent = navigator.userAgent;
+    let version = 999;
+    let ind = userAgent.lastIndexOf("Firefox");
     if (ind != -1) {
-        str = str.substring(ind + 8);
-        aboveV95 = Number(str) >= 95;
-    } else {
-        aboveV95 = true; //default answer
+        version = userAgent.substring(ind + 8);
     }
-    return aboveV95;
+    return version;
+}
+
+/**
+ * Overrides content color scheme.
+ * @param {string} scheme "light", "dark", or "system". Converts "system" to "auto" if above v106.
+ */
+function setBrowserColorScheme(scheme) {
+    let version = checkVersion();
+    let pending_scheme = scheme;
+    if (version >= 95) browser.browserSettings.overrideContentColorScheme.set({
+        value: (pending_scheme === "system" && version >= 106) ? "auto" : pending_scheme
+    });
 }
