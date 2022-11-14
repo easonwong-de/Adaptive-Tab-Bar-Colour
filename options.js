@@ -599,9 +599,8 @@ function checkVersion() {
  * Overrides content color scheme.
  * @param {string} scheme "light", "dark", or "system". Converts "system" to "auto" if above v106.
  */
-function setBrowserColorScheme(scheme) {
+function setBrowserColorScheme(pending_scheme) {
 	let version = checkVersion();
-	let pending_scheme = scheme;
 	if (version >= 95) browser.browserSettings.overrideContentColorScheme.set({
 		value: (pending_scheme === "system" && version >= 106) ? "auto" : pending_scheme
 	});
