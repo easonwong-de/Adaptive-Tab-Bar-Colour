@@ -24,7 +24,7 @@ findAndSendColor();
  * Finds color.
  */
 function findColor() {
-	if (document.fullscreenElement == null) {
+	if (!document.fullscreenElement) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
 	}
@@ -34,11 +34,21 @@ function findColor() {
  * Finds color and send to background.
  */
 function findAndSendColor() {
-	if (document.fullscreenElement == null) {
+	if (!document.fullscreenElement) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (document.visibilityState == "visible")
-			browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
+		if (document.visibilityState == "visible") browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
+	}
+}
+
+/**
+ * Finds color and send to background (fix for transitionend event).
+ */
+function findAndSendColor_fix() {
+	if (!document.fullscreenElement) {
+		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
+		if (!findColorReserved()) findColorUnreserved();
+		if (document.hasFocus()) browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
 	}
 }
 
@@ -51,24 +61,24 @@ ondarkreader.observe(document.documentElement, { attributes: true, attributeFilt
 browser.runtime.onMessage.addListener(
 	(pref, sender, sendResponse) => {
 		if (pref.dynamic) {
-			document.addEventListener("animationend", findAndSendColor);
-			document.addEventListener("animationcancel", findAndSendColor);
+			document.addEventListener("animationend", findAndSendColor_fix);
+			document.addEventListener("animationcancel", findAndSendColor_fix);
 			document.addEventListener("pageshow", findAndSendColor);
 			document.addEventListener("click", findAndSendColor);
 			document.addEventListener("resize", findAndSendColor);
 			document.addEventListener("scroll", findAndSendColor);
-			document.addEventListener("transitionend", findAndSendColor);
-			document.addEventListener("transitioncancel", findAndSendColor);
+			document.addEventListener("transitionend", findAndSendColor_fix);
+			document.addEventListener("transitioncancel", findAndSendColor_fix);
 			document.addEventListener("visibilitychange", findAndSendColor);
 		} else {
-			document.removeEventListener("animationend", findAndSendColor);
-			document.removeEventListener("animationcancel", findAndSendColor);
+			document.removeEventListener("animationend", findAndSendColor_fix);
+			document.removeEventListener("animationcancel", findAndSendColor_fix);
 			document.removeEventListener("click", findAndSendColor);
 			document.removeEventListener("pageshow", findAndSendColor);
 			document.removeEventListener("resize", findAndSendColor);
 			document.removeEventListener("scroll", findAndSendColor);
-			document.removeEventListener("transitionend", findAndSendColor);
-			document.removeEventListener("transitioncancel", findAndSendColor);
+			document.removeEventListener("transitionend", findAndSendColor_fix);
+			document.removeEventListener("transitioncancel", findAndSendColor_fix);
 			document.removeEventListener("visibilitychange", findAndSendColor);
 		}
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
