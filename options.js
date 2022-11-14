@@ -221,7 +221,7 @@ color_scheme_system.addEventListener("input", () => {
 /**
  * Sets the color scheme, and updates appearance of option page.
  * 
- * @param {*} pending_scheme the name of the scheme to change to.
+ * @param {string} pending_scheme "light", "dark", or "system"
  */
 function changeColorScheme(pending_scheme) {
 	pref_scheme = pending_scheme;

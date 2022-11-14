@@ -627,7 +627,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
     if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
-    adaptive_themes[color_scheme]["properties"]["color_scheme"] = (pref_scheme === "system" && checkVersion() >= 106) ? "auto" : pref_scheme;
+    adaptive_themes[color_scheme]["properties"]["color_scheme"] = pref_scheme;
 }
 
 /**
