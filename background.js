@@ -153,8 +153,8 @@ const default_reservedColor_cs = Object.freeze({
     "mail.google.com": "CLASS_wl",
     "matters.news": "IGNORE_THEME",
     "open.spotify.com": "#000000",
-    "www.bbc.com": "IGNORE_THEME",
     "www.instagram.com": "IGNORE_THEME",
+    "www.linkedin.com": "IGNORE_THEME",
     "www.spiegel.de": "IGNORE_THEME"
 });
 

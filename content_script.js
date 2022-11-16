@@ -9,12 +9,13 @@ var RESPONSE_INFO = "*PLACEHOLDER";
 //preloads default color lookup table
 var reservedColor_cs = {
 	"developer.mozilla.org": "IGNORE_THEME",
-	"github.com": "IGNORE_THEME",
-	"mail.google.com": "CLASS_wl",
-	"open.spotify.com": "#000000",
-	"www.bbc.com": "IGNORE_THEME",
-	"www.instagram.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME"
+    "github.com": "IGNORE_THEME",
+    "mail.google.com": "CLASS_wl",
+    "matters.news": "IGNORE_THEME",
+    "open.spotify.com": "#000000",
+    "www.instagram.com": "IGNORE_THEME",
+    "www.linkedin.com": "IGNORE_THEME",
+    "www.spiegel.de": "IGNORE_THEME"
 };
 
 //Send color to background as soon as page loads
