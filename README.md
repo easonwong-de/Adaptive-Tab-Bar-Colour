@@ -4,7 +4,7 @@
 ![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-color?label=version)
 ![Sponsors](https://img.shields.io/badge/sponsors-4-green)
 # Adaptive Tab Bar Color
-Change the color of Firefox tab bar to match the website theme  
+Changes the color of Firefox tab bar to match the website theme  
 <br>
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github" target="_blank">
     <img width="178" height="48" src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true">
