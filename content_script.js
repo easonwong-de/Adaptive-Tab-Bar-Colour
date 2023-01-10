@@ -10,18 +10,19 @@ var RESPONSE_INFO = "*PLACEHOLDER";
 var reservedColor_cs = {
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
-    "github.com": "IGNORE_THEME",
-    "mail.google.com": "CLASS_wl",
-    "matters.news": "IGNORE_THEME",
-    "open.spotify.com": "#000000",
-    "www.instagram.com": "IGNORE_THEME",
-    "www.linkedin.com": "IGNORE_THEME",
-    "www.spiegel.de": "IGNORE_THEME"
+	"github.com": "IGNORE_THEME",
+	"mail.google.com": "CLASS_wl",
+	"matters.news": "IGNORE_THEME",
+	"open.spotify.com": "#000000",
+	"www.instagram.com": "IGNORE_THEME",
+	"www.linkedin.com": "IGNORE_THEME",
+	"www.spiegel.de": "IGNORE_THEME"
 };
 
 var pref_no_theme_color = false;
 
 //Send color to background as soon as page loads
+// Can cause color flicker when pref gets loaded late
 findAndSendColor();
 
 /**
@@ -98,22 +99,38 @@ browser.runtime.onMessage.addListener(
 );
 
 /**
- * Sets RESPONSE_COLOR with the help of reserved color list.
+ * Sets RESPONSE_COLOR with the help of reserved color list and host action.
  * 
  * @returns True if a legal reserved color for the webpage can be found.
  */
 function findColorReserved() {
-	let host = document.location.host;
-	//"host" can be "www.irgendwas.com"
+	let host = document.location.host; //"host" can be "www.irgendwas.com"
 	let hostAction = reservedColor_cs[host];
 	if (hostAction == null) {
 		return false;
-	} else if (hostAction == "IGNORE_THEME") {
-		findComputedColor();
-		RESPONSE_INFO = `Theme color defined by the website is ignored
-			<label id="info_action" title="Use theme color defined by the website">
-			<span>Use theme color</span>
-			</label>`;
+	} else if (pref_no_theme_color && hostAction == "USE_THEME") {
+		// User prefers igoring theme color, but sets to use theme color for this host
+		if (findThemeColor()) {
+			RESPONSE_INFO = `Theme color defined by the website is used
+				<label id="info_action" title="Do not use theme color defined by the website">
+				<span>Do not use theme color</span>
+				</label>`;
+		} else {
+			findComputedColor();
+			RESPONSE_INFO = `Theme color is not found, color is picked fromthe web page`;
+		}
+		return true;
+	} else if (!pref_no_theme_color && hostAction == "IGNORE_THEME") {
+		// User sets to ignore the theme color of this host
+		if (findThemeColor()) {
+			findComputedColor();
+			RESPONSE_INFO = `Theme color defined by the website is ignored
+				<label id="info_action" title="Use theme color defined by the website">
+				<span>Use theme color</span>
+				</label>`;
+		} else {
+			findComputedColor();
+		}
 		return true;
 	} else if (hostAction.startsWith("TAG_")) {
 		let tag = hostAction.replace("TAG_", "");

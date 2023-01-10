@@ -272,7 +272,7 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 17];
+        let pending_last_version = [1, 7, 0];
         //updates from v1.6.16 or earlier
         if (pref_no_theme_color == null) {
             pending_no_theme_color = false;

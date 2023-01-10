@@ -3,13 +3,13 @@
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
-    "github.com": "IGNORE_THEME",
-    "mail.google.com": "CLASS_wl",
-    "matters.news": "IGNORE_THEME",
-    "open.spotify.com": "#000000",
-    "www.instagram.com": "IGNORE_THEME",
-    "www.linkedin.com": "IGNORE_THEME",
-    "www.spiegel.de": "IGNORE_THEME"
+	"github.com": "IGNORE_THEME",
+	"mail.google.com": "CLASS_wl",
+	"matters.news": "IGNORE_THEME",
+	"open.spotify.com": "#000000",
+	"www.instagram.com": "IGNORE_THEME",
+	"www.linkedin.com": "IGNORE_THEME",
+	"www.spiegel.de": "IGNORE_THEME"
 });
 
 const recommendedColor_addon = Object.freeze({
@@ -446,9 +446,9 @@ function autoPopupColor() {
 					let pp_info_action = document.getElementById("info_action");
 					if (pp_info_action) {
 						pp_info_action.onclick = () => {
-							if (pp_info_action.innerText === "Use theme color") {
+							if (pp_info_action.innerText === "Use theme color" || pp_info_action.innerText === "Do not use theme color") {
 								delete pref_reservedColor_cs[domain];
-							} else if (pp_info_action.innerText = "Ignore theme color") {
+							} else if (pp_info_action.innerText === "Ignore theme color") {
 								pref_reservedColor_cs[domain] = "IGNORE_THEME";
 							}
 							current_reservedColor_cs = pref_reservedColor_cs;
