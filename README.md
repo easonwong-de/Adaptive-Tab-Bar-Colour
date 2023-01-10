@@ -2,9 +2,9 @@
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-color)
 ![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-color)
 ![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-color?label=version)
-![Sponsors](https://img.shields.io/badge/sponsors-4-green)
+![Sponsors](https://img.shields.io/badge/sponsors-6-green)
 # Adaptive Tab Bar Color
-Change the color of Firefox tab bar to match the website theme  
+Changes the color of Firefox tab bar to match the website theme  
 <br>
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github" target="_blank">
     <img width="178" height="48" src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true">
@@ -12,7 +12,7 @@ Change the color of Firefox tab bar to match the website theme
 <br>
 
 ## What Does The Add-on Do
-Every time you open, close, or switch tabs, this add-on changes the color of your Firefox browser UI to match the theme color of the website you are viewing – just like how macOS Safari tints its tab bar.  
+Every time you open, close, or switch tabs, this add-on changes the theme of your Firefox browser to match the theme color of the website you are viewing – just like how macOS Safari tints its tab bar.  
 
 <img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="80%">  
 <img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="80%">  
