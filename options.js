@@ -272,8 +272,11 @@ function addAction(i) {
 		switch (select_menu.selectedIndex) {
 			case 0: operation.innerHTML = `<input type="color" class="FiveEm" value="#FFFFFF">`; break;
 			case 1: operation.innerHTML = `<span class="FiveEm"></span>`; break;
-			case 2: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
+			case 2: operation.innerHTML = `<span class="FiveEm"></span>`; break;
 			case 3: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
+			case 4: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
+			case 5: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
+			case 6: operation.innerHTML = `<input type="text" class="FiveEm" value="">`; break;
 			default: break;
 		}
 		autoSaveSettings();
@@ -342,8 +345,11 @@ function autoSaveSettings() {
 			switch (table_cells[1].firstElementChild.selectedIndex) {
 				case 0: action = table_cells[2].firstElementChild.value; break;
 				case 1: action = "IGNORE_THEME"; break;
-				case 2: action = `CLASS_${table_cells[2].firstElementChild.value}`; break;
+				case 2: action = "UN_IGNORE_THEME"; break;
 				case 3: action = `TAG_${table_cells[2].firstElementChild.value}`; break;
+				case 4: action = `CLASS_${table_cells[2].firstElementChild.value}`; break;
+				case 5: action = `ID_${table_cells[2].firstElementChild.value}`; break;
+				case 6: action = `NAME_${table_cells[2].firstElementChild.value}`; break;
 				default: break;
 			}
 			pending_reservedColor_cs[domain] = action;
@@ -388,22 +394,25 @@ function generateNewRow(domain, i) {
 		let part_3 = ``;
 		let part_4 = `<button id="DEL_${i}" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>`;
 		if (action === "IGNORE_THEME") {
-			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option selected>ignore theme color</option><option>use theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_3 = `<span class="FiveEm"></span>`;
+		} else if (action === "UN_IGNORE_THEME") {
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option selected>use theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<span class="FiveEm"></span>`;
 		} else if (action.startsWith("TAG_")) {
-			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>use theme color</option><option>pick from class</option><option selected>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<input type="text" class="FiveEm" value="${action.replace("TAG_", "")}">`;
 		} else if (action.startsWith("CLASS_")) {
-			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>use theme color</option><option selected>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<input type="text" class="FiveEm" value="${action.replace("CLASS_", "")}">`;
 		} else if (action.startsWith("ID_")) {
-			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option selected>pick from id</option><option>pick from name</option></select>`;
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>use theme color</option><option>pick from class</option><option>pick from tag</option><option selected>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<input type="text" class="FiveEm" value="${action.replace("ID_", "")}">`;
 		} else if (action.startsWith("NAME_")) {
-			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option selected>pick from name</option></select>`;
+			part_2 = `<select id="SEL_${i}"><option>specify a color</option><option>ignore theme color</option><option>use theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option selected>pick from name</option></select>`;
 			part_3 = `<input type="text" class="FiveEm" value="${action.replace("NAME_", "")}">`;
 		} else {
-			part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
+			part_2 = `<select id="SEL_${i}"><option selected>specify a color</option><option>ignore theme color</option><option>use theme color</option><option>pick from class</option><option>pick from tag</option><option>pick from id</option><option>pick from name</option></select>`;
 			part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 		}
 		return Promise.resolve(`<td class="TenEm">${part_1}</td><td>${part_2}</td><td id="OPE_${i}">${part_3}</td><td>${part_4}</td>`);
@@ -446,11 +455,9 @@ function autoPopupColor() {
 					let pp_info_action = document.getElementById("info_action");
 					if (pp_info_action) {
 						pp_info_action.onclick = () => {
-							if (pp_info_action.innerText == "Use theme color" || pp_info_action.innerText == "Do not use theme color") {
-								delete pref_reservedColor_cs[domain];
-							} else if (pp_info_action.innerText == "Ignore theme color") {
+							if (pp_info_action.innerText == "Ignore theme color" || pp_info_action.innerText == "Do not use theme color") {
 								pref_reservedColor_cs[domain] = "IGNORE_THEME";
-							} else if (pp_info_action.innerText == "Un-ignore theme color") {
+							} else if (pp_info_action.innerText == "Use theme color" || pp_info_action.innerText == "Un-ignore theme color") {
 								pref_reservedColor_cs[domain] = "UN_IGNORE_THEME";
 							}
 							current_reservedColor_cs = pref_reservedColor_cs;

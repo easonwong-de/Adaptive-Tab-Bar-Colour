@@ -106,7 +106,7 @@ browser.runtime.onMessage.addListener(
 function findColorReserved() {
 	let host = document.location.host; //"host" can be "www.irgendwas.com"
 	let hostAction = reservedColor_cs[host];
-	if (hostAction == null) {
+	if (hostAction == null || (!pref_no_theme_color && hostAction == "UN_IGNORE_THEME") || (pref_no_theme_color && hostAction == "IGNORE_THEME")) {
 		return false;
 	} else if (pref_no_theme_color && hostAction == "UN_IGNORE_THEME") {
 		// User prefers igoring theme color, but sets to use theme color for this host
@@ -167,10 +167,12 @@ function findColorUnreserved() {
 	if (pref_no_theme_color) {
 		if (findThemeColor()) {
 			findComputedColor();
-			RESPONSE_INFO += ` Theme color defined by the website is ignored
+			RESPONSE_INFO += `, because theme color defined by the website is ignored
 				<label id="info_action" title="Use theme color defined by the website">
 				<span>Un-ignore theme color</span>
 				</label>`;
+		} else {
+			findComputedColor();
 		}
 	} else {
 		if (!findThemeColor()) findComputedColor();
