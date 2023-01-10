@@ -112,12 +112,14 @@ function loadPref(pref) {
 function verifyPref() {
 	return pref_scheme != null
 		&& pref_allow_dark_light != null
+		&& pref_dynamic != null
+		&& pref_no_theme_color != null
 		&& pref_tabbar_color != null
 		&& pref_toolbar_color != null
-		&& pref_separator_opacity != null
 		&& pref_popup_color != null
 		&& pref_sidebar_color != null
 		&& pref_sidebar_border_color != null
+		&& pref_separator_opacity != null
 		&& pref_custom != null
 		&& pref_light_home_color != null
 		&& pref_dark_home_color != null
