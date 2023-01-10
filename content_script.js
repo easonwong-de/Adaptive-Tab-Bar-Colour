@@ -166,11 +166,13 @@ function findColorReserved() {
 function findColorUnreserved() {
 	if (pref_no_theme_color) {
 		if (findThemeColor()) {
-			findComputedColor();
-			RESPONSE_INFO += `, because theme color defined by the website is ignored
-				<label id="info_action" title="Use theme color defined by the website">
-				<span>Un-ignore theme color</span>
-				</label>`;
+			if (RESPONSE_COLOR != "DARKNOISE" && RESPONSE_COLOR != "PLAINTEXT") {
+				findComputedColor();
+				RESPONSE_INFO += `, because theme color defined by the website is ignored
+					<label id="info_action" title="Use theme color defined by the website">
+					<span>Un-ignore theme color</span>
+					</label>`;
+			}
 		} else {
 			findComputedColor();
 		}
