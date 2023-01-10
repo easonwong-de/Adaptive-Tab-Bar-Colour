@@ -446,10 +446,12 @@ function autoPopupColor() {
 					let pp_info_action = document.getElementById("info_action");
 					if (pp_info_action) {
 						pp_info_action.onclick = () => {
-							if (pp_info_action.innerText === "Use theme color" || pp_info_action.innerText === "Do not use theme color") {
+							if (pp_info_action.innerText == "Use theme color" || pp_info_action.innerText == "Do not use theme color") {
 								delete pref_reservedColor_cs[domain];
-							} else if (pp_info_action.innerText === "Ignore theme color") {
+							} else if (pp_info_action.innerText == "Ignore theme color") {
 								pref_reservedColor_cs[domain] = "IGNORE_THEME";
+							} else if (pp_info_action.innerText == "Un-ignore theme color") {
+								pref_reservedColor_cs[domain] = "UN_IGNORE_THEME";
 							}
 							current_reservedColor_cs = pref_reservedColor_cs;
 							browser.storage.local.set({

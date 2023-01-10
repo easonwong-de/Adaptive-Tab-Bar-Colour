@@ -99,7 +99,7 @@ browser.runtime.onMessage.addListener(
 );
 
 /**
- * Sets RESPONSE_COLOR with the help of reserved color list and host action.
+ * Sets RESPONSE_COLOR with the help of host actions stored in reservedColor_cs.
  * 
  * @returns True if a legal reserved color for the webpage can be found.
  */
@@ -108,10 +108,10 @@ function findColorReserved() {
 	let hostAction = reservedColor_cs[host];
 	if (hostAction == null) {
 		return false;
-	} else if (pref_no_theme_color && hostAction == "USE_THEME") {
+	} else if (pref_no_theme_color && hostAction == "UN_IGNORE_THEME") {
 		// User prefers igoring theme color, but sets to use theme color for this host
 		if (findThemeColor()) {
-			RESPONSE_INFO = `Theme color defined by the website is used
+			RESPONSE_INFO = `Theme color defined by the website is un-ignored
 				<label id="info_action" title="Do not use theme color defined by the website">
 				<span>Do not use theme color</span>
 				</label>`;
@@ -164,7 +164,17 @@ function findColorReserved() {
  * Sets RESPONSE_COLOR using findThemeColor() and findComputedColor().
  */
 function findColorUnreserved() {
-	if (!findThemeColor()) findComputedColor();
+	if (pref_no_theme_color) {
+		if (findThemeColor()) {
+			findComputedColor();
+			RESPONSE_INFO += ` Theme color defined by the website is ignored
+				<label id="info_action" title="Use theme color defined by the website">
+				<span>Un-ignore theme color</span>
+				</label>`;
+		}
+	} else {
+		if (!findThemeColor()) findComputedColor();
+	}
 }
 
 /** 
