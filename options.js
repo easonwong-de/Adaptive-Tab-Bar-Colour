@@ -1,6 +1,7 @@
 //This script is shared by option page and popup
 
 const default_reservedColor_cs = Object.freeze({
+	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
     "github.com": "IGNORE_THEME",
     "mail.google.com": "CLASS_wl",
@@ -42,6 +43,7 @@ let color_scheme_system = document.getElementById("color_scheme_system");
 let allow_dark_light = document.getElementById("force_mode");
 let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
+let no_theme_color = document.getElementById("no_theme_color");
 let op_tabbar_color = document.getElementById("tabbar_color");
 let op_toolbar_color = document.getElementById("toolbar_color");
 let op_separator_opacity = document.getElementById("separator_opacity");
@@ -63,8 +65,9 @@ let pp_info_display = document.getElementById("info_display");
 
 //Settings cache
 var pref_scheme;
-var pref_force;
+var pref_allow_dark_light;
 var pref_dynamic;
+var pref_no_theme_color;
 var pref_tabbar_color;
 var pref_toolbar_color;
 var pref_separator_opacity;
@@ -82,8 +85,9 @@ var current_reservedColor_cs;
  */
 function loadPref(pref) {
 	pref_scheme = pref.scheme;
-	pref_force = pref.force;
+	pref_allow_dark_light = pref.force;
 	pref_dynamic = pref.dynamic;
+	pref_no_theme_color = pref.no_theme_color;
 	pref_tabbar_color = pref.tabbar_color;
 	pref_toolbar_color = pref.toolbar_color;
 	pref_popup_color = pref.popup_color;
@@ -107,7 +111,7 @@ function loadPref(pref) {
  */
 function verifyPref() {
 	return pref_scheme != null
-		&& pref_force != null
+		&& pref_allow_dark_light != null
 		&& pref_tabbar_color != null
 		&& pref_toolbar_color != null
 		&& pref_separator_opacity != null
@@ -141,8 +145,9 @@ browser.storage.onChanged.addListener(() => {
 function load() {
 	browser.storage.local.get(pref => {
 		if (loadPref(pref) && verifyPref()) {
-			allow_dark_light.checked = !pref_force;
+			allow_dark_light.checked = !pref_allow_dark_light;
 			dynamic.checked = pref_dynamic;
+			no_theme_color.checked = pref_no_theme_color;
 			color_scheme_dark.checked = pref_scheme === "dark";
 			color_scheme_light.checked = pref_scheme === "light";
 			color_scheme_system.checked = pref_scheme === "system";
@@ -177,13 +182,14 @@ function load() {
 }
 
 /**
- * Only loads color scheme, force mode, dynamic mode
+ * Only loads color scheme, force mode, dynamic mode, ignore theme color pref
  */
 function load_lite() {
 	browser.storage.local.get(pref => {
 		if (loadPref(pref) && verifyPref()) {
-			allow_dark_light.checked = !pref_force;
+			allow_dark_light.checked = !pref_allow_dark_light;
 			dynamic.checked = pref_dynamic;
+			no_theme_color.checked = pref_no_theme_color;
 			color_scheme_dark.checked = pref_scheme === "dark";
 			color_scheme_light.checked = pref_scheme === "light";
 			color_scheme_system.checked = pref_scheme === "system";
@@ -236,21 +242,19 @@ if (checkVersion() < 95) {
 	allow_dark_light.disabled = true;
 } else {
 	allow_dark_light.onclick = () => {
-		if (allow_dark_light.checked) {
-			browser.storage.local.set({ force: false });
-		} else {
-			browser.storage.local.set({ force: true });
-		}
+		pref_allow_dark_light = !allow_dark_light.checked;
+		browser.storage.local.set({ force: !allow_dark_light.checked });
 	};
 }
 
 dynamic.onclick = () => {
 	pref_dynamic = dynamic.checked;
-	if (dynamic.checked) {
-		browser.storage.local.set({ dynamic: true });
-	} else {
-		browser.storage.local.set({ dynamic: false });
-	}
+	browser.storage.local.set({ dynamic: dynamic.checked });
+};
+
+no_theme_color.onclick = () => {
+	pref_no_theme_color = no_theme_color.checked;
+	browser.storage.local.set({ no_theme_color: no_theme_color.checked });
 };
 
 /**
@@ -434,6 +438,7 @@ function autoPopupColor() {
 			browser.tabs.sendMessage(id, {
 				reason: "INFO_REQUEST",
 				dynamic: pref_dynamic,
+				no_theme_color: pref_no_theme_color,
 				reservedColor_cs: current_reservedColor_cs
 			}, RESPONSE_INFO => {
 				if (RESPONSE_INFO) {

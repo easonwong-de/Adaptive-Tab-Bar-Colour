@@ -117,8 +117,9 @@ var adaptive_themes = {
 //Settings cache
 //Always synced with settings page
 var pref_scheme;
-var pref_force;
+var pref_allow_dark_light;
 var pref_dynamic;
+var pref_no_theme_color;
 var pref_tabbar_color;
 var pref_toolbar_color;
 var pref_separator_opacity;
@@ -148,6 +149,7 @@ reserved color is IGNORE_THEME => use calculated color as theme color
 reserved color is a tag name => theme color is stored under that tag
 reserved color is a class name => theme color is stored under that class */
 const default_reservedColor_cs = Object.freeze({
+    "apnews.com": "IGNORE_THEME",
     "developer.mozilla.org": "IGNORE_THEME",
     "github.com": "IGNORE_THEME",
     "mail.google.com": "CLASS_wl",
@@ -206,8 +208,9 @@ const reservedColor = Object.freeze({
 function loadPref(pref) {
     //loads prefs
     pref_scheme = pref.scheme;
-    pref_force = pref.force;
+    pref_allow_dark_light = pref.force;
     pref_dynamic = pref.dynamic;
+    pref_no_theme_color = pref.no_theme_color;
     pref_tabbar_color = pref.tabbar_color;
     pref_toolbar_color = pref.toolbar_color;
     pref_separator_opacity = pref.separator_opacity;
@@ -256,8 +259,9 @@ function init() {
     browser.storage.local.get(pref => {
         loadPref(pref);
         let pending_scheme = pref_scheme;
-        let pending_force = pref_force;
+        let pending_force = pref_allow_dark_light;
         let pending_dynamic = pref_dynamic;
+        let pending_no_theme_color = pref_no_theme_color;
         let pending_tabbar_color = pref_tabbar_color;
         let pending_toolbar_color = pref_toolbar_color;
         let pending_separator_opacity = pref_separator_opacity;
@@ -268,7 +272,11 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 6, 16];
+        let pending_last_version = [1, 6, 17];
+        //updates from v1.6.16 or earlier
+        if (pref_no_theme_color == null) {
+            pending_no_theme_color = false;
+        }
         //updates from v1.6.13 or earlier
         if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
             pending_sidebar_color = 0;
@@ -311,7 +319,7 @@ function init() {
         }
         let firstTime = false;
         //first time install
-        if (pref_scheme == null || pref_force == null) {
+        if (pref_scheme == null || pref_allow_dark_light == null) {
             firstTime = true;
             pending_scheme = lightModeDetected() ? "light" : "dark";
             pending_force = false;
@@ -322,6 +330,7 @@ function init() {
             scheme: pending_scheme,
             force: pending_force,
             dynamic: pending_dynamic,
+            no_theme_color: pending_no_theme_color,
             tabbar_color: pending_tabbar_color,
             toolbar_color: pending_toolbar_color,
             separator_opacity: pending_separator_opacity,
@@ -411,9 +420,11 @@ function updateEachWindow(tab) {
             } else if (url.startsWith("moz-extension:")) {
                 setFrameColor(windowId, "ADDON");
             } else {
+                // Sends pref to context script and gets response
                 browser.tabs.sendMessage(tab.id, {
                     reason: "COLOR_REQUEST",
                     dynamic: pref_dynamic,
+                    no_theme_color: pref_no_theme_color,
                     reservedColor_cs: current_reservedColor_cs
                 }, response => {
                     if (!response) {
@@ -562,7 +573,7 @@ function setFrameColor(windowId, color, dark_mode) {
             changeThemePara(rgba(default_light_color), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (!pref_force || (pref_force && current_scheme == "dark" && dark_mode) || (pref_force && current_scheme == "light" && !dark_mode)) {
+    } else if (!pref_allow_dark_light || (pref_allow_dark_light && current_scheme == "dark" && dark_mode) || (pref_allow_dark_light && current_scheme == "light" && !dark_mode)) {
         //Normal coloring
         if (dark_mode) {
             changeThemePara(color, "dark", false);
@@ -571,7 +582,7 @@ function setFrameColor(windowId, color, dark_mode) {
             changeThemePara(color, "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (pref_force) {
+    } else if (pref_allow_dark_light) {
         //Force coloring (use default color)
         if (current_scheme == "dark") {
             changeThemePara(current_dark_home_color, "dark", false);

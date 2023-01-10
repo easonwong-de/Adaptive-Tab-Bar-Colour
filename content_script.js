@@ -8,6 +8,7 @@ var RESPONSE_INFO = "*PLACEHOLDER";
 
 //preloads default color lookup table
 var reservedColor_cs = {
+	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
     "github.com": "IGNORE_THEME",
     "mail.google.com": "CLASS_wl",
@@ -17,6 +18,8 @@ var reservedColor_cs = {
     "www.linkedin.com": "IGNORE_THEME",
     "www.spiegel.de": "IGNORE_THEME"
 };
+
+var pref_no_theme_color = false;
 
 //Send color to background as soon as page loads
 findAndSendColor();
@@ -82,6 +85,7 @@ browser.runtime.onMessage.addListener(
 			document.removeEventListener("transitioncancel", findAndSendColor_fix);
 			document.removeEventListener("visibilitychange", findAndSendColor);
 		}
+		pref_no_theme_color = pref.no_theme_color;
 		reservedColor_cs = structuredClone(pref.reservedColor_cs);
 		if (pref.reason == "INFO_REQUEST") {
 			findColor();
