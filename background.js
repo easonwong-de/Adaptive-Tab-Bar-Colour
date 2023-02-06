@@ -455,7 +455,7 @@ function updateEachWindow(tab) {
             });
         }
     } else {
-        setFrameColor(windowId, "HOME");
+        setFrameColor(windowId, "HOME"); //While the tab is loading, shows home page color
     }
 }
 
