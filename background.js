@@ -447,15 +447,12 @@ function updateEachWindow(tab) {
                                 setFrameColor(windowId, "DEFAULT");
                             } else {
                                 console.error(url + "\nNo connection to content script.");
-                                setFrameColor(windowId, "HOME");
                             }
                         }
                     });
                 }
             });
         }
-    } else {
-        setFrameColor(windowId, "HOME"); //While the tab is loading, shows home page color
     }
 }
 
@@ -525,77 +522,77 @@ function setFrameColor(windowId, color, dark_mode) {
     if (color == "HOME") {
         //Home page and new tab
         if (dark_mode) {
-            changeThemePara(current_dark_home_color, "dark", true);
+            changeThemePara(current_dark_home_color, "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(current_light_home_color, "light", true);
+            changeThemePara(current_light_home_color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (color == "DARKNOISE") {
         //Image viewer
-        changeThemePara(rgba([33, 33, 33, 1]), "darknoise", false);
+        changeThemePara(rgba([33, 33, 33, 1]), "darknoise");
         applyTheme(windowId, adaptive_themes["darknoise"]);
     } else if (color == "PLAINTEXT") {
         //Plain text viewer
         if (dark_mode) {
-            changeThemePara(rgba([50, 50, 50, 1]), "dark", false);
+            changeThemePara(rgba([50, 50, 50, 1]), "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba([236, 236, 236, 1]), "light", false);
+            changeThemePara(rgba([236, 236, 236, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (color == "SYSTEM") {
         //Internal page
         if (dark_mode) {
-            changeThemePara(rgba([30, 30, 30, 1]), "dark", false);
+            changeThemePara(rgba([30, 30, 30, 1]), "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba([255, 255, 255, 1]), "light", false);
+            changeThemePara(rgba([255, 255, 255, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (color == "ADDON") {
         //Add-on page
         if (dark_mode) {
-            changeThemePara(rgba([50, 50, 50, 1]), "dark", false);
+            changeThemePara(rgba([50, 50, 50, 1]), "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba([236, 236, 236, 1]), "light", false);
+            changeThemePara(rgba([236, 236, 236, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (color == "PDFVIEWER") {
         //PDF viewer
         if (dark_mode) {
-            changeThemePara(rgba([56, 56, 61, 1]), "dark", false);
+            changeThemePara(rgba([56, 56, 61, 1]), "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba([249, 249, 250, 1]), "light", false);
+            changeThemePara(rgba([249, 249, 250, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (!color || color == "DEFAULT") {
         //Reset to default color
         if (dark_mode) {
-            changeThemePara(rgba([28, 27, 34, 1]), "dark", false);
+            changeThemePara(rgba([28, 27, 34, 1]), "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba([255, 255, 255, 1]), "light", false);
+            changeThemePara(rgba([255, 255, 255, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (!pref_allow_dark_light || (pref_allow_dark_light && current_scheme == "dark" && dark_mode) || (pref_allow_dark_light && current_scheme == "light" && !dark_mode)) {
         //Normal coloring
         if (dark_mode) {
-            changeThemePara(color, "dark", false);
+            changeThemePara(color, "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(color, "light", false);
+            changeThemePara(color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (pref_allow_dark_light) {
         //Force coloring (use default color)
         if (current_scheme == "dark") {
-            changeThemePara(current_dark_home_color, "dark", false);
+            changeThemePara(current_dark_home_color, "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(current_light_home_color, "light", false);
+            changeThemePara(current_light_home_color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     }
@@ -608,7 +605,7 @@ function setFrameColor(windowId, color, dark_mode) {
  * @param {string} color_scheme Color scheme, "dark", "light", or "darknoise".
  * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
  */
-function changeThemePara(color, color_scheme, change_ntp_bg) {
+function changeThemePara(color, color_scheme) {
     let frame_color, toolbar_color, popup_color, sidebar_color, sidebar_border_color, ntp_color, separator_color;
     if (color_scheme == "dark") {
         frame_color = dimColor(color, pref_tabbar_color);
@@ -644,7 +641,7 @@ function changeThemePara(color, color_scheme, change_ntp_bg) {
     adaptive_themes[color_scheme]["colors"]["toolbar_bottom_separator"] = separator_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field"] = popup_color;
     adaptive_themes[color_scheme]["colors"]["toolbar_field_focus"] = popup_color;
-    if (change_ntp_bg) adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
+    adaptive_themes[color_scheme]["colors"]["ntp_background"] = ntp_color;
     adaptive_themes[color_scheme]["properties"]["color_scheme"] = pref_scheme;
 }
 
