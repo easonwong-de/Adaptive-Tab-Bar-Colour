@@ -301,7 +301,7 @@ function findComputedColor() {
 	if (RESPONSE_COLOR.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
-			RESPONSE_COLOR = "DEFAULT";
+			RESPONSE_COLOR = "HOME";
 			RESPONSE_INFO = "No color is available, fallback to default color";
 		} else {
 			let body_color = getColorFrom(body);
@@ -309,7 +309,7 @@ function findComputedColor() {
 				RESPONSE_COLOR = overlayColor(RESPONSE_COLOR, body_color);
 				RESPONSE_INFO = "Color is successfully picked from the web page";
 			} else {
-				RESPONSE_COLOR = "DEFAULT";
+				RESPONSE_COLOR = "HOME";
 				RESPONSE_INFO = "No color is available, fallback to default color";
 			}
 		}
@@ -359,7 +359,7 @@ function overlayColor(top, bottom) {
  */
 function rgba(color) {
 	if (typeof color == "string") {
-		if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT") return color;
+		if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT" || color == "HOME") return color;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = color;
 		let color_temp = canvas.fillStyle;

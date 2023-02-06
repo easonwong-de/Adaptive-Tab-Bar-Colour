@@ -22,8 +22,6 @@ var current_dark_home_color;
 var current_reservedColor_cs;
 
 //Default values
-const default_light_color = "#FFFFFF";
-const default_dark_color = "#1C1B22";
 const default_light_home_color = "#FFFFFF";
 const default_dark_home_color = "#2B2A33";
 
@@ -51,9 +49,13 @@ url listed as "DEFAULT" => use default_light/dark_color
 url listed as "DARKNOISE" => use "darknoise" theme */
 const reservedColor = Object.freeze({
     "light": {
+        "about:blank": "PLAINTEXT",
         "about:checkerboard": "DEFAULT",
-        "about:debugging#": "rgb(249, 249, 250)",
+        "about:debugging#": "rgb(236, 236, 236)",
         "about:devtools-toolbox": "rgb(249, 249, 250)",
+        "about:firefoxview": "HOME",
+        "about:home": "HOME",
+        "about:newtab": "HOME",
         "about:performance": "DEFAULT",
         "about:plugins": "DEFAULT",
         "about:processes": "rgb(239, 239, 242)",
@@ -67,10 +69,14 @@ const reservedColor = Object.freeze({
         "support.mozilla.org": "rgb(255, 255, 255)"
     },
     "dark": {
+        "about:blank": "PLAINTEXT",
         "about:debugging#": "DEFAULT",
         "about:devtools-toolbox": "rgb(12, 12, 13)",
+        "about:firefoxview": "HOME",
+        "about:home": "HOME",
         "about:logo": "DARKNOISE",
         "about:mozilla": "rgb(143, 15, 7)",
+        "about:newtab": "HOME",
         "about:performance": "rgb(35, 34, 42)",
         "about:plugins": "rgb(43, 42, 50)",
         "about:privatebrowsing": "rgb(37, 0, 62)",
@@ -321,7 +327,7 @@ function init() {
         if (pref_scheme == null || pref_allow_dark_light == null) {
             firstTime = true;
             pending_scheme = lightModeDetected() ? "light" : "dark";
-            pending_force = false;
+            pending_force = true;
             setBrowserColorScheme(pending_scheme);
         }
         if (checkVersion() < 95) pending_force = true;
@@ -401,8 +407,6 @@ function updateEachWindow(tab) {
         } else {
             setFrameColor(windowId, "SYSTEM");
         }
-    } else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
-        setFrameColor(windowId, "HOME");
     } else {
         //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
         getSearchKey(url).then(key => {
@@ -442,7 +446,7 @@ function updateEachWindow(tab) {
                             setFrameColor(windowId, "DEFAULT");
                         } else {
                             console.error(url + "\nNo connection to content script.");
-                            if (tab.status == "complete") setFrameColor(windowId, "DEFAULT");
+                            if (tab.status == "complete") setFrameColor(windowId, "HOME");
                         }
                     }
                 });
@@ -566,10 +570,10 @@ function setFrameColor(windowId, color, dark_mode) {
     } else if (!color || color == "DEFAULT") {
         //Reset to default color
         if (dark_mode) {
-            changeThemePara(rgba(default_dark_color), "dark", false);
+            changeThemePara(rgba([28, 27, 34, 1]), "dark", false);
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba(default_light_color), "light", false);
+            changeThemePara(rgba([255, 255, 255, 1]), "light", false);
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (!pref_allow_dark_light || (pref_allow_dark_light && current_scheme == "dark" && dark_mode) || (pref_allow_dark_light && current_scheme == "light" && !dark_mode)) {
@@ -692,7 +696,7 @@ function dimColor(color, dim) {
  */
 function rgba(color) {
     if (typeof color == "string") {
-        if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT") return color;
+        if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT" || color == "HOME") return color;
         var canvas = document.createElement("canvas").getContext("2d");
         canvas.fillStyle = color;
         let color_temp = canvas.fillStyle;
