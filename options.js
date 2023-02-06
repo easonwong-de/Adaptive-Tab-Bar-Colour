@@ -1,5 +1,25 @@
 //This script is shared by option page and popup
 
+//Settings cache: always synced with settings page
+var pref_scheme;
+var pref_allow_dark_light;
+var pref_dynamic;
+var pref_no_theme_color;
+var pref_tabbar_color;
+var pref_toolbar_color;
+var pref_separator_opacity;
+var pref_popup_color;
+var pref_sidebar_color;
+var pref_sidebar_border_color;
+var pref_custom;
+var pref_light_home_color;
+var pref_dark_home_color;
+var pref_reservedColor_cs;
+
+//Current color lookup table
+var current_reservedColor_cs;
+
+//Default color lookup table
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
@@ -12,6 +32,42 @@ const default_reservedColor_cs = Object.freeze({
 	"www.spiegel.de": "IGNORE_THEME"
 });
 
+/**
+ * Loads preferences into cache and check integrity
+ */
+function loadPref(pref) {
+	pref_scheme = pref.scheme;
+	pref_allow_dark_light = pref.force;
+	pref_dynamic = pref.dynamic;
+	pref_no_theme_color = pref.no_theme_color;
+	pref_tabbar_color = pref.tabbar_color;
+	pref_toolbar_color = pref.toolbar_color;
+	pref_separator_opacity = pref.separator_opacity;
+	pref_popup_color = pref.popup_color;
+	pref_sidebar_color = pref.sidebar_color;
+	pref_sidebar_border_color = pref.sidebar_border_color;
+	pref_custom = pref.custom;
+	pref_light_home_color = pref.light_color;
+	pref_dark_home_color = pref.dark_color;
+	pref_reservedColor_cs = pref.reservedColor_cs;
+	current_reservedColor_cs = (pref_custom) ? pref_reservedColor_cs : default_reservedColor_cs;
+	return pref_scheme != null
+		&& pref_allow_dark_light != null
+		&& pref_dynamic != null
+		&& pref_no_theme_color != null
+		&& pref_tabbar_color != null
+		&& pref_toolbar_color != null
+		&& pref_separator_opacity != null
+		&& pref_popup_color != null
+		&& pref_sidebar_color != null
+		&& pref_sidebar_border_color != null
+		&& pref_custom != null
+		&& pref_light_home_color != null
+		&& pref_dark_home_color != null
+		&& pref_reservedColor_cs != null;
+}
+
+//Recommended color for Add-ons' built-in page
 const recommendedColor_addon = Object.freeze({
 	"uBlock0@raymondhill.net": "#1b1a23",
 	"adguardadblocker@adguard.com": "#131313",
@@ -23,6 +79,7 @@ const recommendedColor_addon = Object.freeze({
 	"{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": "#fffffe"
 });
 
+//List of protected domains
 const protected_domains = Object.freeze({
 	"accounts-static.cdn.mozilla.net": "PROTECTED",
 	"accounts.firefox.com": "PROTECTED",
@@ -63,49 +120,6 @@ let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
 let pp_info_display = document.getElementById("info_display");
 
-//Settings cache
-var pref_scheme;
-var pref_allow_dark_light;
-var pref_dynamic;
-var pref_no_theme_color;
-var pref_tabbar_color;
-var pref_toolbar_color;
-var pref_separator_opacity;
-var pref_popup_color;
-var pref_sidebar_color;
-var pref_sidebar_border_color;
-var pref_custom;
-var pref_light_home_color;
-var pref_dark_home_color;
-var pref_reservedColor_cs;
-var current_reservedColor_cs;
-
-/**
- * Loads preferences into cache.
- */
-function loadPref(pref) {
-	pref_scheme = pref.scheme;
-	pref_allow_dark_light = pref.force;
-	pref_dynamic = pref.dynamic;
-	pref_no_theme_color = pref.no_theme_color;
-	pref_tabbar_color = pref.tabbar_color;
-	pref_toolbar_color = pref.toolbar_color;
-	pref_popup_color = pref.popup_color;
-	pref_sidebar_color = pref.sidebar_color;
-	pref_sidebar_border_color = pref.sidebar_border_color;
-	pref_separator_opacity = pref.separator_opacity;
-	pref_custom = pref.custom;
-	pref_light_home_color = pref.light_color;
-	pref_dark_home_color = pref.dark_color;
-	pref_reservedColor_cs = pref.reservedColor_cs;
-	if (pref_custom) {
-		current_reservedColor_cs = pref_reservedColor_cs;
-	} else {
-		current_reservedColor_cs = default_reservedColor_cs;
-	}
-	return true;
-}
-
 /**
  * @returns If all prefs are loaded.
  */
@@ -116,10 +130,10 @@ function verifyPref() {
 		&& pref_no_theme_color != null
 		&& pref_tabbar_color != null
 		&& pref_toolbar_color != null
+		&& pref_separator_opacity != null
 		&& pref_popup_color != null
 		&& pref_sidebar_color != null
 		&& pref_sidebar_border_color != null
-		&& pref_separator_opacity != null
 		&& pref_custom != null
 		&& pref_light_home_color != null
 		&& pref_dark_home_color != null

@@ -1,13 +1,15 @@
 //Sends color in RGBA object to background.js
 //If A in RGBA is not 1, falls back to default color.
 
-var RESPONSE_COLOR = rgba([0, 0, 0, 0]);
+//Settings cache: updated on message
+var pref_no_theme_color;
+var pref_reservedColor_cs;
 
-//This will be displayed in the pop-up
-var RESPONSE_INFO = "*PLACEHOLDER";
+//Current color lookup table
+var current_reservedColor_cs;
 
-//preloads default color lookup table
-var reservedColor_cs = {
+//Default color lookup table
+const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
@@ -17,13 +19,98 @@ var reservedColor_cs = {
 	"www.instagram.com": "IGNORE_THEME",
 	"www.linkedin.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME"
-};
+});
 
-var pref_no_theme_color = false;
+/**
+ * Loads preferences into cache and check integrity
+ */
+function loadPref(pref) {
+	setDynamicUpdate(pref.dynamic);
+	pref_no_theme_color = pref.no_theme_color;
+	pref_reservedColor_cs = pref.reservedColor_cs;
+	current_reservedColor_cs = (pref_custom) ? pref_reservedColor_cs : default_reservedColor_cs;
+	return pref_no_theme_color != null
+		&& pref_reservedColor_cs != null;
+}
+
+//Initializes response color
+var RESPONSE_COLOR = rgba([0, 0, 0, 0]);
+
+//This will be displayed in the pop-up
+var RESPONSE_INFO = "*PLACEHOLDER*";
 
 //Send color to background as soon as page loads
-// Can cause color flicker when pref gets loaded late
-findAndSendColor();
+browser.storage.local.get(pref => {
+	if (loadPref(pref)) findAndSendColor();
+});
+
+/**
+ * Sets up / Turns off dynamic update.
+ * @param {boolean} dynamic Dynamic update.
+ */
+function setDynamicUpdate(dynamic) {
+	if (dynamic) {
+		document.addEventListener("animationend", findAndSendColor_fix);
+		document.addEventListener("animationcancel", findAndSendColor_fix);
+		document.addEventListener("pageshow", findAndSendColor);
+		document.addEventListener("click", findAndSendColor);
+		document.addEventListener("resize", findAndSendColor);
+		document.addEventListener("scroll", findAndSendColor);
+		document.addEventListener("transitionend", findAndSendColor_fix);
+		document.addEventListener("transitioncancel", findAndSendColor_fix);
+		document.addEventListener("visibilitychange", findAndSendColor);
+	} else {
+		document.removeEventListener("animationend", findAndSendColor_fix);
+		document.removeEventListener("animationcancel", findAndSendColor_fix);
+		document.removeEventListener("click", findAndSendColor);
+		document.removeEventListener("pageshow", findAndSendColor);
+		document.removeEventListener("resize", findAndSendColor);
+		document.removeEventListener("scroll", findAndSendColor);
+		document.removeEventListener("transitionend", findAndSendColor_fix);
+		document.removeEventListener("transitioncancel", findAndSendColor_fix);
+		document.removeEventListener("visibilitychange", findAndSendColor);
+	}
+}
+
+//Detects theme-color changes
+var onThemeColor = new MutationObserver(findAndSendColor);
+if (document.querySelector("meta[name=theme-color]") != null)
+	onThemeColor.observe(document.querySelector("meta[name=theme-color]"), { attributes: true });
+
+//Detects Dark Reader
+var onDarkReader = new MutationObserver(findAndSendColor);
+onDarkReader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
+
+//Detects style injections & theme-color being added
+var onStyleInjection = new MutationObserver(mutations => {
+	mutations.forEach(mutation => {
+		if ((mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName == "STYLE")
+			|| (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName == "STYLE")) {
+			findAndSendColor();
+		} else if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName == "META" && mutation.addedNodes[0].name == "theme-color") {
+			onThemeColor.observe(document.querySelector("meta[name=theme-color]"), { attributes: true });
+		}
+	});
+});
+onStyleInjection.observe(document.documentElement, { childList: true });
+onStyleInjection.observe(document.head, { childList: true });
+
+//Fired by update() from background.js
+//Loads newly applied settings
+browser.runtime.onMessage.addListener(
+	(pref, sender, sendResponse) => {
+		setDynamicUpdate(pref.dynamic);
+		pref_no_theme_color = pref.no_theme_color;
+		pref_reservedColor_cs = pref.reservedColor_cs;
+		if (pref.reason == "INFO_REQUEST") {
+			findColor();
+			sendResponse(RESPONSE_INFO);
+		} else if (pref.reason == "COLOR_REQUEST") {
+			findAndSendColor();
+			sendResponse(RESPONSE_COLOR);
+		}
+	}
+);
 
 /**
  * Finds color.
@@ -57,55 +144,14 @@ function findAndSendColor_fix() {
 	}
 }
 
-//Updates color when Dark Reader changes mode
-var ondarkreader = new MutationObserver(findAndSendColor);
-ondarkreader.observe(document.documentElement, { attributes: true, attributeFilter: ["data-darkreader-mode"] });
-
-//Fired by update() from background.js
-//Loads newly applied settings
-browser.runtime.onMessage.addListener(
-	(pref, sender, sendResponse) => {
-		if (pref.dynamic) {
-			document.addEventListener("animationend", findAndSendColor_fix);
-			document.addEventListener("animationcancel", findAndSendColor_fix);
-			document.addEventListener("pageshow", findAndSendColor);
-			document.addEventListener("click", findAndSendColor);
-			document.addEventListener("resize", findAndSendColor);
-			document.addEventListener("scroll", findAndSendColor);
-			document.addEventListener("transitionend", findAndSendColor_fix);
-			document.addEventListener("transitioncancel", findAndSendColor_fix);
-			document.addEventListener("visibilitychange", findAndSendColor);
-		} else {
-			document.removeEventListener("animationend", findAndSendColor_fix);
-			document.removeEventListener("animationcancel", findAndSendColor_fix);
-			document.removeEventListener("click", findAndSendColor);
-			document.removeEventListener("pageshow", findAndSendColor);
-			document.removeEventListener("resize", findAndSendColor);
-			document.removeEventListener("scroll", findAndSendColor);
-			document.removeEventListener("transitionend", findAndSendColor_fix);
-			document.removeEventListener("transitioncancel", findAndSendColor_fix);
-			document.removeEventListener("visibilitychange", findAndSendColor);
-		}
-		pref_no_theme_color = pref.no_theme_color;
-		reservedColor_cs = structuredClone(pref.reservedColor_cs);
-		if (pref.reason == "INFO_REQUEST") {
-			findColor();
-			sendResponse(RESPONSE_INFO);
-		} else if (pref.reason == "COLOR_REQUEST") {
-			findAndSendColor();
-			sendResponse(RESPONSE_COLOR);
-		}
-	}
-);
-
 /**
- * Sets RESPONSE_COLOR with the help of host actions stored in reservedColor_cs.
+ * Sets RESPONSE_COLOR with the help of host actions stored in pref_reservedColor_cs.
  * 
  * @returns True if a legal reserved color for the webpage can be found.
  */
 function findColorReserved() {
 	let host = document.location.host; //"host" can be "www.irgendwas.com"
-	let hostAction = reservedColor_cs[host];
+	let hostAction = pref_reservedColor_cs[host];
 	if (hostAction == null || (!pref_no_theme_color && hostAction == "UN_IGNORE_THEME") || (pref_no_theme_color && hostAction == "IGNORE_THEME")) {
 		return false;
 	} else if (pref_no_theme_color && hostAction == "UN_IGNORE_THEME") {

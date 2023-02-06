@@ -1,3 +1,135 @@
+//Settings cache: always synced with settings page
+var pref_scheme;
+var pref_allow_dark_light;
+var pref_dynamic;
+var pref_no_theme_color;
+var pref_tabbar_color;
+var pref_toolbar_color;
+var pref_separator_opacity;
+var pref_popup_color;
+var pref_sidebar_color;
+var pref_sidebar_border_color;
+var pref_custom;
+var pref_light_home_color;
+var pref_dark_home_color;
+var pref_reservedColor_cs;
+var pref_last_version;
+
+//Controlled by other prefs
+var current_scheme;
+var current_light_home_color;
+var current_dark_home_color;
+var current_reservedColor_cs;
+
+//Default values
+const default_light_color = "#FFFFFF";
+const default_dark_color = "#1C1B22";
+const default_light_home_color = "#FFFFFF";
+const default_dark_home_color = "#2B2A33";
+
+/* reserved color is a color => the color is the theme color for the web
+reserved color is IGNORE_THEME => use calculated color as theme color
+reserved color is a tag name => theme color is stored under that tag
+reserved color is a class name => theme color is stored under that class */
+const default_reservedColor_cs = Object.freeze({
+    "apnews.com": "IGNORE_THEME",
+    "developer.mozilla.org": "IGNORE_THEME",
+    "github.com": "IGNORE_THEME",
+    "mail.google.com": "CLASS_wl",
+    "matters.news": "IGNORE_THEME",
+    "open.spotify.com": "#000000",
+    "www.instagram.com": "IGNORE_THEME",
+    "www.linkedin.com": "IGNORE_THEME",
+    "www.spiegel.de": "IGNORE_THEME"
+});
+
+/* Pages where content script can't be injected
+other reserved color are in content_script.js
+url listed only in "light"/"dark" => only use that color regardless of the color scheme
+url listed in both => choose color scheme as needed
+url listed as "DEFAULT" => use default_light/dark_color
+url listed as "DARKNOISE" => use "darknoise" theme */
+const reservedColor = Object.freeze({
+    "light": {
+        "about:checkerboard": "DEFAULT",
+        "about:debugging#": "rgb(249, 249, 250)",
+        "about:devtools-toolbox": "rgb(249, 249, 250)",
+        "about:performance": "DEFAULT",
+        "about:plugins": "DEFAULT",
+        "about:processes": "rgb(239, 239, 242)",
+        "about:sync-log": "DEFAULT",
+        "accounts-static.cdn.mozilla.net": "DEFAULT",
+        "accounts.firefox.com": "rgb(251, 251, 254)",
+        "addons.cdn.mozilla.net": "DEFAULT",
+        "content.cdn.mozilla.net": "DEFAULT",
+        "discovery.addons.mozilla.org": "rgb(236, 236, 236)",
+        "install.mozilla.org": "DEFAULT",
+        "support.mozilla.org": "rgb(255, 255, 255)"
+    },
+    "dark": {
+        "about:debugging#": "DEFAULT",
+        "about:devtools-toolbox": "rgb(12, 12, 13)",
+        "about:logo": "DARKNOISE",
+        "about:mozilla": "rgb(143, 15, 7)",
+        "about:performance": "rgb(35, 34, 42)",
+        "about:plugins": "rgb(43, 42, 50)",
+        "about:privatebrowsing": "rgb(37, 0, 62)",
+        "about:processes": "rgb(43, 42, 50)",
+        "about:sync-log": "rgb(30, 30, 30)",
+        "accounts-static.cdn.mozilla.net": "DEFAULT",
+        "addons.cdn.mozilla.net": "DEFAULT",
+        "addons.mozilla.org": "rgb(32, 18, 58)",
+        "content.cdn.mozilla.net": "DEFAULT",
+        "install.mozilla.org": "DEFAULT"
+    }
+});
+
+/**
+ * Loads preferences into cache.
+ * Also modifies the "current" data.
+ */
+function loadPref(pref) {
+    //loads prefs
+    pref_scheme = pref.scheme;
+    pref_allow_dark_light = pref.force;
+    pref_dynamic = pref.dynamic;
+    pref_no_theme_color = pref.no_theme_color;
+    pref_tabbar_color = pref.tabbar_color;
+    pref_toolbar_color = pref.toolbar_color;
+    pref_separator_opacity = pref.separator_opacity;
+    pref_popup_color = pref.popup_color;
+    pref_sidebar_color = pref.sidebar_color;
+    pref_sidebar_border_color = pref.sidebar_border_color;
+    pref_custom = pref.custom;
+    pref_light_home_color = pref.light_color;
+    pref_dark_home_color = pref.dark_color;
+    pref_reservedColor_cs = pref.reservedColor_cs;
+    pref_last_version = pref.last_version;
+    //loads currents
+    if (pref_custom) {
+        current_light_home_color = rgba(pref_light_home_color);
+        current_dark_home_color = rgba(pref_dark_home_color);
+        current_reservedColor_cs = pref_reservedColor_cs;
+    } else {
+        current_light_home_color = rgba(default_light_home_color);
+        current_dark_home_color = rgba(default_dark_home_color);
+        current_reservedColor_cs = default_reservedColor_cs;
+    }
+    switch (pref_scheme) {
+        case "light":
+            current_scheme = "light";
+            break;
+        case "dark":
+            current_scheme = "dark";
+            break;
+        case "system":
+            current_scheme = lightModeDetected() ? "light" : "dark";
+            break;
+        default:
+            break;
+    }
+}
+
 var adaptive_themes = {
     "light": {
         colors: {
@@ -114,139 +246,6 @@ var adaptive_themes = {
     }
 };
 
-//Settings cache
-//Always synced with settings page
-var pref_scheme;
-var pref_allow_dark_light;
-var pref_dynamic;
-var pref_no_theme_color;
-var pref_tabbar_color;
-var pref_toolbar_color;
-var pref_separator_opacity;
-var pref_popup_color;
-var pref_sidebar_color;
-var pref_sidebar_border_color;
-var pref_custom;
-var pref_light_home_color;
-var pref_dark_home_color;
-var pref_reservedColor_cs;
-var pref_last_version;
-
-//These prefs are controlled by other prefs
-var current_scheme;
-var current_light_home_color;
-var current_dark_home_color;
-var current_reservedColor_cs;
-
-//Default values
-const default_light_color = "#FFFFFF";
-const default_dark_color = "#1C1B22";
-const default_light_home_color = "#FFFFFF";
-const default_dark_home_color = "#2B2A33";
-
-/* reserved color is a color => the color is the theme color for the web
-reserved color is IGNORE_THEME => use calculated color as theme color
-reserved color is a tag name => theme color is stored under that tag
-reserved color is a class name => theme color is stored under that class */
-const default_reservedColor_cs = Object.freeze({
-    "apnews.com": "IGNORE_THEME",
-    "developer.mozilla.org": "IGNORE_THEME",
-    "github.com": "IGNORE_THEME",
-    "mail.google.com": "CLASS_wl",
-    "matters.news": "IGNORE_THEME",
-    "open.spotify.com": "#000000",
-    "www.instagram.com": "IGNORE_THEME",
-    "www.linkedin.com": "IGNORE_THEME",
-    "www.spiegel.de": "IGNORE_THEME"
-});
-
-/* Pages where content script can't be injected
-other reserved color are in content_script.js
-url listed only in "light"/"dark" => only use that color regardless of the color scheme
-url listed in both => choose color scheme as needed
-url listed as "DEFAULT" => use default_light/dark_color
-url listed as "DARKNOISE" => use "darknoise" theme */
-const reservedColor = Object.freeze({
-    "light": {
-        "about:checkerboard": "DEFAULT",
-        "about:debugging#": "rgb(249, 249, 250)",
-        "about:devtools-toolbox": "rgb(249, 249, 250)",
-        "about:performance": "DEFAULT",
-        "about:plugins": "DEFAULT",
-        "about:processes": "rgb(239, 239, 242)",
-        "about:sync-log": "DEFAULT",
-        "accounts-static.cdn.mozilla.net": "DEFAULT",
-        "accounts.firefox.com": "rgb(251, 251, 254)",
-        "addons.cdn.mozilla.net": "DEFAULT",
-        "content.cdn.mozilla.net": "DEFAULT",
-        "discovery.addons.mozilla.org": "rgb(236, 236, 236)",
-        "install.mozilla.org": "DEFAULT",
-        "support.mozilla.org": "rgb(255, 255, 255)"
-    },
-    "dark": {
-        "about:debugging#": "DEFAULT",
-        "about:devtools-toolbox": "rgb(12, 12, 13)",
-        "about:logo": "DARKNOISE",
-        "about:mozilla": "rgb(143, 15, 7)",
-        "about:performance": "rgb(35, 34, 42)",
-        "about:plugins": "rgb(43, 42, 50)",
-        "about:privatebrowsing": "rgb(37, 0, 62)",
-        "about:processes": "rgb(43, 42, 50)",
-        "about:sync-log": "rgb(30, 30, 30)",
-        "accounts-static.cdn.mozilla.net": "DEFAULT",
-        "addons.cdn.mozilla.net": "DEFAULT",
-        "addons.mozilla.org": "rgb(32, 18, 58)",
-        "content.cdn.mozilla.net": "DEFAULT",
-        "install.mozilla.org": "DEFAULT"
-    }
-});
-
-/**
- * Loads preferences into cache.
- * Also modifies the "current" data.
- */
-function loadPref(pref) {
-    //loads prefs
-    pref_scheme = pref.scheme;
-    pref_allow_dark_light = pref.force;
-    pref_dynamic = pref.dynamic;
-    pref_no_theme_color = pref.no_theme_color;
-    pref_tabbar_color = pref.tabbar_color;
-    pref_toolbar_color = pref.toolbar_color;
-    pref_separator_opacity = pref.separator_opacity;
-    pref_popup_color = pref.popup_color;
-    pref_sidebar_color = pref.sidebar_color;
-    pref_sidebar_border_color = pref.sidebar_border_color;
-    pref_custom = pref.custom;
-    pref_light_home_color = pref.light_color;
-    pref_dark_home_color = pref.dark_color;
-    pref_reservedColor_cs = pref.reservedColor_cs;
-    pref_last_version = pref.last_version;
-    //loads currents
-    if (pref_custom) {
-        current_light_home_color = rgba(pref_light_home_color);
-        current_dark_home_color = rgba(pref_dark_home_color);
-        current_reservedColor_cs = pref_reservedColor_cs;
-    } else {
-        current_light_home_color = rgba(default_light_home_color);
-        current_dark_home_color = rgba(default_dark_home_color);
-        current_reservedColor_cs = default_reservedColor_cs;
-    }
-    switch (pref_scheme) {
-        case "light":
-            current_scheme = "light";
-            break;
-        case "dark":
-            current_scheme = "dark";
-            break;
-        case "system":
-            current_scheme = lightModeDetected() ? "light" : "dark";
-            break;
-        default:
-            break;
-    }
-}
-
 //Fired when the extension is first installed
 //when the extension is updated to a new version
 //and when the browser is updated to a new version
@@ -272,7 +271,7 @@ function init() {
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 7, 0];
+        let pending_last_version = [1, 7, 1];
         //updates from v1.6.16 or earlier
         if (pref_no_theme_color == null) {
             pending_no_theme_color = false;
