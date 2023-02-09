@@ -298,6 +298,7 @@ div.sponsor {
 	animation-duration: 2.5s;
 	animation-direction: alternate;
 	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
 }
 
 @keyframes auto-icon-animation {
