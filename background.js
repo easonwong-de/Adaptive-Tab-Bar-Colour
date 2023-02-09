@@ -119,7 +119,12 @@ function loadPref(pref) {
     pref_dark_fallback_color = pref.dark_fallback_color;
     pref_reservedColor_cs = pref.reservedColor_cs;
     pref_last_version = pref.last_version;
-    //loads currents
+}
+
+/**
+ * Sets current_xxx values after pref being loaded.
+ */
+function setCurrent() {
     if (pref_custom) {
         current_light_home_color = rgba(pref_light_home_color);
         current_dark_home_color = rgba(pref_dark_home_color);
@@ -288,7 +293,7 @@ function init() {
         let pending_light_fallback_color = pref_light_fallback_color;
         let pending_dark_fallback_color = pref_dark_fallback_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 7, 1, 1];
+        let pending_last_version = [1, 7, 1, 2];
         //updates from v1.7 or earlier
         if (pref_light_fallback_color == null || pref_dark_fallback_color == null) {
             pending_light_fallback_color = default_light_fallback_color;
@@ -365,9 +370,11 @@ function init() {
             dark_fallback_color: pending_dark_fallback_color,
             reservedColor_cs: pending_reservedColor_cs,
             last_version: pending_last_version
+        }).then(() => {
+            setCurrent();
+            update();
+            if (firstTime) browser.runtime.openOptionsPage();
         });
-        if (firstTime) browser.runtime.openOptionsPage();
-        update();
     });
 }
 
@@ -397,6 +404,7 @@ function update() {
     browser.tabs.query({ active: true }, tabs => {
         browser.storage.local.get(pref => {
             loadPref(pref);
+            setCurrent();
             setBrowserColorScheme(pref_scheme);
             tabs.forEach(updateEachWindow);
         });
