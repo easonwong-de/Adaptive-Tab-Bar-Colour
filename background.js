@@ -598,13 +598,13 @@ function setFrameColor(windowId, color, dark_mode) {
             changeThemePara(rgba([249, 249, 250, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (!color || color == "DEFAULT") {
+    } else if (color == "DEFAULT") {
         //Reset to default color
         if (dark_mode) {
-            changeThemePara(default_dark_fallback_color, "dark");
+            changeThemePara(rgba([28, 27, 34, 1]), "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(default_light_fallback_color, "light");
+            changeThemePara(rgba([255, 255, 255, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (!pref_allow_dark_light || (pref_allow_dark_light && current_scheme == "dark" && dark_mode) || (pref_allow_dark_light && current_scheme == "light" && !dark_mode)) {
@@ -616,7 +616,7 @@ function setFrameColor(windowId, color, dark_mode) {
             changeThemePara(color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (pref_allow_dark_light) {
+    } else if (!color || pref_allow_dark_light) {
         //Force coloring (use fallback color)
         if (current_scheme == "dark") {
             changeThemePara(current_dark_fallback_color, "dark");

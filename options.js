@@ -171,7 +171,7 @@ function load() {
 				op_light_fallback_color.value = pref_light_fallback_color;
 				op_dark_fallback_color.value = pref_dark_fallback_color;
 				let table_rows = op_custom_options_table.rows;
-				for (let i = table_rows.length - 1; i > 1; i--)
+				for (let i = table_rows.length - 1; i > 3; i--)
 					op_custom_options_table.deleteRow(i);
 				let domains = Object.keys(pref_reservedColor_cs);
 				domains.forEach((domain, i) => {
@@ -579,12 +579,12 @@ function autoOptionsColor() {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		force_mode_caption.innerHTML = "Allow dark tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn dark";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (prevents flashing)";
 	} else {
 		body.classList.add("dark");
 		body.classList.remove("light");
 		force_mode_caption.innerHTML = "Allow light tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn bright";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (prevents flashing)";
 	}
 }
 
