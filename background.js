@@ -293,7 +293,7 @@ function init() {
         let pending_light_fallback_color = pref_light_fallback_color;
         let pending_dark_fallback_color = pref_dark_fallback_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 7, 1, 2];
+        let pending_last_version = [1, 7, 1, 3];
         //updates from v1.7 or earlier
         if (pref_light_fallback_color == null || pref_dark_fallback_color == null) {
             pending_light_fallback_color = default_light_fallback_color;
@@ -371,7 +371,6 @@ function init() {
             reservedColor_cs: pending_reservedColor_cs,
             last_version: pending_last_version
         }).then(() => {
-            setCurrent();
             update();
             if (firstTime) browser.runtime.openOptionsPage();
         });
