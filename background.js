@@ -422,9 +422,9 @@ function updateEachWindow(tab) {
             setFrameColor(windowId, "PLAINTEXT");
         } else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
             //When visiting internal files (content script blocked)
-            if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm")) {
+            if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
                 setFrameColor(windowId, "PLAINTEXT");
-            } else if (url.endsWith(".png") || url.endsWith(".css")) {
+            } else if (url.endsWith(".png") || url.endsWith(".jpg")) {
                 setFrameColor(windowId, "DARKNOISE");
             } else {
                 setFrameColor(windowId, "SYSTEM");

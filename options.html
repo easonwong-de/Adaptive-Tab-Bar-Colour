@@ -17,19 +17,39 @@
 	</div>
 	<div id="settings" hidden="true">
 		<div>
-			<h4>
-				<input id="color_scheme_no_dark" type="radio" />
-				<label for="color_scheme_no_dark" title="Use light color scheme for browser">Prefer Light Mode</label>
-			</h4>
-			<h4>
-				<input id="color_scheme_no_light" type="radio" />
-				<label for="color_scheme_no_light" title="Use dark color scheme for browser">Prefer Dark Mode</label>
-			</h4>
-			<h4>
-				<input id="color_scheme_system" type="radio" />
-				<label for="color_scheme_system" title="Use system color scheme for browser">Follow System
-					(recommended)</label>
-			</h4>
+			<h4> Color scheme preference</h4>
+			<form xmlns="http://www.w3.org/1999/xhtml" id="web-appearance-chooser" autocomplete="off">
+				<label class="web-appearance-choice" title="Use system color scheme">
+					<div class="web-appearance-choice-image-container">
+						<img role="presentation" alt="" width="54" height="42" />
+						<img class="auto-icon" role="presentation" alt="" width="54" height="42" />
+					</div>
+					<div class="web-appearance-choice-footer">
+						<input id="color_scheme_system" type="radio" name="web-appearance" value="auto" />
+						<span>Automatic</span>
+					</div>
+				</label>
+				<label class="web-appearance-choice"
+					title="Use light color scheme">
+					<div class="web-appearance-choice-image-container">
+						<img role="presentation" alt="" width="54" height="42" />
+					</div>
+					<div class="web-appearance-choice-footer">
+						<input id="color_scheme_no_dark" type="radio" name="web-appearance" value="light" />
+						<span>Light</span>
+					</div>
+				</label>
+				<label class="web-appearance-choice"
+					title="Use dark color scheme">
+					<div class="web-appearance-choice-image-container">
+						<img class="dark-icon" role="presentation" alt="" width="54" height="42" />
+					</div>
+					<div class="web-appearance-choice-footer">
+						<input id="color_scheme_no_light" type="radio" name="web-appearance" value="dark" />
+						<span>Dark</span>
+					</div>
+				</label>
+			</form>
 			<hr>
 			<h4 title="Allow tab bar to turn bright (prevents flashing)">
 				<input id="force_mode" type="checkbox" />
@@ -138,8 +158,8 @@
 				<span>
 					<button id="reset_all" title="Reset domain-specific rules">
 						<svg viewBox="0 0 24 24">
-							<path d="M2.5 2v6h6M21.5 22v-6h-6" stroke="#FF2600"/>
-							<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" stroke="#FF2600"/>
+							<path d="M2.5 2v6h6M21.5 22v-6h-6" stroke="#FF2600" />
+							<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" stroke="#FF2600" />
 						</svg>
 					</button>
 				</span>
