@@ -564,10 +564,10 @@ function autoPopupColor() {
 	});
 	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
 		force_mode_caption.innerHTML = "Allow dark tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (prevents flashing)";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (might cause flashing)";
 	} else {
 		force_mode_caption.innerHTML = "Allow light tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (prevents flashing)";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (might cause flashing)";
 	}
 }
 
@@ -579,12 +579,12 @@ function autoOptionsColor() {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		force_mode_caption.innerHTML = "Allow dark tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (prevents flashing)";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (might cause flashing)";
 	} else {
 		body.classList.add("dark");
 		body.classList.remove("light");
 		force_mode_caption.innerHTML = "Allow light tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (prevents flashing)";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (might cause flashing)";
 	}
 }
 
