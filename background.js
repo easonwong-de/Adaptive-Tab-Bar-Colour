@@ -390,8 +390,6 @@ function lightModeDetected() {
     return lightModeDetection && lightModeDetection.matches;
 }
 
-update();
-
 /**
  * Updates pref cache and triggers color change in all windows.
  */
