@@ -23,6 +23,7 @@ Every time you open, close, or switch tabs, this add-on changes the theme of you
 ## Works Well With
 
 <a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a>  
+<a href="https://addons.mozilla.org/firefox/addon/stylish/">Stylish</a>  
 <br>
 
 ## Incompatible With
