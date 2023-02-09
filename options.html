@@ -31,7 +31,7 @@
 					(recommended)</label>
 			</h4>
 			<hr>
-			<h4 title="Allow tab bar to turn bright">
+			<h4 title="Allow tab bar to turn bright (prevents flashing)">
 				<input id="force_mode" type="checkbox" />
 				<label id="force_mode_caption" for="force_mode">Allow light tab bar</label>
 			</h4>
@@ -78,7 +78,7 @@
 		<div id="custom_options" hidden="true">
 			<table id="custom_options_table">
 				<tr>
-					<td class="TenEm"><span>about:home light</span></td>
+					<td class="TenEm"><span>Homepage color: light</span></td>
 					<td>
 						<select>
 							<option selected>specify a color</option>
@@ -97,7 +97,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="TenEm"><span>about:home dark</span></td>
+					<td class="TenEm"><span>Homepage color: dark</span></td>
 					<td>
 						<select>
 							<option selected>specify a color</option>
@@ -108,6 +108,44 @@
 					</td>
 					<td>
 						<button id="reset_dark_color" title="Reset">
+							<svg viewBox="0 0 24 24">
+								<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+								<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+							</svg>
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td class="TenEm"><span>Fallback color: light</span></td>
+					<td>
+						<select>
+							<option selected>specify a color</option>
+						</select>
+					</td>
+					<td>
+						<input class="FiveEm" type="color" value="#FFFFFF" id="light_fallback_color">
+					</td>
+					<td>
+						<button id="reset_light_fallback_color" title="Reset">
+							<svg viewBox="0 0 24 24">
+								<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+								<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+							</svg>
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td class="TenEm"><span>Fallback color: dark</span></td>
+					<td>
+						<select>
+							<option selected>specify a color</option>
+						</select>
+					</td>
+					<td>
+						<input class="FiveEm" type="color" value="#2B2A33" id="dark_fallback_color">
+					</td>
+					<td>
+						<button id="reset_dark_fallback_color" title="Reset">
 							<svg viewBox="0 0 24 24">
 								<path d="M2.5 2v6h6M21.5 22v-6h-6" />
 								<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />

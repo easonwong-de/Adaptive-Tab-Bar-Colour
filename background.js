@@ -12,6 +12,8 @@ var pref_sidebar_border_color;
 var pref_custom;
 var pref_light_home_color;
 var pref_dark_home_color;
+var pref_light_fallback_color;
+var pref_dark_fallback_color;
 var pref_reservedColor_cs;
 var pref_last_version;
 
@@ -19,11 +21,15 @@ var pref_last_version;
 var current_scheme;
 var current_light_home_color;
 var current_dark_home_color;
+var current_light_fallback_color;
+var current_dark_fallback_color;
 var current_reservedColor_cs;
 
 //Default values
 const default_light_home_color = "#FFFFFF";
 const default_dark_home_color = "#2B2A33";
+const default_light_fallback_color = "#FFFFFF";
+const default_dark_fallback_color = "#2B2A33";
 
 /* reserved color is a color => the color is the theme color for the web
 reserved color is IGNORE_THEME => use calculated color as theme color
@@ -109,16 +115,22 @@ function loadPref(pref) {
     pref_custom = pref.custom;
     pref_light_home_color = pref.light_color;
     pref_dark_home_color = pref.dark_color;
+    pref_light_fallback_color = pref.light_fallback_color;
+    pref_dark_fallback_color = pref.dark_fallback_color;
     pref_reservedColor_cs = pref.reservedColor_cs;
     pref_last_version = pref.last_version;
     //loads currents
     if (pref_custom) {
         current_light_home_color = rgba(pref_light_home_color);
         current_dark_home_color = rgba(pref_dark_home_color);
+        current_light_fallback_color = rgba(pref_light_fallback_color);
+        current_dark_fallback_color = rgba(pref_dark_fallback_color);
         current_reservedColor_cs = pref_reservedColor_cs;
     } else {
         current_light_home_color = rgba(default_light_home_color);
         current_dark_home_color = rgba(default_dark_home_color);
+        current_light_fallback_color = rgba(default_light_fallback_color);
+        current_dark_fallback_color = rgba(default_dark_fallback_color);
         current_reservedColor_cs = default_reservedColor_cs;
     }
     switch (pref_scheme) {
@@ -276,8 +288,15 @@ function init() {
         let pending_custom = pref_custom;
         let pending_light_home_color = pref_light_home_color;
         let pending_dark_home_color = pref_dark_home_color;
+        let pending_light_fallback_color = pref_light_fallback_color;
+        let pending_dark_fallback_color = pref_dark_fallback_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
         let pending_last_version = [1, 7, 1];
+        //updates from v1.7 or earlier
+        if (pref_light_fallback_color == null || pref_dark_fallback_color == null) {
+            pending_light_fallback_color = default_light_fallback_color;
+            pending_dark_fallback_color = default_dark_fallback_color;
+        }
         //updates from v1.6.16 or earlier
         if (pref_no_theme_color == null) {
             pending_no_theme_color = false;
@@ -345,6 +364,8 @@ function init() {
             custom: pending_custom,
             light_color: pending_light_home_color,
             dark_color: pending_dark_home_color,
+            light_fallback_color: pending_light_fallback_color,
+            dark_fallback_color: pending_dark_fallback_color,
             reservedColor_cs: pending_reservedColor_cs,
             last_version: pending_last_version
         });
@@ -528,6 +549,15 @@ function setFrameColor(windowId, color, dark_mode) {
             changeThemePara(current_light_home_color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
+    } else if (color == "FALLBACK") {
+        //Fallback color
+        if (dark_mode) {
+            changeThemePara(current_dark_fallback_color, "dark");
+            applyTheme(windowId, adaptive_themes["dark"]);
+        } else {
+            changeThemePara(current_light_fallback_color, "light");
+            applyTheme(windowId, adaptive_themes["light"]);
+        }
     } else if (color == "DARKNOISE") {
         //Image viewer
         changeThemePara(rgba([33, 33, 33, 1]), "darknoise");
@@ -571,10 +601,10 @@ function setFrameColor(windowId, color, dark_mode) {
     } else if (!color || color == "DEFAULT") {
         //Reset to default color
         if (dark_mode) {
-            changeThemePara(rgba([28, 27, 34, 1]), "dark");
+            changeThemePara(default_dark_fallback_color, "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(rgba([255, 255, 255, 1]), "light");
+            changeThemePara(default_light_fallback_color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (!pref_allow_dark_light || (pref_allow_dark_light && current_scheme == "dark" && dark_mode) || (pref_allow_dark_light && current_scheme == "light" && !dark_mode)) {
@@ -587,12 +617,12 @@ function setFrameColor(windowId, color, dark_mode) {
             applyTheme(windowId, adaptive_themes["light"]);
         }
     } else if (pref_allow_dark_light) {
-        //Force coloring (use default color)
+        //Force coloring (use fallback color)
         if (current_scheme == "dark") {
-            changeThemePara(current_dark_home_color, "dark");
+            changeThemePara(current_dark_fallback_color, "dark");
             applyTheme(windowId, adaptive_themes["dark"]);
         } else {
-            changeThemePara(current_light_home_color, "light");
+            changeThemePara(current_light_fallback_color, "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
     }
@@ -697,7 +727,7 @@ function dimColor(color, dim) {
  */
 function rgba(color) {
     if (typeof color == "string") {
-        if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT" || color == "HOME") return color;
+        if (color == "DEFAULT" || color == "DARKNOISE" || color == "PLAINTEXT" || color == "HOME" || color == "FALLBACK") return color;
         var canvas = document.createElement("canvas").getContext("2d");
         canvas.fillStyle = color;
         let color_temp = canvas.fillStyle;

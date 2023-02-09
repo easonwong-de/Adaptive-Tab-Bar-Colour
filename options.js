@@ -14,6 +14,8 @@ var pref_sidebar_border_color;
 var pref_custom;
 var pref_light_home_color;
 var pref_dark_home_color;
+var pref_light_fallback_color;
+var pref_dark_fallback_color;
 var pref_reservedColor_cs;
 
 //Current color lookup table
@@ -49,6 +51,8 @@ function loadPref(pref) {
 	pref_custom = pref.custom;
 	pref_light_home_color = pref.light_color;
 	pref_dark_home_color = pref.dark_color;
+	pref_light_fallback_color = pref.light_fallback_color;
+	pref_dark_fallback_color = pref.dark_fallback_color;
 	pref_reservedColor_cs = pref.reservedColor_cs;
 	current_reservedColor_cs = (pref_custom) ? pref_reservedColor_cs : default_reservedColor_cs;
 	return pref_scheme != null
@@ -64,6 +68,8 @@ function loadPref(pref) {
 		&& pref_custom != null
 		&& pref_light_home_color != null
 		&& pref_dark_home_color != null
+		&& pref_light_fallback_color != null
+		&& pref_dark_fallback_color != null
 		&& pref_reservedColor_cs != null;
 }
 
@@ -114,31 +120,15 @@ let op_light_color = document.getElementById("light_color");
 let op_dark_color = document.getElementById("dark_color");
 let op_reset_light = document.getElementById("reset_light_color");
 let op_reset_dark = document.getElementById("reset_dark_color");
+let op_light_fallback_color = document.getElementById("light_fallback_color");
+let op_dark_fallback_color = document.getElementById("dark_fallback_color");
+let op_reset_light_fallback = document.getElementById("reset_light_fallback_color");
+let op_reset_dark_fallback = document.getElementById("reset_dark_fallback_color");
 let op_reset_all = document.getElementById("reset_all");
 let op_save = document.getElementById("save");
 let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
 let pp_info_display = document.getElementById("info_display");
-
-/**
- * @returns If all prefs are loaded.
- */
-function verifyPref() {
-	return pref_scheme != null
-		&& pref_allow_dark_light != null
-		&& pref_dynamic != null
-		&& pref_no_theme_color != null
-		&& pref_tabbar_color != null
-		&& pref_toolbar_color != null
-		&& pref_separator_opacity != null
-		&& pref_popup_color != null
-		&& pref_sidebar_color != null
-		&& pref_sidebar_border_color != null
-		&& pref_custom != null
-		&& pref_light_home_color != null
-		&& pref_dark_home_color != null
-		&& pref_reservedColor_cs != null;
-}
 
 settings.hidden = true;
 loading.hidden = false;
@@ -160,7 +150,7 @@ browser.storage.onChanged.addListener(() => {
  */
 function load() {
 	browser.storage.local.get(pref => {
-		if (loadPref(pref) && verifyPref()) {
+		if (loadPref(pref)) {
 			allow_dark_light.checked = !pref_allow_dark_light;
 			dynamic.checked = pref_dynamic;
 			no_theme_color.checked = pref_no_theme_color;
@@ -178,12 +168,14 @@ function load() {
 				op_custom_options.hidden = !pref_custom;
 				op_light_color.value = pref_light_home_color;
 				op_dark_color.value = pref_dark_home_color;
+				op_light_fallback_color.value = pref_light_fallback_color;
+				op_dark_fallback_color.value = pref_dark_fallback_color;
 				let table_rows = op_custom_options_table.rows;
 				for (let i = table_rows.length - 1; i > 1; i--)
 					op_custom_options_table.deleteRow(i);
 				let domains = Object.keys(pref_reservedColor_cs);
 				domains.forEach((domain, i) => {
-					let new_row = op_custom_options_table.insertRow(i + 2);
+					let new_row = op_custom_options_table.insertRow(i + 4);
 					generateNewRow(domain, i).then(new_row_HTML => {
 						new_row.innerHTML += new_row_HTML;
 						addAction(i);
@@ -202,7 +194,7 @@ function load() {
  */
 function load_lite() {
 	browser.storage.local.get(pref => {
-		if (loadPref(pref) && verifyPref()) {
+		if (loadPref(pref)) {
 			allow_dark_light.checked = !pref_allow_dark_light;
 			dynamic.checked = pref_dynamic;
 			no_theme_color.checked = pref_no_theme_color;
@@ -333,6 +325,10 @@ if (popupDetected()) {
 	op_dark_color.onchange = () => browser.storage.local.set({ dark_color: op_dark_color.value });
 	op_reset_light.onclick = () => browser.storage.local.set({ light_color: "#FFFFFF" }).then(load);
 	op_reset_dark.onclick = () => browser.storage.local.set({ dark_color: "#2B2A33" }).then(load);
+	op_light_fallback_color.onchange = () => browser.storage.local.set({ light_fallback_color: op_light_fallback_color.value });
+	op_dark_fallback_color.onchange = () => browser.storage.local.set({ dark_fallback_color: op_dark_fallback_color.value });
+	op_reset_light_fallback.onclick = () => browser.storage.local.set({ light_fallback_color: "#FFFFFF" }).then(load);
+	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ dark_fallback_color: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
 	op_add.onclick = () => {
 		let i = 0;
@@ -489,7 +485,7 @@ function autoPopupColor() {
 				} else if (tabs[0].favIconUrl && tabs[0].favIconUrl.startsWith("chrome:")) {
 					pp_info_display.innerHTML = "This page is protected by browser";
 				} else {
-					pp_info_display.innerHTML = "An error occurred, using default color";
+					pp_info_display.innerHTML = "An error occurred, using fallback color";
 				}
 			});
 		} else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
@@ -568,10 +564,10 @@ function autoPopupColor() {
 	});
 	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
 		force_mode_caption.innerHTML = "Allow dark tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn dark";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (prevents flashing)";
 	} else {
 		force_mode_caption.innerHTML = "Allow light tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn bright";
+		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (prevents flashing)";
 	}
 }
 
