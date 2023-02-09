@@ -15,6 +15,7 @@ body {
 }
 
 #info_display,
+h4,
 label {
 	text-align: left;
 	display: block;
@@ -95,6 +96,10 @@ label {
 
 .dark #info_display {
 	border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+h4 {
+	text-align: center;
 }
 
 hr {

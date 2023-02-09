@@ -468,6 +468,7 @@ function updateEachWindow(tab) {
                                 setFrameColor(windowId, "DEFAULT");
                             } else {
                                 console.error(url + "\nNo connection to content script.");
+                                setFrameColor(windowId, "FALLBACK");
                             }
                         }
                     });
