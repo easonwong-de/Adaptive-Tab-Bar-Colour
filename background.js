@@ -400,7 +400,7 @@ function lightModeDetected() {
  * Updates pref cache and triggers color change in all windows.
  */
 function update() {
-    browser.tabs.query({ active: true }, tabs => {
+    browser.tabs.query({ active: true, status: "complete" }, tabs => {
         browser.storage.local.get(pref => {
             loadPref(pref);
             setCurrent();
@@ -418,65 +418,63 @@ function update() {
 function updateEachWindow(tab) {
     let url = tab.url;
     let windowId = tab.windowId;
-    if (tab.status == "complete") {
-        if (url.startsWith("view-source:")) {
-            //When visiting internal files (content script blocked)
+    if (url.startsWith("view-source:")) {
+        //When visiting internal files (content script blocked)
+        setFrameColor(windowId, "PLAINTEXT");
+    } else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
+        //When visiting internal files (content script blocked)
+        if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
             setFrameColor(windowId, "PLAINTEXT");
-        } else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
-            //When visiting internal files (content script blocked)
-            if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
-                setFrameColor(windowId, "PLAINTEXT");
-            } else if (url.endsWith(".png") || url.endsWith(".jpg")) {
-                setFrameColor(windowId, "DARKNOISE");
-            } else {
-                setFrameColor(windowId, "SYSTEM");
-            }
+        } else if (url.endsWith(".png") || url.endsWith(".jpg")) {
+            setFrameColor(windowId, "DARKNOISE");
         } else {
-            //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
-            getSearchKey(url).then(key => {
-                let reversed_scheme = current_scheme == "light" ? "dark" : "light";
-                if (reservedColor[current_scheme][key]) { //For prefered scheme there's a reserved color
-                    setFrameColor(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
-                } else if (reservedColor[reversed_scheme][key]) { //Site has reserved color in the other mode
-                    setFrameColor(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
-                } else if (url.startsWith("about:")) {
-                    setFrameColor(windowId, "DEFAULT");
-                } else if (key.startsWith("Add-on ID: ") && current_reservedColor_cs[key]) {
-                    let frameColor = rgba(current_reservedColor_cs[key]);
-                    setFrameColor(windowId, frameColor, isDarkModeSuitable(frameColor));
-                } else if (url.startsWith("moz-extension:")) {
-                    setFrameColor(windowId, "ADDON");
-                } else {
-                    // Sends pref to context script and gets response
-                    browser.tabs.sendMessage(tab.id, {
-                        reason: "COLOR_REQUEST",
-                        dynamic: pref_dynamic,
-                        no_theme_color: pref_no_theme_color,
-                        reservedColor_cs: current_reservedColor_cs
-                    }, response => {
-                        if (!response) {
-                            if (url.startsWith("data:image")) {
-                                //Content script is blocked on data:pages
-                                //Viewing an image on data:image
-                                console.log(url + "\nMight be image viewer.");
-                                setFrameColor(windowId, "DARKNOISE");
-                            } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-                                //When viewing a pdf file, Firefox blocks content script
-                                console.log(url + "\nMight be pdf viewer.");
-                                setFrameColor(windowId, "PDFVIEWER");
-                            } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
-                                //Content script is also blocked on website that failed to load
-                                console.log(url + "\nTab failed to load.");
-                                setFrameColor(windowId, "DEFAULT");
-                            } else {
-                                console.error(url + "\nNo connection to content script.");
-                                setFrameColor(windowId, "FALLBACK");
-                            }
-                        }
-                    });
-                }
-            });
+            setFrameColor(windowId, "SYSTEM");
         }
+    } else {
+        //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
+        getSearchKey(url).then(key => {
+            let reversed_scheme = current_scheme == "light" ? "dark" : "light";
+            if (reservedColor[current_scheme][key]) { //For prefered scheme there's a reserved color
+                setFrameColor(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
+            } else if (reservedColor[reversed_scheme][key]) { //Site has reserved color in the other mode
+                setFrameColor(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
+            } else if (url.startsWith("about:")) {
+                setFrameColor(windowId, "DEFAULT");
+            } else if (key.startsWith("Add-on ID: ") && current_reservedColor_cs[key]) {
+                let frameColor = rgba(current_reservedColor_cs[key]);
+                setFrameColor(windowId, frameColor, isDarkModeSuitable(frameColor));
+            } else if (url.startsWith("moz-extension:")) {
+                setFrameColor(windowId, "ADDON");
+            } else {
+                // Sends pref to context script and gets response
+                browser.tabs.sendMessage(tab.id, {
+                    reason: "COLOR_REQUEST",
+                    dynamic: pref_dynamic,
+                    no_theme_color: pref_no_theme_color,
+                    reservedColor_cs: current_reservedColor_cs
+                }, response => {
+                    if (!response) {
+                        if (url.startsWith("data:image")) {
+                            //Content script is blocked on data:pages
+                            //Viewing an image on data:image
+                            console.log(url + "\nMight be image viewer.");
+                            setFrameColor(windowId, "DARKNOISE");
+                        } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+                            //When viewing a pdf file, Firefox blocks content script
+                            console.log(url + "\nMight be pdf viewer.");
+                            setFrameColor(windowId, "PDFVIEWER");
+                        } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
+                            //Content script is also blocked on website that failed to load
+                            console.log(url + "\nTab failed to load.");
+                            setFrameColor(windowId, "DEFAULT");
+                        } else {
+                            console.error(url + "\nNo connection to content script.");
+                            setFrameColor(windowId, "FALLBACK");
+                        }
+                    }
+                });
+            }
+        });
     }
 }
 
