@@ -96,7 +96,6 @@ const reservedColor = Object.freeze({
 
 /**
  * Loads preferences into cache.
- * Also modifies the "current" data.
  */
 function loadPref(pref) {
     //loads prefs
@@ -119,6 +118,9 @@ function loadPref(pref) {
     pref_last_version = pref.last_version;
 }
 
+/**
+ * @returns Integrity of preferences.
+ */
 function verifyPref() {
     return pref_scheme != null
         && pref_allow_dark_light != null
@@ -425,7 +427,7 @@ function update() {
                 setCurrent();
                 setBrowserColorScheme(pref_scheme);
                 tabs.forEach(updateEachWindow);
-            } else {
+            } else { // If the pref is corupted, initialzes pref
                 initialize().then(() => {
                     setCurrent();
                     setBrowserColorScheme(pref_scheme);
