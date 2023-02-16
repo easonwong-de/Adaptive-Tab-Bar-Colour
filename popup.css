@@ -102,6 +102,16 @@ h4 {
 	text-align: center;
 }
 
+#reinstall-tip {
+	overflow-wrap: break-word;
+	white-space: normal;
+	opacity: 0;
+	animation-name: appear;
+	animation-duration: 0s;
+	animation-delay: 5s;
+	animation-fill-mode: forwards;
+}
+
 hr {
 	height: 1px;
 	border-width: 0;

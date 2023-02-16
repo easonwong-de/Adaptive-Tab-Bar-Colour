@@ -55,7 +55,6 @@ url listed as "DEFAULT" => use default_light/dark_color
 url listed as "DARKNOISE" => use "darknoise" theme */
 const reservedColor = Object.freeze({
     "light": {
-        "about:blank": "PLAINTEXT",
         "about:checkerboard": "DEFAULT",
         "about:debugging#": "rgb(236, 236, 236)",
         "about:devtools-toolbox": "rgb(249, 249, 250)",
@@ -75,7 +74,6 @@ const reservedColor = Object.freeze({
         "support.mozilla.org": "rgb(255, 255, 255)"
     },
     "dark": {
-        "about:blank": "PLAINTEXT",
         "about:debugging#": "DEFAULT",
         "about:devtools-toolbox": "rgb(12, 12, 13)",
         "about:firefoxview": "HOME",
@@ -119,6 +117,25 @@ function loadPref(pref) {
     pref_dark_fallback_color = pref.dark_fallback_color;
     pref_reservedColor_cs = pref.reservedColor_cs;
     pref_last_version = pref.last_version;
+}
+
+function verifyPref() {
+    return pref_scheme != null
+        && pref_allow_dark_light != null
+        && pref_dynamic != null
+        && pref_no_theme_color != null
+        && pref_tabbar_color != null
+        && pref_toolbar_color != null
+        && pref_separator_opacity != null
+        && pref_popup_color != null
+        && pref_sidebar_color != null
+        && pref_sidebar_border_color != null
+        && pref_custom != null
+        && pref_light_home_color != null
+        && pref_dark_home_color != null
+        && pref_light_fallback_color != null
+        && pref_dark_fallback_color != null
+        && pref_reservedColor_cs != null;
 }
 
 /**
@@ -269,12 +286,12 @@ var adaptive_themes = {
     }
 };
 
-init();
+initialize();
 
 /**
  * Initializes the settings, then opens options page.
  */
-function init() {
+function initialize() {
     browser.storage.local.get(pref => {
         loadPref(pref);
         let pending_scheme = pref_scheme;
@@ -293,7 +310,7 @@ function init() {
         let pending_light_fallback_color = pref_light_fallback_color;
         let pending_dark_fallback_color = pref_dark_fallback_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 7, 2];
+        let pending_last_version = [1, 7, 3];
         //updates from v1.7 or earlier
         if (pref_light_fallback_color == null || pref_dark_fallback_color == null) {
             pending_light_fallback_color = default_light_fallback_color;
@@ -373,6 +390,7 @@ function init() {
         }).then(() => {
             update();
             if (firstTime) browser.runtime.openOptionsPage();
+            return Promise.resolve("Initialization done");
         });
     });
 }
@@ -381,7 +399,7 @@ browser.tabs.onUpdated.addListener(update); //When new tab is opened / reloaded
 browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
-browser.runtime.onMessage.addListener(update); //When preferences changed
+browser.runtime.onMessage.addListener(message => message == "INIT_REQUEST" ? initialize() : update()); //When pref corupted / preferences changed
 
 //Light Mode Match Media
 const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
@@ -403,9 +421,17 @@ function update() {
     browser.tabs.query({ active: true, status: "complete" }, tabs => {
         browser.storage.local.get(pref => {
             loadPref(pref);
-            setCurrent();
-            setBrowserColorScheme(pref_scheme);
-            tabs.forEach(updateEachWindow);
+            if (verifyPref()) {
+                setCurrent();
+                setBrowserColorScheme(pref_scheme);
+                tabs.forEach(updateEachWindow);
+            } else {
+                initialize().then(() => {
+                    setCurrent();
+                    setBrowserColorScheme(pref_scheme);
+                    tabs.forEach(updateEachWindow);
+                });
+            }
         });
     });
 }

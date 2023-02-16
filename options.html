@@ -9,6 +9,8 @@
 <body class="dark">
 	<div id="loading">
 		<h4>Loading…</h4>
+		<p id="reinstall-tip">Preference data could be corupted. Please remove the add-on, quit Firefox, and re-install
+			the add-on. I’m sorry for your inconvenience!</p>
 		<h1>&nbsp;</h1>
 		<h1>&nbsp;</h1>
 		<h1>&nbsp;</h1>
@@ -17,7 +19,7 @@
 	</div>
 	<div id="settings" hidden="true">
 		<div>
-			<h4> Color scheme preference</h4>
+			<h4>Color scheme preference</h4>
 			<form xmlns="http://www.w3.org/1999/xhtml" id="web-appearance-chooser" autocomplete="off">
 				<label class="web-appearance-choice" title="Use system color scheme">
 					<div class="web-appearance-choice-image-container">
@@ -29,8 +31,7 @@
 						<span>Automatic</span>
 					</div>
 				</label>
-				<label class="web-appearance-choice"
-					title="Use light color scheme">
+				<label class="web-appearance-choice" title="Use light color scheme">
 					<div class="web-appearance-choice-image-container">
 						<img role="presentation" alt="" width="54" height="42" />
 					</div>
@@ -39,8 +40,7 @@
 						<span>Light</span>
 					</div>
 				</label>
-				<label class="web-appearance-choice"
-					title="Use dark color scheme">
+				<label class="web-appearance-choice" title="Use dark color scheme">
 					<div class="web-appearance-choice-image-container">
 						<img class="dark-icon" role="presentation" alt="" width="54" height="42" />
 					</div>
@@ -175,7 +175,7 @@
 		</div>
 		<hr>
 		<div>
-			<p><a href="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/issues">Report an issue / submit a
+			<p><a href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/issues">Report an issue / submit a
 					suggestion</a></p>
 		</div>
 		<div class="sponsor">
@@ -193,7 +193,7 @@
 		</div>
 	</div>
 	<p>&nbsp;</p>
-	<script type="text/javascript" src="../options.js"></script>
+	<script defer type="text/javascript" src="../options.js"></script>
 </body>
 
 </html>

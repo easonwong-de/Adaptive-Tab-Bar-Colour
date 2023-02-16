@@ -29,6 +29,17 @@ div {
 	overflow: hidden;
 }
 
+#reinstall-tip {
+	width: 50%;
+	overflow-wrap: break-word;
+	white-space: normal;
+	opacity: 0;
+	animation-name: appear;
+	animation-duration: 0s;
+	animation-delay: 5s;
+	animation-fill-mode: forwards;
+}
+
 #custom_options {
 	margin-left: 4em;
 	margin-bottom: 2em;
@@ -292,16 +303,15 @@ div.sponsor {
 .web-appearance-choice img.auto-icon {
 	position: absolute;
 	top: 1em;
-	opacity: 0.5;
 	content: url("chrome://browser/content/preferences/web-appearance-dark.svg");
-	animation-name: auto-icon-animation;
+	animation-name: appear;
 	animation-duration: 2.5s;
 	animation-direction: alternate;
 	animation-iteration-count: infinite;
 	animation-timing-function: ease-in-out;
 }
 
-@keyframes auto-icon-animation {
+@keyframes appear {
 	from {
 		opacity: 0;
 	}

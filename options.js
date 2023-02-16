@@ -185,6 +185,8 @@ function load() {
 			autoPageColor();
 			loading.hidden = true;
 			settings.hidden = false;
+		} else {
+			browser.runtime.sendMessage("INIT_REQUEST");
 		}
 	});
 }
