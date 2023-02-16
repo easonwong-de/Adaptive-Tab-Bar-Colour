@@ -1,4 +1,4 @@
-![Icon](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/images/ATBC_128.png)  
+![Icon](https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/blob/main/images/ATBC_128.png)  
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-color)
 ![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-color)
 ![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-color?label=version)
@@ -7,7 +7,7 @@
 Changes the color of Firefox tab bar to match the website theme  
 <br>
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-color/?utm_source=github.com&utm_medium=git&utm_content=download-button&campaign=github" target="_blank">
-    <img width="178" height="48" src="https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true">
+    <img width="178" height="48" src="https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true">
 </a>
 <br>
 
@@ -40,9 +40,9 @@ This add-on takes control of browser’s UI color and color scheme settings. Any
 <br>
 
 ## For CSS Theme Enjoyers
-A CSS theme can work with [ATBC](## "Adaptive Tab Bar Color"), when system color variables are being used. <a href="https://github.com/YS-Wong/WhiteSurFirefoxThemeMacOS">This</a> is an example of an [ATBC](## "Adaptive Tab Bar Color")-compatible CSS theme.  
+A CSS theme can work with [ATBC](## "Adaptive Tab Bar Color"), when system color variables are being used. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">This</a> is an example of an [ATBC](## "Adaptive Tab Bar Color")-compatible CSS theme.  
 
-<img width="45%" src="https://raw.githubusercontent.com/YS-Wong/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png"><img width="45%" src="https://raw.githubusercontent.com/YS-Wong/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png">
+<img width="45%" src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png"><img width="45%" src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png">
 <br>
 
 ## Safety Warning
@@ -56,5 +56,5 @@ Beware of malicious web UI: Please distinguish between the browser’s UI and th
 <br>
 
 ## License
-[The MIT License (MIT)](https://github.com/YS-Wong/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
+[The MIT License (MIT)](https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/raw/main/LICENSE)  
 <br>
