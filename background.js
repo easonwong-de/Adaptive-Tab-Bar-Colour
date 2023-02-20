@@ -312,7 +312,7 @@ function initialize() {
         let pending_light_fallback_color = pref_light_fallback_color;
         let pending_dark_fallback_color = pref_dark_fallback_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 7, 3];
+        let pending_last_version = [1, 7, 4];
         //updates from v1.7 or earlier
         if (pref_light_fallback_color == null || pref_dark_fallback_color == null) {
             pending_light_fallback_color = default_light_fallback_color;

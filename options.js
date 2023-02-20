@@ -350,7 +350,7 @@ if (popupDetected()) {
 function autoSaveSettings() {
 	let pending_reservedColor_cs = {};
 	let all_table_rows = op_custom_options_table.firstElementChild.children;
-	for (let i = 2; i < all_table_rows.length; i++) {
+	for (let i = 4; i < all_table_rows.length; i++) {
 		let table_cells = all_table_rows[i].children;
 		let domain = table_cells[0].firstElementChild.title;
 		if (!domain) domain = table_cells[0].firstElementChild.value;
