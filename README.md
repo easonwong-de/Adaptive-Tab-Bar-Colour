@@ -25,7 +25,7 @@ Every time you open, close, or switch tabs, this add-on changes the theme of you
 
 ## Works Well With
 
-This add-on is programmed particularly to react to some prominent web page styling add-ons.
+This add-on is programmed particularly to be responsive to some prominent web page styling add-ons.
 
 <ol>
 	<li><a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a></li>
