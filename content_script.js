@@ -36,7 +36,7 @@ function loadPref(pref) {
 var RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 
 //This will be displayed in the pop-up
-var RESPONSE_INFO = "*PLACEHOLDER*";
+var RESPONSE_INFO = "";
 
 //Send color to background as soon as page loads
 browser.storage.local.get((pref) => {
@@ -154,11 +154,11 @@ function findAndSendColor_fix() {
  * @returns True if a legal reserved color for the webpage can be found.
  */
 function findColorReserved() {
-    let host = document.location.host; //"host" can be "www.irgendwas.com"
-    let hostAction = pref_reservedColor_cs[host];
-    if (hostAction == null || (!pref_no_theme_color && hostAction == "UN_IGNORE_THEME") || (pref_no_theme_color && hostAction == "IGNORE_THEME")) {
+    let domain = document.location.host; //"host" can be "www.irgendwas.com"
+    let action = pref_reservedColor_cs[domain];
+    if (action == null || (!pref_no_theme_color && action == "UN_IGNORE_THEME") || (pref_no_theme_color && action == "IGNORE_THEME")) {
         return false;
-    } else if (pref_no_theme_color && hostAction == "UN_IGNORE_THEME") {
+    } else if (pref_no_theme_color && action == "UN_IGNORE_THEME") {
         // User prefers igoring theme color, but sets to use theme color for this host
         if (findThemeColor()) {
             RESPONSE_INFO = `Theme color defined by the website is un-ignored
@@ -170,7 +170,7 @@ function findColorReserved() {
             RESPONSE_INFO = `Theme color is not found, color is picked from the web page`;
         }
         return true;
-    } else if (!pref_no_theme_color && hostAction == "IGNORE_THEME") {
+    } else if (!pref_no_theme_color && action == "IGNORE_THEME") {
         // User sets to ignore the theme color of this host
         if (findThemeColor()) {
             findComputedColor();
@@ -182,21 +182,12 @@ function findColorReserved() {
             findComputedColor();
         }
         return true;
-    } else if (hostAction.startsWith("QS_")) {
-        let selector = hostAction.replace("QS_", "");
-        let element = document.querySelector(selector);
-        if (element) {
-            RESPONSE_COLOR = getColorFrom(element);
-            RESPONSE_INFO =
-                RESPONSE_COLOR.a == 1
-                    ? `Color is picked from an HTML element matching <b>${selector}</b>`
-                    : `HTML element matching <b>${selector}</b> doesn’t have a legitimate color, color is picked from the web page`;
-        } else {
-            RESPONSE_COLOR = null;
-            RESPONSE_INFO = `HTML element matching <b>${selector}</b> is not found, color is picked from the web page`;
-        }
+    } else if (action.startsWith("QS_")) {
+        let selector = action.replace("QS_", "");
+        RESPONSE_COLOR = getColorFrom(document.querySelector(selector));
+        RESPONSE_INFO = `Color is picked from an HTML element matching <b>${selector}</b>`;
     } else {
-        RESPONSE_COLOR = rgba(hostAction);
+        RESPONSE_COLOR = rgba(action);
         RESPONSE_INFO = `Color for this domain is specified in the settings`;
     }
     //Return ture if reponse color is legal and can be sent to background.js

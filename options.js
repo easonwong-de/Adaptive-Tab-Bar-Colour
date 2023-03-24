@@ -401,8 +401,12 @@ function autoSaveSettings() {
                 default:
                     break;
             }
-            pending_reservedColor_cs[domain] = action;
-            if (table_cells[4] != null) table_cells[4].remove();
+            if (action != "QS_") {
+                pending_reservedColor_cs[domain] = action;
+                if (table_cells[4] != null) table_cells[4].remove();
+            } else {
+                if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
+            }
         } else {
             if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
         }
