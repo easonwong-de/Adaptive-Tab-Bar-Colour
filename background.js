@@ -39,12 +39,12 @@ const default_reservedColor_cs = Object.freeze({
     "apnews.com": "IGNORE_THEME",
     "developer.mozilla.org": "IGNORE_THEME",
     "github.com": "IGNORE_THEME",
-    "mail.google.com": "CLASS_wl",
+    "mail.google.com": "QS_div.wl",
     "matters.news": "IGNORE_THEME",
     "open.spotify.com": "#000000",
     "www.instagram.com": "IGNORE_THEME",
     "www.linkedin.com": "IGNORE_THEME",
-    "www.spiegel.de": "IGNORE_THEME"
+    "www.spiegel.de": "IGNORE_THEME",
 });
 
 /* Pages where content script can't be injected
@@ -54,7 +54,7 @@ url listed in both => choose color scheme as needed
 url listed as "DEFAULT" => use default_light/dark_color
 url listed as "DARKNOISE" => use "darknoise" theme */
 const reservedColor = Object.freeze({
-    "light": {
+    light: {
         "about:checkerboard": "DEFAULT",
         "about:debugging#": "rgb(236, 236, 236)",
         "about:devtools-toolbox": "rgb(249, 249, 250)",
@@ -71,9 +71,9 @@ const reservedColor = Object.freeze({
         "content.cdn.mozilla.net": "DEFAULT",
         "discovery.addons.mozilla.org": "rgb(236, 236, 236)",
         "install.mozilla.org": "DEFAULT",
-        "support.mozilla.org": "rgb(255, 255, 255)"
+        "support.mozilla.org": "rgb(255, 255, 255)",
     },
-    "dark": {
+    dark: {
         "about:debugging#": "DEFAULT",
         "about:devtools-toolbox": "rgb(12, 12, 13)",
         "about:firefoxview": "HOME",
@@ -90,8 +90,8 @@ const reservedColor = Object.freeze({
         "addons.cdn.mozilla.net": "DEFAULT",
         "addons.mozilla.org": "rgb(32, 18, 58)",
         "content.cdn.mozilla.net": "DEFAULT",
-        "install.mozilla.org": "DEFAULT"
-    }
+        "install.mozilla.org": "DEFAULT",
+    },
 });
 
 /**
@@ -122,22 +122,24 @@ function loadPref(pref) {
  * @returns Integrity of preferences.
  */
 function verifyPref() {
-    return pref_scheme != null
-        && pref_allow_dark_light != null
-        && pref_dynamic != null
-        && pref_no_theme_color != null
-        && pref_tabbar_color != null
-        && pref_toolbar_color != null
-        && pref_separator_opacity != null
-        && pref_popup_color != null
-        && pref_sidebar_color != null
-        && pref_sidebar_border_color != null
-        && pref_custom != null
-        && pref_light_home_color != null
-        && pref_dark_home_color != null
-        && pref_light_fallback_color != null
-        && pref_dark_fallback_color != null
-        && pref_reservedColor_cs != null;
+    return (
+        pref_scheme != null &&
+        pref_allow_dark_light != null &&
+        pref_dynamic != null &&
+        pref_no_theme_color != null &&
+        pref_tabbar_color != null &&
+        pref_toolbar_color != null &&
+        pref_separator_opacity != null &&
+        pref_popup_color != null &&
+        pref_sidebar_color != null &&
+        pref_sidebar_border_color != null &&
+        pref_custom != null &&
+        pref_light_home_color != null &&
+        pref_dark_home_color != null &&
+        pref_light_fallback_color != null &&
+        pref_dark_fallback_color != null &&
+        pref_reservedColor_cs != null
+    );
 }
 
 /**
@@ -173,7 +175,7 @@ function setCurrent() {
 }
 
 var adaptive_themes = {
-    "light": {
+    light: {
         colors: {
             //Theme colors
             frame: "rgb(255, 255, 255)",
@@ -206,10 +208,10 @@ var adaptive_themes = {
             tab_loading: "rgba(0, 0, 0, 0)",
         },
         properties: {
-            color_scheme: "auto"
-        }
+            color_scheme: "auto",
+        },
     },
-    "dark": {
+    dark: {
         colors: {
             //Theme colors
             frame: "rgb(28, 27, 34)",
@@ -242,10 +244,11 @@ var adaptive_themes = {
             tab_loading: "rgba(0, 0, 0, 0)",
         },
         properties: {
-            color_scheme: "auto"
-        }
+            color_scheme: "auto",
+        },
     },
-    "darknoise": { //For image viewer
+    darknoise: {
+        //For image viewer
         colors: {
             //Theme colors
             frame: "rgb(33, 33, 33)",
@@ -278,14 +281,14 @@ var adaptive_themes = {
             tab_loading: "rgba(0, 0, 0, 0)",
         },
         images: {
-            additional_backgrounds: ["images/imagedoc-darknoise.png"]
+            additional_backgrounds: ["images/imagedoc-darknoise.png"],
         },
         properties: {
             additional_backgrounds_alignment: ["left bottom"],
             additional_backgrounds_tiling: ["repeat"],
-            color_scheme: "auto"
-        }
-    }
+            color_scheme: "auto",
+        },
+    },
 };
 
 initialize();
@@ -294,7 +297,7 @@ initialize();
  * Initializes the settings, then opens options page.
  */
 function initialize() {
-    browser.storage.local.get(pref => {
+    browser.storage.local.get((pref) => {
         loadPref(pref);
         let pending_scheme = pref_scheme;
         let pending_force = pref_allow_dark_light;
@@ -312,90 +315,110 @@ function initialize() {
         let pending_light_fallback_color = pref_light_fallback_color;
         let pending_dark_fallback_color = pref_dark_fallback_color;
         let pending_reservedColor_cs = pref_reservedColor_cs;
-        let pending_last_version = [1, 7, 4];
-        //updates from v1.7.3 or earlier
+        let pending_last_version = [1, 7, 5];
+        // updates from v1.7.4 or earlier
+        // Converts legacy rules to query selector format
+        if (pref_last_version <= [1, 7, 4] && pref_reservedColor_cs) {
+            Object.keys(pending_reservedColor_cs).forEach((domain) => {
+                let temp = pref_reservedColor_cs[domain];
+                if (temp.startsWith("TAG_")) {
+                    pending_reservedColor_cs[domain] = temp.replace("TAG_", "QS_");
+                } else if (temp.startsWith("CLASS_")) {
+                    pending_reservedColor_cs[domain] = temp.replace("CLASS_", "QS_.");
+                } else if (temp.startsWith("ID_")) {
+                    pending_reservedColor_cs[domain] = temp.replace("ID_", "QS_#");
+                } else if (temp.startsWith("NAME_")) {
+                    pending_reservedColor_cs[domain] = `${temp.replace("NAME_", "QS_[name='")}']`;
+                } else if (temp === "") {
+                    delete pending_reservedColor_cs[domain];
+                }
+            });
+        }
+        // updates from v1.7.3 or earlier
         if (pref_reservedColor_cs) delete pending_reservedColor_cs[undefined];
-        //updates from v1.7 or earlier
+        // updates from v1.7 or earlier
         if (pref_light_fallback_color == null || pref_dark_fallback_color == null) {
             pending_light_fallback_color = default_light_fallback_color;
             pending_dark_fallback_color = default_dark_fallback_color;
         }
-        //updates from v1.6.16 or earlier
+        // updates from v1.6.16 or earlier
         if (pref_no_theme_color == null) {
             pending_no_theme_color = false;
         }
-        //updates from v1.6.13 or earlier
+        // updates from v1.6.13 or earlier
         if (pref_sidebar_color == null || pref_sidebar_border_color == null) {
             pending_sidebar_color = 0;
             pending_sidebar_border_color = 0;
         }
-        //updates from v1.6.5 or earlier
+        // updates from v1.6.5 or earlier
         if (pref_separator_opacity == null) {
             pending_separator_opacity = 0;
         }
-        //updates from v1.6.4 or earlier
-        if (pref_last_version < [1, 6, 4, 1] && pref_dark_home_color.toUpperCase() == "#1C1B22") {
+        // updates from v1.6.4 or earlier
+        if (pref_last_version <= [1, 6, 4] && pref_dark_home_color && pref_dark_home_color.toUpperCase() == "#1C1B22") {
             pending_dark_home_color = default_dark_home_color;
         }
-        //updates from v1.6.3 or earlier
+        // updates from v1.6.3 or earlier
         if (pref_toolbar_color == null) {
             pending_toolbar_color = 0;
         }
-        //updates from v1.6.2 or earlier
+        // updates from v1.6.2 or earlier
         if (pref_tabbar_color == null || pref_popup_color == null) {
             pending_tabbar_color = 0;
             pending_popup_color = 0.05;
         }
-        //updates from v1.5.7 or earlier
+        // updates from v1.5.7 or earlier
         if (pref_reservedColor_cs == null) {
             pending_reservedColor_cs = default_reservedColor_cs;
         }
-        //updates from v1.5.3 or earlier
+        // updates from v1.5.3 or earlier
         if (pref_dynamic == null) {
             pending_dynamic = false;
         }
-        //updates from v1.3.1 or earlier
+        // updates from v1.3.1 or earlier
         if (pref_last_version == null) {
             pending_force = false;
         }
-        //updates from v1.3 or earlier
+        // updates from v1.3 or earlier
         if (pref_custom == null || pref_light_home_color == null || pref_dark_home_color == null) {
             pending_custom = false;
             pending_light_home_color = default_light_home_color;
             pending_dark_home_color = default_dark_home_color;
         }
         let firstTime = false;
-        //first time install
+        // first time install
         if (pref_scheme == null || pref_allow_dark_light == null) {
             firstTime = true;
-            pending_scheme = lightModeDetected() ? "light" : "dark";
             pending_force = true;
+            pending_scheme = lightModeDetected() ? "light" : "dark";
             setBrowserColorScheme(pending_scheme);
         }
         if (checkVersion() < 95) pending_force = true;
-        browser.storage.local.set({
-            scheme: pending_scheme,
-            force: pending_force,
-            dynamic: pending_dynamic,
-            no_theme_color: pending_no_theme_color,
-            tabbar_color: pending_tabbar_color,
-            toolbar_color: pending_toolbar_color,
-            separator_opacity: pending_separator_opacity,
-            popup_color: pending_popup_color,
-            sidebar_color: pending_sidebar_color,
-            sidebar_border_color: pending_sidebar_border_color,
-            custom: pending_custom,
-            light_color: pending_light_home_color,
-            dark_color: pending_dark_home_color,
-            light_fallback_color: pending_light_fallback_color,
-            dark_fallback_color: pending_dark_fallback_color,
-            reservedColor_cs: pending_reservedColor_cs,
-            last_version: pending_last_version
-        }).then(() => {
-            update();
-            if (firstTime) browser.runtime.openOptionsPage();
-            return Promise.resolve("Initialization done");
-        });
+        browser.storage.local
+            .set({
+                scheme: pending_scheme,
+                force: pending_force,
+                dynamic: pending_dynamic,
+                no_theme_color: pending_no_theme_color,
+                tabbar_color: pending_tabbar_color,
+                toolbar_color: pending_toolbar_color,
+                separator_opacity: pending_separator_opacity,
+                popup_color: pending_popup_color,
+                sidebar_color: pending_sidebar_color,
+                sidebar_border_color: pending_sidebar_border_color,
+                custom: pending_custom,
+                light_color: pending_light_home_color,
+                dark_color: pending_dark_home_color,
+                light_fallback_color: pending_light_fallback_color,
+                dark_fallback_color: pending_dark_fallback_color,
+                reservedColor_cs: pending_reservedColor_cs,
+                last_version: pending_last_version,
+            })
+            .then(() => {
+                update();
+                if (firstTime) browser.runtime.openOptionsPage();
+                return Promise.resolve("Initialization done");
+            });
     });
 }
 
@@ -403,13 +426,14 @@ browser.tabs.onUpdated.addListener(update); //When new tab is opened / reloaded
 browser.tabs.onActivated.addListener(update); //When switch tabs
 browser.tabs.onAttached.addListener(update); //When attach tab to windows
 browser.windows.onFocusChanged.addListener(update); //When new window is opened
-browser.runtime.onMessage.addListener(message => message == "INIT_REQUEST" ? initialize() : update()); //When pref corupted / preferences changed
+browser.runtime.onMessage.addListener((message) => (message == "INIT_REQUEST" ? initialize() : update())); //When pref corupted / preferences changed
 
 //Light Mode Match Media
 const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
-if (lightModeDetection) lightModeDetection.onchange = () => {
-    if (pref_scheme == "system") update();
-};
+if (lightModeDetection)
+    lightModeDetection.onchange = () => {
+        if (pref_scheme == "system") update();
+    };
 
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect.
@@ -422,14 +446,15 @@ function lightModeDetected() {
  * Updates pref cache and triggers color change in all windows.
  */
 function update() {
-    browser.tabs.query({ active: true, status: "complete" }, tabs => {
-        browser.storage.local.get(pref => {
+    browser.tabs.query({ active: true, status: "complete" }, (tabs) => {
+        browser.storage.local.get((pref) => {
             loadPref(pref);
             if (verifyPref()) {
                 setCurrent();
                 setBrowserColorScheme(pref_scheme);
                 tabs.forEach(updateEachWindow);
-            } else { // If the pref is corupted, initialzes pref
+            } else {
+                // If the pref is corupted, initialzes pref
                 initialize().then(() => {
                     setCurrent();
                     setBrowserColorScheme(pref_scheme);
@@ -442,7 +467,7 @@ function update() {
 
 /**
  * Updates the color for a window.
- * 
+ *
  * @param {tabs.Tab} tab The tab the window is showing
  */
 function updateEachWindow(tab) {
@@ -462,11 +487,13 @@ function updateEachWindow(tab) {
         }
     } else {
         //When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
-        getSearchKey(url).then(key => {
+        getSearchKey(url).then((key) => {
             let reversed_scheme = current_scheme == "light" ? "dark" : "light";
-            if (reservedColor[current_scheme][key]) { //For prefered scheme there's a reserved color
+            if (reservedColor[current_scheme][key]) {
+                //For prefered scheme there's a reserved color
                 setFrameColor(windowId, rgba(reservedColor[current_scheme][key]), current_scheme == "dark");
-            } else if (reservedColor[reversed_scheme][key]) { //Site has reserved color in the other mode
+            } else if (reservedColor[reversed_scheme][key]) {
+                //Site has reserved color in the other mode
                 setFrameColor(windowId, rgba(reservedColor[reversed_scheme][key]), reversed_scheme == "dark");
             } else if (url.startsWith("about:")) {
                 setFrameColor(windowId, "DEFAULT");
@@ -477,32 +504,36 @@ function updateEachWindow(tab) {
                 setFrameColor(windowId, "ADDON");
             } else {
                 // Sends pref to context script and gets response
-                browser.tabs.sendMessage(tab.id, {
-                    reason: "COLOR_REQUEST",
-                    dynamic: pref_dynamic,
-                    no_theme_color: pref_no_theme_color,
-                    reservedColor_cs: current_reservedColor_cs
-                }, response => {
-                    if (!response) {
-                        if (url.startsWith("data:image")) {
-                            //Content script is blocked on data:pages
-                            //Viewing an image on data:image
-                            console.log(url + "\nMight be image viewer.");
-                            setFrameColor(windowId, "DARKNOISE");
-                        } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-                            //When viewing a pdf file, Firefox blocks content script
-                            console.log(url + "\nMight be pdf viewer.");
-                            setFrameColor(windowId, "PDFVIEWER");
-                        } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
-                            //Content script is also blocked on website that failed to load
-                            console.log(url + "\nTab failed to load.");
-                            setFrameColor(windowId, "DEFAULT");
-                        } else {
-                            console.error(url + "\nNo connection to content script.");
-                            setFrameColor(windowId, "FALLBACK");
+                browser.tabs.sendMessage(
+                    tab.id,
+                    {
+                        reason: "COLOR_REQUEST",
+                        dynamic: pref_dynamic,
+                        no_theme_color: pref_no_theme_color,
+                        reservedColor_cs: current_reservedColor_cs,
+                    },
+                    (response) => {
+                        if (!response) {
+                            if (url.startsWith("data:image")) {
+                                //Content script is blocked on data:pages
+                                //Viewing an image on data:image
+                                console.log(url + "\nMight be image viewer.");
+                                setFrameColor(windowId, "DARKNOISE");
+                            } else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+                                //When viewing a pdf file, Firefox blocks content script
+                                console.log(url + "\nMight be pdf viewer.");
+                                setFrameColor(windowId, "PDFVIEWER");
+                            } else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
+                                //Content script is also blocked on website that failed to load
+                                console.log(url + "\nTab failed to load.");
+                                setFrameColor(windowId, "DEFAULT");
+                            } else {
+                                console.error(url + "\nNo connection to content script.");
+                                setFrameColor(windowId, "FALLBACK");
+                            }
                         }
                     }
-                });
+                );
             }
         });
     }
@@ -510,7 +541,7 @@ function updateEachWindow(tab) {
 
 /**
  * Gets the search key for reservedColor (_cs).
- * 
+ *
  * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas"
  * @returns e.g. "about:page", "addons.mozilla.org", "Add-on ID: ATBC@EasonWong"
  */
@@ -519,8 +550,8 @@ function getSearchKey(url) {
         return Promise.resolve(url.split(/\/|\?/)[0]); //e.g. "about:page"
     } else if (url.startsWith("moz-extension:")) {
         let uuid = url.split(/\/|\?/)[2];
-        return new Promise(resolve => {
-            browser.management.getAll().then(addon_list => {
+        return new Promise((resolve) => {
+            browser.management.getAll().then((addon_list) => {
                 let breakLoop = false;
                 for (addon of addon_list) {
                     if (addon.type === "extension" && addon.hostPermissions) {
@@ -542,7 +573,7 @@ function getSearchKey(url) {
 }
 
 //Recieves the color from content script
-browser.runtime.onConnect.addListener(port => {
+browser.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener((message, sender, sendResponse) => {
         setFrameColor(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
     });
@@ -550,17 +581,17 @@ browser.runtime.onConnect.addListener(port => {
 
 /**
  * Changes tab bar to the appointed color (with windowId).
- * 
+ *
  * "force" and "scheme" come from preferences.
- * 
+ *
  * force: false => normal;
  * force: true, scheme: dark, darkMode: true => normal;
  * force: true, scheme: light, darkMode: false => normal;
  * force: true, scheme: dark, darkMode: false => dark;
  * force: true, scheme: light, darkMode: true => light;
- * 
+ *
  * if color is empty, then roll back to default color.
- * 
+ *
  * @param {number} windowId The ID of the window.
  * @param {object | string} color The color to change to in rgb object or command string.
  * Command strings are: "DEFAULT", "DARKNOISE", and "PLAINTEXT"
@@ -638,7 +669,11 @@ function setFrameColor(windowId, color, dark_mode) {
             changeThemePara(rgba([255, 255, 255, 1]), "light");
             applyTheme(windowId, adaptive_themes["light"]);
         }
-    } else if (!pref_allow_dark_light || (pref_allow_dark_light && current_scheme == "dark" && dark_mode) || (pref_allow_dark_light && current_scheme == "light" && !dark_mode)) {
+    } else if (
+        !pref_allow_dark_light ||
+        (pref_allow_dark_light && current_scheme == "dark" && dark_mode) ||
+        (pref_allow_dark_light && current_scheme == "light" && !dark_mode)
+    ) {
         //Normal coloring
         if (dark_mode) {
             changeThemePara(color, "dark");
@@ -661,7 +696,7 @@ function setFrameColor(windowId, color, dark_mode) {
 
 /**
  * Adjusts the parameters in adaptive_themes.
- * 
+ *
  * @param {object} color Color of the frame.
  * @param {string} color_scheme Color scheme, "dark", "light", or "darknoise".
  * @param {boolean} change_ntp_bg Determines if to change color of New Tab Page.
@@ -708,7 +743,7 @@ function changeThemePara(color, color_scheme) {
 
 /**
  * Applies theme to certain window.
- * 
+ *
  * @param {number} windowId The ID of the target window
  * @param {object} theme The theme to apply
  */
@@ -716,12 +751,12 @@ function applyTheme(windowId, theme) {
     browser.theme.update(windowId, theme);
 }
 
-/** 
+/**
  * Returns if dark mode should be used considering the color.
- * 
+ *
  * @param {object} color The color to check, in rgb object.
  * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
-*/
+ */
 function isDarkModeSuitable(color) {
     if (color == null || typeof color != "object") return null;
     let brightness = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
@@ -730,7 +765,7 @@ function isDarkModeSuitable(color) {
 
 /**
  * Dims or lightens color.
- * 
+ *
  * @param {object} color Color to process, in rgb object.
  * @param {number} dim between -1.0 (dim) to 1.0 (light).
  * @returns Dimmed or lightened color string.
@@ -752,7 +787,7 @@ function dimColor(color, dim) {
 /**
  * Converts any color to rgba object.
  * @author JayB (modified by Eason Wong)
- * 
+ *
  * @param {string | Number[]} color Color to convert.
  * @returns Color in rgba object. Pure black if invalid.
  */
@@ -770,7 +805,7 @@ function rgba(color) {
                 r: parseInt(r, 16),
                 g: parseInt(g, 16),
                 b: parseInt(b, 16),
-                a: 1
+                a: 1,
             };
         } else {
             let result = color_temp.match(/[.?\d]+/g).map(Number);
@@ -778,7 +813,7 @@ function rgba(color) {
                 r: result[0],
                 g: result[1],
                 b: result[2],
-                a: result[3]
+                a: result[3],
             };
         }
     } else {
@@ -805,7 +840,8 @@ function checkVersion() {
  */
 function setBrowserColorScheme(pending_scheme) {
     let version = checkVersion();
-    if (version >= 95) browser.browserSettings.overrideContentColorScheme.set({
-        value: (pending_scheme === "system" && version >= 106) ? "auto" : pending_scheme
-    });
+    if (version >= 95)
+        browser.browserSettings.overrideContentColorScheme.set({
+            value: pending_scheme === "system" && version >= 106 ? "auto" : pending_scheme,
+        });
 }
