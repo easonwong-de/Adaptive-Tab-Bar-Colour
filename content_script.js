@@ -8,6 +8,8 @@ var pref_reservedColor_cs;
 //Current color lookup table
 var current_reservedColor_cs;
 
+var pref_custom;
+
 //Default color lookup table
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
