@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="UTF-8" />
+		<link href="../popup.css" rel="stylesheet" type="text/css" />
+	</head>
 
-<head>
-	<meta charset="UTF-8">
-	<link href="../popup.css" rel="stylesheet" type="text/css">
-</head>
-
-<body class="dark">
-	<div id="loading">
-		<h4>Loading…</h4>
-		<p id="reinstall-tip">Preference data could be corupted. Please remove the add-on, quit Firefox, and re-install
-			the add-on. I’m sorry for your inconvenience!</p>
-	</div>
-	<div id="settings" hidden="true">
-		<div>
-			<div id="info_display">This page is protected by browser</div>
-			<hr>
-			<h4>Color scheme preference</h4>
-			<label for="color_scheme_system" title="Use system color scheme">
-				<input id="color_scheme_system" type="radio" />
-				<span>Automatic</span>
-			</label>
-			<label for="color_scheme_no_dark" title="Use light color scheme">
-				<input id="color_scheme_no_dark" type="radio" />
-				<span>Light</span>
-			</label>
-			<label for="color_scheme_no_light" title="Use dark color scheme">
-				<input id="color_scheme_no_light" type="radio" />
-				<span>Dark</span>
-			</label>
-			<hr>
-			<label for="force_mode" title="Allow tab bar to turn bright">
-				<input id="force_mode" type="checkbox" />
-				<span id="force_mode_caption">Allow light tab bar</span>
-			</label>
-			<label for="dynamic" title="Updates tab bar color while scrolling">
-				<input id="dynamic" type="checkbox" />
-				<span>Dynamic color update</span>
-			</label>
-			<label for="no_theme_color" title="Always ignore theme color defined by the websites">
-				<input id="no_theme_color" type="checkbox" />
-				<span>Ignore all theme color</span>
-			</label>
-			<label id="custom_popup" title="Open option page">More settings…</label>
+	<body class="dark">
+		<div id="loading">
+			<h4>Loading…</h4>
+			<p id="reinstall-tip">
+				Preference data could be corupted. Please remove the add-on, quit Firefox, and re-install the add-on. I’m sorry for your
+				inconvenience!
+			</p>
 		</div>
-	</div>
-	<script type="text/javascript" src="../options.js"></script>
-</body>
-
+		<div id="settings" hidden="true">
+			<div>
+				<div id="info_display">This page is protected by browser</div>
+				<hr />
+				<h4>Color scheme preference</h4>
+				<label for="color_scheme_system" title="Use system color scheme">
+					<input id="color_scheme_system" type="radio" />
+					<span>Automatic</span>
+				</label>
+				<label for="color_scheme_no_dark" title="Use light color scheme">
+					<input id="color_scheme_no_dark" type="radio" />
+					<span>Light</span>
+				</label>
+				<label for="color_scheme_no_light" title="Use dark color scheme">
+					<input id="color_scheme_no_light" type="radio" />
+					<span>Dark</span>
+				</label>
+				<hr />
+				<label for="force_mode" title="Allow tab bar to turn bright">
+					<input id="force_mode" type="checkbox" />
+					<span id="force_mode_caption">Allow light tab bar</span>
+				</label>
+				<label for="dynamic" title="Updates tab bar color while scrolling">
+					<input id="dynamic" type="checkbox" />
+					<span>Dynamic color update</span>
+				</label>
+				<label for="no_theme_color" title="Always ignore theme color defined by the websites">
+					<input id="no_theme_color" type="checkbox" />
+					<span>Ignore all theme color</span>
+				</label>
+				<label id="custom_popup" title="Open option page">More settings…</label>
+			</div>
+		</div>
+		<script type="text/javascript" src="../options.js"></script>
+	</body>
 </html>

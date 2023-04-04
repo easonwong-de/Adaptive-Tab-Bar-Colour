@@ -192,12 +192,12 @@ hr {
 	text-overflow: ellipsis;
 }
 
-input[type='range'] {
+input[type="range"] {
 	margin-inline: 1em;
 	width: 6em;
 }
 
-input[type='color'] {
+input[type="color"] {
 	padding: 0;
 	border: none;
 	height: 1.5em;
@@ -205,7 +205,7 @@ input[type='color'] {
 	cursor: pointer;
 }
 
-input[type='text'] {
+input[type="text"] {
 	height: 1.75em;
 	padding-inline: 0.25em;
 	vertical-align: middle;
@@ -217,23 +217,23 @@ input[type='text'] {
 	width: 100%;
 }
 
-.light input[type='text'] {
+.light input[type="text"] {
 	border: solid 1px rgb(215, 215, 219);
 }
 
-.dark input[type='text'] {
+.dark input[type="text"] {
 	border: solid 1px rgb(78, 77, 84);
 }
 
-.light input[type='checkbox'],
-.light input[type='radio'],
-.light input[type='range'] {
+.light input[type="checkbox"],
+.light input[type="radio"],
+.light input[type="range"] {
 	accent-color: rgb(34, 100, 216);
 }
 
-.dark input[type='checkbox'],
-.dark input[type='radio'],
-.dark input[type='range'] {
+.dark input[type="checkbox"],
+.dark input[type="radio"],
+.dark input[type="range"] {
 	accent-color: rgb(98, 218, 251);
 }
 

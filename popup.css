@@ -49,7 +49,7 @@ label {
 }
 
 .light #info_action:hover {
-	background-color: rgba(0, 0, 0, 0.20);
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .light #info_action:active {
@@ -61,7 +61,7 @@ label {
 }
 
 .dark #info_action:hover {
-	background-color: rgba(255, 255, 255, 0.20);
+	background-color: rgba(255, 255, 255, 0.2);
 }
 
 .dark #info_action:active {
@@ -82,7 +82,7 @@ label {
 }
 
 .dark .tip {
-	background-color: rgba(255, 255, 255, 0.10);
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 #info_display {
@@ -95,7 +95,7 @@ label {
 }
 
 .dark #info_display {
-	border: 1px solid rgba(255, 255, 255, 0.10);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 h4 {
@@ -119,12 +119,12 @@ hr {
 
 .light hr {
 	color: rgba(0, 0, 0, 0.13);
-	background-color: rgba(0, 0, 0, 0.13)
+	background-color: rgba(0, 0, 0, 0.13);
 }
 
 .dark hr {
-	color: rgba(255, 255, 255, 0.10);
-	background-color: rgba(255, 255, 255, 0.10)
+	color: rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 .light input {
