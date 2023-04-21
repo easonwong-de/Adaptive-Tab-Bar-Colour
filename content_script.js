@@ -1,14 +1,14 @@
-//Sends color in RGBA object to background.js
-//If A in RGBA is not 1, falls back to default color.
+// Sends color in RGBA object to background.js
+// If A in RGBA is not 1, falls back to default color.
 
-//Settings cache: updated on message
+// Settings cache: updated on message
 var pref_no_theme_color;
 var pref_reservedColor_cs;
 
-//Current color lookup table
+// Current color lookup table
 var current_reservedColor_cs;
 
-//Default color lookup table
+// Default color lookup table
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
@@ -32,13 +32,13 @@ function loadPref(pref) {
 	return pref_no_theme_color != null && pref_reservedColor_cs != null;
 }
 
-//Initializes response color
+// Initializes response color
 var RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 
-//This will be displayed in the pop-up
+// This will be displayed in the pop-up
 var RESPONSE_INFO = "";
 
-//Send color to background as soon as page loads
+// Send color to background as soon as page loads
 browser.storage.local.get((pref) => {
 	if (loadPref(pref)) findAndSendColor();
 });
@@ -71,21 +71,21 @@ function setDynamicUpdate(dynamic) {
 	}
 }
 
-//Detects theme-color changes
+// Detects theme-color changes
 var onThemeColor = new MutationObserver(findAndSendColor);
 if (document.querySelector("meta[name=theme-color]") != null)
 	onThemeColor.observe(document.querySelector("meta[name=theme-color]"), {
 		attributes: true,
 	});
 
-//Detects Dark Reader
+// Detects Dark Reader
 var onDarkReader = new MutationObserver(findAndSendColor);
 onDarkReader.observe(document.documentElement, {
 	attributes: true,
 	attributeFilter: ["data-darkreader-mode"],
 });
 
-//Detects style injections & theme-color being added
+// Detects style injections & theme-color being added
 var onStyleInjection = new MutationObserver((mutations) => {
 	mutations.forEach((mutation) => {
 		if (
@@ -101,8 +101,8 @@ var onStyleInjection = new MutationObserver((mutations) => {
 onStyleInjection.observe(document.documentElement, { childList: true });
 onStyleInjection.observe(document.head, { childList: true });
 
-//Fired by update() from background.js
-//Loads newly applied settings
+// Fired by update() from background.js
+// Loads newly applied settings
 browser.runtime.onMessage.addListener((pref, sender, sendResponse) => {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_color = pref.no_theme_color;
@@ -154,7 +154,7 @@ function findAndSendColor_fix() {
  * @returns True if a legal reserved color for the webpage can be found.
  */
 function findColorReserved() {
-	let domain = document.location.host; //"host" can be "www.irgendwas.com"
+	let domain = document.location.host; // "host" can be "www.irgendwas.com"
 	let action = pref_reservedColor_cs[domain];
 	if (action == null || (!pref_no_theme_color && action == "UN_IGNORE_THEME") || (pref_no_theme_color && action == "IGNORE_THEME")) {
 		return false;
@@ -190,7 +190,7 @@ function findColorReserved() {
 		RESPONSE_COLOR = rgba(action);
 		RESPONSE_INFO = `Color for this domain is specified in the settings`;
 	}
-	//Return ture if reponse color is legal and can be sent to background.js
+	// Return ture if reponse color is legal and can be sent to background.js
 	return RESPONSE_COLOR != null && RESPONSE_COLOR.a == 1;
 }
 
@@ -221,23 +221,23 @@ function findColorUnreserved() {
  * @returns False if no legal theme-color can be found.
  */
 function findThemeColor() {
-	if (getComputedStyle(document.documentElement).backgroundImage == `url("chrome://global/skin/media/imagedoc-darknoise.png")`) {
-		//Image viewer
-		//Firefox chooses imagedoc-darknoise.png as the background of image viewer
-		//Doesn't work with images on data:image url
+	if (getComputedStyle(document.documentElement).backgroundImage == `url("chrome:// global/skin/media/imagedoc-darknoise.png")`) {
+		// Image viewer
+		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
+		// Doesn't work with images on data:image url
 		RESPONSE_COLOR = "DARKNOISE";
-		RESPONSE_INFO = `Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background`;
+		RESPONSE_INFO = `Using <b>chrome:// global/skin/media/imagedoc-darknoise.png</b> as background`;
 		return true;
 	} else if (
 		document.getElementsByTagName("link").length > 0 &&
-		document.getElementsByTagName("link")[0].href == "resource://content-accessible/plaintext.css"
+		document.getElementsByTagName("link")[0].href == "resource:// content-accessible/plaintext.css"
 	) {
-		//Plain text viewer
-		//Firefox seems to have blocked content script when viewing plain text online
-		//Thus this may only works for viewing local text file
+		// Plain text viewer
+		// Firefox seems to have blocked content script when viewing plain text online
+		// Thus this may only works for viewing local text file
 		if (getColorFrom(document.body).a != 1) {
 			RESPONSE_COLOR = "PLAINTEXT";
-			RESPONSE_INFO = `Using color from <b>resource://content-accessible/plaintext.css</b>`;
+			RESPONSE_INFO = `Using color from <b>resource:// content-accessible/plaintext.css</b>`;
 			return true;
 		} else {
 			return false;
@@ -248,8 +248,8 @@ function findThemeColor() {
 		if (headerTag == null) headerTag = document.querySelector(`meta[name="theme-color"]`);
 		if (headerTag != null) {
 			RESPONSE_COLOR = rgba(headerTag.content);
-			//Return true if it is legal (opaque) and can be sent to background.js
-			//Otherwise, return false and trigger getComputedColor()
+			// Return true if it is legal (opaque) and can be sent to background.js
+			// Otherwise, return false and trigger getComputedColor()
 			if (RESPONSE_COLOR.a == 1) {
 				RESPONSE_INFO = `Using theme color defined by the website
 					<label id="info_action" title="Ignore theme color defined by the website">
@@ -274,20 +274,20 @@ function findComputedColor() {
 	let color_temp0 = rgba([0, 0, 0, 0]);
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
-		//If the color is already opaque, intercept the loop
+		// If the color is already opaque, intercept the loop
 		if (color_temp0.a == 1) break;
-		//Only if the element is wide and thick enough will it be included in the calculation
+		// Only if the element is wide and thick enough will it be included in the calculation
 		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20) {
 			let color_temp1 = getColorFrom(element);
-			//If the element is tranparen, just skip
+			// If the element is tranparen, just skip
 			if (color_temp1.a == 0) continue;
 			color_temp0 = overlayColor(color_temp0, color_temp1);
 		}
 	}
 	cc(RESPONSE_COLOR, color_temp0);
-	//If the color is still not opaque, overlay it over the webpage body
-	//If the body is not opaque, overlay it over rgb(236, 236, 236)
-	//On Firefox Nightly it should be rgb(255, 255, 255)
+	// If the color is still not opaque, overlay it over the webpage body
+	// If the body is not opaque, overlay it over rgb(236, 236, 236)
+	// On Firefox Nightly it should be rgb(255, 255, 255)
 	if (RESPONSE_COLOR.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
@@ -390,5 +390,5 @@ function cc(target, source) {
 	target.a = source.a;
 }
 
-//Passes coloring info to pop-up
+// Passes coloring info to pop-up
 RESPONSE_INFO;

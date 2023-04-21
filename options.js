@@ -1,27 +1,31 @@
-//This script is shared by option page and popup
+// This script is shared by option page and popup
 
-//Settings cache: always synced with settings page
-var pref_scheme;
-var pref_allow_dark_light;
-var pref_dynamic;
-var pref_no_theme_color;
-var pref_tabbar_color;
-var pref_toolbar_color;
-var pref_separator_opacity;
-var pref_popup_color;
-var pref_sidebar_color;
-var pref_sidebar_border_color;
-var pref_custom;
-var pref_light_home_color;
-var pref_dark_home_color;
-var pref_light_fallback_color;
-var pref_dark_fallback_color;
-var pref_reservedColor_cs;
+// Settings cache: always synced with settings page
+var pref_scheme; // scheme
+var pref_allow_dark_light; // force
+var pref_dynamic; // dynamic
+var pref_no_theme_color; // no_theme_color
+var pref_tabbar; // tabbar_color
+var pref_tab_selected; // tab_selected
+var pref_toolbar; // toolbar_color
+var pref_toolbar_border_bottom; // separator_opacity
+var pref_toolbar_field; // toolbar_field_color
+var pref_toolbar_field_focus; // toolbar_field_focus_color
+var pref_sidebar; // sidebar_color
+var pref_sidebar_border; // sidebar_border_color
+var pref_popup; // popup_color
+var pref_popup_border; // popup_color
+var pref_custom; // custom
+var pref_home_light; // light_color
+var pref_home_dark; // dark_color
+var pref_fallback_light; // light_fallback_color
+var pref_fallback_dark; // dark_fallback_color
+var pref_reservedColor_cs; // reservedColor_cs
 
-//Current color lookup table
+// Current color lookup table
 var current_reservedColor_cs;
 
-//Default color lookup table
+// Default color lookup table
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
@@ -41,21 +45,26 @@ const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0
  * Loads preferences into cache and check integrity
  */
 function loadPref(pref) {
+	// loads prefs
 	pref_scheme = pref.scheme;
 	pref_allow_dark_light = pref.force;
 	pref_dynamic = pref.dynamic;
 	pref_no_theme_color = pref.no_theme_color;
-	pref_tabbar_color = pref.tabbar_color;
-	pref_toolbar_color = pref.toolbar_color;
-	pref_separator_opacity = pref.separator_opacity;
-	pref_popup_color = pref.popup_color;
-	pref_sidebar_color = pref.sidebar_color;
-	pref_sidebar_border_color = pref.sidebar_border_color;
+	pref_tabbar = pref.tabbar_color;
+	pref_tab_selected = pref.tab_selected_color;
+	pref_toolbar = pref.toolbar_color;
+	pref_toolbar_border_bottom = pref.separator_opacity;
+	pref_toolbar_field = pref.toolbar_field_color;
+	pref_toolbar_field_focus = pref.toolbar_field_focus_color;
+	pref_sidebar = pref.sidebar_color;
+	pref_sidebar_border = pref.sidebar_border_color;
+	pref_popup = pref.popup_color;
+	pref_popup_border = pref.popup_border_color;
 	pref_custom = pref.custom;
-	pref_light_home_color = pref.light_color;
-	pref_dark_home_color = pref.dark_color;
-	pref_light_fallback_color = pref.light_fallback_color;
-	pref_dark_fallback_color = pref.dark_fallback_color;
+	pref_home_light = pref.light_color;
+	pref_home_dark = pref.dark_color;
+	pref_fallback_light = pref.light_fallback_color;
+	pref_fallback_dark = pref.dark_fallback_color;
 	pref_reservedColor_cs = pref.reservedColor_cs;
 	current_reservedColor_cs = pref_custom ? pref_reservedColor_cs : default_reservedColor_cs;
 	return (
@@ -63,22 +72,26 @@ function loadPref(pref) {
 		pref_allow_dark_light != null &&
 		pref_dynamic != null &&
 		pref_no_theme_color != null &&
-		pref_tabbar_color != null &&
-		pref_toolbar_color != null &&
-		pref_separator_opacity != null &&
-		pref_popup_color != null &&
-		pref_sidebar_color != null &&
-		pref_sidebar_border_color != null &&
+		pref_tabbar != null &&
+		pref_tab_selected != null &&
+		pref_toolbar != null &&
+		pref_toolbar_border_bottom != null &&
+		pref_toolbar_field != null &&
+		pref_toolbar_field_focus != null &&
+		pref_sidebar != null &&
+		pref_sidebar_border != null &&
+		pref_popup != null &&
+		pref_popup_border != null &&
 		pref_custom != null &&
-		pref_light_home_color != null &&
-		pref_dark_home_color != null &&
-		pref_light_fallback_color != null &&
-		pref_dark_fallback_color != null &&
+		pref_home_light != null &&
+		pref_home_dark != null &&
+		pref_fallback_light != null &&
+		pref_fallback_dark != null &&
 		pref_reservedColor_cs != null
 	);
 }
 
-//Recommended color for Add-ons' built-in page
+// Recommended color for Add-ons' built-in page
 const recommendedColor_addon = Object.freeze({
 	"uBlock0@raymondhill.net": "#1b1a23",
 	"adguardadblocker@adguard.com": "#131313",
@@ -90,7 +103,7 @@ const recommendedColor_addon = Object.freeze({
 	"{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": "#fffffe",
 });
 
-//List of protected domains
+// List of protected domains
 const protected_domains = Object.freeze({
 	"accounts-static.cdn.mozilla.net": "PROTECTED",
 	"accounts.firefox.com": "PROTECTED",
@@ -112,12 +125,16 @@ let allow_dark_light = document.getElementById("force_mode");
 let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
 let no_theme_color = document.getElementById("no_theme_color");
-let op_tabbar_color = document.getElementById("tabbar_color");
-let op_toolbar_color = document.getElementById("toolbar_color");
-let op_separator_opacity = document.getElementById("separator_opacity");
-let op_popup_color = document.getElementById("popup_color");
-let op_sidebar_color = document.getElementById("sidebar_color");
-let op_sidebar_border_color = document.getElementById("sidebar_border_color");
+let op_tabbar = document.getElementById("tabbar_color");
+let op_tab_selected = document.getElementById("tab_selected_color");
+let op_toolbar = document.getElementById("toolbar_color");
+let op_toolbar_border_bottom = document.getElementById("toolbar_border_bottom_color");
+let op_toolbar_field = document.getElementById("toolbar_field_color");
+let op_toolbar_field_focus = document.getElementById("toolbar_field_focus_color");
+let op_sidebar = document.getElementById("sidebar_color");
+let op_sidebar_border = document.getElementById("sidebar_border_color");
+let op_popup = document.getElementById("popup_color");
+let op_popup_border = document.getElementById("popup_border_color");
 let op_more_custom = document.getElementById("more_custom");
 let op_custom_options = document.getElementById("custom_options");
 let op_custom_options_table = document.getElementById("custom_options_table");
@@ -141,10 +158,10 @@ loading.hidden = false;
 popupDetected() ? load_lite() : load();
 
 browser.theme.onUpdated.addListener(autoPageColor);
-//Load prefs when popup is opened
+// Load prefs when popup is opened
 document.addEventListener("pageshow", load);
-//Sync prefs on option page and popup
-//Technically it might cause dead loop, but onChanged will not be triggered when same pref is set
+// Sync prefs on option page and popup
+// Technically it might cause dead loop, but onChanged will not be triggered when same pref is set
 browser.storage.onChanged.addListener(() => {
 	if (!popupDetected()) document.hasFocus() ? load_lite() : load();
 	applySettings();
@@ -156,26 +173,30 @@ browser.storage.onChanged.addListener(() => {
 function load() {
 	browser.storage.local.get((pref) => {
 		if (loadPref(pref)) {
-			allow_dark_light.checked = !pref_allow_dark_light;
-			dynamic.checked = pref_dynamic;
-			no_theme_color.checked = pref_no_theme_color;
 			color_scheme_dark.checked = pref_scheme === "dark";
 			color_scheme_light.checked = pref_scheme === "light";
 			color_scheme_system.checked = pref_scheme === "system";
+			allow_dark_light.checked = !pref_allow_dark_light;
+			dynamic.checked = pref_dynamic;
+			no_theme_color.checked = pref_no_theme_color;
 			if (!popupDetected()) {
-				//when the script is run by option page
-				op_tabbar_color.value = pref_tabbar_color;
-				op_toolbar_color.value = pref_toolbar_color;
-				op_separator_opacity.value = pref_separator_opacity;
-				op_popup_color.value = pref_popup_color;
-				op_sidebar_color.value = pref_sidebar_color;
-				op_sidebar_border_color.value = pref_sidebar_border_color;
+				// when the script is run by option page
+				op_tabbar.value = pref_tabbar;
+				op_tab_selected.value = pref_tab_selected;
+				op_toolbar.value = pref_toolbar;
+				op_toolbar_border_bottom.value = pref_toolbar_border_bottom;
+				op_toolbar_field.value = pref_toolbar_field;
+				op_toolbar_field_focus.value = pref_toolbar_field_focus;
+				op_sidebar.value = pref_sidebar;
+				op_sidebar_border.value = pref_sidebar_border;
+				op_popup.value = pref_popup;
+				op_popup_border.value = pref_popup_border;
 				op_more_custom.checked = pref_custom;
 				op_custom_options.hidden = !pref_custom;
-				op_light_color.value = pref_light_home_color;
-				op_dark_color.value = pref_dark_home_color;
-				op_light_fallback_color.value = pref_light_fallback_color;
-				op_dark_fallback_color.value = pref_dark_fallback_color;
+				op_light_color.value = pref_home_light;
+				op_dark_color.value = pref_home_dark;
+				op_light_fallback_color.value = pref_fallback_light;
+				op_dark_fallback_color.value = pref_fallback_dark;
 				let table_rows = op_custom_options_table.rows;
 				for (let i = table_rows.length - 1; i > 3; i--) op_custom_options_table.deleteRow(i);
 				let domains = Object.keys(pref_reservedColor_cs);
@@ -202,12 +223,12 @@ function load() {
 function load_lite() {
 	browser.storage.local.get((pref) => {
 		if (loadPref(pref)) {
-			allow_dark_light.checked = !pref_allow_dark_light;
-			dynamic.checked = pref_dynamic;
-			no_theme_color.checked = pref_no_theme_color;
 			color_scheme_dark.checked = pref_scheme === "dark";
 			color_scheme_light.checked = pref_scheme === "light";
 			color_scheme_system.checked = pref_scheme === "system";
+			allow_dark_light.checked = !pref_allow_dark_light;
+			dynamic.checked = pref_dynamic;
+			no_theme_color.checked = pref_no_theme_color;
 			autoPageColor();
 			loading.hidden = true;
 			settings.hidden = false;
@@ -251,7 +272,7 @@ function changeColorScheme(pending_scheme) {
 	autoPageColor();
 }
 
-//If it's below v95.0, grey out "allow..." option
+// If it's below v95.0, grey out "allow..." option
 if (checkVersion() < 95) {
 	allow_dark_light.checked = false;
 	allow_dark_light.disabled = true;
@@ -312,34 +333,54 @@ function addAction(i) {
 if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
-	op_tabbar_color.oninput = () => {
+	op_tabbar.oninput = () => {
 		browser.storage.local.set({
-			tabbar_color: Number(op_tabbar_color.value),
+			tabbar_color: Number(op_tabbar.value),
 		});
 	};
-	op_toolbar_color.oninput = () => {
+	op_tab_selected.oninput = () => {
 		browser.storage.local.set({
-			toolbar_color: Number(op_toolbar_color.value),
+			tab_selected_color: Number(op_tab_selected.value),
 		});
 	};
-	op_popup_color.oninput = () => {
+	op_toolbar.oninput = () => {
 		browser.storage.local.set({
-			popup_color: Number(op_popup_color.value),
+			toolbar_color: Number(op_toolbar.value),
 		});
 	};
-	op_sidebar_color.oninput = () => {
+	op_toolbar_border_bottom.oninput = () => {
 		browser.storage.local.set({
-			sidebar_color: Number(op_sidebar_color.value),
+			separator_opacity: Number(op_toolbar_border_bottom.value),
 		});
 	};
-	op_sidebar_border_color.oninput = () => {
+	op_toolbar_field.oninput = () => {
 		browser.storage.local.set({
-			sidebar_border_color: Number(op_sidebar_border_color.value),
+			toolbar_field_color: Number(op_toolbar_field.value),
 		});
 	};
-	op_separator_opacity.oninput = () => {
+	op_toolbar_field_focus.oninput = () => {
 		browser.storage.local.set({
-			separator_opacity: Number(op_separator_opacity.value),
+			toolbar_field_focus_color: Number(op_toolbar_field_focus.value),
+		});
+	};
+	op_sidebar.oninput = () => {
+		browser.storage.local.set({
+			sidebar_color: Number(op_sidebar.value),
+		});
+	};
+	op_sidebar_border.oninput = () => {
+		browser.storage.local.set({
+			sidebar_border_color: Number(op_sidebar_border.value),
+		});
+	};
+	op_popup.oninput = () => {
+		browser.storage.local.set({
+			popup_color: Number(op_popup.value),
+		});
+	};
+	op_popup_border.oninput = () => {
+		browser.storage.local.set({
+			popup_border_color: Number(op_popup_border.value),
 		});
 	};
 	op_more_custom.onclick = () => {
@@ -363,7 +404,7 @@ if (popupDetected()) {
 	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
 	op_add.onclick = () => {
 		let i = 0;
-		while (document.getElementById(`DOM_${i}`) != null) i++; //finds an unoccupied index
+		while (document.getElementById(`DOM_${i}`) != null) i++; // finds an unoccupied index
 		let new_row = op_custom_options_table.insertRow(op_custom_options_table.rows.length);
 		generateNewRow("", i).then((new_row_HTML) => {
 			new_row.innerHTML = new_row_HTML;
@@ -511,7 +552,7 @@ function autoPageColor() {
  * Updates popup's color depends on tab bar color.
  */
 function autoPopupColor() {
-	//Sets text in info box
+	// Sets text in info box
 	browser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
@@ -662,7 +703,7 @@ function popupDetected() {
 	return document.getElementById("more_custom") == null;
 }
 
-//Light Mode Match Media on option page
+// Light Mode Match Media on option page
 const lightModeDetection_p = window.matchMedia("(prefers-color-scheme: light)");
 if (lightModeDetection_p)
 	lightModeDetection_p.onchange = () => {
