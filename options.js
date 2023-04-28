@@ -355,7 +355,9 @@ if (popupDetected()) {
 	op_dark_fallback_color.onchange = () => browser.storage.local.set({ dark_fallback_color: op_dark_fallback_color.value });
 	op_reset_light_fallback.onclick = () => browser.storage.local.set({ light_fallback_color: "#FFFFFF" }).then(load);
 	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ dark_fallback_color: "#2B2A33" }).then(load);
-	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
+	op_reset_all.onclick = () => {
+		if (confirm("Do you want to reset all the rules?")) browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
+	};
 	op_add.onclick = () => {
 		let i = 0;
 		while (document.getElementById(`DOM_${i}`) != null) i++; // finds an unoccupied index
@@ -428,7 +430,7 @@ function generateNewRow(domain, i) {
 				</select>`;
 				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColor_cs[domain]}">`;
 				let part_4 = `<button id="DEL_${i}" title="Delete">${svg_bin}</button>`;
-				resolve(`<td class="TenEm">${part_1}</td>
+				resolve(`<td class="TenFiveEm">${part_1}</td>
 				<td>${part_2}</td>
 				<td id="OPE_${i}">${part_3}</td>
 				<td>${part_4}</td>`);
@@ -480,7 +482,7 @@ function generateNewRow(domain, i) {
 			part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 		}
 		return Promise.resolve(
-			`<td class="TenEm">${part_1}</td>
+			`<td class="TenFiveEm">${part_1}</td>
 			<td>${part_2}</td>
 			<td id="OPE_${i}">${part_3}</td>
 			<td>${part_4}</td>`

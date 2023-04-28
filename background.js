@@ -200,6 +200,7 @@ var adaptive_themes = {
 			toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
 			// URL bar
 			toolbar_field: "rgb(242, 242, 242)",
+			toolbar_field_border: "rgba(0, 0, 0, 0)",
 			toolbar_field_focus: "rgb(242, 242, 242)",
 			toolbar_field_border_focus: "rgb(130, 180, 245)",
 			// Sidebar
@@ -238,6 +239,7 @@ var adaptive_themes = {
 			toolbar_bottom_separator: "rgba(255, 255, 255, 0)",
 			// URL bar
 			toolbar_field: "rgb(39, 38, 45)",
+			toolbar_field_border: "rgba(0, 0, 0, 0)",
 			toolbar_field_focus: "rgb(39, 38, 45)",
 			toolbar_field_border_focus: "rgb(70, 118, 160)",
 			// Sidebar
@@ -277,6 +279,7 @@ var adaptive_themes = {
 			toolbar_bottom_separator: "rgba(255, 255, 255, 0)",
 			// URL bar
 			toolbar_field: "rgb(44, 44, 44)",
+			toolbar_field_border: "rgba(0, 0, 0, 0)",
 			toolbar_field_focus: "rgb(44, 44, 44)",
 			toolbar_field_border_focus: "rgb(70, 118, 160)",
 			// Sidebar

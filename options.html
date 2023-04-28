@@ -64,61 +64,76 @@
 						<input id="force_mode" type="checkbox" />
 						<label id="force_mode_caption" for="force_mode">Allow light tab bar</label>
 					</h2>
-					<h2 title="Updates tab bar color while scrolling">
+					<h2 title="Keeps updating tab bar color while browsing within a web page">
 						<input id="dynamic" type="checkbox" />
 						<label for="dynamic">Dynamic color update</label>
 					</h2>
-					<h2 title="Always ignore theme color defined by the websites">
+					<h2 title="Always ignore theme color defined by the website">
 						<input id="no_theme_color" type="checkbox" />
-						<label for="no_theme_color">Ignore all theme color</label>
+						<label for="no_theme_color">Ignore designated theme color</label>
 					</h2>
 				</div>
 				<div id="tab_2" class="tab">
-					<h3 title="Set tab bar color offset">
-						<label for="tabbar_color" class="TenEm">Tab bar</label>
-						<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0" />
-					</h3>
-					<h3>
-						<label for="tab_selected_color" class="TenEm">tab_selected</label>
-						<input type="range" id="tab_selected_color" min="0" max="0.2" step="0.05" value="0" />
-					</h3>
-					<h3 title="Set tool bar color offset. Use the same value as tab bar color offset to prevent color transitioning">
-						<label for="toolbar_color" class="TenEm">Toolbar</label>
-						<input type="range" id="toolbar_color" min="0" max="0.2" step="0.05" value="0" />
-					</h3>
-					<h3 title="Color offset of separator line between browser UI and webpage">
-						<label for="toolbar_border_bottom_color" class="TenEm">Bottom line</label>
-						<input type="range" id="toolbar_border_bottom_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
-					<h3>
-						<label for="toolbar_field_color" class="TenEm">toolbar_field_color</label>
-						<input type="range" id="toolbar_field_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
-					<h3>
-						<label for="toolbar_field_focus_color" class="TenEm">toolbar_field_focus_color</label>
-						<input type="range" id="toolbar_field_focus_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
-					<h3 title="Set sidebar color offset">
-						<label for="sidebar_color" class="TenEm">Sidebar</label>
-						<input type="range" id="sidebar_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
-					<h3 title="Set sidebar border color offset">
-						<label for="sidebar_border_color" class="TenEm">Sidebar border</label>
-						<input type="range" id="sidebar_border_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
-					<h3>
-						<label for="popup_color" class="TenEm">popup_color</label>
-						<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
-					<h3>
-						<label for="popup_border_color" class="TenEm">popup_border_color</label>
-						<input type="range" id="popup_border_color" min="0" max="0.2" step="0.05" value="0.05" />
-					</h3>
+					<div id="cus_tabbar">
+						<h2>Tab bar</h2>
+						<h3>
+							<label for="tabbar_color" class="TenEm">Background</label>
+							<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0" />
+						</h3>
+						<h3>
+							<label for="tab_selected_color" class="TenEm">Selected tab</label>
+							<input type="range" id="tab_selected_color" min="0" max="0.2" step="0.05" value="0" />
+						</h3>
+					</div>
+					<div id="cus_toolbar">
+						<h2>Toolbar</h2>
+						<h3>
+							<label for="toolbar_color" class="TenEm">Background</label>
+							<input type="range" id="toolbar_color" min="0" max="0.2" step="0.05" value="0" />
+						</h3>
+						<h3>
+							<label for="toolbar_border_bottom_color" class="TenEm">Border</label>
+							<input type="range" id="toolbar_border_bottom_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+					</div>
+					<div id="cus_urlbar">
+						<h2>URL bar</h2>
+						<h3>
+							<label for="toolbar_field_color" class="TenEm">Background</label>
+							<input type="range" id="toolbar_field_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+						<h3>
+							<label for="toolbar_field_focus_color" class="TenEm">Background on focus</label>
+							<input type="range" id="toolbar_field_focus_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+					</div>
+					<div id="cus_sidebar">
+						<h2>Sidebar</h2>
+						<h3>
+							<label for="sidebar_color" class="TenEm">Background</label>
+							<input type="range" id="sidebar_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+						<h3>
+							<label for="sidebar_border_color" class="TenEm">Border</label>
+							<input type="range" id="sidebar_border_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+					</div>
+					<div id="cus_popup">
+						<h2>Pop-up</h2>
+						<h3>
+							<label for="popup_color" class="TenEm">Background</label>
+							<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+						<h3>
+							<label for="popup_border_color" class="TenEm">Border</label>
+							<input type="range" id="popup_border_color" min="0" max="0.2" step="0.05" value="0.05" />
+						</h3>
+					</div>
 				</div>
 				<div id="tab_3" class="tab">
 					<h2>
 						<input id="more_custom" type="checkbox" />
-						<label for="more_custom">Enable</label>
+						<label for="more_custom">Enable rules for specific domains</label>
 					</h2>
 					<div id="custom_options">
 						<table id="custom_options_table">

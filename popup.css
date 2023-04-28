@@ -5,23 +5,23 @@ body {
 }
 
 .light {
-	color: rgb(0, 0, 0);
 	background-color: rgb(255, 255, 255);
+	color: rgb(0, 0, 0);
 }
 
 .dark {
-	color: rgb(255, 255, 255);
 	background-color: rgb(28, 27, 34);
+	color: rgb(255, 255, 255);
 }
 
 #info_display,
 h4,
 label {
-	text-align: left;
 	display: block;
 	margin: 0;
 	padding: 0.5em;
 	border-radius: 4px;
+	text-align: left;
 }
 
 .light label:hover {
@@ -69,12 +69,12 @@ label {
 }
 
 .tip {
-	display: inline-block;
-	vertical-align: middle;
-	font-size: 50%;
 	padding-inline: 1em;
+	display: inline-block;
 	margin: 0;
 	border-radius: 5px;
+	font-size: 50%;
+	vertical-align: middle;
 }
 
 .light .tip {
@@ -104,12 +104,12 @@ h4 {
 
 #reinstall-tip {
 	overflow-wrap: break-word;
-	white-space: normal;
+	animation-fill-mode: forwards;
 	opacity: 0;
 	animation-name: appear;
 	animation-duration: 0s;
 	animation-delay: 5s;
-	animation-fill-mode: forwards;
+	white-space: normal;
 }
 
 hr {
@@ -118,13 +118,13 @@ hr {
 }
 
 .light hr {
-	color: rgba(0, 0, 0, 0.13);
 	background-color: rgba(0, 0, 0, 0.13);
+	color: rgba(0, 0, 0, 0.13);
 }
 
 .dark hr {
-	color: rgba(255, 255, 255, 0.1);
 	background-color: rgba(255, 255, 255, 0.1);
+	color: rgba(255, 255, 255, 0.1);
 }
 
 .light input {

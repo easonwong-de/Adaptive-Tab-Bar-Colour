@@ -54,19 +54,19 @@ span {
 }
 
 h2 {
+	margin-block: 1em;
+	padding: 0;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: normal;
-	padding: 0;
-	margin-block: 1em;
 }
 
 h3 {
+	margin-block: 0.25em;
+	padding: 0;
 	font-size: inherit;
 	font-weight: inherit;
 	line-height: normal;
-	padding: 0;
-	margin-block: 0.5em;
 }
 
 button,
@@ -90,8 +90,8 @@ select {
 
 button,
 select {
-	color: var(--color);
 	background-color: var(--bg-button);
+	color: var(--color);
 }
 
 button:hover,
@@ -136,8 +136,8 @@ a:active {
 }
 
 hr {
-	height: 1px;
 	margin-block: 1rem;
+	height: 1px;
 	background-color: var(--color-line);
 	border-width: 0;
 }
@@ -154,6 +154,14 @@ hr {
 	display: inline-block;
 	overflow: hidden;
 	width: 10em !important;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.TenFiveEm {
+	display: inline-block;
+	overflow: hidden;
+	width: clamp(5em, 15em, calc(100vw - 20em)) !important;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
@@ -202,13 +210,13 @@ div.sponsor {
 .tab_label {
 	margin-inline-end: 4px;
 	margin-block-start: 1rem;
-	padding: 4px 1em;
-	text-align: center;
 	display: inline-block;
+	padding: 4px 1em;
 	background-color: var(--bg-button);
 	border-radius: 4px;
 	font-size: 14px;
 	font-weight: 600;
+	text-align: center;
 }
 
 .tab_label:hover {
@@ -229,8 +237,14 @@ div.sponsor {
 	width: 100%;
 }
 
-#tab_switch_1:checked ~ #tab_1,
-#tab_switch_2:checked ~ #tab_2,
+#tab_switch_1:checked ~ #tab_1 {
+	display: block;
+}
+
+#tab_switch_2:checked ~ #tab_2 {
+	display: flex;
+}
+
 #tab_switch_3:checked ~ #tab_3 {
 	display: block;
 }
@@ -243,6 +257,18 @@ div.sponsor {
 #custom_options.disabled button,
 #custom_options.disabled input {
 	pointer-events: none;
+}
+
+#tab_2 {
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+#tab_2 > div {
+	width: fit-content;
+	padding: 0.1rem 1rem;
+	background-color: var(--bg-button);
+	border-radius: 8px;
 }
 
 /* - This Source Code Form is subject to the terms of the Mozilla Public
