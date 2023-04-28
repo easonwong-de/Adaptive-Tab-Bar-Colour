@@ -192,7 +192,7 @@ function load() {
 				op_popup.value = pref_popup;
 				op_popup_border.value = pref_popup_border;
 				op_more_custom.checked = pref_custom;
-				op_custom_options.hidden = !pref_custom;
+				op_custom_options.className = pref_custom ? "enabled" : "disabled";
 				op_light_color.value = pref_home_light;
 				op_dark_color.value = pref_home_dark;
 				op_light_fallback_color.value = pref_fallback_light;
@@ -333,72 +333,26 @@ function addAction(i) {
 if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
-	op_tabbar.oninput = () => {
-		browser.storage.local.set({
-			tabbar_color: Number(op_tabbar.value),
-		});
-	};
-	op_tab_selected.oninput = () => {
-		browser.storage.local.set({
-			tab_selected_color: Number(op_tab_selected.value),
-		});
-	};
-	op_toolbar.oninput = () => {
-		browser.storage.local.set({
-			toolbar_color: Number(op_toolbar.value),
-		});
-	};
-	op_toolbar_border_bottom.oninput = () => {
-		browser.storage.local.set({
-			separator_opacity: Number(op_toolbar_border_bottom.value),
-		});
-	};
-	op_toolbar_field.oninput = () => {
-		browser.storage.local.set({
-			toolbar_field_color: Number(op_toolbar_field.value),
-		});
-	};
-	op_toolbar_field_focus.oninput = () => {
-		browser.storage.local.set({
-			toolbar_field_focus_color: Number(op_toolbar_field_focus.value),
-		});
-	};
-	op_sidebar.oninput = () => {
-		browser.storage.local.set({
-			sidebar_color: Number(op_sidebar.value),
-		});
-	};
-	op_sidebar_border.oninput = () => {
-		browser.storage.local.set({
-			sidebar_border_color: Number(op_sidebar_border.value),
-		});
-	};
-	op_popup.oninput = () => {
-		browser.storage.local.set({
-			popup_color: Number(op_popup.value),
-		});
-	};
-	op_popup_border.oninput = () => {
-		browser.storage.local.set({
-			popup_border_color: Number(op_popup_border.value),
-		});
-	};
-	op_more_custom.onclick = () => {
+	op_tabbar.oninput = () => browser.storage.local.set({ tabbar_color: Number(op_tabbar.value) });
+	op_tab_selected.oninput = () => browser.storage.local.set({ tab_selected_color: Number(op_tab_selected.value) });
+	op_toolbar.oninput = () => browser.storage.local.set({ toolbar_color: Number(op_toolbar.value) });
+	op_toolbar_border_bottom.oninput = () => browser.storage.local.set({ separator_opacity: Number(op_toolbar_border_bottom.value) });
+	op_toolbar_field.oninput = () => browser.storage.local.set({ toolbar_field_color: Number(op_toolbar_field.value) });
+	op_toolbar_field_focus.oninput = () => browser.storage.local.set({ toolbar_field_focus_color: Number(op_toolbar_field_focus.value) });
+	op_sidebar.oninput = () => browser.storage.local.set({ sidebar_color: Number(op_sidebar.value) });
+	op_sidebar_border.oninput = () => browser.storage.local.set({ sidebar_border_color: Number(op_sidebar_border.value) });
+	op_popup.oninput = () => browser.storage.local.set({ popup_color: Number(op_popup.value) });
+	op_popup_border.oninput = () => browser.storage.local.set({ popup_border_color: Number(op_popup_border.value) });
+	op_more_custom.onchange = () => {
+		op_custom_options.className = op_more_custom.checked ? "enabled" : "disabled";
 		browser.storage.local.set({ custom: op_more_custom.checked });
-		op_custom_options.hidden = !op_more_custom.checked;
 	};
 	op_light_color.onchange = () => browser.storage.local.set({ light_color: op_light_color.value });
 	op_dark_color.onchange = () => browser.storage.local.set({ dark_color: op_dark_color.value });
 	op_reset_light.onclick = () => browser.storage.local.set({ light_color: "#FFFFFF" }).then(load);
 	op_reset_dark.onclick = () => browser.storage.local.set({ dark_color: "#2B2A33" }).then(load);
-	op_light_fallback_color.onchange = () =>
-		browser.storage.local.set({
-			light_fallback_color: op_light_fallback_color.value,
-		});
-	op_dark_fallback_color.onchange = () =>
-		browser.storage.local.set({
-			dark_fallback_color: op_dark_fallback_color.value,
-		});
+	op_light_fallback_color.onchange = () => browser.storage.local.set({ light_fallback_color: op_light_fallback_color.value });
+	op_dark_fallback_color.onchange = () => browser.storage.local.set({ dark_fallback_color: op_dark_fallback_color.value });
 	op_reset_light_fallback.onclick = () => browser.storage.local.set({ light_fallback_color: "#FFFFFF" }).then(load);
 	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ dark_fallback_color: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);

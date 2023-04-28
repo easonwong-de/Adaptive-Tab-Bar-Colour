@@ -7,7 +7,7 @@
 
 	<body class="dark">
 		<div id="loading">
-			<h4>Loading…</h4>
+			<h2>Loading…</h2>
 			<p id="reinstall-tip">
 				Preference data could be corupted. Please remove the add-on, quit Firefox, and re-install the add-on. I’m sorry for your
 				inconvenience!
@@ -19,200 +19,213 @@
 			<h1>&nbsp;</h1>
 		</div>
 		<div id="settings" hidden="true">
-			<div>
-				<h4>Color scheme preference</h4>
-				<form xmlns="http://www.w3.org/1999/xhtml" id="web-appearance-chooser" autocomplete="off">
-					<label class="web-appearance-choice" title="Use system color scheme">
-						<div class="web-appearance-choice-image-container">
-							<img role="presentation" alt="" width="54" height="42" />
-							<img class="auto-icon" role="presentation" alt="" width="54" height="42" />
-						</div>
-						<div class="web-appearance-choice-footer">
-							<input id="color_scheme_system" type="radio" name="web-appearance" value="auto" />
-							<span>Automatic</span>
-						</div>
-					</label>
-					<label class="web-appearance-choice" title="Use light color scheme">
-						<div class="web-appearance-choice-image-container">
-							<img role="presentation" alt="" width="54" height="42" />
-						</div>
-						<div class="web-appearance-choice-footer">
-							<input id="color_scheme_no_dark" type="radio" name="web-appearance" value="light" />
-							<span>Light</span>
-						</div>
-					</label>
-					<label class="web-appearance-choice" title="Use dark color scheme">
-						<div class="web-appearance-choice-image-container">
-							<img class="dark-icon" role="presentation" alt="" width="54" height="42" />
-						</div>
-						<div class="web-appearance-choice-footer">
-							<input id="color_scheme_no_light" type="radio" name="web-appearance" value="dark" />
-							<span>Dark</span>
-						</div>
-					</label>
-				</form>
+			<div class="tab_wrapper">
+				<input type="radio" name="tab_switch" id="tab_switch_1" class="tab_switch" checked />
+				<label for="tab_switch_1" class="tab_label">General</label>
+				<input type="radio" name="tab_switch" id="tab_switch_2" class="tab_switch" />
+				<label for="tab_switch_2" class="tab_label">Customization</label>
+				<input type="radio" name="tab_switch" id="tab_switch_3" class="tab_switch" />
+				<label for="tab_switch_3" class="tab_label">Advanced</label>
 				<hr />
-				<h4 title="Allow tab bar to turn bright (might cause flashing)">
-					<input id="force_mode" type="checkbox" />
-					<label id="force_mode_caption" for="force_mode">Allow light tab bar</label>
-				</h4>
-				<h4 title="Updates tab bar color while scrolling">
-					<input id="dynamic" type="checkbox" />
-					<label for="dynamic">Dynamic color update</label>
-				</h4>
-				<h4 title="Always ignore theme color defined by the websites">
-					<input id="no_theme_color" type="checkbox" />
-					<label for="no_theme_color">Ignore all theme color</label>
-				</h4>
-				<hr />
-				<h4 title="Set tab bar color offset">
-					<label for="tabbar_color" class="TenEm">Tab bar</label>
-					<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0" />
-				</h4>
-				<h4>
-					<label for="tab_selected_color" class="TenEm">tab_selected</label>
-					<input type="range" id="tab_selected_color" min="0" max="0.2" step="0.05" value="0" />
-				</h4>
-				<h4 title="Set tool bar color offset. Use the same value as tab bar color offset to prevent color transitioning">
-					<label for="toolbar_color" class="TenEm">Toolbar</label>
-					<input type="range" id="toolbar_color" min="0" max="0.2" step="0.05" value="0" />
-				</h4>
-				<h4 title="Color offset of separator line between browser UI and webpage">
-					<label for="toolbar_border_bottom_color" class="TenEm">Bottom line</label>
-					<input type="range" id="toolbar_border_bottom_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<h4>
-					<label for="toolbar_field_color" class="TenEm">toolbar_field_color</label>
-					<input type="range" id="toolbar_field_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<h4>
-					<label for="toolbar_field_focus_color" class="TenEm">toolbar_field_focus_color</label>
-					<input type="range" id="toolbar_field_focus_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<h4 title="Set sidebar color offset">
-					<label for="sidebar_color" class="TenEm">Sidebar</label>
-					<input type="range" id="sidebar_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<h4 title="Set sidebar border color offset">
-					<label for="sidebar_border_color" class="TenEm">Sidebar border</label>
-					<input type="range" id="sidebar_border_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<h4>
-					<label for="popup_color" class="TenEm">popup_color</label>
-					<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<h4>
-					<label for="popup_border_color" class="TenEm">popup_border_color</label>
-					<input type="range" id="popup_border_color" min="0" max="0.2" step="0.05" value="0.05" />
-				</h4>
-				<hr />
-				<h4>
-					<input id="more_custom" type="checkbox" />
-					<label for="more_custom">Set color for specific domains</label>
-				</h4>
-			</div>
-			<div id="custom_options" hidden="true">
-				<table id="custom_options_table">
-					<tr>
-						<td colspan="2"><span>Homepage color: light</span></td>
-						<td>
-							<input class="FiveEm" type="color" value="#FFFFFF" id="light_color" />
-						</td>
-						<td>
-							<button id="reset_light_color" title="Reset">
-								<svg viewBox="0 0 24 24">
-									<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-									<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-								</svg>
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2"><span>Homepage color: dark</span></td>
-						<td>
-							<input class="FiveEm" type="color" value="#2B2A33" id="dark_color" />
-						</td>
-						<td>
-							<button id="reset_dark_color" title="Reset">
-								<svg viewBox="0 0 24 24">
-									<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-									<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-								</svg>
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2"><span>Fallback color: light</span></td>
-						<td>
-							<input class="FiveEm" type="color" value="#FFFFFF" id="light_fallback_color" />
-						</td>
-						<td>
-							<button id="reset_light_fallback_color" title="Reset">
-								<svg viewBox="0 0 24 24">
-									<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-									<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-								</svg>
-							</button>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2"><span>Fallback color: dark</span></td>
-						<td>
-							<input class="FiveEm" type="color" value="#2B2A33" id="dark_fallback_color" />
-						</td>
-						<td>
-							<button id="reset_dark_fallback_color" title="Reset">
-								<svg viewBox="0 0 24 24">
-									<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-									<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-								</svg>
-							</button>
-						</td>
-					</tr>
-				</table>
-				<div style="padding: 4px">
-					<span>
-						<button id="reset_all" title="Reset domain-specific rules">
-							<svg viewBox="0 0 24 24">
-								<path d="M2.5 2v6h6M21.5 22v-6h-6" stroke="#FF2600" />
-								<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" stroke="#FF2600" />
-							</svg>
-						</button>
-					</span>
-					<span>
-						<button id="add" title="Add a new rule">
-							<svg viewBox="0 0 24 24">
-								<line x1="12" y1="5" x2="12" y2="19"></line>
-								<line x1="5" y1="12" x2="19" y2="12"></line>
-							</svg>
-						</button>
-					</span>
+				<div id="tab_1" class="tab">
+					<h2>Color scheme preference</h2>
+					<form xmlns="http://www.w3.org/1999/xhtml" id="web-appearance-chooser" autocomplete="off">
+						<label class="web-appearance-choice" title="Use system color scheme">
+							<div class="web-appearance-choice-image-container">
+								<img role="presentation" alt="" width="54" height="42" />
+								<img class="auto-icon" role="presentation" alt="" width="54" height="42" />
+							</div>
+							<div class="web-appearance-choice-footer">
+								<input id="color_scheme_system" type="radio" name="web-appearance" value="auto" />
+								<span>Automatic</span>
+							</div>
+						</label>
+						<label class="web-appearance-choice" title="Use light color scheme">
+							<div class="web-appearance-choice-image-container">
+								<img role="presentation" alt="" width="54" height="42" />
+							</div>
+							<div class="web-appearance-choice-footer">
+								<input id="color_scheme_no_dark" type="radio" name="web-appearance" value="light" />
+								<span>Light</span>
+							</div>
+						</label>
+						<label class="web-appearance-choice" title="Use dark color scheme">
+							<div class="web-appearance-choice-image-container">
+								<img class="dark-icon" role="presentation" alt="" width="54" height="42" />
+							</div>
+							<div class="web-appearance-choice-footer">
+								<input id="color_scheme_no_light" type="radio" name="web-appearance" value="dark" />
+								<span>Dark</span>
+							</div>
+						</label>
+					</form>
+					<hr />
+					<h2 title="Allow tab bar to turn bright (might cause flashing)">
+						<input id="force_mode" type="checkbox" />
+						<label id="force_mode_caption" for="force_mode">Allow light tab bar</label>
+					</h2>
+					<h2 title="Updates tab bar color while scrolling">
+						<input id="dynamic" type="checkbox" />
+						<label for="dynamic">Dynamic color update</label>
+					</h2>
+					<h2 title="Always ignore theme color defined by the websites">
+						<input id="no_theme_color" type="checkbox" />
+						<label for="no_theme_color">Ignore all theme color</label>
+					</h2>
+				</div>
+				<div id="tab_2" class="tab">
+					<h3 title="Set tab bar color offset">
+						<label for="tabbar_color" class="TenEm">Tab bar</label>
+						<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0" />
+					</h3>
+					<h3>
+						<label for="tab_selected_color" class="TenEm">tab_selected</label>
+						<input type="range" id="tab_selected_color" min="0" max="0.2" step="0.05" value="0" />
+					</h3>
+					<h3 title="Set tool bar color offset. Use the same value as tab bar color offset to prevent color transitioning">
+						<label for="toolbar_color" class="TenEm">Toolbar</label>
+						<input type="range" id="toolbar_color" min="0" max="0.2" step="0.05" value="0" />
+					</h3>
+					<h3 title="Color offset of separator line between browser UI and webpage">
+						<label for="toolbar_border_bottom_color" class="TenEm">Bottom line</label>
+						<input type="range" id="toolbar_border_bottom_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+					<h3>
+						<label for="toolbar_field_color" class="TenEm">toolbar_field_color</label>
+						<input type="range" id="toolbar_field_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+					<h3>
+						<label for="toolbar_field_focus_color" class="TenEm">toolbar_field_focus_color</label>
+						<input type="range" id="toolbar_field_focus_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+					<h3 title="Set sidebar color offset">
+						<label for="sidebar_color" class="TenEm">Sidebar</label>
+						<input type="range" id="sidebar_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+					<h3 title="Set sidebar border color offset">
+						<label for="sidebar_border_color" class="TenEm">Sidebar border</label>
+						<input type="range" id="sidebar_border_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+					<h3>
+						<label for="popup_color" class="TenEm">popup_color</label>
+						<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+					<h3>
+						<label for="popup_border_color" class="TenEm">popup_border_color</label>
+						<input type="range" id="popup_border_color" min="0" max="0.2" step="0.05" value="0.05" />
+					</h3>
+				</div>
+				<div id="tab_3" class="tab">
+					<h2>
+						<input id="more_custom" type="checkbox" />
+						<label for="more_custom">Enable</label>
+					</h2>
+					<div id="custom_options">
+						<table id="custom_options_table">
+							<tr>
+								<td colspan="2"><span>Homepage color: light</span></td>
+								<td>
+									<input class="FiveEm" type="color" value="#FFFFFF" id="light_color" />
+								</td>
+								<td>
+									<button id="reset_light_color" title="Reset">
+										<svg viewBox="0 0 24 24">
+											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+										</svg>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><span>Homepage color: dark</span></td>
+								<td>
+									<input class="FiveEm" type="color" value="#2B2A33" id="dark_color" />
+								</td>
+								<td>
+									<button id="reset_dark_color" title="Reset">
+										<svg viewBox="0 0 24 24">
+											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+										</svg>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><span>Fallback color: light</span></td>
+								<td>
+									<input class="FiveEm" type="color" value="#FFFFFF" id="light_fallback_color" />
+								</td>
+								<td>
+									<button id="reset_light_fallback_color" title="Reset">
+										<svg viewBox="0 0 24 24">
+											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+										</svg>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2"><span>Fallback color: dark</span></td>
+								<td>
+									<input class="FiveEm" type="color" value="#2B2A33" id="dark_fallback_color" />
+								</td>
+								<td>
+									<button id="reset_dark_fallback_color" title="Reset">
+										<svg viewBox="0 0 24 24">
+											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+										</svg>
+									</button>
+								</td>
+							</tr>
+						</table>
+						<div style="padding: 4px">
+							<span>
+								<button id="reset_all" title="Reset domain-specific rules">
+									<svg viewBox="0 0 24 24">
+										<path d="M2.5 2v6h6M21.5 22v-6h-6" stroke="#FF2600" />
+										<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" stroke="#FF2600" />
+									</svg>
+								</button>
+							</span>
+							<span>
+								<button id="add" title="Add a new rule">
+									<svg viewBox="0 0 24 24">
+										<line x1="12" y1="5" x2="12" y2="19"></line>
+										<line x1="5" y1="12" x2="19" y2="12"></line>
+									</svg>
+								</button>
+							</span>
+						</div>
+					</div>
 				</div>
 			</div>
 			<hr />
-			<div>
-				<p><a href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/issues">Report an issue / submit a suggestion</a></p>
-			</div>
-			<div class="sponsor">
-				<form action="https://www.paypal.com/donate" method="post" target="_blank">
-					<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
-					<input
-						type="image"
-						src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
-						border="0"
-						name="submit"
-						title="PayPal - The safer, easier way to pay online!"
-						alt="Donate with PayPal button"
-					/>
-					<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-				</form>
-				<a href="https://www.buymeacoffee.com/easonwong" target="_blank">
-					<img
-						src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-						alt="Buy Me A Coffee"
-						style="height: 47px !important; width: auto !important"
-					/>
-				</a>
+			<div class="footer">
+				<div>
+					<p><a href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/issues">Report an issue / submit a suggestion</a></p>
+				</div>
+				<div class="sponsor">
+					<form action="https://www.paypal.com/donate" method="post" target="_blank">
+						<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
+						<input
+							type="image"
+							src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
+							border="0"
+							name="submit"
+							title="PayPal - The safer, easier way to pay online!"
+							alt="Donate with PayPal button"
+						/>
+						<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+					</form>
+					<a href="https://www.buymeacoffee.com/easonwong" target="_blank">
+						<img
+							src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+							alt="Buy Me A Coffee"
+							style="height: 47px !important; width: auto !important"
+						/>
+					</a>
+				</div>
 			</div>
 		</div>
 		<p>&nbsp;</p>
