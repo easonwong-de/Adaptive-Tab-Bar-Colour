@@ -67,6 +67,8 @@ h3 {
 	font-size: inherit;
 	font-weight: inherit;
 	line-height: normal;
+	display: flex;
+	align-items: center;
 }
 
 button,
