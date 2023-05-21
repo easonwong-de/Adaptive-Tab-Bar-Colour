@@ -31,7 +31,6 @@ const default_reservedColor_cs = Object.freeze({
 	"developer.mozilla.org": "IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "QS_div.wl",
-	"matters.news": "IGNORE_THEME",
 	"open.spotify.com": "#000000",
 	"www.instagram.com": "IGNORE_THEME",
 	"www.linkedin.com": "IGNORE_THEME",
@@ -101,6 +100,7 @@ const recommendedColor_addon = Object.freeze({
 	"sponsorBlocker@ajay.app": "#323232",
 	"tongwen@softcup": "#fffffe",
 	"{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": "#fffffe",
+	"{e7476172-097c-4b77-b56e-f56a894adca9}": "#151f2a",
 });
 
 // List of protected domains
@@ -545,6 +545,8 @@ function autoPopupColor() {
 						pp_info_display.innerHTML = "Using color for PDF viewer";
 					} else if (tabs[0].favIconUrl && tabs[0].favIconUrl.startsWith("chrome:")) {
 						pp_info_display.innerHTML = "This page is protected by browser";
+					} else if (url.endsWith("http://" + tabs[0].title) || url.endsWith("https://" + tabs[0].title)) {
+						pp_info_display.innerHTML = "Using color for plain text viewer";
 					} else {
 						pp_info_display.innerHTML = "An error occurred, using fallback color";
 					}

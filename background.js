@@ -44,7 +44,6 @@ const default_reservedColor_cs = Object.freeze({
 	"developer.mozilla.org": "IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "QS_div.wl",
-	"matters.news": "IGNORE_THEME",
 	"open.spotify.com": "#000000",
 	"www.instagram.com": "IGNORE_THEME",
 	"www.linkedin.com": "IGNORE_THEME",
@@ -507,6 +506,7 @@ function update() {
  * @param {tabs.Tab} tab The tab the window is showing
  */
 function updateEachWindow(tab) {
+	console.log(tab);
 	let url = tab.url;
 	let windowId = tab.windowId;
 	if (url.startsWith("view-source:")) {
@@ -563,6 +563,10 @@ function updateEachWindow(tab) {
 								// Content script is also blocked on website that failed to load
 								console.log(url + "\nTab failed to load.");
 								setFrameColor(windowId, "DEFAULT");
+							} else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) {
+								// When viewing plain text online, Firefox blocks content script
+								console.log(url + "\nMight be plain text viewer.");
+								setFrameColor(windowId, "PLAINTEXT");
 							} else {
 								console.error(url + "\nNo connection to content script.");
 								setFrameColor(windowId, "FALLBACK");
