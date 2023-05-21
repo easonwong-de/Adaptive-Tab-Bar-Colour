@@ -220,23 +220,23 @@ function findColorUnreserved() {
  * @returns False if no legal theme-color can be found.
  */
 function findThemeColor() {
-	if (getComputedStyle(document.documentElement).backgroundImage == `url("chrome:// global/skin/media/imagedoc-darknoise.png")`) {
+	if (getComputedStyle(document.documentElement).backgroundImage == `url("chrome://global/skin/media/imagedoc-darknoise.png")`) {
 		// Image viewer
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url
 		RESPONSE_COLOR = "DARKNOISE";
-		RESPONSE_INFO = `Using <b>chrome:// global/skin/media/imagedoc-darknoise.png</b> as background`;
+		RESPONSE_INFO = `Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background`;
 		return true;
 	} else if (
 		document.getElementsByTagName("link").length > 0 &&
-		document.getElementsByTagName("link")[0].href == "resource:// content-accessible/plaintext.css"
+		document.getElementsByTagName("link")[0].href == "resource://content-accessible/plaintext.css"
 	) {
 		// Plain text viewer
 		// Firefox seems to have blocked content script when viewing plain text online
 		// Thus this may only works for viewing local text file
 		if (getColorFrom(document.body).a != 1) {
 			RESPONSE_COLOR = "PLAINTEXT";
-			RESPONSE_INFO = `Using color from <b>resource:// content-accessible/plaintext.css</b>`;
+			RESPONSE_INFO = `Using color from <b>resource://content-accessible/plaintext.css</b>`;
 			return true;
 		} else {
 			return false;
