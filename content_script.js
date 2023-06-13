@@ -42,31 +42,71 @@ browser.storage.local.get((pref) => {
 	if (loadPref(pref)) findAndSendColor();
 });
 
+
+var debouncePrevRun = 0;
+var debounceTimeout = null;
+
+/**
+ * Runs the given function with a maximum rate of 100ms.
+ *
+ * @param {function} fn
+ * @returns
+ */
+function withDebounce(fn) {
+	const timeout = 100;
+
+	return function () {
+		const curTime = Date.now();
+
+		if(debounceTimeout) {
+			// Clear any outstanding timeout.
+			clearTimeout(debounceTimeout);
+			debounceTimeout = null;
+		}
+
+		if(curTime - timeout > debouncePrevRun) {
+			// Been longer than the timeout? Just call the function now
+			debouncePrevRun = curTime;
+			fn();
+		} else {
+			// Too fast? Delay the function call
+			debounceTimeout = setTimeout(() => {
+				debouncePrevRun = Date.now();
+				debounceTimeout = null;
+				fn();
+			}, timeout - (curTime - debouncePrevRun));
+		}
+	}
+}
+
 /**
  * Sets up / Turns off dynamic update.
  * @param {boolean} dynamic Dynamic update.
  */
 function setDynamicUpdate(dynamic) {
+	const findAndSendColor_debounce = withDebounce(findAndSendColor);
+	const findAndSendColor_fix_debounce = withDebounce(findAndSendColor_fix);
+
 	if (dynamic) {
-		document.addEventListener("animationend", findAndSendColor_fix);
-		document.addEventListener("animationcancel", findAndSendColor_fix);
-		document.addEventListener("pageshow", findAndSendColor);
-		document.addEventListener("click", findAndSendColor);
-		document.addEventListener("resize", findAndSendColor);
-		document.addEventListener("scroll", findAndSendColor);
-		document.addEventListener("transitionend", findAndSendColor_fix);
-		document.addEventListener("transitioncancel", findAndSendColor_fix);
-		document.addEventListener("visibilitychange", findAndSendColor);
+		document.addEventListener("animationend", findAndSendColor_fix_debounce);
+		document.addEventListener("animationcancel", findAndSendColor_fix_debounce);
+		document.addEventListener("pageshow", findAndSendColor_debounce);
+		document.addEventListener("click", findAndSendColor_debounce);
+		document.addEventListener("resize", findAndSendColor_debounce);
+		document.addEventListener("scroll", findAndSendColor_debounce);
+		document.addEventListener("transitionend", findAndSendColor_fix_debounce);
+		document.addEventListener("transitioncancel", findAndSendColor_fix_debounce);
+		document.addEventListener("visibilitychange", findAndSendColor_debounce);
 	} else {
-		document.removeEventListener("animationend", findAndSendColor_fix);
-		document.removeEventListener("animationcancel", findAndSendColor_fix);
-		document.removeEventListener("click", findAndSendColor);
-		document.removeEventListener("pageshow", findAndSendColor);
-		document.removeEventListener("resize", findAndSendColor);
-		document.removeEventListener("scroll", findAndSendColor);
-		document.removeEventListener("transitionend", findAndSendColor_fix);
-		document.removeEventListener("transitioncancel", findAndSendColor_fix);
-		document.removeEventListener("visibilitychange", findAndSendColor);
+		document.removeEventListener("animationend", findAndSendColor_fix_debounce);
+		document.removeEventListener("animationcancel", findAndSendColor_fix_debounce);
+		document.removeEventListener("pageshow", findAndSendColor_debounce);
+		document.removeEventListener("click", findAndSendColor_debounce);
+		document.removeEventListener("resize", findAndSendColor_debounce);
+		document.removeEventListener("scroll", findAndSendColor_debounce);
+		document.removeEventListener("transitionend", findAndSendColor_fix_debounce);
+		document.removeEventListener("transitioncancel", findAndSendColor_fix_debounce);
+		document.removeEventListener("visibilitychange", findAndSendColor_debounce);
 	}
 }
 
