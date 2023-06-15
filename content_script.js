@@ -53,7 +53,7 @@ var debounceTimeoutID = null;
  */
 function addDebounce(fn) {
 	const timeout = 100;
-	return function () {
+	return () => {
 		const curTime = Date.now();
 		if (debounceTimeoutID) {
 			// Clear pending function
