@@ -41,7 +41,7 @@ const svg_bin = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></poly
 const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
 
 /**
- * Loads preferences into cache and check integrity
+ * Loads preferences into cache and check integrity.
  */
 function loadPref(pref) {
 	// loads prefs
@@ -168,7 +168,7 @@ browser.storage.onChanged.addListener(() => {
 });
 
 /**
- * Loads all prefs
+ * Loads all prefs.
  */
 function load() {
 	browser.storage.local.get((pref) => {
@@ -218,7 +218,7 @@ function load() {
 }
 
 /**
- * Only loads color scheme, force mode, dynamic mode, ignore theme color pref
+ * Only loads color scheme, force mode, dynamic mode, ignore theme color pref.
  */
 function load_lite() {
 	browser.storage.local.get((pref) => {
@@ -262,8 +262,7 @@ color_scheme_system.addEventListener("input", () => {
 
 /**
  * Sets the color scheme, and updates appearance of option page.
- *
- * @param {string} pending_scheme "light", "dark", or "system"
+ * @param {string} pending_scheme "light", "dark", or "system".
  */
 function changeColorScheme(pending_scheme) {
 	pref_scheme = pending_scheme;
@@ -295,7 +294,6 @@ no_theme_color.onclick = () => {
 
 /**
  * Gives newly generated HTML elements actions.
- *
  * @param {number} i The index number given to newly generated HTML elements.
  */
 function addAction(i) {
@@ -415,10 +413,8 @@ function autoSaveSettings() {
  * Reads settings for a domain, generates new HTML elements and gives them id-s.
  * These HTML elements shall be inserted into op_custom_options_table using insertRow().
  * Shall run addAction() after inserting.
- *
  * @param {*} domain Domain stored in the storage.
  * @param {*} i Special numbering of the elements.
- * @returns
  */
 function generateNewRow(domain, i) {
 	if (domain.startsWith("Add-on ID: ")) {
@@ -491,14 +487,14 @@ function generateNewRow(domain, i) {
 }
 
 /**
- * Triggers color update
+ * Triggers color update.
  */
 function applySettings() {
 	browser.runtime.sendMessage("UPDATE_REQUEST");
 }
 
 /**
- * Updates color of option page or popup
+ * Updates color of option page or popup.
  */
 function autoPageColor() {
 	popupDetected() ? autoPopupColor() : autoOptionsColor();
@@ -655,7 +651,7 @@ function autoOptionsColor() {
 }
 
 /**
- * @returns true if the script is run by the popup
+ * @returns true if the script is run by the popup.
  */
 function popupDetected() {
 	return document.getElementById("more_custom") == null;
@@ -669,7 +665,7 @@ if (lightModeDetection_p)
 	};
 
 /**
- * @returns true if in light mode, false if in dark mode or cannot detect
+ * @returns true if in light mode, false if in dark mode or cannot detect.
  */
 function lightModeDetected() {
 	return lightModeDetection_p && lightModeDetection_p.matches;

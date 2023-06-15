@@ -339,7 +339,7 @@ function initialize() {
 		let pending_fallback_light = pref_fallback_light;
 		let pending_fallback_dark = pref_fallback_dark;
 		let pending_reservedColor_cs = pref_reservedColor_cs;
-		let pending_last_version = [1, 7, 6];
+		let pending_last_version = [1, 7, 8];
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
 			pending_tab_selected = 0.15;
@@ -502,8 +502,7 @@ function update() {
 
 /**
  * Updates the color for a window.
- *
- * @param {tabs.Tab} tab The tab the window is showing
+ * @param {tabs.Tab} tab The tab the window is showing.
  */
 function updateEachWindow(tab) {
 	console.log(tab);
@@ -581,9 +580,8 @@ function updateEachWindow(tab) {
 
 /**
  * Gets the search key for reservedColor (_cs).
- *
- * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas"
- * @returns e.g. "about:page", "addons.mozilla.org", "Add-on ID: ATBC@EasonWong"
+ * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
+ * @returns e.g. "about:page", "addons.mozilla.org", "Add-on ID: ATBC@EasonWong".
  */
 function getSearchKey(url) {
 	if (url.startsWith("about:")) {
@@ -748,7 +746,6 @@ function setFrameColor(windowId, color, dark_mode) {
 
 /**
  * Adjusts the parameters in adaptive_themes.
- *
  * @param {object} color Color of the frame.
  * @param {string} color_scheme Color scheme, "dark", "light", or "darknoise".
  */
@@ -812,9 +809,8 @@ function changeThemePara(color, color_scheme) {
 
 /**
  * Applies theme to certain window.
- *
- * @param {number} windowId The ID of the target window
- * @param {object} theme The theme to apply
+ * @param {number} windowId The ID of the target window.
+ * @param {object} theme The theme to apply.
  */
 function applyTheme(windowId, theme) {
 	browser.theme.update(windowId, theme);
@@ -822,7 +818,6 @@ function applyTheme(windowId, theme) {
 
 /**
  * Returns if dark mode should be used considering the color.
- *
  * @param {object} color The color to check, in rgb object.
  * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
  */
@@ -834,7 +829,6 @@ function isDarkModeSuitable(color) {
 
 /**
  * Dims or lightens color.
- *
  * @param {object} color Color to process, in rgb object.
  * @param {number} dim between -1.0 (dim) to 1.0 (light).
  * @returns Dimmed or lightened color string.
@@ -855,8 +849,7 @@ function dimColor(color, dim) {
 
 /**
  * Converts any color to rgba object.
- * @author JayB (modified by Eason Wong)
- *
+ * @author JayB on Stack Overflow (modified by Eason Wong).
  * @param {string | Number[]} color Color to convert.
  * @returns Color in rgba object. Pure black if invalid.
  */

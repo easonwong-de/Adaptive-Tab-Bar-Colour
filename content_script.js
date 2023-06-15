@@ -42,41 +42,37 @@ browser.storage.local.get((pref) => {
 	if (loadPref(pref)) findAndSendColor();
 });
 
-
 var debouncePrevRun = 0;
-var debounceTimeout = null;
+var debounceTimeoutID = null;
 
 /**
  * Runs the given function with a maximum rate of 100ms.
- *
- * @param {function} fn
- * @returns
+ * @param {function} fn Fuction without debounce.
+ * @returns Function with debounce.
+ * @author cloone8 on GitHub.
  */
-function withDebounce(fn) {
+function addDebounce(fn) {
 	const timeout = 100;
-
 	return function () {
 		const curTime = Date.now();
-
-		if(debounceTimeout) {
-			// Clear any outstanding timeout.
-			clearTimeout(debounceTimeout);
-			debounceTimeout = null;
+		if (debounceTimeoutID) {
+			// Clear pending function
+			clearTimeout(debounceTimeoutID);
+			debounceTimeoutID = null;
 		}
-
-		if(curTime - timeout > debouncePrevRun) {
-			// Been longer than the timeout? Just call the function now
+		if (curTime - timeout > debouncePrevRun) {
+			// No timeout => call the function right away
 			debouncePrevRun = curTime;
 			fn();
 		} else {
-			// Too fast? Delay the function call
-			debounceTimeout = setTimeout(() => {
+			// Blocked by timeout => delay the function call
+			debounceTimeoutID = setTimeout(() => {
 				debouncePrevRun = Date.now();
-				debounceTimeout = null;
+				debounceTimeoutID = null;
 				fn();
 			}, timeout - (curTime - debouncePrevRun));
 		}
-	}
+	};
 }
 
 /**
@@ -84,13 +80,12 @@ function withDebounce(fn) {
  * @param {boolean} dynamic Dynamic update.
  */
 function setDynamicUpdate(dynamic) {
-	const findAndSendColor_debounce = withDebounce(findAndSendColor);
-	const findAndSendColor_fix_debounce = withDebounce(findAndSendColor_fix);
-
+	const findAndSendColor_debounce = addDebounce(findAndSendColor);
+	const findAndSendColor_fix_debounce = addDebounce(findAndSendColor_fix);
 	if (dynamic) {
 		document.addEventListener("animationend", findAndSendColor_fix_debounce);
 		document.addEventListener("animationcancel", findAndSendColor_fix_debounce);
-		document.addEventListener("pageshow", findAndSendColor_debounce);
+		document.addEventListener("pageshow", findAndSendColor);
 		document.addEventListener("click", findAndSendColor_debounce);
 		document.addEventListener("resize", findAndSendColor_debounce);
 		document.addEventListener("scroll", findAndSendColor_debounce);
@@ -100,7 +95,7 @@ function setDynamicUpdate(dynamic) {
 	} else {
 		document.removeEventListener("animationend", findAndSendColor_fix_debounce);
 		document.removeEventListener("animationcancel", findAndSendColor_fix_debounce);
-		document.removeEventListener("pageshow", findAndSendColor_debounce);
+		document.removeEventListener("pageshow", findAndSendColor);
 		document.removeEventListener("click", findAndSendColor_debounce);
 		document.removeEventListener("resize", findAndSendColor_debounce);
 		document.removeEventListener("scroll", findAndSendColor_debounce);
@@ -189,7 +184,6 @@ function findAndSendColor_fix() {
 
 /**
  * Sets RESPONSE_COLOR with the help of host actions stored in pref_reservedColor_cs.
- *
  * @returns True if a legal reserved color for the webpage can be found.
  */
 function findColorReserved() {
@@ -256,7 +250,6 @@ function findColorUnreserved() {
 
 /**
  * Sets RESPONSE_COLOR using theme-color defined by the website HTML, or preset color for image / plain text viewer.
- *
  * @returns False if no legal theme-color can be found.
  */
 function findThemeColor() {
@@ -306,8 +299,7 @@ function findThemeColor() {
 
 /**
  * Sets REPONSE_COLOR using web elements.
- *
- * @author emilio on GitHub (modified by Eason Wong)
+ * @author emilio on GitHub (modified by easonwong-de).
  */
 function findComputedColor() {
 	let color_temp0 = rgba([0, 0, 0, 0]);
@@ -359,7 +351,6 @@ function getColorFrom(element) {
 
 /**
  * Overlays one color over another.
- *
  * @param {Object} top Color on top.
  * @param {Object} bottom Color underneath.
  * @returns Result of the addition in object.
@@ -381,8 +372,7 @@ function overlayColor(top, bottom) {
 
 /**
  * Converts any color to rgba object.
- * @author JayB (modified by Eason Wong)
- *
+ * @author JayB on Stack Overflow (modified by easonwong-de).
  * @param {string | Number[]} color Color to convert.
  * @returns Color in rgba object. Pure black if invalid.
  */
@@ -417,8 +407,7 @@ function rgba(color) {
 }
 
 /**
- * Copies colors.
- *
+ * Copies rgba objects.
  * @param {Object} target Target color object.
  * @param {Object} source Source color object.
  */
