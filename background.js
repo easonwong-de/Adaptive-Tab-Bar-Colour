@@ -339,7 +339,7 @@ function initialize() {
 		let pending_fallback_light = pref_fallback_light;
 		let pending_fallback_dark = pref_fallback_dark;
 		let pending_reservedColor_cs = pref_reservedColor_cs;
-		let pending_last_version = [1, 7, 8];
+		let pending_last_version = [1, 7, 9];
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
 			pending_tab_selected = 0.15;
@@ -505,7 +505,6 @@ function update() {
  * @param {tabs.Tab} tab The tab the window is showing.
  */
 function updateEachWindow(tab) {
-	console.log(tab);
 	let url = tab.url;
 	let windowId = tab.windowId;
 	if (url.startsWith("view-source:")) {
