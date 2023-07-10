@@ -167,14 +167,7 @@ function findAndSendColor() {
 	if (!document.fullscreenElement) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (document.visibilityState == "visible") {
-			browser.runtime.sendMessage({ reason: "COLOR_UPDATE", color: RESPONSE_COLOR });
-			// Re-establishes port to refresh tab info
-			// Todo: make re-using a port possible
-			/* let port = browser.runtime.connect();
-			port.postMessage({ color: RESPONSE_COLOR });
-			port.disconnect(); */
-		}
+		if (document.visibilityState == "visible") browser.runtime.sendMessage({ reason: "COLOR_UPDATE", color: RESPONSE_COLOR });
 	}
 }
 
@@ -185,11 +178,7 @@ function findAndSendColor_fix() {
 	if (!document.fullscreenElement) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (document.hasFocus()) {
-			let port = browser.runtime.connect();
-			port.postMessage({ color: RESPONSE_COLOR });
-			port.disconnect();
-		}
+		if (document.hasFocus()) browser.runtime.sendMessage({ reason: "COLOR_UPDATE", color: RESPONSE_COLOR });
 	}
 }
 
