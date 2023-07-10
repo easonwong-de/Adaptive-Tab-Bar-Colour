@@ -12,10 +12,10 @@ var current_reservedColor_cs;
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
+	"www.facebook.com": "UN_IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "QS_div.wl",
 	"open.spotify.com": "#000000",
-	"www.instagram.com": "IGNORE_THEME",
 	"www.linkedin.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME",
 });
@@ -23,7 +23,7 @@ const default_reservedColor_cs = Object.freeze({
 /**
  * Loads preferences into cache and check integrity
  */
-function loadPref(pref) {
+function cachePref_content(pref) {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_color = pref.no_theme_color;
 	pref_reservedColor_cs = pref.reservedColor_cs;
@@ -39,7 +39,7 @@ var RESPONSE_INFO = "";
 
 // Send color to background as soon as page loads
 browser.storage.local.get((pref) => {
-	if (loadPref(pref)) findAndSendColor();
+	if (cachePref_content(pref)) findAndSendColor();
 });
 
 var debouncePrevRun = 0;
@@ -146,7 +146,7 @@ browser.runtime.onMessage.addListener((pref, sender, sendResponse) => {
 		sendResponse(RESPONSE_INFO);
 	} else if (pref.reason == "COLOR_REQUEST") {
 		findAndSendColor();
-		sendResponse(RESPONSE_COLOR);
+		sendResponse(RESPONSE_COLOR); // Sends back anything to prove activity
 	}
 });
 
@@ -167,7 +167,14 @@ function findAndSendColor() {
 	if (!document.fullscreenElement) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (document.visibilityState == "visible") browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
+		if (document.visibilityState == "visible") {
+			browser.runtime.sendMessage({ reason: "COLOR_UPDATE", color: RESPONSE_COLOR });
+			// Re-establishes port to refresh tab info
+			// Todo: make re-using a port possible
+			/* let port = browser.runtime.connect();
+			port.postMessage({ color: RESPONSE_COLOR });
+			port.disconnect(); */
+		}
 	}
 }
 
@@ -178,7 +185,11 @@ function findAndSendColor_fix() {
 	if (!document.fullscreenElement) {
 		RESPONSE_COLOR = rgba([0, 0, 0, 0]);
 		if (!findColorReserved()) findColorUnreserved();
-		if (document.hasFocus()) browser.runtime.connect().postMessage({ color: RESPONSE_COLOR });
+		if (document.hasFocus()) {
+			let port = browser.runtime.connect();
+			port.postMessage({ color: RESPONSE_COLOR });
+			port.disconnect();
+		}
 	}
 }
 
@@ -401,8 +412,10 @@ function rgba(color) {
 				a: result[3],
 			};
 		}
-	} else {
+	} else if (typeof color == "object") {
 		return { r: color[0], g: color[1], b: color[2], a: color[3] };
+	} else {
+		return null;
 	}
 }
 

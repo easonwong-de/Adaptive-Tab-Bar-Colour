@@ -42,10 +42,10 @@ reserved color is a class name => theme color is stored under that class */
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
+	"www.facebook.com": "UN_IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "QS_div.wl",
 	"open.spotify.com": "#000000",
-	"www.instagram.com": "IGNORE_THEME",
 	"www.linkedin.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME",
 });
@@ -98,10 +98,9 @@ const reservedColor = Object.freeze({
 });
 
 /**
- * Loads preferences into cache.
+ * Caches pref into local variables.
  */
-function loadPref(pref) {
-	// loads prefs
+function cachePref(pref) {
 	pref_scheme = pref.scheme;
 	pref_allow_dark_light = pref.force;
 	pref_dynamic = pref.dynamic;
@@ -126,7 +125,7 @@ function loadPref(pref) {
 }
 
 /**
- * @returns Integrity of preferences.
+ * @returns Integrity of pref cache.
  */
 function verifyPref() {
 	return (
@@ -314,11 +313,12 @@ var adaptive_themes = {
 initialize();
 
 /**
- * Initializes the settings, then opens options page.
+ * Initializes / restores the settings.
+ * If pref_scheme or pref_allow_dark_light is missing, opens the option page.
  */
 function initialize() {
 	browser.storage.local.get((pref) => {
-		loadPref(pref);
+		cachePref(pref);
 		let pending_scheme = pref_scheme;
 		let pending_force = pref_allow_dark_light;
 		let pending_dynamic = pref_dynamic;
@@ -342,10 +342,10 @@ function initialize() {
 		let pending_last_version = [1, 7, 9];
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
-			pending_tab_selected = 0.15;
+			pending_tab_selected = 0.1;
 			pending_toolbar_field = 0.05;
 			pending_toolbar_field_focus = 0.05;
-			pending_popup_border = 0;
+			pending_popup_border = 0.05;
 		}
 		// updates from v1.7.4 or earlier
 		// Converts legacy rules to query selector format
@@ -378,8 +378,8 @@ function initialize() {
 		}
 		// updates from v1.6.13 or earlier
 		if (pref_sidebar == null || pref_sidebar_border == null) {
-			pending_sidebar = 0;
-			pending_sidebar_border = 0;
+			pending_sidebar = 0.05;
+			pending_sidebar_border = 0.05;
 		}
 		// updates from v1.6.5 or earlier
 		if (pref_toolbar_border_bottom == null) {
@@ -450,7 +450,7 @@ function initialize() {
 				last_version: pending_last_version,
 			})
 			.then(() => {
-				update();
+				loadPrefAndUpdate();
 				if (firstTime) browser.runtime.openOptionsPage();
 				return Promise.resolve("Initialization done");
 			});
@@ -459,15 +459,30 @@ function initialize() {
 
 browser.tabs.onUpdated.addListener(update); // When new tab is opened / reloaded
 browser.tabs.onActivated.addListener(update); // When switch tabs
-browser.tabs.onAttached.addListener(update); // When attach tab to windows
-browser.windows.onFocusChanged.addListener(update); //When new window is opened
-browser.runtime.onMessage.addListener((message) => (message == "INIT_REQUEST" ? initialize() : update())); // When pref corupted / preferences changed
+browser.tabs.onAttached.addListener(update); // When a tab is attatched to a window
+browser.windows.onFocusChanged.addListener(update); // When a new window is opened
+browser.runtime.onMessage.addListener((message, sender) => {
+	switch (message.reason) {
+		case "INIT_REQUEST": // When pref is corupted
+			initialize();
+			break;
+		case "UPDATE_REQUEST": // When pref changed
+			loadPrefAndUpdate();
+			break;
+		case "COLOR_UPDATE":
+			let dark_mode = isDarkModeSuitable(message.color);
+			sender.tab.active ? setFrameColor(sender.tab.windowId, message.color, dark_mode) : update();
+			break;
+		default:
+			break;
+	}
+});
 
 // Light Mode Match Media
 const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
 if (lightModeDetection)
 	lightModeDetection.onchange = () => {
-		if (pref_scheme == "system") update();
+		if (pref_scheme == "system") loadPrefAndUpdate();
 	};
 
 /**
@@ -478,25 +493,31 @@ function lightModeDetected() {
 }
 
 /**
- * Updates pref cache and triggers color change in all windows.
+ * Triggers color change in all windows.
  */
 function update() {
 	browser.tabs.query({ active: true, status: "complete" }, (tabs) => {
-		browser.storage.local.get((pref) => {
-			loadPref(pref);
-			if (verifyPref()) {
+		if (verifyPref()) {
+			tabs.forEach(updateEachWindow);
+		} else {
+			// If the pref is corupted, initialzes pref
+			initialize().then(() => {
 				setCurrent();
 				setBrowserColorScheme(pref_scheme);
 				tabs.forEach(updateEachWindow);
-			} else {
-				// If the pref is corupted, initialzes pref
-				initialize().then(() => {
-					setCurrent();
-					setBrowserColorScheme(pref_scheme);
-					tabs.forEach(updateEachWindow);
-				});
-			}
-		});
+			});
+		}
+	});
+}
+
+/**
+ * Updates pref cache and triggers color change in all windows.
+ */
+function loadPrefAndUpdate() {
+	browser.storage.local.get((pref) => {
+		cachePref(pref);
+		setCurrent();
+		update();
 	});
 }
 
@@ -537,7 +558,8 @@ function updateEachWindow(tab) {
 			} else if (url.startsWith("moz-extension:")) {
 				setFrameColor(windowId, "ADDON");
 			} else {
-				// Sends pref to context script and gets response
+				// Sends pref to content script and tests if the script is responsive
+				// The content script sends color back by themselves via a port
 				browser.tabs.sendMessage(
 					tab.id,
 					{
@@ -608,13 +630,6 @@ function getSearchKey(url) {
 		return Promise.resolve(url.split(/\/|\?/)[2]); // e.g. "addons.mozilla.org"
 	}
 }
-
-// Recieves the color from content script
-browser.runtime.onConnect.addListener((port) => {
-	port.onMessage.addListener((message, sender, sendResponse) => {
-		setFrameColor(sender.sender.tab.windowId, message.color, isDarkModeSuitable(message.color));
-	});
-});
 
 /**
  * Changes tab bar to the appointed color (with windowId).
@@ -877,8 +892,10 @@ function rgba(color) {
 				a: result[3],
 			};
 		}
-	} else {
+	} else if (typeof color == "object") {
 		return { r: color[0], g: color[1], b: color[2], a: color[3] };
+	} else {
+		return null;
 	}
 }
 

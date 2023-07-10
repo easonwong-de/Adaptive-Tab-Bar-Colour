@@ -29,10 +29,10 @@ var current_reservedColor_cs;
 const default_reservedColor_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
+	"www.facebook.com": "UN_IGNORE_THEME",
 	"github.com": "IGNORE_THEME",
 	"mail.google.com": "QS_div.wl",
 	"open.spotify.com": "#000000",
-	"www.instagram.com": "IGNORE_THEME",
 	"www.linkedin.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME",
 });
@@ -41,9 +41,9 @@ const svg_bin = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></poly
 const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
 
 /**
- * Loads preferences into cache and check integrity.
+ * Caches pref into local variables and checks integrity.
  */
-function loadPref(pref) {
+function cachePref_option(pref) {
 	// loads prefs
 	pref_scheme = pref.scheme;
 	pref_allow_dark_light = pref.force;
@@ -172,7 +172,7 @@ browser.storage.onChanged.addListener(() => {
  */
 function load() {
 	browser.storage.local.get((pref) => {
-		if (loadPref(pref)) {
+		if (cachePref_option(pref)) {
 			color_scheme_dark.checked = pref_scheme === "dark";
 			color_scheme_light.checked = pref_scheme === "light";
 			color_scheme_system.checked = pref_scheme === "system";
@@ -212,7 +212,7 @@ function load() {
 			loading.hidden = true;
 			settings.hidden = false;
 		} else {
-			browser.runtime.sendMessage("INIT_REQUEST");
+			browser.runtime.sendMessage({ reason: "INIT_REQUEST" });
 		}
 	});
 }
@@ -222,7 +222,7 @@ function load() {
  */
 function load_lite() {
 	browser.storage.local.get((pref) => {
-		if (loadPref(pref)) {
+		if (cachePref_option(pref)) {
 			color_scheme_dark.checked = pref_scheme === "dark";
 			color_scheme_light.checked = pref_scheme === "light";
 			color_scheme_system.checked = pref_scheme === "system";
@@ -490,7 +490,7 @@ function generateNewRow(domain, i) {
  * Triggers color update.
  */
 function applySettings() {
-	browser.runtime.sendMessage("UPDATE_REQUEST");
+	browser.runtime.sendMessage({ reason: "UPDATE_REQUEST" });
 }
 
 /**
