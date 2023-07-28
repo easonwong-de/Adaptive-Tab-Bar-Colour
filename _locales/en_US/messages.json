@@ -1,10 +1,10 @@
 {
 	"extensionName": {
-		"message": "Adaptive Tab Bar Colour"
+		"message": "Adaptive Tab Bar Color"
 	},
 
 	"extensionDescription": {
-		"message": "Changes the colour of Firefox tab bar to match the website theme."
+		"message": "Changes the color of Firefox tab bar to match the website theme."
 	},
 
 	"option.html & popup.html": {
@@ -32,7 +32,7 @@
 	},
 
 	"colourSchemePreference": {
-		"message": "Colour scheme preference"
+		"message": "Color scheme preference"
 	},
 
 	"automatic": {
@@ -56,11 +56,11 @@
 	},
 
 	"dynamicColourUpdate": {
-		"message": "Dynamic colour update"
+		"message": "Dynamic color update"
 	},
 
 	"ignoreDesignatedThemeColour": {
-		"message": "Ignore designated theme colour"
+		"message": "Ignore designated theme color"
 	},
 
 	"tabBar": {
@@ -104,7 +104,7 @@
 	},
 
 	"homepageColourLight": {
-		"message": "Home page colour: light"
+		"message": "Home page color: light"
 	},
 
 	"homepageColourDark": {
@@ -112,11 +112,11 @@
 	},
 
 	"fallbackColourLight": {
-		"message": "Fallback colour: light"
+		"message": "Fallback color: light"
 	},
 
 	"fallbackColourDark": {
-		"message": "Fallback colour: dark"
+		"message": "Fallback color: dark"
 	},
 
 	"reportAnIssue": {
@@ -140,15 +140,15 @@
 	},
 
 	"specifyAColour": {
-		"message": "specify a colour"
+		"message": "specify a color"
 	},
 
 	"ignoreThemeColour": {
-		"message": "ignore theme colour"
+		"message": "ignore theme color"
 	},
 
 	"useThemeColour": {
-		"message": "use theme colour"
+		"message": "use theme color"
 	},
 
 	"useQuerySelector": {
@@ -156,15 +156,15 @@
 	},
 
 	"useSystemColourScheme": {
-		"message": "Use system colour scheme"
+		"message": "Use system color scheme"
 	},
 
 	"useLightColourScheme": {
-		"message": "Use light colour scheme"
+		"message": "Use light color scheme"
 	},
 
 	"useDarkColourScheme": {
-		"message": "Use dark colour scheme"
+		"message": "Use dark color scheme"
 	},
 
 	"forceModeTooltip_bright": {
@@ -176,11 +176,11 @@
 	},
 
 	"dynamicModeTooltip": {
-		"message": "Keeps updating tab bar colour while browsing within a web page"
+		"message": "Keeps updating tab bar color while browsing within a web page"
 	},
 
 	"noThemeColourModeTooltip": {
-		"message": "Always ignore theme colour defined by the website"
+		"message": "Always ignore theme color defined by the website"
 	},
 
 	"delete": {
@@ -200,7 +200,7 @@
 	},
 
 	"colourForPDFViewer": {
-		"message": "Using colour for PDF viewer"
+		"message": "Using color for PDF viewer"
 	},
 
 	"pageIsProtected": {
@@ -208,27 +208,27 @@
 	},
 
 	"colourForPlainTextViewer": {
-		"message": "Using colour for plain text viewer"
+		"message": "Using color for plain text viewer"
 	},
 
 	"errorOccured": {
-		"message": "An error occurred, using fallback colour"
+		"message": "An error occurred, using fallback color"
 	},
 
 	"colourForHomePage": {
-		"message": "Tab bar colour for home page can be configured in settings"
+		"message": "Tab bar color for home page can be configured in settings"
 	},
 
 	"useDefaultColourForAddon": {
-		"message": "Using specified colour for pages related to <b>$1</b><label id='info_action' title='Use default colour'><span>Use default colour</span></label>"
+		"message": "Using specified color for pages related to <b>$1</b><label id='info_action' title='Use default color'><span>Use default color</span></label>"
 	},
 
 	"useRecommendedColourForAddon": {
-		"message": "Use recommended colour for pages related to <b>$1</b><label id='info_action' title='Use recommended colour'><span>Use recommended colour</span></label>"
+		"message": "Use recommended color for pages related to <b>$1</b><label id='info_action' title='Use recommended color'><span>Use recommended color</span></label>"
 	},
 
 	"specifyColourForAddon": {
-		"message": "Click “Specify a color” to open settings and specify tab bar colour for pages related to <b>$1</b><label id='info_action' title='Open settings and specify a colour to pages related to $1'><span>Specify a colour</span></label>"
+		"message": "Click “Specify a color” to open settings and specify tab bar color for pages related to <b>$1</b><label id='info_action' title='Open settings and specify a color to pages related to $1'><span>Specify a color</span></label>"
 	},
 
 	"content_script.js": {
@@ -236,27 +236,27 @@
 	},
 
 	"themeColourIsUnignored": {
-		"message": "Theme colour defined by the website is un-ignored<label id='info_action' title='Do not use theme colour defined by the website' data-action='IGNORE_THEME'><span>Do not use theme colour</span></label>"
+		"message": "Theme color defined by the website is un-ignored<label id='info_action' title='Do not use theme color defined by the website' data-action='IGNORE_THEME'><span>Do not use theme color</span></label>"
 	},
 
 	"themeColourNotFound": {
-		"message": "Theme colour is not found, colour is picked from the web page"
+		"message": "Theme color is not found, color is picked from the web page"
 	},
 
 	"themeColourIsIgnored": {
-		"message": "Theme colour defined by the website is ignored<label id='info_action' title='Use theme colour defined by the website' data-action='UN_IGNORE_THEME'><span>Use theme colour</span></label>"
+		"message": "Theme color defined by the website is ignored<label id='info_action' title='Use theme color defined by the website' data-action='UN_IGNORE_THEME'><span>Use theme color</span></label>"
 	},
 
 	"colourIsPickedFrom": {
-		"message": "Colour is picked from an HTML element matching <b>$1</b>"
+		"message": "Color is picked from an HTML element matching <b>$1</b>"
 	},
 
 	"colourIsSpecified": {
-		"message": "Colour for this domain is specified in the settings"
+		"message": "Color for this domain is specified in the settings"
 	},
 
 	"bacauseThemeColourIsIgnored": {
-		"message": ", because theme colour defined by the website is ignored<label id='info_action' title='Use theme colour defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme colour</span></label>"
+		"message": ", because theme color defined by the website is ignored<label id='info_action' title='Use theme color defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme color</span></label>"
 	},
 
 	"usingDarkNoise": {
@@ -264,19 +264,19 @@
 	},
 
 	"usingColourForPlainText": {
-		"message": "Using colour from <b>resource://content-accessible/plaintext.css</b>"
+		"message": "Using color from <b>resource://content-accessible/plaintext.css</b>"
 	},
 
 	"usingThemeColour": {
-		"message": "Using theme colour defined by the website<label id='info_action' title='Ignore theme colour defined by the website' data-action='IGNORE_THEME'><span>Ignore theme colour</span></label>"
+		"message": "Using theme color defined by the website<label id='info_action' title='Ignore theme color defined by the website' data-action='IGNORE_THEME'><span>Ignore theme color</span></label>"
 	},
 
 	"usingFallbackColour": {
-		"message": "No colour is available, using fallback colour"
+		"message": "No color is available, using fallback color"
 	},
 
 	"colourPickedFromWebpage": {
-		"message": "Colour is successfully picked from the web page"
+		"message": "Color is successfully picked from the web page"
 	},
 
 	"end": {

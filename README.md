@@ -6,7 +6,7 @@
 
 # Adaptive Tab Bar Colour
 
-Changes the colour of Firefox tab bar to match the website theme
+Changes the colour of Firefox tab bar to match the website theme.
 
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
 	<img src="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true" width="178" height="48">

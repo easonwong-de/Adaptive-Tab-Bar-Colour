@@ -1,10 +1,10 @@
 {
 	"extensionName": {
-		"message": "Adaptive Tab Bar Colour"
+		"message": "Anpassbare Tableistenfarbe"
 	},
 
 	"extensionDescription": {
-		"message": "Changes the colour of Firefox tab bar to match the website theme."
+		"message": "Ändert die Farbe der Firefox-Tableiste, um zum Design der Website zu passen."
 	},
 
 	"option.html & popup.html": {
