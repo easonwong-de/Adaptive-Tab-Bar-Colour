@@ -1,0 +1,285 @@
+{
+	"extensionName": {
+		"message": "Adaptive Tab Bar Colour"
+	},
+
+	"extensionDescription": {
+		"message": "Changes the colour of Firefox tab bar to match the website theme."
+	},
+
+	"option.html & popup.html": {
+		"message": "=============================="
+	},
+
+	"reinstall_tip": {
+		"message": "Preference data could be corrupted. Please remove the add-on, and re-install the add-on after rebooting Firefox. I’m sorry for your inconvenience!"
+	},
+
+	"loading": {
+		"message": "Loading…"
+	},
+
+	"general": {
+		"message": "General"
+	},
+
+	"customisation": {
+		"message": "Customisation"
+	},
+
+	"advanced": {
+		"message": "Advanced"
+	},
+
+	"colourSchemePreference": {
+		"message": "Colour scheme preference"
+	},
+
+	"automatic": {
+		"message": "Automatic"
+	},
+
+	"light": {
+		"message": "Light"
+	},
+
+	"dark": {
+		"message": "Dark"
+	},
+
+	"allowLightTabBar": {
+		"message": "Allow light tab bar"
+	},
+
+	"allowDarkTabBar": {
+		"message": "Allow dark tab bar"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Dynamic colour update"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignore designated theme colour"
+	},
+
+	"tabBar": {
+		"message": "Tab bar"
+	},
+
+	"background": {
+		"message": "Background"
+	},
+
+	"selectedTab": {
+		"message": "Selected tab"
+	},
+
+	"toolbar": {
+		"message": "Toolbar"
+	},
+
+	"border": {
+		"message": "Border"
+	},
+
+	"URLBar": {
+		"message": "URL bar"
+	},
+
+	"backgroundOnFocus": {
+		"message": "Background on focus"
+	},
+
+	"sidebar": {
+		"message": "Sidebar"
+	},
+
+	"popUp": {
+		"message": "Pop-up"
+	},
+
+	"enableRulesForSpecificDomains": {
+		"message": "Enable rules for specific domains"
+	},
+
+	"homepageColourLight": {
+		"message": "Home page colour: light"
+	},
+
+	"homepageColourDark": {
+		"message": "Home page color: dark"
+	},
+
+	"fallbackColourLight": {
+		"message": "Fallback colour: light"
+	},
+
+	"fallbackColourDark": {
+		"message": "Fallback colour: dark"
+	},
+
+	"reportAnIssue": {
+		"message": "Report an issue / submit a suggestion"
+	},
+
+	"moreSettings": {
+		"message": "More settings…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Open option page"
+	},
+
+	"option.js": {
+		"message": "=============================="
+	},
+
+	"resetRuleConfirm": {
+		"message": "Do you want to reset all the rules?"
+	},
+
+	"specifyAColour": {
+		"message": "specify a colour"
+	},
+
+	"ignoreThemeColour": {
+		"message": "ignore theme colour"
+	},
+
+	"useThemeColour": {
+		"message": "use theme colour"
+	},
+
+	"useQuerySelector": {
+		"message": "use query selector"
+	},
+
+	"useSystemColourScheme": {
+		"message": "Use system colour scheme"
+	},
+
+	"useLightColourScheme": {
+		"message": "Use light colour scheme"
+	},
+
+	"useDarkColourScheme": {
+		"message": "Use dark colour scheme"
+	},
+
+	"forceModeTooltip_bright": {
+		"message": "Allow tab bar to turn bright (might cause flashing)"
+	},
+
+	"forceModeTooltip_dark": {
+		"message": "Allow tab bar to turn dark (might cause flashing)"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Keeps updating tab bar colour while browsing within a web page"
+	},
+
+	"noThemeColourModeTooltip": {
+		"message": "Always ignore theme colour defined by the website"
+	},
+
+	"delete": {
+		"message": "Delete"
+	},
+
+	"reset": {
+		"message": "Reset"
+	},
+
+	"resetDomainSpecificRules": {
+		"message": "Reset domain-specific rules"
+	},
+
+	"addANewRule": {
+		"message": "Add a new rule"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Using colour for PDF viewer"
+	},
+
+	"pageIsProtected": {
+		"message": "This page is protected by browser"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Using colour for plain text viewer"
+	},
+
+	"errorOccured": {
+		"message": "An error occurred, using fallback colour"
+	},
+
+	"colourForHomePage": {
+		"message": "Tab bar colour for home page can be configured in settings"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Using specified colour for pages related to <b>$1</b><label id='info_action' title='Use default colour'><span>Use default colour</span></label>"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Use recommended colour for pages related to <b>$1</b><label id='info_action' title='Use recommended colour'><span>Use recommended colour</span></label>"
+	},
+
+	"specifyColourForAddon": {
+		"message": "Click “Specify a color” to open settings and specify tab bar colour for pages related to <b>$1</b><label id='info_action' title='Open settings and specify a colour to pages related to $1'><span>Specify a colour</span></label>"
+	},
+
+	"content_script.js": {
+		"message": "=============================="
+	},
+
+	"themeColourIsUnignored": {
+		"message": "Theme colour defined by the website is un-ignored<label id='info_action' title='Do not use theme colour defined by the website' data-action='IGNORE_THEME'><span>Do not use theme colour</span></label>"
+	},
+
+	"themeColourNotFound": {
+		"message": "Theme colour is not found, colour is picked from the web page"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "Theme colour defined by the website is ignored<label id='info_action' title='Use theme colour defined by the website' data-action='UN_IGNORE_THEME'><span>Use theme colour</span></label>"
+	},
+
+	"colourIsPickedFrom": {
+		"message": "Colour is picked from an HTML element matching <b>$1</b>"
+	},
+
+	"colourIsSpecified": {
+		"message": "Colour for this domain is specified in the settings"
+	},
+
+	"bacauseThemeColourIsIgnored": {
+		"message": ", because theme colour defined by the website is ignored<label id='info_action' title='Use theme colour defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme colour</span></label>"
+	},
+
+	"usingDarkNoise": {
+		"message": "Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background"
+	},
+
+	"usingColourForPlainText": {
+		"message": "Using colour from <b>resource://content-accessible/plaintext.css</b>"
+	},
+
+	"usingThemeColour": {
+		"message": "Using theme colour defined by the website<label id='info_action' title='Ignore theme colour defined by the website' data-action='IGNORE_THEME'><span>Ignore theme colour</span></label>"
+	},
+
+	"usingFallbackColour": {
+		"message": "No colour is available, using fallback colour"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "Colour is successfully picked from the web page"
+	},
+
+	"end": {
+		"message": "=============================="
+	}
+}

@@ -1,5 +1,15 @@
 // This script is shared by option page and popup
 
+// Localisation
+document.addEventListener("DOMContentLoaded", function () {
+	document.querySelectorAll("[data-text]").forEach((element) => {
+		element.textContent = msg(element.dataset.text);
+	});
+	document.querySelectorAll("[data-title]").forEach((element) => {
+		element.title = msg(element.dataset.title);
+	});
+});
+
 // Settings cache: always synced with settings page
 var pref_scheme; // scheme
 var pref_allow_dark_light; // force
@@ -354,7 +364,7 @@ if (popupDetected()) {
 	op_reset_light_fallback.onclick = () => browser.storage.local.set({ light_fallback_color: "#FFFFFF" }).then(load);
 	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ dark_fallback_color: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => {
-		if (confirm("Do you want to reset all the rules?")) browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
+		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColor_cs: default_reservedColor_cs }).then(load);
 	};
 	op_add.onclick = () => {
 		let i = 0;
@@ -422,10 +432,10 @@ function generateNewRow(domain, i) {
 			browser.management.get(domain.replace("Add-on ID: ", "")).then((addon) => {
 				let part_1 = `<span id="DOM_${i}" title="${domain}">${addon.name}</span>`;
 				let part_2 = `<select id="SEL_${i}">
-					<option selected>specify a color</option>
+					<option selected>${msg("specifyAColour")}</option>
 				</select>`;
 				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColor_cs[domain]}">`;
-				let part_4 = `<button id="DEL_${i}" title="Delete">${svg_bin}</button>`;
+				let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
 				resolve(`<td class="TenFiveEm">${part_1}</td>
 				<td>${part_2}</td>
 				<td id="OPE_${i}">${part_3}</td>
@@ -443,37 +453,37 @@ function generateNewRow(domain, i) {
 		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
 		let part_2 = ``;
 		let part_3 = ``;
-		let part_4 = `<button id="DEL_${i}" title="Delete">${svg_bin}</button>`;
+		let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
 		if (action === "IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}">
-				<option>specify a color</option>
-				<option selected>ignore theme color</option>
-				<option>use theme color</option>
-				<option>use query selector</option>
+				<option>${msg("specifyAColour")}</option>
+				<option selected>${msg("ignoreThemeColour")}</option>
+				<option>${msg("useThemeColour")}</option>
+				<option>${msg("useQuerySelector")}</option>
 			</select>`;
 			part_3 = `<span class="FiveEm"></span>`;
 		} else if (action === "UN_IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}">
-				<option>specify a color</option>
-				<option>ignore theme color</option>
-				<option selected>use theme color</option>
-				<option>use query selector</option>
+				<option>${msg("specifyAColour")}</option>
+				<option>${msg("ignoreThemeColour")}</option>
+				<option selected>${msg("useThemeColour")}</option>
+				<option>${msg("useQuerySelector")}</option>
 			</select>`;
 			part_3 = `<span class="FiveEm"></span>`;
 		} else if (action.startsWith("QS_")) {
 			part_2 = `<select id="SEL_${i}">
-				<option>specify a color</option>
-				<option>ignore theme color</option>
-				<option>use theme color</option>
-				<option selected>use query selector</option>
+				<option>${msg("specifyAColour")}</option>
+				<option>${msg("ignoreThemeColour")}</option>
+				<option>${msg("useThemeColour")}</option>
+				<option selected>${msg("useQuerySelector")}</option>
 			</select>`;
 			part_3 = `<input type="text" class="FiveEm" value="${action.replace("QS_", "")}">`;
 		} else {
 			part_2 = `<select id="SEL_${i}">
-				<option selected>specify a color</option>
-				<option>ignore theme color</option>
-				<option>use theme color</option>
-				<option>use query selector</option>´
+				<option selected>${msg("specifyAColour")}</option>
+				<option>${msg("ignoreThemeColour")}</option>
+				<option>${msg("useThemeColour")}</option>
+				<option>${msg("useQuerySelector")}</option>´
 			</select>`;
 			part_3 = `<input type="color" class="FiveEm" value="${action}">`;
 		}
@@ -524,11 +534,7 @@ function autoPopupColor() {
 						let pp_info_action = document.getElementById("info_action");
 						if (pp_info_action) {
 							pp_info_action.onclick = () => {
-								if (pp_info_action.innerText == "Ignore theme color" || pp_info_action.innerText == "Do not use theme color") {
-									pref_reservedColor_cs[domain] = "IGNORE_THEME";
-								} else if (pp_info_action.innerText == "Use theme color" || pp_info_action.innerText == "Un-ignore theme color") {
-									pref_reservedColor_cs[domain] = "UN_IGNORE_THEME";
-								}
+								pref_reservedColor_cs[domain] = pp_info_action.dataset.action;
 								current_reservedColor_cs = pref_reservedColor_cs;
 								browser.storage.local.set({
 									custom: true,
@@ -538,18 +544,18 @@ function autoPopupColor() {
 							};
 						}
 					} else if (url.endsWith(".pdf") || tabs[0].title.endsWith(".pdf")) {
-						pp_info_display.innerHTML = "Using color for PDF viewer";
+						pp_info_display.innerHTML = msg("colourForPDFViewer");
 					} else if (tabs[0].favIconUrl && tabs[0].favIconUrl.startsWith("chrome:")) {
-						pp_info_display.innerHTML = "This page is protected by browser";
+						pp_info_display.innerHTML = msg("pageIsProtected");
 					} else if (url.endsWith("http://" + tabs[0].title) || url.endsWith("https://" + tabs[0].title)) {
-						pp_info_display.innerHTML = "Using color for plain text viewer";
+						pp_info_display.innerHTML = msg("colourForPlainTextViewer");
 					} else {
-						pp_info_display.innerHTML = "An error occurred, using fallback color";
+						pp_info_display.innerHTML = msg("errorOccured");
 					}
 				}
 			);
 		} else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
-			pp_info_display.innerHTML = "Tab bar color for home page can be configured in settings";
+			pp_info_display.innerHTML = msg("colourForHomePage");
 		} else if (url.startsWith("moz-extension:")) {
 			let uuid = url.split(/\/|\?/)[2];
 			browser.management.getAll().then((addon_list) => {
@@ -559,10 +565,7 @@ function autoPopupColor() {
 						for (host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
 								if (current_reservedColor_cs[`Add-on ID: ${addon.id}`]) {
-									pp_info_display.innerHTML = `Using specified color for pages related to <b>${addon.name}</b>
-										<label id="info_action" title="Use default color">
-											<span>Use default color</span>
-										</label>`;
+									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
 										delete pref_reservedColor_cs[`Add-on ID: ${addon.id}`];
 										current_reservedColor_cs = pref_reservedColor_cs;
@@ -572,10 +575,7 @@ function autoPopupColor() {
 										});
 									};
 								} else if (recommendedColor_addon[addon.id]) {
-									pp_info_display.innerHTML = `Use recommended color for pages related to <b>${addon.name}</b>
-										<label id="info_action" title="Use recommended color">
-											<span>Use recommended color</span>
-										</label>`;
+									pp_info_display.innerHTML = msg("useRecommendedColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
 										pref_reservedColor_cs[`Add-on ID: ${addon.id}`] = recommendedColor_addon[addon.id];
 										current_reservedColor_cs = pref_reservedColor_cs;
@@ -585,11 +585,7 @@ function autoPopupColor() {
 										});
 									};
 								} else {
-									pp_info_display.innerHTML = `Click “Specify a color” to open settings 
-										and specify tab bar color for pages related to <b>${addon.name}</b>
-										<label id="info_action" title="Open settings and specify a color to pages related to ${addon.name}">
-											<span>Specify a color</span>
-										</label>`;
+									pp_info_display.innerHTML = msg("specifyColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
 										pref_reservedColor_cs[`Add-on ID: ${addon.id}`] = "#333333";
 										current_reservedColor_cs = pref_reservedColor_cs;
@@ -610,7 +606,7 @@ function autoPopupColor() {
 				}
 			});
 		} else {
-			pp_info_display.innerHTML = "This page is protected by browser";
+			pp_info_display.innerHTML = msg("pageIsProtected");
 		}
 	});
 	browser.theme.getCurrent().then((current_theme) => {
@@ -625,11 +621,11 @@ function autoPopupColor() {
 		}
 	});
 	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
-		force_mode_caption.innerHTML = "Allow dark tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (might cause flashing)";
+		force_mode_caption.innerHTML = msg("allowDarkTabBar");
+		force_mode_caption.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
-		force_mode_caption.innerHTML = "Allow light tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (might cause flashing)";
+		force_mode_caption.innerHTML = msg("allowLightTabBar");
+		force_mode_caption.parentElement.title = msg("forceModeTooltip_bright");
 	}
 }
 
@@ -640,13 +636,13 @@ function autoOptionsColor() {
 	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
-		force_mode_caption.innerHTML = "Allow dark tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn dark (might cause flashing)";
+		force_mode_caption.innerHTML = msg("allowDarkTabBar");
+		force_mode_caption.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
 		body.classList.add("dark");
 		body.classList.remove("light");
-		force_mode_caption.innerHTML = "Allow light tab bar";
-		force_mode_caption.parentElement.title = "Allow tab bar to turn bright (might cause flashing)";
+		force_mode_caption.innerHTML = msg("allowLightTabBar");
+		force_mode_caption.parentElement.title = msg("forceModeTooltip_bright");
 	}
 }
 
@@ -694,4 +690,12 @@ function setBrowserColorScheme(pending_scheme) {
 		browser.browserSettings.overrideContentColorScheme.set({
 			value: pending_scheme === "system" && version >= 106 ? "auto" : pending_scheme,
 		});
+}
+
+/**
+ * Inquires localised messages.
+ * @param {string} key handle in _locales.
+ */
+function msg(key, placeholder) {
+	return browser.i18n.getMessage(key, placeholder);
 }

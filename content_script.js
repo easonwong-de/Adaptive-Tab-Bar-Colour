@@ -194,23 +194,17 @@ function findColorReserved() {
 	} else if (pref_no_theme_color && action == "UN_IGNORE_THEME") {
 		// User prefers igoring theme color, but sets to use theme color for this host
 		if (findThemeColor()) {
-			RESPONSE_INFO = `Theme color defined by the website is un-ignored
-				<label id="info_action" title="Do not use theme color defined by the website">
-					<span>Do not use theme color</span>
-				</label>`;
+			RESPONSE_INFO = msg("themeColourIsUnignored");
 		} else {
 			findComputedColor();
-			RESPONSE_INFO = `Theme color is not found, color is picked from the web page`;
+			RESPONSE_INFO = msg("themeColourNotFound");
 		}
 		return true;
 	} else if (!pref_no_theme_color && action == "IGNORE_THEME") {
 		// User sets to ignore the theme color of this host
 		if (findThemeColor()) {
 			findComputedColor();
-			RESPONSE_INFO = `Theme color defined by the website is ignored
-				<label id="info_action" title="Use theme color defined by the website">
-					<span>Use theme color</span>
-				</label>`;
+			RESPONSE_INFO = msg("themeColourIsIgnored");
 		} else {
 			findComputedColor();
 		}
@@ -218,10 +212,10 @@ function findColorReserved() {
 	} else if (action.startsWith("QS_")) {
 		let selector = action.replace("QS_", "");
 		RESPONSE_COLOR = getColorFrom(document.querySelector(selector));
-		RESPONSE_INFO = `Color is picked from an HTML element matching <b>${selector}</b>`;
+		RESPONSE_INFO = msg("colourIsPickedFrom", selector);
 	} else {
 		RESPONSE_COLOR = rgba(action);
-		RESPONSE_INFO = `Color for this domain is specified in the settings`;
+		RESPONSE_INFO = msg("colourIsSpecified");
 	}
 	// Return ture if reponse color is legal and can be sent to background.js
 	return RESPONSE_COLOR != null && RESPONSE_COLOR.a == 1;
@@ -235,10 +229,7 @@ function findColorUnreserved() {
 		if (findThemeColor()) {
 			if (RESPONSE_COLOR != "DARKNOISE" && RESPONSE_COLOR != "PLAINTEXT") {
 				findComputedColor();
-				RESPONSE_INFO += `, because theme color defined by the website is ignored
-					<label id="info_action" title="Use theme color defined by the website">
-						<span>Un-ignore theme color</span>
-					</label>`;
+				RESPONSE_INFO += msg("bacauseThemeColourIsIgnored");
 			}
 		} else {
 			findComputedColor();
@@ -258,7 +249,7 @@ function findThemeColor() {
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url
 		RESPONSE_COLOR = "DARKNOISE";
-		RESPONSE_INFO = `Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background`;
+		RESPONSE_INFO = msg("usingDarkNoise");
 		return true;
 	} else if (
 		document.getElementsByTagName("link").length > 0 &&
@@ -269,7 +260,7 @@ function findThemeColor() {
 		// Thus this may only works for viewing local text file
 		if (getColorFrom(document.body).a != 1) {
 			RESPONSE_COLOR = "PLAINTEXT";
-			RESPONSE_INFO = `Using color from <b>resource://content-accessible/plaintext.css</b>`;
+			RESPONSE_INFO = msg("usingColourForPlainText");
 			return true;
 		} else {
 			return false;
@@ -283,10 +274,7 @@ function findThemeColor() {
 			// Return true if it is legal (opaque) and can be sent to background.js
 			// Otherwise, return false and trigger getComputedColor()
 			if (RESPONSE_COLOR.a == 1) {
-				RESPONSE_INFO = `Using theme color defined by the website
-					<label id="info_action" title="Ignore theme color defined by the website">
-						<span>Ignore theme color</span>
-					</label>`;
+				RESPONSE_INFO = msg("usingThemeColour");
 				return true;
 			} else {
 				return false;
@@ -323,19 +311,19 @@ function findComputedColor() {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
 			RESPONSE_COLOR = "FALLBACK";
-			RESPONSE_INFO = "No color is available, using fallback color";
+			RESPONSE_INFO = msg("usingFallbackColour");
 		} else {
 			let body_color = getColorFrom(body);
 			if (body_color.a == 1) {
 				RESPONSE_COLOR = overlayColor(RESPONSE_COLOR, body_color);
-				RESPONSE_INFO = "Color is successfully picked from the web page";
+				RESPONSE_INFO = msg("colourPickedFromWebpage");
 			} else {
 				RESPONSE_COLOR = "FALLBACK";
-				RESPONSE_INFO = "No color is available, using fallback color";
+				RESPONSE_INFO = msg("usingFallbackColour");
 			}
 		}
 	} else {
-		RESPONSE_INFO = "Color is successfully picked from the web page";
+		RESPONSE_INFO = msg("colourPickedFromWebpage");
 	}
 }
 
@@ -418,6 +406,14 @@ function cc(target, source) {
 	target.g = source.g;
 	target.b = source.b;
 	target.a = source.a;
+}
+
+/**
+ * Inquires localised messages.
+ * @param {string} key handle in _locales.
+ */
+function msg(key, placeholder) {
+	return browser.i18n.getMessage(key, placeholder);
 }
 
 // Passes coloring info to pop-up

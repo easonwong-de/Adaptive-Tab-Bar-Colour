@@ -31,7 +31,7 @@ body.dark {
 	--bg-button-active: rgb(91, 91, 102);
 }
 
-#reinstall-tip {
+#reinstall_tip {
 	overflow-wrap: break-word;
 	animation-fill-mode: forwards;
 	opacity: 0;

@@ -1,0 +1,285 @@
+{
+	"extensionName": {
+		"message": "適應性變色標題列"
+	},
+
+	"extensionDescription": {
+		"message": "改變 Firefox 標題列顏色，使之與網頁融為一體。"
+	},
+
+	"option.html": {
+		"message": "=============================="
+	},
+
+	"reinstall_tip": {
+		"message": "設定檔可能已損壞。請考慮嘗試移除此擴充套件，重新啟動 Firefox 之後再次安裝。"
+	},
+
+	"loading": {
+		"message": "載入中⋯⋯"
+	},
+
+	"general": {
+		"message": "一般"
+	},
+
+	"customisation": {
+		"message": "自定義"
+	},
+
+	"advanced": {
+		"message": "進階"
+	},
+
+	"colourSchemePreference": {
+		"message": "瀏覽器外觀設定"
+	},
+
+	"automatic": {
+		"message": "自動"
+	},
+
+	"light": {
+		"message": "亮色"
+	},
+
+	"dark": {
+		"message": "暗色"
+	},
+
+	"allowLightTabBar": {
+		"message": "允許亮色的標題列"
+	},
+
+	"allowDarkTabBar": {
+		"message": "允許暗色的標題列"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "動態更新標題列顏色"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "忽略網站指定的主題色"
+	},
+
+	"tabBar": {
+		"message": "分頁列"
+	},
+
+	"background": {
+		"message": "顏色"
+	},
+
+	"selectedTab": {
+		"message": "選中的分頁"
+	},
+
+	"toolbar": {
+		"message": "工具列"
+	},
+
+	"border": {
+		"message": "邊界顏色"
+	},
+
+	"URLBar": {
+		"message": "網址列"
+	},
+
+	"backgroundOnFocus": {
+		"message": "選中時的顏色"
+	},
+
+	"sidebar": {
+		"message": "側邊列"
+	},
+
+	"popUp": {
+		"message": "選單"
+	},
+
+	"enableRulesForSpecificDomains": {
+		"message": "為特定域名設定規則"
+	},
+
+	"homepageColourLight": {
+		"message": "首頁背景色（亮色）"
+	},
+
+	"homepageColourDark": {
+		"message": "首頁背景色（暗色）"
+	},
+
+	"fallbackColourLight": {
+		"message": "備選顏色（亮色）"
+	},
+
+	"fallbackColourDark": {
+		"message": "備選顏色（暗色）"
+	},
+
+	"reportAnIssue": {
+		"message": "回報問題／提供建議"
+	},
+
+	"moreSettings": {
+		"message": "更多設定"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "開啟設定頁"
+	},
+
+	"option.js": {
+		"message": "=============================="
+	},
+
+	"resetRuleConfirm": {
+		"message": "你確認要重設所有規則嗎？"
+	},
+
+	"specifyAColour": {
+		"message": "指定顏色"
+	},
+
+	"ignoreThemeColour": {
+		"message": "忽略主題色"
+	},
+
+	"useThemeColour": {
+		"message": "使用主題色"
+	},
+
+	"useQuerySelector": {
+		"message": "使用 query 選擇式"
+	},
+
+	"useSystemColourScheme": {
+		"message": "跟隨作業系統佈景主題"
+	},
+
+	"useLightColourScheme": {
+		"message": "使用亮色佈景主題"
+	},
+
+	"useDarkColourScheme": {
+		"message": "使用暗色佈景主題"
+	},
+
+	"forceModeTooltip_bright": {
+		"message": "允許標題列採用亮色（可能造成閃爍）"
+	},
+
+	"forceModeTooltip_dark": {
+		"message": "允許標題列採用暗色（可能造成閃爍）"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "在同一網頁停留時，持續更新標題列顏色"
+	},
+
+	"noThemeColourModeTooltip": {
+		"message": "總是忽略網站指定的主題色"
+	},
+
+	"delete": {
+		"message": "刪除"
+	},
+
+	"reset": {
+		"message": "重設"
+	},
+
+	"resetDomainSpecificRules": {
+		"message": "重設所有域名著色規則"
+	},
+
+	"addANewRule": {
+		"message": "新建規則"
+	},
+
+	"colourForPDFViewer": {
+		"message": "按 PDF 閱讀器著色"
+	},
+
+	"pageIsProtected": {
+		"message": "此頁面是受瀏覽器保護"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "按文本閱讀器著色"
+	},
+
+	"errorOccured": {
+		"message": "發生錯誤，使用備選顏色"
+	},
+
+	"colourForHomePage": {
+		"message": "首頁背景色可在設定頁調整"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "使用為 <b>$1</b> 相關頁面指定的顏色<label id='info_action' title='使用默認顏色'><span>使用默認顏色</span></label>"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "可使用為 <b>$1</b> 相關頁面推介的顏色<label id='info_action' title='使用推介顏色'><span>使用推介顏色</span></label>"
+	},
+
+	"specifyColourForAddon": {
+		"message": "點擊「指定顏色」以開啟設定頁。您可為 <b>$1</b> 相關頁面指定顏色<label id='info_action' title='開啟設定頁來為 $1 相關頁面指定顏色'><span>指定顏色</span></label>"
+	},
+
+	"content_script.js": {
+		"message": "=============================="
+	},
+
+	"themeColourIsUnignored": {
+		"message": "此網站指定的主題色被解除忽略<label id='info_action' title='不使用此網站指定的主題色' data-action='IGNORE_THEME'><span>忽略此主題色</span></label>"
+	},
+
+	"themeColourNotFound": {
+		"message": "網站未指定主題色，標題列顏色是從網頁獲取"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "此網站指定的主題色被忽略<label id='info_action' title='使用此網站指定的主題色' data-action='UN_IGNORE_THEME'><span>使用此主題色</span></label>"
+	},
+
+	"colourIsPickedFrom": {
+		"message": "標題列顏色是從符合 <b>$1</b> 的網頁元件中獲取"
+	},
+
+	"colourIsSpecified": {
+		"message": "此域名對應的顏色是被指定"
+	},
+
+	"bacauseThemeColourIsIgnored": {
+		"message": "，皆因網站指定的主題色被默認忽略<label id='info_action' title='使用此網站指定的主題色' data-action='UN_IGNORE_THEME'><span>解除忽略此主題色</span></label>"
+	},
+
+	"usingDarkNoise": {
+		"message": "使用 <b>chrome://global/skin/media/imagedoc-darknoise.png</b> 作為背景"
+	},
+
+	"usingColourForPlainText": {
+		"message": "使用 <b>resource://content-accessible/plaintext.css</b> 規定的顏色"
+	},
+
+	"usingThemeColour": {
+		"message": "使用此網站指定的主題色<label id='info_action' title='忽略此網站指定的主題色' data-action='IGNORE_THEME'><span>忽略此主題色</span></label>"
+	},
+
+	"usingFallbackColour": {
+		"message": "未能從網頁獲取顏色，使用備選顏色"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "標題列顏色是從網頁中獲取"
+	},
+
+	"end": {
+		"message": "=============================="
+	}
+}

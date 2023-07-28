@@ -7,43 +7,43 @@
 
 	<body class="dark">
 		<div id="loading">
-			<h4>Loading…</h4>
-			<p id="reinstall-tip">
-				Preference data could be corupted. Please remove the add-on, quit Firefox, and re-install the add-on. I’m sorry for your
+			<h4 data-text="loading">Loading…</h4>
+			<p id="reinstall_tip" data-text="reinstall_tip">
+				Preference data could be corrupted. Please remove the add-on, and re-install the add-on after rebooting Firefox. I’m sorry for your
 				inconvenience!
 			</p>
 		</div>
 		<div id="settings" hidden="true">
 			<div>
-				<div id="info_display">This page is protected by browser</div>
+				<div id="info_display" data-text="pageIsProtected">This page is protected by browser</div>
 				<hr />
-				<h4>Color scheme preference</h4>
-				<label for="color_scheme_system" title="Use system color scheme">
+				<h4 data-text="colourSchemePreference">Colour scheme preference</h4>
+				<label for="color_scheme_system" data-title="useSystemColourScheme">
 					<input id="color_scheme_system" type="radio" />
-					<span>Automatic</span>
+					<span data-text="automatic">Automatic</span>
 				</label>
-				<label for="color_scheme_no_dark" title="Use light color scheme">
+				<label for="color_scheme_no_dark" data-title="useLightColourScheme">
 					<input id="color_scheme_no_dark" type="radio" />
-					<span>Light</span>
+					<span data-text="light">Light</span>
 				</label>
-				<label for="color_scheme_no_light" title="Use dark color scheme">
+				<label for="color_scheme_no_light" data-title="useDarkColourScheme">
 					<input id="color_scheme_no_light" type="radio" />
-					<span>Dark</span>
+					<span data-text="dark">Dark</span>
 				</label>
 				<hr />
-				<label for="force_mode" title="Allow tab bar to turn bright">
+				<label for="force_mode" data-title="forceModeTooltip_bright">
 					<input id="force_mode" type="checkbox" />
-					<span id="force_mode_caption">Allow light tab bar</span>
+					<span id="force_mode_caption" data-text="allowLightTabBar">Allow light tab bar</span>
 				</label>
-				<label for="dynamic" title="Updates tab bar color while scrolling">
+				<label for="dynamic" data-title="dynamicModeTooltip">
 					<input id="dynamic" type="checkbox" />
-					<span>Dynamic color update</span>
+					<span data-text="dynamicColourUpdate">Dynamic color update</span>
 				</label>
-				<label for="no_theme_color" title="Always ignore theme color defined by the websites">
+				<label for="no_theme_color" data-title="noThemeColourModeTooltip">
 					<input id="no_theme_color" type="checkbox" />
-					<span>Ignore all theme color</span>
+					<span data-text="ignoreDesignatedThemeColour">Ignore all theme color</span>
 				</label>
-				<label id="custom_popup" title="Open option page">More settings…</label>
+				<label id="custom_popup" data-text="moreSettings" data-title="moreSettingsTooltip">More settings…</label>
 			</div>
 		</div>
 		<script type="text/javascript" src="../options.js"></script>
