@@ -120,7 +120,7 @@
 	},
 
 	"reportAnIssue": {
-		"message": "Report an issue / submit a suggestion"
+		"message": "Report an issue / submit a suggestion / translate this add-on"
 	},
 
 	"moreSettings": {
@@ -224,7 +224,7 @@
 	},
 
 	"useRecommendedColourForAddon": {
-		"message": "Use recommended color for pages related to <b>$1</b><label id='info_action' title='Use recommended color'><span>Use recommended color</span></label>"
+		"message": "Recommended color for pages related to <b>$1</b> is available<label id='info_action' title='Use recommended color'><span>Use recommended color</span></label>"
 	},
 
 	"specifyColourForAddon": {

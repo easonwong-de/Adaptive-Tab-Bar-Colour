@@ -33,7 +33,7 @@ Vorsicht vor schädlicher Web-UI: Bitte unterscheiden Sie zwischen der Browser-B
 
 <b>Für CSS-Theme-Liebhaber</b>
 
-Ein CSS-Theme kann mit <abbr title="Anpassbare Tableistenfarbe">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Hier</a> ist ein Beispiel für ein mit <abbr title="Anpassbare Tableistenfarbe">ATBC</abbr> kompatibles CSS-Theme.
+Ein CSS-Theme kann mit <abbr title="Anpassende Tableistenfarbe">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Hier</a> ist ein Beispiel für ein mit <abbr title="Anpassende Tableistenfarbe">ATBC</abbr> kompatibles CSS-Theme.
 
 
 <b>Bekannte Probleme</b>
