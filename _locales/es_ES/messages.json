@@ -1,0 +1,285 @@
+{
+	"extensionName": {
+		"message": "Adaptive Tab Bar Colour"
+	},
+
+	"extensionDescription": {
+		"message": "Cambia el color de la barra de pestañas de Firefox para que coincida con el tema del sitio web."
+	},
+
+	"option.html & popup.html": {
+		"message": "=============================="
+	},
+
+	"reinstallTip": {
+		"message": "Los datos de preferencias podrían estar corruptos. Por favor, elimine el complemento y vuelva a instalarlo después de reiniciar Firefox. ¡Lo siento por las molestias!"
+	},
+
+	"loading": {
+		"message": "Cargando…"
+	},
+
+	"general": {
+		"message": "General"
+	},
+
+	"customisation": {
+		"message": "Personalización"
+	},
+
+	"advanced": {
+		"message": "Avanzado"
+	},
+
+	"colourSchemePreference": {
+		"message": "Preferencias el esquema de color"
+	},
+
+	"automatic": {
+		"message": "Automático"
+	},
+
+	"light": {
+		"message": "Claro"
+	},
+
+	"dark": {
+		"message": "Oscuro"
+	},
+
+	"allowLightTabBar": {
+		"message": "Permitir la barra de pestañas clara"
+	},
+
+	"allowDarkTabBar": {
+		"message": "Permitir la barra de pestañas oscura"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Actualización automatica de color"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignora el thema de color designado"
+	},
+
+	"tabBar": {
+		"message": "Barra de pestañas"
+	},
+
+	"background": {
+		"message": "Fondo"
+	},
+
+	"selectedTab": {
+		"message": "Pestaña Seleccionada"
+	},
+
+	"toolbar": {
+		"message": "Barra de Herramientas"
+	},
+
+	"border": {
+		"message": "Borde"
+	},
+
+	"URLBar": {
+		"message": "Barra de direcciones"
+	},
+
+	"backgroundOnFocus": {
+		"message": "Fondo seleccionado"
+	},
+
+	"sidebar": {
+		"message": "Barra lateral"
+	},
+
+	"popUp": {
+		"message": "Ventana emergente"
+	},
+
+	"enableRulesForSpecificDomains": {
+		"message": "Activar reglas para dominios especificos"
+	},
+
+	"homepageColourLight": {
+		"message": "Color de la pagina de inicio: claro"
+	},
+
+	"homepageColourDark": {
+		"message": "Color de la pagina de inicio: oscuro"
+	},
+
+	"fallbackColourLight": {
+		"message": "Color de reserva: claro"
+	},
+
+	"fallbackColourDark": {
+		"message": "Color de reserva: oscuro"
+	},
+
+	"reportAnIssue": {
+		"message": "Reportar un problema / enviar sugerencia / traducir este complemento"
+	},
+
+	"moreSettings": {
+		"message": "Más ajustes…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Abrir pagina de ajustes"
+	},
+
+	"option.js": {
+		"message": "=============================="
+	},
+
+	"resetRuleConfirm": {
+		"message": "¿Quieres reiniciar todas las reglas?"
+	},
+
+	"specifyAColour": {
+		"message": "especifica un color"
+	},
+
+	"ignoreThemeColour": {
+		"message": "Ignorar el color del tema"
+	},
+
+	"useThemeColour": {
+		"message": "Usar el color del tema"
+	},
+
+	"useQuerySelector": {
+		"message": "Usar el selector de consulta"
+	},
+
+	"useSystemColourScheme": {
+		"message": "Usar el esquema de color del sistema"
+	},
+
+	"useLightColourScheme": {
+		"message": "Usar el esquema de color claro"
+	},
+
+	"useDarkColourScheme": {
+		"message": "Usar el esquema de color oscuro"
+	},
+
+	"forceModeTooltip_bright": {
+		"message": "Permitir que la barra de pestañas se ponga brillante (puede causar parpadeo)"
+	},
+
+	"forceModeTooltip_dark": {
+		"message": "Permitir que la barra de pestañas se ponga oscura (puede causar parpadeo)"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Sigue actualizando el color de la barra de pestañas mientras navega por una página web"
+	},
+
+	"noThemeColourModeTooltip": {
+		"message": "Ignorar siempre el color del tema definido por el sitio web"
+	},
+
+	"delete": {
+		"message": "Eliminar"
+	},
+
+	"reset": {
+		"message": "Restablecer"
+	},
+
+	"resetDomainSpecificRules": {
+		"message": "Restablecer las reglas específicas del dominio"
+	},
+
+	"addANewRule": {
+		"message": "Añadir una nueva regla"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Usando el color para el visor de PDF"
+	},
+
+	"pageIsProtected": {
+		"message": "Esta página está protegida por el navegador"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Usando el color para el visor de texto plano"
+	},
+
+	"errorOccured": {
+		"message": "Ocurrió un error, usando el color de reserva"
+	},
+
+	"colourForHomePage": {
+		"message": "El color de la barra de pestañas para la página de inicio se puede configurar en los ajustes"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Usando el color especificado para las páginas relacionadas con <b>$1</b><label id='info_action' title='Usar color predeterminado'><span>Usar color predeterminado</span></label>"	
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Se encuentra disponible un color recomendado para las páginas relacionadas con <b>$1</b><label id='info_action' title='Usar color recomendado'><span>Usar color recomendado</span></label>"	
+	},
+
+	"specifyColourForAddon": {
+		"message": "Haga clic en “Especificar un color” para abrir la configuración y especificar el color de la barra de pestañas para las páginas relacionadas con <b>$1</b><label id='info_action' title='Abrir la configuración y especificar un color para las páginas relacionadas con $1'><span>Especificar un color</span></label>"
+	},
+
+	"content_script.js": {
+		"message": "=============================="
+	},
+
+	"themeColourIsUnignored": {
+		"message": "El color del tema definido por el sitio web no se ignora<label id='info_action' title='No usar el color del tema definido por el sitio web' data-action='IGNORE_THEME'><span>No usar el color del tema</span></label>"
+	},
+
+	"themeColourNotFound": {
+		"message": "No se ha encontrado el color del tema, se ha seleccionado un color de la página web"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "El color del tema definido por el sitio web se ha ignorado<label id='info_action' title='Usar el color del tema definido por el sitio web' data-action='UN_IGNORE_THEME'><span>Usar el color del tema</span></label>"
+	},
+
+	"colourIsPickedFrom": {
+		"message": "El color se ha seleccionado de un elemento HTML que coincide con <b>$1</b>"
+	},
+
+	"colourIsSpecified": {
+		"message": "El color para este dominio se ha especificado en la configuración"
+	},
+
+	"bacauseThemeColourIsIgnored": {
+		"message": ", porque el color del tema definido por el sitio web se ha ignorado<label id='info_action' title='Usar el color del tema definido por el sitio web' data-action='UN_IGNORE_THEME'><span>No ignorar el color del tema</span></label>"
+	},
+
+	"usingDarkNoise": {
+		"message": "Se está utilizando <b>chrome://global/skin/media/imagedoc-darknoise.png</b> como fondo"
+	},
+
+	"usingColourForPlainText": {
+		"message": "Se está utilizando el color de <b>resource://content-accessible/plaintext.css</b>"
+	},
+
+	"usingThemeColour": {
+		"message": "Se está utilizando el color del tema definido por el sitio web<label id='info_action' title='Ignorar el color del tema definido por el sitio web' data-action='IGNORE_THEME'><span>Ignorar el color del tema</span></label>"
+	},
+
+	"usingFallbackColour": {
+		"message": "No se ha encontrado ningún color, se está utilizando el color de reserva"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "El color se ha seleccionado correctamente de la página web"
+	},
+
+	"end": {
+		"message": "=============================="
+	}
+}
