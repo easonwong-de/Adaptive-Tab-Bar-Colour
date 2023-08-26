@@ -1,3 +1,14 @@
+import {
+	default_home_light,
+	default_home_dark,
+	default_fallback_light,
+	default_fallback_dark,
+	default_reservedColour_cs,
+	reservedColour_aboutPage,
+	checkVersion,
+} from "./shared.js";
+import { rgba, dimColour } from "./colour.js";
+
 // Settings cache: always synced with settings page (followed by handles in storage)
 var pref_scheme; // scheme
 var pref_allow_dark_light; // force
@@ -28,74 +39,6 @@ var current_home_dark;
 var current_fallback_light;
 var current_fallback_dark;
 var current_reservedColour_cs;
-
-// Default values
-const default_home_light = "#FFFFFF";
-const default_home_dark = "#2B2A33";
-const default_fallback_light = "#FFFFFF";
-const default_fallback_dark = "#2B2A33";
-
-/* reserved colour is a colour => the colour is the theme colour for the web
-reserved colour is IGNORE_THEME => use calculated colour as theme colour
-reserved colour is a tag name => theme colour is stored under that tag
-reserved colour is a class name => theme colour is stored under that class */
-const default_reservedColour_cs = Object.freeze({
-	"apnews.com": "IGNORE_THEME",
-	"developer.mozilla.org": "IGNORE_THEME",
-	"www.facebook.com": "UN_IGNORE_THEME",
-	"github.com": "IGNORE_THEME",
-	"mail.google.com": "QS_div.wl",
-	"open.spotify.com": "#000000",
-	"www.linkedin.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME",
-});
-
-/* Pages where content script can't be injected
-other reserved colour are in content_script.js
-url listed only in "light"/"dark" => only use that colour regardless of the colour scheme
-url listed in both => choose colour scheme as needed
-url listed as "DEFAULT" => use default_light/dark_colour
-url listed as "DARKNOISE" => use "darknoise" theme */
-const reservedColour = Object.freeze({
-	light: {
-		"about:checkerboard": "DEFAULT",
-		"about:debugging#": "rgb(236, 236, 236)",
-		"about:devtools-toolbox": "rgb(249, 249, 250)",
-		"about:firefoxview": "HOME",
-		"about:home": "HOME",
-		"about:newtab": "HOME",
-		"about:performance": "DEFAULT",
-		"about:plugins": "DEFAULT",
-		"about:processes": "rgb(239, 239, 242)",
-		"about:sync-log": "DEFAULT",
-		"accounts-static.cdn.mozilla.net": "DEFAULT",
-		"accounts.firefox.com": "rgb(251, 251, 254)",
-		"addons.cdn.mozilla.net": "DEFAULT",
-		"content.cdn.mozilla.net": "DEFAULT",
-		"discovery.addons.mozilla.org": "rgb(236, 236, 236)",
-		"install.mozilla.org": "DEFAULT",
-		"support.mozilla.org": "rgb(255, 255, 255)",
-	},
-	dark: {
-		"about:debugging#": "DEFAULT",
-		"about:devtools-toolbox": "rgb(12, 12, 13)",
-		"about:firefoxview": "HOME",
-		"about:home": "HOME",
-		"about:logo": "DARKNOISE",
-		"about:mozilla": "rgb(143, 15, 7)",
-		"about:newtab": "HOME",
-		"about:performance": "rgb(35, 34, 42)",
-		"about:plugins": "rgb(43, 42, 50)",
-		"about:privatebrowsing": "rgb(37, 0, 62)",
-		"about:processes": "rgb(43, 42, 50)",
-		"about:sync-log": "rgb(30, 30, 30)",
-		"accounts-static.cdn.mozilla.net": "DEFAULT",
-		"addons.cdn.mozilla.net": "DEFAULT",
-		"addons.mozilla.org": "rgb(32, 18, 58)",
-		"content.cdn.mozilla.net": "DEFAULT",
-		"install.mozilla.org": "DEFAULT",
-	},
-});
 
 /**
  * Caches pref into local variables.
@@ -339,7 +282,7 @@ function initialize() {
 		let pending_fallback_light = pref_fallback_light;
 		let pending_fallback_dark = pref_fallback_dark;
 		let pending_reservedColour_cs = pref_reservedColour_cs;
-		let pending_last_version = [2, 0, 0];
+		let pending_last_version = [2, 1];
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
 			pending_tab_selected = 0.1;
@@ -544,12 +487,12 @@ function updateEachWindow(tab) {
 		// When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
 		getSearchKey(url).then((key) => {
 			let reversed_scheme = current_scheme == "light" ? "dark" : "light";
-			if (reservedColour[current_scheme][key]) {
+			if (reservedColour_aboutPage[current_scheme][key]) {
 				// For prefered scheme there's a reserved colour
-				setFrameColour(windowId, rgba(reservedColour[current_scheme][key]), current_scheme == "dark");
-			} else if (reservedColour[reversed_scheme][key]) {
+				setFrameColour(windowId, rgba(reservedColour_aboutPage[current_scheme][key]), current_scheme == "dark");
+			} else if (reservedColour_aboutPage[reversed_scheme][key]) {
 				// Site has reserved colour in the other mode
-				setFrameColour(windowId, rgba(reservedColour[reversed_scheme][key]), reversed_scheme == "dark");
+				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversed_scheme][key]), reversed_scheme == "dark");
 			} else if (url.startsWith("about:")) {
 				setFrameColour(windowId, "DEFAULT");
 			} else if (key.startsWith("Add-on ID: ") && current_reservedColour_cs[key]) {
@@ -828,6 +771,9 @@ function changeThemePara(colour, colourScheme) {
  */
 function applyTheme(windowId, theme) {
 	browser.theme.update(windowId, theme);
+	browser.runtime.sendMessage("TPOH@EasonWong", "TPOH_UPDATE").catch((e) => {
+		console.error(e);
+	});
 }
 
 /**
@@ -839,77 +785,6 @@ function isDarkModeSuitable(colour) {
 	if (colour == null || typeof colour != "object") return null;
 	let brightness = 0.299 * colour.r + 0.587 * colour.g + 0.114 * colour.b;
 	return brightness < 128; // For good contrast, colours' brightness should differ at least for 50%
-}
-
-/**
- * Dims or lightens colour.
- * @param {object} colour Colour to process, in rgb object.
- * @param {number} dim between -1.0 (dim) to 1.0 (light).
- * @returns Dimmed or lightened colour string.
- */
-function dimColour(colour, dim) {
-	let result = Object.assign({}, colour);
-	if (dim > 0) {
-		result.r = colour.r + dim * (255 - colour.r);
-		result.g = colour.g + dim * (255 - colour.g);
-		result.b = colour.b + dim * (255 - colour.b);
-	} else if (dim < 0) {
-		result.r = (dim + 1) * colour.r;
-		result.g = (dim + 1) * colour.g;
-		result.b = (dim + 1) * colour.b;
-	}
-	return "rgb(" + Math.floor(result.r) + ", " + Math.floor(result.g) + ", " + Math.floor(result.b) + ")";
-}
-
-/**
- * Converts any colour to rgba object.
- * @author JayB on Stack Overflow (modified by Eason Wong).
- * @param {string | Number[]} colour Colour to convert.
- * @returns Colour in rgba object. Pure black if invalid.
- */
-function rgba(colour) {
-	if (typeof colour == "string") {
-		if (colour == "DEFAULT" || colour == "DARKNOISE" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
-		var canvas = document.createElement("canvas").getContext("2d");
-		canvas.fillStyle = colour;
-		let colour_temp = canvas.fillStyle;
-		if (colour_temp.startsWith("#")) {
-			let r = colour_temp[1] + colour_temp[2];
-			let g = colour_temp[3] + colour_temp[4];
-			let b = colour_temp[5] + colour_temp[6];
-			return {
-				r: parseInt(r, 16),
-				g: parseInt(g, 16),
-				b: parseInt(b, 16),
-				a: 1,
-			};
-		} else {
-			let result = colour_temp.match(/[.?\d]+/g).map(Number);
-			return {
-				r: result[0],
-				g: result[1],
-				b: result[2],
-				a: result[3],
-			};
-		}
-	} else if (typeof colour == "object") {
-		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
-	} else {
-		return null;
-	}
-}
-
-/**
- * @returns Firefox version. 999 if cannot be found.
- */
-function checkVersion() {
-	let userAgent = navigator.userAgent;
-	let version = 999;
-	let ind = userAgent.lastIndexOf("Firefox");
-	if (ind != -1) {
-		version = userAgent.substring(ind + 8);
-	}
-	return version;
 }
 
 /**

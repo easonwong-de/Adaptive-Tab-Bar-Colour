@@ -23,7 +23,7 @@ const default_reservedColour_cs = Object.freeze({
 /**
  * Loads preferences into cache and check integrity.
  */
-function cachePref_content(pref) {
+function cachePref_cs(pref) {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_colour = pref.no_theme_color;
 	pref_reservedColour_cs = pref.reservedColor_cs;
@@ -39,7 +39,7 @@ var RESPONSE_INFO = "";
 
 // Send colour to background as soon as page loads
 browser.storage.local.get((pref) => {
-	if (cachePref_content(pref)) findAndSendColour();
+	if (cachePref_cs(pref)) findAndSendColour();
 });
 
 var debouncePrevRun = 0;

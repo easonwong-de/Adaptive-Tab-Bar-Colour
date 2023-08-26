@@ -1,5 +1,7 @@
 // This script is shared by option page and popup
 
+import { default_reservedColour_cs, recommendedColour_addon, protectedDomain, checkVersion } from "./shared.js";
+
 // Localisation
 document.addEventListener("DOMContentLoaded", function () {
 	document.querySelectorAll("[data-text]").forEach((element) => {
@@ -35,25 +37,13 @@ var pref_reservedColour_cs; // reservedColor_cs
 // Current colour lookup table
 var current_reservedColour_cs;
 
-// Default colour lookup table
-const default_reservedColour_cs = Object.freeze({
-	"apnews.com": "IGNORE_THEME",
-	"developer.mozilla.org": "IGNORE_THEME",
-	"www.facebook.com": "UN_IGNORE_THEME",
-	"github.com": "IGNORE_THEME",
-	"mail.google.com": "QS_div.wl",
-	"open.spotify.com": "#000000",
-	"www.linkedin.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME",
-});
-
 const svg_bin = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
 const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
 
 /**
  * Caches pref into local variables and checks integrity.
  */
-function cachePref_option(pref) {
+function cachePref_op(pref) {
 	// loads prefs
 	pref_scheme = pref.scheme;
 	pref_allow_dark_light = pref.force;
@@ -99,31 +89,6 @@ function cachePref_option(pref) {
 		pref_reservedColour_cs != null
 	);
 }
-
-// Recommended colour for Add-ons' built-in page
-const recommendedColour_addon = Object.freeze({
-	"uBlock0@raymondhill.net": "#1b1a23",
-	"adguardadblocker@adguard.com": "#131313",
-	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": "#fffffe",
-	"enhancerforyoutube@maximerf.addons.mozilla.org": "#282a2d",
-	"languagetool-webextension@languagetool.org": "#111113",
-	"sponsorBlocker@ajay.app": "#323232",
-	"tongwen@softcup": "#fffffe",
-	"{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": "#fffffe",
-	"{e7476172-097c-4b77-b56e-f56a894adca9}": "#151f2a",
-});
-
-// List of protected domains
-const protected_domains = Object.freeze({
-	"accounts-static.cdn.mozilla.net": "PROTECTED",
-	"accounts.firefox.com": "PROTECTED",
-	"addons.cdn.mozilla.net": "PROTECTED",
-	"addons.mozilla.org": "PROTECTED",
-	"content.cdn.mozilla.net": "PROTECTED",
-	"discovery.addons.mozilla.org": "PROTECTED",
-	"install.mozilla.org": "PROTECTED",
-	"support.mozilla.org": "PROTECTED",
-});
 
 let body = document.getElementsByTagName("body")[0];
 let loading = document.getElementById("loading");
@@ -182,7 +147,7 @@ browser.storage.onChanged.addListener(() => {
  */
 function load() {
 	browser.storage.local.get((pref) => {
-		if (cachePref_option(pref)) {
+		if (cachePref_op(pref)) {
 			colour_scheme_dark.checked = pref_scheme === "dark";
 			colour_scheme_light.checked = pref_scheme === "light";
 			colour_scheme_system.checked = pref_scheme === "system";
@@ -232,7 +197,7 @@ function load() {
  */
 function load_lite() {
 	browser.storage.local.get((pref) => {
-		if (cachePref_option(pref)) {
+		if (cachePref_op(pref)) {
 			colour_scheme_dark.checked = pref_scheme === "dark";
 			colour_scheme_light.checked = pref_scheme === "light";
 			colour_scheme_system.checked = pref_scheme === "system";
@@ -519,7 +484,7 @@ function autoPopupColour() {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
 		let id = tabs[0].id;
-		if (((url.startsWith("http:") || url.startsWith("https:")) && protected_domains[domain] != "PROTECTED") || url.startsWith("file:")) {
+		if (((url.startsWith("http:") || url.startsWith("https:")) && protectedDomain[domain] != "PROTECTED") || url.startsWith("file:")) {
 			browser.tabs.sendMessage(
 				id,
 				{
@@ -665,19 +630,6 @@ if (lightModeDetection_p)
  */
 function lightModeDetected() {
 	return lightModeDetection_p && lightModeDetection_p.matches;
-}
-
-/**
- * @returns Firefox version. 999 if cannot be found.
- */
-function checkVersion() {
-	let userAgent = navigator.userAgent;
-	let version = 999;
-	let ind = userAgent.lastIndexOf("Firefox");
-	if (ind != -1) {
-		version = userAgent.substring(ind + 8);
-	}
-	return version;
 }
 
 /**
