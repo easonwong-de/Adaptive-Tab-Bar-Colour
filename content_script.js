@@ -3,9 +3,6 @@
 
 // Settings cache: updated on message
 var pref_no_theme_colour;
-var pref_reservedColour_cs;
-
-// Current colour lookup table
 var current_reservedColour_cs;
 
 // Default colour lookup table
@@ -26,9 +23,8 @@ const default_reservedColour_cs = Object.freeze({
 function cachePref_cs(pref) {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_colour = pref.no_theme_color;
-	pref_reservedColour_cs = pref.reservedColor_cs;
-	current_reservedColour_cs = pref.custom ? pref_reservedColour_cs : default_reservedColour_cs;
-	return pref_no_theme_colour != null && pref_reservedColour_cs != null;
+	current_reservedColour_cs = pref.custom ? pref.reservedColor_cs : default_reservedColour_cs;
+	return pref_no_theme_colour != null && current_reservedColour_cs != null;
 }
 
 // Initializes response colour
@@ -140,7 +136,7 @@ onStyleInjection.observe(document.head, { childList: true });
 browser.runtime.onMessage.addListener((pref, sender, sendResponse) => {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_colour = pref.no_theme_color;
-	pref_reservedColour_cs = pref.reservedColor_cs;
+	current_reservedColour_cs = pref.reservedColor_cs;
 	if (pref.reason == "INFO_REQUEST") {
 		findColour();
 		sendResponse(RESPONSE_INFO);
@@ -183,12 +179,12 @@ function findAndSendColour_fix() {
 }
 
 /**
- * Sets RESPONSE_COLOUR with the help of host actions stored in pref_reservedColour_cs.
+ * Sets RESPONSE_COLOUR with the help of host actions stored in current_reservedColour_cs.
  * @returns True if a legal reserved colour for the webpage can be found.
  */
 function findColourReserved() {
 	let domain = document.location.host; // "host" can be "www.irgendwas.com"
-	let action = pref_reservedColour_cs[domain];
+	let action = current_reservedColour_cs[domain];
 	if (action == null || (!pref_no_theme_colour && action == "UN_IGNORE_THEME") || (pref_no_theme_colour && action == "IGNORE_THEME")) {
 		return false;
 	} else if (pref_no_theme_colour && action == "UN_IGNORE_THEME") {
