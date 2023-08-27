@@ -1,10 +1,6 @@
 // Sends colour in RGBA object to background.js
 // If A in RGBA is not 1, falls back to default colour.
 
-// Settings cache: updated on message
-var pref_no_theme_colour;
-var current_reservedColour_cs = default_reservedColour_cs;
-
 // Default colour lookup table
 const default_reservedColour_cs = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
@@ -16,6 +12,10 @@ const default_reservedColour_cs = Object.freeze({
 	"www.linkedin.com": "IGNORE_THEME",
 	"www.spiegel.de": "IGNORE_THEME",
 });
+
+// Settings cache: updated on message
+var pref_no_theme_colour;
+var current_reservedColour_cs = default_reservedColour_cs;
 
 /**
  * Loads preferences into cache and check integrity.
