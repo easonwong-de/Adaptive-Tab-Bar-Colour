@@ -8,7 +8,7 @@
 	"browser_specific_settings": {
 		"gecko": {
 			"id": "ATBC@EasonWong",
-			"strict_min_version": "58.0"
+			"strict_min_version": "112.0"
 		}
 	},
 	"permissions": ["activeTab", "tabs", "theme", "storage", "browserSettings", "management"],
