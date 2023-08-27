@@ -16,7 +16,7 @@ Dieses Add-on wurde speziell programmiert, um gut mit einigen bekannten Webseite
 
 Dieses Add-on übernimmt die Kontrolle über die Farben und das Farbschema der Browserschnittstelle. Es ist nicht kompatibel mit Add-ons, die Änderungen daran vornehmen.
 <ol>
-	<li>Firefox unter <a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version-58.0</a> (veröffentlicht im Januar 2018)</li>
+	<li>Firefox unter <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">Version-112.0</a> (veröffentlicht im April 2023)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>

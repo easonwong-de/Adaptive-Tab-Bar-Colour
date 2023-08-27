@@ -16,7 +16,7 @@ This add-on is programmed particularly to be responsive to some prominent web pa
 
 This add-on takes control of browser’s UI colour and colour scheme settings. Any add-on that makes changes to them is incompatible.
 <ol>
-	<li>Firefox under <a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version 58.0</a> (released on Jan, 2018)</li>
+	<li>Firefox under <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">Version 112.0</a> (released on Apr, 2023)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>

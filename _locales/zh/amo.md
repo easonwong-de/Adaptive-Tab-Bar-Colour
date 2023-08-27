@@ -16,7 +16,7 @@
 
 此擴充套件接管閣下瀏覽器佈景主題的偏好設定。任何對相關設定做出修改的套件可能與本套件不相容。
 <ol>
-	<li><a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version 58.0</a> 之前的 Firefox 版本（於 2018 年一月發佈）</li>
+	<li><a href="https://www.mozilla.org/firefox/112.0/releasenotes/">Version 112.0</a> 之前的 Firefox 版本（於 2023 年四月發佈）</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>

@@ -16,7 +16,7 @@ Este complemento está programado específicamente para ser receptivo a algunos 
 
 Este complemento toma el control de los ajustes de color de la interfaz de usuario y el esquema de color del navegador. Cualquier complemento que los modifique es incompatible.
 <ol>
-	<li>Firefox inferior a la  <a href="https://www.mozilla.org/firefox/58.0/releasenotes/">Version 58.0</a> (released on Jan, 2018)</li>
+	<li>Firefox inferior a la  <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">Version 112.0</a> (released on Apr, 2023)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
