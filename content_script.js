@@ -3,7 +3,7 @@
 
 // Settings cache: updated on message
 var pref_no_theme_colour;
-var current_reservedColour_cs;
+var current_reservedColour_cs = default_reservedColour_cs;
 
 // Default colour lookup table
 const default_reservedColour_cs = Object.freeze({
