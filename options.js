@@ -525,9 +525,9 @@ function autoPopupColour() {
 			let uuid = url.split(/\/|\?/)[2];
 			browser.management.getAll().then((addon_list) => {
 				let breakLoop = false;
-				for (addon of addon_list) {
+				for (let addon of addon_list) {
 					if (addon.type === "extension" && addon.hostPermissions) {
-						for (host of addon.hostPermissions) {
+						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
 								if (current_reservedColour_cs[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);

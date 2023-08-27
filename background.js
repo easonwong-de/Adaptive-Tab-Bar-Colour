@@ -555,9 +555,9 @@ function getSearchKey(url) {
 		return new Promise((resolve) => {
 			browser.management.getAll().then((addonList) => {
 				let breakLoop = false;
-				for (addon of addonList) {
+				for (let addon of addonList) { // bugs for some reason
 					if (addon.type === "extension" && addon.hostPermissions) {
-						for (host of addon.hostPermissions) {
+						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
 								resolve(`Add-on ID: ${addon.id}`);
 								breakLoop = true;
