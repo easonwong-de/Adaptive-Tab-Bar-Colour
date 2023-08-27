@@ -771,7 +771,7 @@ function changeThemePara(colour, colourScheme) {
  */
 function applyTheme(windowId, theme) {
 	browser.theme.update(windowId, theme);
-	browser.runtime.sendMessage("TPOH@EasonWong", "TPOH_UPDATE").catch((e) => {
+	browser.runtime.sendMessage("OHTP@EasonWong", "TPOH_UPDATE").catch((e) => {
 		if (e.message != "Could not establish connection. Receiving end does not exist.") console.error(e);
 	});
 }
