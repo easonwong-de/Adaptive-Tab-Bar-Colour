@@ -71,32 +71,33 @@ function addDebounce(fn) {
 	};
 }
 
+const findAndSendColour_debounce = addDebounce(findAndSendColour);
+const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_animation);
+
 /**
  * Sets up / Turns off dynamic update.
  * @param {boolean} dynamic Dynamic update.
  */
 function setDynamicUpdate(dynamic) {
-	const findAndSendColour_debounce = addDebounce(findAndSendColour);
-	const findAndSendColour_fix_debounce = addDebounce(findAndSendColour_fix);
 	if (dynamic) {
-		document.addEventListener("animationend", findAndSendColour_fix_debounce);
-		document.addEventListener("animationcancel", findAndSendColour_fix_debounce);
+		document.addEventListener("animationend", findAndSendColour_animation_debounce);
+		document.addEventListener("animationcancel", findAndSendColour_animation_debounce);
 		document.addEventListener("pageshow", findAndSendColour);
 		document.addEventListener("click", findAndSendColour_debounce);
 		document.addEventListener("resize", findAndSendColour_debounce);
 		document.addEventListener("scroll", findAndSendColour_debounce);
-		document.addEventListener("transitionend", findAndSendColour_fix_debounce);
-		document.addEventListener("transitioncancel", findAndSendColour_fix_debounce);
+		document.addEventListener("transitionend", findAndSendColour_animation_debounce);
+		document.addEventListener("transitioncancel", findAndSendColour_animation_debounce);
 		document.addEventListener("visibilitychange", findAndSendColour_debounce);
 	} else {
-		document.removeEventListener("animationend", findAndSendColour_fix_debounce);
-		document.removeEventListener("animationcancel", findAndSendColour_fix_debounce);
+		document.removeEventListener("animationend", findAndSendColour_animation_debounce);
+		document.removeEventListener("animationcancel", findAndSendColour_animation_debounce);
 		document.removeEventListener("pageshow", findAndSendColour);
 		document.removeEventListener("click", findAndSendColour_debounce);
 		document.removeEventListener("resize", findAndSendColour_debounce);
 		document.removeEventListener("scroll", findAndSendColour_debounce);
-		document.removeEventListener("transitionend", findAndSendColour_fix_debounce);
-		document.removeEventListener("transitioncancel", findAndSendColour_fix_debounce);
+		document.removeEventListener("transitionend", findAndSendColour_animation_debounce);
+		document.removeEventListener("transitioncancel", findAndSendColour_animation_debounce);
 		document.removeEventListener("visibilitychange", findAndSendColour_debounce);
 	}
 }
@@ -170,7 +171,7 @@ function findAndSendColour() {
 /**
  * Finds colour and send to background (fix for transitionend event).
  */
-function findAndSendColour_fix() {
+function findAndSendColour_animation() {
 	if (!document.fullscreenElement) {
 		RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
 		if (!findColourReserved()) findColourUnreserved();
