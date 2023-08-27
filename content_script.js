@@ -52,7 +52,7 @@ var debounceTimeoutID = null;
  * @author cloone8 on GitHub.
  */
 function addDebounce(fn) {
-	const timeoutMs = 100;
+	const timeoutMs = 250;
 	return () => {
 		const currentTime = Date.now();
 		if (debounceTimeoutID) {
