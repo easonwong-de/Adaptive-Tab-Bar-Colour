@@ -281,22 +281,25 @@ function addAction(i) {
 		switch (select_menu.selectedIndex) {
 			case 0:
 				operation.innerHTML = `<input type="color" class="FiveEm" value="#FFFFFF">`;
+				operation.onchange = autoSaveSettings;
 				break;
 			case 1:
 				operation.innerHTML = `<span class="FiveEm"></span>`;
+				operation.oninput = autoSaveSettings;
 				break;
 			case 2:
 				operation.innerHTML = `<span class="FiveEm"></span>`;
+				operation.oninput = autoSaveSettings;
 				break;
 			case 3:
 				operation.innerHTML = `<input type="text" class="FiveEm" value="">`;
+				operation.oninput = autoSaveSettings;
 				break;
 			default:
 				break;
 		}
 		autoSaveSettings();
 	};
-	operation.oninput = autoSaveSettings;
 	delete_button.onclick = () => {
 		delete_button.parentElement.parentElement.remove();
 		autoSaveSettings();
