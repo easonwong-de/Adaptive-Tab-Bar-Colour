@@ -164,7 +164,8 @@ var adaptive_themes = {
 			icons: "rgb(30, 30, 30)",
 		},
 		properties: {
-			color_scheme: "auto",
+			color_scheme: "light",
+			content_color_scheme: "auto",
 		},
 	},
 	dark: {
@@ -203,7 +204,8 @@ var adaptive_themes = {
 			icons: "rgb(225, 225, 225)",
 		},
 		properties: {
-			color_scheme: "auto",
+			color_scheme: "dark",
+			content_color_scheme: "auto",
 		},
 	},
 	darknoise: {
@@ -248,7 +250,8 @@ var adaptive_themes = {
 		properties: {
 			additional_backgrounds_alignment: ["left bottom"],
 			additional_backgrounds_tiling: ["repeat"],
-			color_scheme: "auto",
+			color_scheme: "dark",
+			content_color_scheme: "system",
 		},
 	},
 };
@@ -282,7 +285,7 @@ function initialize() {
 		let pending_fallback_light = pref_fallback_light;
 		let pending_fallback_dark = pref_fallback_dark;
 		let pending_reservedColour_cs = pref_reservedColour_cs;
-		let pending_last_version = [2, 1];
+		let pending_last_version = [2, 2];
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
 			pending_tab_selected = 0.1;
@@ -555,7 +558,8 @@ function getSearchKey(url) {
 		return new Promise((resolve) => {
 			browser.management.getAll().then((addonList) => {
 				let breakLoop = false;
-				for (let addon of addonList) { // bugs for some reason
+				for (let addon of addonList) {
+					// bugs for some reason
 					if (addon.type === "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
@@ -761,7 +765,7 @@ function changeThemePara(colour, colourScheme) {
 	adaptive_themes[colourScheme]["colors"]["sidebar_border"] = sidebar_border;
 	adaptive_themes[colourScheme]["colors"]["popup"] = popup;
 	adaptive_themes[colourScheme]["colors"]["popup_border"] = popup_border;
-	adaptive_themes[colourScheme]["properties"]["color_scheme"] = pref_scheme;
+	//adaptive_themes[colourScheme]["properties"]["color_scheme"] = pref_scheme;
 }
 
 /**
