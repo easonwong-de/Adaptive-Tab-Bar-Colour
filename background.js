@@ -251,7 +251,7 @@ var adaptive_themes = {
 			additional_backgrounds_alignment: ["left bottom"],
 			additional_backgrounds_tiling: ["repeat"],
 			color_scheme: "dark",
-			content_color_scheme: "system",
+			content_color_scheme: "auto",
 		},
 	},
 };
