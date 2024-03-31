@@ -63,6 +63,14 @@
 		"message": "Ignore designated theme colour"
 	},
 
+	"overlay": {
+		"message": "Overlay"
+	},
+
+	"opacityFactor": {
+		"message": "Opacity factor"
+	},
+
 	"tabBar": {
 		"message": "Tab bar"
 	},
