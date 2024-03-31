@@ -67,8 +67,8 @@ export function contrastFactor(colour1, colour2) {
  * @param {number} overlayFactor Factor of the non-linear function. The higher the factor, the slower the opacity drops.
  * @returns Overlay opacity. 0 is fully transparent, 1 is fully opaque.
  */
-export function contrastAdjustedOverlayOpacity(contrast, overlayFactor = 0.15) {
-	return 1 - Math.pow(contrast, overlayFactor);
+export function contrastAdjustedOverlayOpacity(contrast, overlayFactor = 0.25, threshold = 0.25) {
+	return contrast <= threshold ? 1 : 1 - Math.pow(contrast, overlayFactor);
 }
 
 /**

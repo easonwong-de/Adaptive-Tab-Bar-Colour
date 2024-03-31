@@ -71,6 +71,10 @@
 		"message": "Factor de opacidad"
 	},
 
+	"opacityThreshold": {
+		"message": "Umbral de opacidad"
+	},
+
 	"tabBar": {
 		"message": "Barra de pestañas"
 	},

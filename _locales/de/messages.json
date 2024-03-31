@@ -71,6 +71,10 @@
 		"message": "Opazitätsfaktor"
 	},
 
+	"opacityThreshold": {
+		"message": "Opazitätsschwelle"
+	},
+
 	"tabBar": {
 		"message": "Tableiste"
 	},

@@ -15,6 +15,7 @@ var pref_allow_dark_light; // force
 var pref_dynamic; // dynamic
 var pref_no_theme_colour; // no_theme_color
 var pref_overlay_opacity_factor; // overlay_opacity_factor
+var pref_overlay_opacity_threshold; // overlay_opacity_threshold
 var pref_tabbar; // tabbar_color
 var pref_tab_selected; // tab_selected_color
 var pref_toolbar; // toolbar_color
@@ -50,6 +51,7 @@ function cachePref(pref) {
 	pref_dynamic = pref.dynamic;
 	pref_no_theme_colour = pref.no_theme_color;
 	pref_overlay_opacity_factor = pref.overlay_opacity_factor;
+	pref_overlay_opacity_threshold = pref.overlay_opacity_threshold;
 	pref_tabbar = pref.tabbar_color;
 	pref_tab_selected = pref.tab_selected_color;
 	pref_toolbar = pref.toolbar_color;
@@ -272,6 +274,7 @@ function initialize() {
 		let pending_dynamic = pref_dynamic;
 		let pending_no_theme_colour = pref_no_theme_colour;
 		let pending_overlay_opacity_factor = pref_overlay_opacity_factor;
+		let pending_overlay_opacity_threshold = pref_overlay_opacity_threshold;
 		let pending_tabbar = pref_tabbar;
 		let pending_tab_selected = pref_tab_selected;
 		let pending_toolbar = pref_toolbar;
@@ -290,8 +293,9 @@ function initialize() {
 		let pending_reservedColour_cs = pref_reservedColour_cs;
 		let pending_last_version = [2, 2];
 		// updates from v2.3 or earlier
-		if (pref_overlay_opacity_factor == null) {
-			pending_overlay_opacity_factor = 0.15;
+		if (pref_overlay_opacity_factor == null || pref_overlay_opacity_threshold == null) {
+			pending_overlay_opacity_factor = 0.25;
+			pending_overlay_opacity_threshold = 0.25;
 		}
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
@@ -385,6 +389,7 @@ function initialize() {
 				dynamic: pending_dynamic,
 				no_theme_color: pending_no_theme_colour,
 				overlay_opacity_factor: pending_overlay_opacity_factor,
+				overlay_opacity_threshold: pending_overlay_opacity_threshold,
 				tabbar_color: pending_tabbar,
 				tab_selected_color: pending_tab_selected,
 				toolbar_color: pending_toolbar,
@@ -695,7 +700,7 @@ function setFrameColour(windowId, colour, darkMode) {
 				// Compute the contrast between the colour and the base colour
 				let contrast = contrastFactor(colour, baseColour);
 				// Adjust the overlay opacity based on the contrast
-				colour.a = contrastAdjustedOverlayOpacity(contrast, pref_overlay_opacity_factor);
+				colour.a = contrastAdjustedOverlayOpacity(contrast, pref_overlay_opacity_factor, pref_overlay_opacity_threshold);
 				// Compute the overlay colour
 				let result = overlayColour(colour, baseColour);
 

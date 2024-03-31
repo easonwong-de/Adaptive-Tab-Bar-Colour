@@ -71,6 +71,10 @@
 		"message": "不透明度系数"
 	},
 
+	"opacityThreshold": {
+		"message": "不透明度閾值"
+	},
+
 	"tabBar": {
 		"message": "索引標籤列"
 	},

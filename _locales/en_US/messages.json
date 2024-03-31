@@ -71,6 +71,10 @@
 		"message": "Opacity factor"
 	},
 
+	"opacityThreshold": {
+		"message": "Opacity threshold"
+	},
+
 	"tabBar": {
 		"message": "Tab bar"
 	},

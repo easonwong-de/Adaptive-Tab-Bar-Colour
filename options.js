@@ -101,6 +101,7 @@ let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
 let no_theme_colour = document.getElementById("no_theme_color");
 let op_overlay_opacity_factor = document.getElementById("overlay_opacity_factor");
+let op_overlay_opacity_threshold = document.getElementById("overlay_opacity_threshold");
 let op_tabbar = document.getElementById("tabbar_color");
 let op_tab_selected = document.getElementById("tab_selected_color");
 let op_toolbar = document.getElementById("toolbar_color");
@@ -158,6 +159,7 @@ function load() {
 			if (!popupDetected()) {
 				// when the script is run by option page
 				op_overlay_opacity_factor.value = pref.overlay_opacity_factor;
+				op_overlay_opacity_threshold.value = pref.overlay_opacity_threshold;
 				op_tabbar.value = pref_tabbar;
 				op_tab_selected.value = pref_tab_selected;
 				op_toolbar.value = pref_toolbar;
@@ -309,6 +311,7 @@ if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
 	op_overlay_opacity_factor.oninput = () => browser.storage.local.set({ overlay_opacity_factor: Number(op_overlay_opacity_factor.value) });
+	op_overlay_opacity_threshold.oninput = () => browser.storage.local.set({ overlay_opacity_threshold: Number(op_overlay_opacity_threshold.value) });
 	op_tabbar.oninput = () => browser.storage.local.set({ tabbar_color: Number(op_tabbar.value) });
 	op_tab_selected.oninput = () => browser.storage.local.set({ tab_selected_color: Number(op_tab_selected.value) });
 	op_toolbar.oninput = () => browser.storage.local.set({ toolbar_color: Number(op_toolbar.value) });
