@@ -7,13 +7,15 @@ import {
 	reservedColour_aboutPage,
 	checkVersion,
 } from "./shared.js";
-import { rgba, dimColour } from "./colour.js";
+import { rgba, dimColour, contrastFactor, contrastAdjustedOverlayOpacity, overlayColour } from "./colour.js";
 
 // Settings cache: always synced with settings page (followed by handles in storage)
 var pref_scheme; // scheme
 var pref_allow_dark_light; // force
 var pref_dynamic; // dynamic
 var pref_no_theme_colour; // no_theme_color
+var pref_overlay_opacity_factor; // overlay_opacity_factor
+var pref_overlay_opacity_threshold; // overlay_opacity_threshold
 var pref_tabbar; // tabbar_color
 var pref_tab_selected; // tab_selected_color
 var pref_toolbar; // toolbar_color
@@ -48,6 +50,8 @@ function cachePref(pref) {
 	pref_allow_dark_light = pref.force;
 	pref_dynamic = pref.dynamic;
 	pref_no_theme_colour = pref.no_theme_color;
+	pref_overlay_opacity_factor = pref.overlay_opacity_factor;
+	pref_overlay_opacity_threshold = pref.overlay_opacity_threshold;
 	pref_tabbar = pref.tabbar_color;
 	pref_tab_selected = pref.tab_selected_color;
 	pref_toolbar = pref.toolbar_color;
@@ -269,6 +273,8 @@ function initialize() {
 		let pending_force = pref_allow_dark_light;
 		let pending_dynamic = pref_dynamic;
 		let pending_no_theme_colour = pref_no_theme_colour;
+		let pending_overlay_opacity_factor = pref_overlay_opacity_factor;
+		let pending_overlay_opacity_threshold = pref_overlay_opacity_threshold;
 		let pending_tabbar = pref_tabbar;
 		let pending_tab_selected = pref_tab_selected;
 		let pending_toolbar = pref_toolbar;
@@ -286,6 +292,11 @@ function initialize() {
 		let pending_fallback_dark = pref_fallback_dark;
 		let pending_reservedColour_cs = pref_reservedColour_cs;
 		let pending_last_version = [2, 2];
+		// updates from v2.3 or earlier
+		if (pref_overlay_opacity_factor == null || pref_overlay_opacity_threshold == null) {
+			pending_overlay_opacity_factor = 0.25;
+			pending_overlay_opacity_threshold = 0.25;
+		}
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
 			pending_tab_selected = 0.1;
@@ -377,6 +388,8 @@ function initialize() {
 				force: pending_force,
 				dynamic: pending_dynamic,
 				no_theme_color: pending_no_theme_colour,
+				overlay_opacity_factor: pending_overlay_opacity_factor,
+				overlay_opacity_threshold: pending_overlay_opacity_threshold,
 				tabbar_color: pending_tabbar,
 				tab_selected_color: pending_tab_selected,
 				toolbar_color: pending_toolbar,
@@ -416,8 +429,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
 			loadPrefAndUpdate();
 			break;
 		case "COLOUR_UPDATE":
-			let dark_mode = isDarkModeSuitable(message.colour);
-			sender.tab.active ? setFrameColour(sender.tab.windowId, message.colour, dark_mode) : update();
+			sender.tab.active ? setFrameColour(sender.tab.windowId, message.colour) : update();
 			break;
 		default:
 			break;
@@ -500,7 +512,7 @@ function updateEachWindow(tab) {
 				setFrameColour(windowId, "DEFAULT");
 			} else if (key.startsWith("Add-on ID: ") && current_reservedColour_cs[key]) {
 				let frameColour = rgba(current_reservedColour_cs[key]);
-				setFrameColour(windowId, frameColour, isDarkModeSuitable(frameColour));
+				setFrameColour(windowId, frameColour);
 			} else if (url.startsWith("moz-extension:")) {
 				setFrameColour(windowId, "ADDON");
 			} else {
@@ -683,12 +695,20 @@ function setFrameColour(windowId, colour, darkMode) {
 				(pref_allow_dark_light && current_scheme == "dark" && darkMode) ||
 				(pref_allow_dark_light && current_scheme == "light" && !darkMode)
 			) {
-				// Normal colouring
+				// Adaptive colouring based on contrast between the colour and the base colour
+				let baseColour = current_scheme == "dark" ? rgba(default_home_dark) : rgba(default_home_light);
+				// Compute the contrast between the colour and the base colour
+				let contrast = contrastFactor(colour, baseColour);
+				// Adjust the overlay opacity based on the contrast
+				colour.a = contrastAdjustedOverlayOpacity(contrast, pref_overlay_opacity_factor, pref_overlay_opacity_threshold);
+				// Compute the overlay colour
+				let result = overlayColour(colour, baseColour);
+
 				if (darkMode) {
-					changeThemePara(colour, "dark");
+					changeThemePara(result, "dark");
 					applyTheme(windowId, adaptive_themes["dark"]);
 				} else {
-					changeThemePara(colour, "light");
+					changeThemePara(result, "light");
 					applyTheme(windowId, adaptive_themes["light"]);
 				}
 			} else if (!colour || pref_allow_dark_light) {
@@ -778,17 +798,6 @@ function applyTheme(windowId, theme) {
 	browser.runtime.sendMessage("OHTP@EasonWong", "TPOH_UPDATE").catch((e) => {
 		if (e.message != "Could not establish connection. Receiving end does not exist.") console.error(e);
 	});
-}
-
-/**
- * Returns if dark mode should be used considering the colour.
- * @param {object} colour The colour to check, in rgb object.
- * @returns {boolean} "true" => dark mode; "false" => light mode; "null" => both.
- */
-function isDarkModeSuitable(colour) {
-	if (colour == null || typeof colour != "object") return null;
-	let brightness = 0.299 * colour.r + 0.587 * colour.g + 0.114 * colour.b;
-	return brightness < 128; // For good contrast, colours' brightness should differ at least for 50%
 }
 
 /**

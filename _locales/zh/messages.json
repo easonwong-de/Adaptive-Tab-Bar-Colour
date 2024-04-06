@@ -63,6 +63,18 @@
 		"message": "忽略網站指定的主題色"
 	},
 
+	"overlay": {
+		"message": "覆盖"
+	},
+
+	"opacityFactor": {
+		"message": "不透明度系数"
+	},
+
+	"opacityThreshold": {
+		"message": "不透明度閾值"
+	},
+
 	"tabBar": {
 		"message": "索引標籤列"
 	},

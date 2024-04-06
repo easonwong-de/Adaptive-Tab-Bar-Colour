@@ -63,6 +63,18 @@
 		"message": "Vorgegebene Theme-Farbe ignorieren"
 	},
 
+	"overlay": {
+		"message": "Overlay"
+	},
+
+	"opacityFactor": {
+		"message": "Opazitätsfaktor"
+	},
+
+	"opacityThreshold": {
+		"message": "Opazitätsschwelle"
+	},
+
 	"tabBar": {
 		"message": "Tableiste"
 	},

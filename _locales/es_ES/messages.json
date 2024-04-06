@@ -63,6 +63,18 @@
 		"message": "Ignora el thema de color designado"
 	},
 
+	"overlay": {
+		"message": "Superposición"
+	},
+
+	"opacityFactor": {
+		"message": "Factor de opacidad"
+	},
+
+	"opacityThreshold": {
+		"message": "Umbral de opacidad"
+	},
+
 	"tabBar": {
 		"message": "Barra de pestañas"
 	},
