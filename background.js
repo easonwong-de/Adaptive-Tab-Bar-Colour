@@ -260,17 +260,17 @@ var adaptive_themes = {
 	},
 };
 
-initialize();
+initialise();
 
 /**
  * Initializes / restores the settings.
  * If pref_scheme or pref_allow_dark_light is missing, opens the option page.
  */
-function initialize() {
+function initialise() {
 	browser.storage.local.get((pref) => {
 		cachePref(pref);
 		let pending_scheme = pref_scheme;
-		let pending_force = pref_allow_dark_light;
+		let pending_allow_dark_light = pref_allow_dark_light;
 		let pending_dynamic = pref_dynamic;
 		let pending_no_theme_colour = pref_no_theme_colour;
 		let pending_overlay_opacity_factor = pref_overlay_opacity_factor;
@@ -292,10 +292,10 @@ function initialize() {
 		let pending_fallback_dark = pref_fallback_dark;
 		let pending_reservedColour_cs = pref_reservedColour_cs;
 		let pending_last_version = [2, 2];
-		// updates from v2.3 or earlier
+		// updates from v2.1 or earlier
 		if (pref_overlay_opacity_factor == null || pref_overlay_opacity_threshold == null) {
-			pending_overlay_opacity_factor = 0.25;
-			pending_overlay_opacity_threshold = 0.25;
+			pending_overlay_opacity_factor = 0.2;
+			pending_overlay_opacity_threshold = 0.1;
 		}
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
@@ -365,7 +365,7 @@ function initialize() {
 		}
 		// updates from v1.3.1 or earlier
 		if (pref_last_version == null) {
-			pending_force = false;
+			pending_allow_dark_light = false;
 		}
 		// updates from v1.3 or earlier
 		if (pref_custom == null || pref_home_light == null || pref_home_dark == null) {
@@ -377,15 +377,15 @@ function initialize() {
 		// first time install
 		if (pref_scheme == null || pref_allow_dark_light == null) {
 			firstTime = true;
-			pending_force = true;
+			pending_allow_dark_light = true;
 			pending_scheme = lightModeDetected() ? "light" : "dark";
 			setBrowserColourScheme(pending_scheme);
 		}
-		if (checkVersion() < 95) pending_force = true;
+		if (checkVersion() < 95) pending_allow_dark_light = true;
 		browser.storage.local
 			.set({
 				scheme: pending_scheme,
-				force: pending_force,
+				force: pending_allow_dark_light,
 				dynamic: pending_dynamic,
 				no_theme_color: pending_no_theme_colour,
 				overlay_opacity_factor: pending_overlay_opacity_factor,
@@ -411,7 +411,7 @@ function initialize() {
 			.then(() => {
 				loadPrefAndUpdate();
 				if (firstTime) browser.runtime.openOptionsPage();
-				return Promise.resolve("Initialization done");
+				return Promise.resolve("Initialisation done");
 			});
 	});
 }
@@ -423,7 +423,7 @@ browser.windows.onFocusChanged.addListener(update); // When a new window is open
 browser.runtime.onMessage.addListener((message, sender) => {
 	switch (message.reason) {
 		case "INIT_REQUEST": // When pref is corupted
-			initialize();
+			initialise();
 			break;
 		case "UPDATE_REQUEST": // When pref changed
 			loadPrefAndUpdate();
@@ -458,8 +458,8 @@ function update() {
 		if (verifyPref()) {
 			tabs.forEach(updateEachWindow);
 		} else {
-			// If the pref is corupted, initialzes pref
-			initialize().then(() => {
+			// If the pref is corrupted, initialises pref
+			initialise().then(() => {
 				setCurrent();
 				setBrowserColourScheme(pref_scheme);
 				tabs.forEach(updateEachWindow);
@@ -499,7 +499,7 @@ function updateEachWindow(tab) {
 			setFrameColour(windowId, "SYSTEM");
 		}
 	} else {
-		// When visiting normal websites, pdf viewer (content script blocked), website failed to load, or local files
+		// When visiting normal websites, pdf viewer (content script blocked), failed-to-load website, or local files
 		getSearchKey(url).then((key) => {
 			let reversed_scheme = current_scheme == "light" ? "dark" : "light";
 			if (reservedColour_aboutPage[current_scheme][key]) {
@@ -517,7 +517,7 @@ function updateEachWindow(tab) {
 				setFrameColour(windowId, "ADDON");
 			} else {
 				// Sends pref to content script and tests if the script is responsive
-				// The content script sends colour back by themselves via a port
+				// The content script sends colour back by themselves
 				browser.tabs.sendMessage(
 					tab.id,
 					{
@@ -527,28 +527,31 @@ function updateEachWindow(tab) {
 						reservedColor_cs: current_reservedColour_cs,
 					},
 					(response) => {
-						if (!response) {
-							if (url.startsWith("data:image")) {
-								// Content script is blocked on data:pages
-								// Viewing an image on data:image
-								console.log(url + "\nMight be image viewer.");
-								setFrameColour(windowId, "DARKNOISE");
-							} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-								// When viewing a pdf file, Firefox blocks content script
-								console.log(url + "\nMight be pdf viewer.");
-								setFrameColour(windowId, "PDFVIEWER");
-							} else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
-								// Content script is also blocked on website that failed to load
-								console.log(url + "\nTab failed to load.");
-								setFrameColour(windowId, "DEFAULT");
-							} else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) {
-								// When viewing plain text online, Firefox blocks content script
-								console.log(url + "\nMight be plain text viewer.");
-								setFrameColour(windowId, "PLAINTEXT");
-							} else {
-								console.error(url + "\nNo connection to content script.");
-								setFrameColour(windowId, "FALLBACK");
-							}
+						if (response) {
+							// The colour is successfully returned
+							return null;
+						} else if (url.startsWith("data:image")) {
+							// Content script is blocked on data:pages
+							// Viewing an image on data:image
+							console.log(url + "\nMight be image viewer.");
+							setFrameColour(windowId, "DARKNOISE");
+						} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+							// When viewing a pdf file, Firefox blocks content script
+							console.log(url + "\nMight be pdf viewer.");
+							setFrameColour(windowId, "PDFVIEWER");
+						} else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
+							// The page probably failed to load
+							// Content script is also blocked on website that failed to load
+							console.log(url + "\nTab failed to load.");
+							setFrameColour(windowId, "DEFAULT");
+						} else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) {
+							// When viewing plain text online, Firefox blocks content script
+							// In this case, the tab title is the same as the URL
+							console.log(url + "\nMight be plain text viewer.");
+							setFrameColour(windowId, "PLAINTEXT");
+						} else {
+							console.error(url + "\nNo connection to content script.");
+							setFrameColour(windowId, "FALLBACK");
 						}
 					}
 				);
@@ -572,6 +575,7 @@ function getSearchKey(url) {
 				let breakLoop = false;
 				for (let addon of addonList) {
 					// bugs for some reason
+					// What bugs? Please elaborate
 					if (addon.type === "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
@@ -737,9 +741,9 @@ function changeThemePara(colour, colourScheme) {
 			tabbar = dimColour(colour, pref_tabbar);
 			tab_selected = dimColour(colour, pref_tab_selected);
 			ntp = dimColour(colour, 0);
-			toolbar = pref_toolbar == pref_tabbar ? "rgba(0, 0, 0, 0)" : dimColour(colour, pref_toolbar);
+			toolbar = dimColour(colour, pref_toolbar);
 			toolbar_border_bottom = dimColour(colour, pref_toolbar_border_bottom + pref_toolbar);
-			toolbar_field = pref_toolbar == pref_toolbar_field ? "rgba(0, 0, 0, 0)" : dimColour(colour, pref_toolbar_field);
+			toolbar_field = dimColour(colour, pref_toolbar_field);
 			toolbar_field_focus = dimColour(colour, pref_toolbar_field_focus);
 			sidebar = dimColour(colour, pref_sidebar);
 			sidebar_border = dimColour(colour, pref_sidebar + pref_sidebar_border);
@@ -750,9 +754,9 @@ function changeThemePara(colour, colourScheme) {
 			tabbar = dimColour(colour, -pref_tabbar * 1.5);
 			tab_selected = dimColour(colour, -pref_tab_selected * 1.5);
 			ntp = dimColour(colour, 0);
-			toolbar = pref_toolbar == pref_tabbar ? "rgba(0, 0, 0, 0)" : dimColour(colour, -pref_toolbar * 1.5);
+			toolbar = dimColour(colour, -pref_toolbar * 1.5);
 			toolbar_border_bottom = dimColour(colour, (-pref_toolbar_border_bottom - pref_toolbar) * 1.5);
-			toolbar_field = pref_toolbar == pref_toolbar_field ? "rgba(0, 0, 0, 0)" : dimColour(colour, -pref_toolbar_field * 1.5);
+			toolbar_field = dimColour(colour, -pref_toolbar_field * 1.5);
 			toolbar_field_focus = dimColour(colour, -pref_toolbar_field_focus * 1.5);
 			sidebar = dimColour(colour, -pref_sidebar * 1.5);
 			sidebar_border = dimColour(colour, (-pref_sidebar - pref_sidebar_border) * 1.5);
@@ -763,9 +767,9 @@ function changeThemePara(colour, colourScheme) {
 			tabbar = "rgb(33, 33, 33)";
 			tab_selected = dimColour(colour, pref_tab_selected);
 			ntp = dimColour(colour, 0);
-			toolbar = pref_toolbar == pref_tabbar ? "rgba(0, 0, 0, 0)" : dimColour(colour, pref_toolbar);
+			toolbar = dimColour(colour, pref_toolbar);
 			toolbar_border_bottom = dimColour(colour, pref_toolbar_border_bottom + pref_toolbar);
-			toolbar_field = pref_toolbar == pref_toolbar_field ? "rgba(0, 0, 0, 0)" : dimColour(colour, pref_toolbar_field);
+			toolbar_field = dimColour(colour, pref_toolbar_field);
 			toolbar_field_focus = dimColour(colour, pref_toolbar_field_focus);
 			sidebar = dimColour(colour, pref_sidebar);
 			sidebar_border = dimColour(colour, pref_sidebar + pref_sidebar_border);
@@ -785,7 +789,7 @@ function changeThemePara(colour, colourScheme) {
 	adaptive_themes[colourScheme]["colors"]["sidebar_border"] = sidebar_border;
 	adaptive_themes[colourScheme]["colors"]["popup"] = popup;
 	adaptive_themes[colourScheme]["colors"]["popup_border"] = popup_border;
-	//adaptive_themes[colourScheme]["properties"]["color_scheme"] = pref_scheme;
+	// adaptive_themes[colourScheme]["properties"]["color_scheme"] = pref_scheme;
 }
 
 /**

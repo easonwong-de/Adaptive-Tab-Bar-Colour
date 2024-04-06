@@ -124,7 +124,6 @@ let op_dark_fallback_colour = document.getElementById("dark_fallback_color");
 let op_reset_light_fallback = document.getElementById("reset_light_fallback_color");
 let op_reset_dark_fallback = document.getElementById("reset_dark_fallback_color");
 let op_reset_all = document.getElementById("reset_all");
-let op_save = document.getElementById("save");
 let op_add = document.getElementById("add");
 let pp_more_custom = document.getElementById("custom_popup");
 let pp_info_display = document.getElementById("info_display");
@@ -308,8 +307,10 @@ function addAction(i) {
 }
 
 if (popupDetected()) {
+	// popup
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
+	// option page
 	op_overlay_opacity_factor.oninput = () => browser.storage.local.set({ overlay_opacity_factor: Number(op_overlay_opacity_factor.value) });
 	op_overlay_opacity_threshold.oninput = () => browser.storage.local.set({ overlay_opacity_threshold: Number(op_overlay_opacity_threshold.value) });
 	op_tabbar.oninput = () => browser.storage.local.set({ tabbar_color: Number(op_tabbar.value) });

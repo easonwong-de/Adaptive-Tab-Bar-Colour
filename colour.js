@@ -75,7 +75,7 @@ export function contrastAdjustedOverlayOpacity(contrast, overlayFactor = 0.25, t
  * Dims or lightens colour.
  * @param {object} colour Colour to process, in rgb object.
  * @param {number} dim between -1.0 (dim) to 1.0 (light).
- * @returns Dimmed or lightened colour string.
+ * @returns Dimmed or lightened colour string e.g. "rgb(xxx)".
  */
 export function dimColour(colour, dim) {
 	let result = Object.assign({}, colour);
