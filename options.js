@@ -1,6 +1,6 @@
 // This script is shared by option page and popup
 
-import { default_reservedColour_cs, recommendedColour_addon, protectedDomain, checkVersion } from "./shared.js";
+import { default_reservedColour_webPage, recommendedColour_addon, protectedDomain, checkVersion } from "./shared.js";
 
 // Localisation
 document.addEventListener("DOMContentLoaded", function () {
@@ -32,10 +32,10 @@ var pref_home_light; // light_color
 var pref_home_dark; // dark_color
 var pref_fallback_light; // light_fallback_color
 var pref_fallback_dark; // dark_fallback_color
-var pref_reservedColour_cs; // reservedColor_cs
+var pref_reservedColour_webPage; // reservedColor_webPage
 
 // Current colour lookup table
-var current_reservedColour_cs;
+var current_reservedColour_webPage;
 
 const svg_bin = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
 const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
@@ -64,8 +64,8 @@ function cachePref_op(pref) {
 	pref_home_dark = pref.dark_color;
 	pref_fallback_light = pref.light_fallback_color;
 	pref_fallback_dark = pref.dark_fallback_color;
-	pref_reservedColour_cs = pref.reservedColor_cs;
-	current_reservedColour_cs = pref_custom ? pref_reservedColour_cs : default_reservedColour_cs;
+	pref_reservedColour_webPage = pref.reservedColor_webPage;
+	current_reservedColour_webPage = pref_custom ? pref_reservedColour_webPage : default_reservedColour_webPage;
 	return (
 		pref_scheme != null &&
 		pref_allow_dark_light != null &&
@@ -86,7 +86,7 @@ function cachePref_op(pref) {
 		pref_home_dark != null &&
 		pref_fallback_light != null &&
 		pref_fallback_dark != null &&
-		pref_reservedColour_cs != null
+		pref_reservedColour_webPage != null
 	);
 }
 
@@ -100,8 +100,8 @@ let allow_dark_light = document.getElementById("force_mode");
 let force_mode_caption = document.getElementById("force_mode_caption");
 let dynamic = document.getElementById("dynamic");
 let no_theme_colour = document.getElementById("no_theme_color");
-let op_overlay_opacity_factor = document.getElementById("overlay_opacity_factor");
-let op_overlay_opacity_threshold = document.getElementById("overlay_opacity_threshold");
+/* let op_overlay_opacity_factor = document.getElementById("overlay_opacity_factor");
+let op_overlay_opacity_threshold = document.getElementById("overlay_opacity_threshold"); */
 let op_tabbar = document.getElementById("tabbar_color");
 let op_tab_selected = document.getElementById("tab_selected_color");
 let op_toolbar = document.getElementById("toolbar_color");
@@ -157,8 +157,8 @@ function load() {
 			no_theme_colour.checked = pref_no_theme_colour;
 			if (!popupDetected()) {
 				// when the script is run by option page
-				op_overlay_opacity_factor.value = pref.overlay_opacity_factor;
-				op_overlay_opacity_threshold.value = pref.overlay_opacity_threshold;
+				/* op_overlay_opacity_factor.value = pref.overlay_opacity_factor;
+				op_overlay_opacity_threshold.value = pref.overlay_opacity_threshold; */
 				op_tabbar.value = pref_tabbar;
 				op_tab_selected.value = pref_tab_selected;
 				op_toolbar.value = pref_toolbar;
@@ -177,7 +177,7 @@ function load() {
 				op_dark_fallback_colour.value = pref_fallback_dark;
 				let table_rows = op_custom_options_table.rows;
 				for (let i = table_rows.length - 1; i > 3; i--) op_custom_options_table.deleteRow(i);
-				let domains = Object.keys(pref_reservedColour_cs);
+				let domains = Object.keys(pref_reservedColour_webPage);
 				domains.forEach((domain, i) => {
 					let new_row = op_custom_options_table.insertRow(i + 4);
 					generateNewRow(domain, i).then((new_row_HTML) => {
@@ -311,8 +311,8 @@ if (popupDetected()) {
 	pp_more_custom.onclick = () => browser.runtime.openOptionsPage();
 } else {
 	// option page
-	op_overlay_opacity_factor.oninput = () => browser.storage.local.set({ overlay_opacity_factor: Number(op_overlay_opacity_factor.value) });
-	op_overlay_opacity_threshold.oninput = () => browser.storage.local.set({ overlay_opacity_threshold: Number(op_overlay_opacity_threshold.value) });
+	/* op_overlay_opacity_factor.oninput = () => browser.storage.local.set({ overlay_opacity_factor: Number(op_overlay_opacity_factor.value) });
+	op_overlay_opacity_threshold.oninput = () => browser.storage.local.set({ overlay_opacity_threshold: Number(op_overlay_opacity_threshold.value) }); */
 	op_tabbar.oninput = () => browser.storage.local.set({ tabbar_color: Number(op_tabbar.value) });
 	op_tab_selected.oninput = () => browser.storage.local.set({ tab_selected_color: Number(op_tab_selected.value) });
 	op_toolbar.oninput = () => browser.storage.local.set({ toolbar_color: Number(op_toolbar.value) });
@@ -336,7 +336,7 @@ if (popupDetected()) {
 	op_reset_light_fallback.onclick = () => browser.storage.local.set({ light_fallback_color: "#FFFFFF" }).then(load);
 	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ dark_fallback_color: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => {
-		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColor_cs: default_reservedColour_cs }).then(load);
+		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColor_webPage: default_reservedColour_webPage }).then(load);
 	};
 	op_add.onclick = () => {
 		let i = 0;
@@ -354,13 +354,13 @@ if (popupDetected()) {
  * Reads lookup table and stores data in storage.
  */
 function autoSaveSettings() {
-	let pending_reservedColour_cs = {};
+	let pending_reservedColour_webPage = {};
 	let all_table_rows = op_custom_options_table.firstElementChild.children;
 	for (let i = 4; i < all_table_rows.length; i++) {
 		let table_cells = all_table_rows[i].children;
 		let domain = table_cells[0].firstElementChild.title;
 		if (!domain) domain = table_cells[0].firstElementChild.value;
-		if (domain != "" && isNaN(domain) && pending_reservedColour_cs[domain] == null) {
+		if (domain != "" && isNaN(domain) && pending_reservedColour_webPage[domain] == null) {
 			let action;
 			switch (table_cells[1].firstElementChild.selectedIndex) {
 				case 0:
@@ -379,7 +379,7 @@ function autoSaveSettings() {
 					break;
 			}
 			if (action != "QS_") {
-				pending_reservedColour_cs[domain] = action;
+				pending_reservedColour_webPage[domain] = action;
 				if (table_cells[4] != null) table_cells[4].remove();
 			} else {
 				if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
@@ -388,7 +388,7 @@ function autoSaveSettings() {
 			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
 		}
 	}
-	browser.storage.local.set({ reservedColor_cs: pending_reservedColour_cs });
+	browser.storage.local.set({ reservedColor_webPage: pending_reservedColour_webPage });
 }
 
 /**
@@ -406,7 +406,7 @@ function generateNewRow(domain, i) {
 				let part_2 = `<select id="SEL_${i}">
 					<option selected>${msg("specifyAColour")}</option>
 				</select>`;
-				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColour_cs[domain]}">`;
+				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColour_webPage[domain]}">`;
 				let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
 				resolve(`<td class="TenFiveEm">${part_1}</td>
 				<td>${part_2}</td>
@@ -420,7 +420,7 @@ function generateNewRow(domain, i) {
 			domain = "example.com";
 			action = "#ECECEC";
 		} else {
-			action = pref_reservedColour_cs[domain];
+			action = pref_reservedColour_webPage[domain];
 		}
 		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
 		let part_2 = ``;
@@ -498,7 +498,7 @@ function autoPopupColour() {
 					reason: "INFO_REQUEST",
 					dynamic: pref_dynamic,
 					no_theme_color: pref_no_theme_colour,
-					reservedColor_cs: current_reservedColour_cs,
+					reservedColor_webPage: current_reservedColour_webPage,
 				},
 				(RESPONSE_INFO) => {
 					if (RESPONSE_INFO) {
@@ -506,11 +506,11 @@ function autoPopupColour() {
 						let pp_info_action = document.getElementById("info_action");
 						if (pp_info_action) {
 							pp_info_action.onclick = () => {
-								pref_reservedColour_cs[domain] = pp_info_action.dataset.action;
-								current_reservedColour_cs = pref_reservedColour_cs;
+								pref_reservedColour_webPage[domain] = pp_info_action.dataset.action;
+								current_reservedColour_webPage = pref_reservedColour_webPage;
 								browser.storage.local.set({
 									custom: true,
-									reservedColor_cs: pref_reservedColour_cs,
+									reservedColor_webPage: pref_reservedColour_webPage,
 								});
 								load_lite();
 							};
@@ -536,35 +536,35 @@ function autoPopupColour() {
 					if (addon.type === "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-								if (current_reservedColour_cs[`Add-on ID: ${addon.id}`]) {
+								if (current_reservedColour_webPage[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										delete pref_reservedColour_cs[`Add-on ID: ${addon.id}`];
-										current_reservedColour_cs = pref_reservedColour_cs;
+										delete pref_reservedColour_webPage[`Add-on ID: ${addon.id}`];
+										current_reservedColour_webPage = pref_reservedColour_webPage;
 										browser.storage.local.set({
 											custom: true,
-											reservedColor_cs: pref_reservedColour_cs,
+											reservedColor_webPage: pref_reservedColour_webPage,
 										});
 									};
 								} else if (recommendedColour_addon[addon.id]) {
 									pp_info_display.innerHTML = msg("useRecommendedColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref_reservedColour_cs[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
-										current_reservedColour_cs = pref_reservedColour_cs;
+										pref_reservedColour_webPage[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
+										current_reservedColour_webPage = pref_reservedColour_webPage;
 										browser.storage.local.set({
 											custom: true,
-											reservedColor_cs: pref_reservedColour_cs,
+											reservedColor_webPage: pref_reservedColour_webPage,
 										});
 									};
 								} else {
 									pp_info_display.innerHTML = msg("specifyColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref_reservedColour_cs[`Add-on ID: ${addon.id}`] = "#333333";
-										current_reservedColour_cs = pref_reservedColour_cs;
+										pref_reservedColour_webPage[`Add-on ID: ${addon.id}`] = "#333333";
+										current_reservedColour_webPage = pref_reservedColour_webPage;
 										browser.storage.local
 											.set({
 												custom: true,
-												reservedColor_cs: pref_reservedColour_cs,
+												reservedColor_webPage: pref_reservedColour_webPage,
 											})
 											.then(() => browser.runtime.openOptionsPage());
 									};

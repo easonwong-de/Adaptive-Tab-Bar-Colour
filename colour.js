@@ -46,7 +46,7 @@ export function rgba(colour) {
  * @param {Object} colour2 Second colour.
  * @returns Contrast factor. 0 is identical, 1 is maximally different.
  */
-export function contrastFactor(colour1, colour2) {
+/* export function contrastFactor(colour1, colour2) {
 	// Note: the sRGB values are not linear, affecting the accuracy of the luminance calculation, but it is close enough for our purposes
 	// and less computationally expensive
 	// Compute delta for each channel
@@ -57,7 +57,7 @@ export function contrastFactor(colour1, colour2) {
 	let distance = Math.sqrt(0.2126 * r_delta * r_delta + 0.7152 * g_delta * g_delta + 0.0722 * b_delta * b_delta);
 	// Normalise the distance to a range of 0-1
 	return distance/255;
-}
+} */
 
 /**
  * Calculates the overlay opacity for a given contrast factor. The higher the contrast, the lower the opacity.
@@ -67,14 +67,14 @@ export function contrastFactor(colour1, colour2) {
  * @param {number} overlayFactor Factor of the non-linear function. The higher the factor, the slower the opacity drops.
  * @returns Overlay opacity. 0 is fully transparent, 1 is fully opaque.
  */
-export function contrastAdjustedOverlayOpacity(contrast, overlayFactor = 0.25, threshold = 0.25) {
+/* export function contrastAdjustedOverlayOpacity(contrast, overlayFactor = 0.25, threshold = 0.25) {
 	return contrast <= threshold ? 1 : 1 - Math.pow(contrast, overlayFactor);
-}
+} */
 
 /**
  * Dims or lightens colour.
  * @param {object} colour Colour to process, in rgb object.
- * @param {number} dim between -1.0 (dim) to 1.0 (light).
+ * @param {number} dim between -1.0 (black) to 1.0 (white).
  * @returns Dimmed or lightened colour string e.g. "rgb(xxx)".
  */
 export function dimColour(colour, dim) {

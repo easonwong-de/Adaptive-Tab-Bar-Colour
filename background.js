@@ -3,14 +3,14 @@ import {
 	default_home_dark,
 	default_fallback_light,
 	default_fallback_dark,
-	default_reservedColour_cs,
+	default_reservedColour_webPage,
 	reservedColour_aboutPage,
 	checkVersion,
 } from "./shared.js";
-import { rgba, dimColour, contrastFactor, contrastAdjustedOverlayOpacity, overlayColour } from "./colour.js";
+import { rgba, dimColour, /* contrastFactor, contrastAdjustedOverlayOpacity, */ overlayColour } from "./colour.js";
 
 // Settings cache: always synced with settings page (followed by handles in storage)
-var pref_scheme; // scheme
+/* var pref_scheme; // scheme
 var pref_allow_dark_light; // force
 var pref_dynamic; // dynamic
 var pref_no_theme_colour; // no_theme_color
@@ -31,8 +31,41 @@ var pref_home_light; // light_color
 var pref_home_dark; // dark_color
 var pref_fallback_light; // light_fallback_color
 var pref_fallback_dark; // dark_fallback_color
-var pref_reservedColour_cs; // reservedColor_cs
-var pref_last_version; // last_version
+var pref_reservedColour_webPage; // reservedColor_webPage
+var pref_last_version; // last_version */
+
+var pref = {
+	scheme: systemLightModeDetected() ? "light" : "dark",
+	allow_dark_light: true,
+	dynamic: false,
+	no_theme_colour: false,
+	tabbar: 0,
+	tab_selected: 0.1,
+	toolbar: 0,
+	toolbar_border_bottom: 0,
+	toolbar_field: 0.05,
+	toolbar_field_focus: 0.05,
+	sidebar: 0.05,
+	sidebar_border: 0.05,
+	popup: 0.05,
+	popup_border: 0.05,
+	custom: false,
+	home_light: default_home_light,
+	home_dark: default_fallback_dark,
+	fallback_light: default_fallback_light,
+	fallback_dark: default_fallback_dark,
+	reservedColour_webPage: default_reservedColour_webPage,
+	last_version: [2, 2],
+};
+
+vars = {
+	scheme,
+	home_light,
+	home_dark,
+	fallback_light,
+	fallback_dark,
+	reservedColour_webPage,
+};
 
 // Controlled by prefs
 var current_scheme;
@@ -40,7 +73,7 @@ var current_home_light;
 var current_home_dark;
 var current_fallback_light;
 var current_fallback_dark;
-var current_reservedColour_cs;
+var current_reservedColour_webPage;
 
 /**
  * Caches pref into local variables.
@@ -50,8 +83,8 @@ function cachePref(pref) {
 	pref_allow_dark_light = pref.force;
 	pref_dynamic = pref.dynamic;
 	pref_no_theme_colour = pref.no_theme_color;
-	pref_overlay_opacity_factor = pref.overlay_opacity_factor;
-	pref_overlay_opacity_threshold = pref.overlay_opacity_threshold;
+	/* pref_overlay_opacity_factor = pref.overlay_opacity_factor;
+	pref_overlay_opacity_threshold = pref.overlay_opacity_threshold; */
 	pref_tabbar = pref.tabbar_color;
 	pref_tab_selected = pref.tab_selected_color;
 	pref_toolbar = pref.toolbar_color;
@@ -67,7 +100,7 @@ function cachePref(pref) {
 	pref_home_dark = pref.dark_color;
 	pref_fallback_light = pref.light_fallback_color;
 	pref_fallback_dark = pref.dark_fallback_color;
-	pref_reservedColour_cs = pref.reservedColor_cs;
+	pref_reservedColour_webPage = pref.reservedColor_webPage;
 	pref_last_version = pref.last_version;
 }
 
@@ -95,26 +128,26 @@ function verifyPref() {
 		pref_home_dark != null &&
 		pref_fallback_light != null &&
 		pref_fallback_dark != null &&
-		pref_reservedColour_cs != null
+		pref_reservedColour_webPage != null
 	);
 }
 
 /**
- * Sets current_xxx values after pref being loaded.
+ * Sets "vars" values after pref being loaded.
  */
-function setCurrent() {
+function updateVars() {
 	if (pref_custom) {
 		current_home_light = rgba(pref_home_light);
 		current_home_dark = rgba(pref_home_dark);
 		current_fallback_light = rgba(pref_fallback_light);
 		current_fallback_dark = rgba(pref_fallback_dark);
-		current_reservedColour_cs = pref_reservedColour_cs;
+		current_reservedColour_webPage = pref_reservedColour_webPage;
 	} else {
 		current_home_light = rgba(default_home_light);
 		current_home_dark = rgba(default_home_dark);
 		current_fallback_light = rgba(default_fallback_light);
 		current_fallback_dark = rgba(default_fallback_dark);
-		current_reservedColour_cs = default_reservedColour_cs;
+		current_reservedColour_webPage = default_reservedColour_webPage;
 	}
 	switch (pref_scheme) {
 		case "light":
@@ -124,7 +157,7 @@ function setCurrent() {
 			current_scheme = "dark";
 			break;
 		case "system":
-			current_scheme = lightModeDetected() ? "light" : "dark";
+			current_scheme = systemLightModeDetected() ? "light" : "dark";
 			break;
 		default:
 			break;
@@ -264,17 +297,17 @@ initialise();
 
 /**
  * Initializes / restores the settings.
- * If pref_scheme or pref_allow_dark_light is missing, opens the option page.
+ * If pref.scheme or pref.allow_dark_light is missing, opens the option page.
  */
 function initialise() {
-	browser.storage.local.get((pref) => {
-		cachePref(pref);
+	browser.storage.local.get((pref_storage) => {
+		pref = pref_storage;
 		let pending_scheme = pref_scheme;
 		let pending_allow_dark_light = pref_allow_dark_light;
 		let pending_dynamic = pref_dynamic;
 		let pending_no_theme_colour = pref_no_theme_colour;
-		let pending_overlay_opacity_factor = pref_overlay_opacity_factor;
-		let pending_overlay_opacity_threshold = pref_overlay_opacity_threshold;
+		/* let pending_overlay_opacity_factor = pref_overlay_opacity_factor;
+		let pending_overlay_opacity_threshold = pref_overlay_opacity_threshold; */
 		let pending_tabbar = pref_tabbar;
 		let pending_tab_selected = pref_tab_selected;
 		let pending_toolbar = pref_toolbar;
@@ -290,13 +323,13 @@ function initialise() {
 		let pending_home_dark = pref_home_dark;
 		let pending_fallback_light = pref_fallback_light;
 		let pending_fallback_dark = pref_fallback_dark;
-		let pending_reservedColour_cs = pref_reservedColour_cs;
+		let pending_reservedColour_webPage = pref_reservedColour_webPage;
 		let pending_last_version = [2, 2];
 		// updates from v2.1 or earlier
-		if (pref_overlay_opacity_factor == null || pref_overlay_opacity_threshold == null) {
+		/* if (pref_overlay_opacity_factor == null || pref_overlay_opacity_threshold == null) {
 			pending_overlay_opacity_factor = 0.2;
 			pending_overlay_opacity_threshold = 0.1;
-		}
+		} */
 		// updates from v1.7.5 or earlier
 		if (pref_tab_selected == null || pref_toolbar_field == null || pref_toolbar_field_focus == null || pref_popup_border == null) {
 			pending_tab_selected = 0.1;
@@ -306,24 +339,24 @@ function initialise() {
 		}
 		// updates from v1.7.4 or earlier
 		// Converts legacy rules to query selector format
-		if (pref_last_version <= [1, 7, 4] && pref_reservedColour_cs) {
-			Object.keys(pending_reservedColour_cs).forEach((domain) => {
-				let temp = pref_reservedColour_cs[domain];
+		if (pref_last_version <= [1, 7, 4] && pref_reservedColour_webPage) {
+			Object.keys(pending_reservedColour_webPage).forEach((domain) => {
+				let temp = pref_reservedColour_webPage[domain];
 				if (temp.startsWith("TAG_")) {
-					pending_reservedColour_cs[domain] = temp.replace("TAG_", "QS_");
+					pending_reservedColour_webPage[domain] = temp.replace("TAG_", "QS_");
 				} else if (temp.startsWith("CLASS_")) {
-					pending_reservedColour_cs[domain] = temp.replace("CLASS_", "QS_.");
+					pending_reservedColour_webPage[domain] = temp.replace("CLASS_", "QS_.");
 				} else if (temp.startsWith("ID_")) {
-					pending_reservedColour_cs[domain] = temp.replace("ID_", "QS_#");
+					pending_reservedColour_webPage[domain] = temp.replace("ID_", "QS_#");
 				} else if (temp.startsWith("NAME_")) {
-					pending_reservedColour_cs[domain] = `${temp.replace("NAME_", "QS_[name='")}']`;
+					pending_reservedColour_webPage[domain] = `${temp.replace("NAME_", "QS_[name='")}']`;
 				} else if (temp === "") {
-					delete pending_reservedColour_cs[domain];
+					delete pending_reservedColour_webPage[domain];
 				}
 			});
 		}
 		// updates from v1.7.3 or earlier
-		if (pref_reservedColour_cs) delete pending_reservedColour_cs[undefined];
+		if (pref_reservedColour_webPage) delete pending_reservedColour_webPage[undefined];
 		// updates from v1.7 or earlier
 		if (pref_fallback_light == null || pref_fallback_dark == null) {
 			pending_fallback_light = default_fallback_light;
@@ -356,8 +389,8 @@ function initialise() {
 			pending_popup = 0.05;
 		}
 		// updates from v1.5.7 or earlier
-		if (pref_reservedColour_cs == null) {
-			pending_reservedColour_cs = default_reservedColour_cs;
+		if (pref_reservedColour_webPage == null) {
+			pending_reservedColour_webPage = default_reservedColour_webPage;
 		}
 		// updates from v1.5.3 or earlier
 		if (pref_dynamic == null) {
@@ -373,12 +406,12 @@ function initialise() {
 			pending_home_light = default_home_light;
 			pending_home_dark = default_home_dark;
 		}
-		let firstTime = false;
+		let firstTimeInstall = false;
 		// first time install
 		if (pref_scheme == null || pref_allow_dark_light == null) {
-			firstTime = true;
+			firstTimeInstall = true;
 			pending_allow_dark_light = true;
-			pending_scheme = lightModeDetected() ? "light" : "dark";
+			pending_scheme = systemLightModeDetected() ? "light" : "dark";
 			setBrowserColourScheme(pending_scheme);
 		}
 		if (checkVersion() < 95) pending_allow_dark_light = true;
@@ -388,8 +421,8 @@ function initialise() {
 				force: pending_allow_dark_light,
 				dynamic: pending_dynamic,
 				no_theme_color: pending_no_theme_colour,
-				overlay_opacity_factor: pending_overlay_opacity_factor,
-				overlay_opacity_threshold: pending_overlay_opacity_threshold,
+				/* overlay_opacity_factor: pending_overlay_opacity_factor,
+				overlay_opacity_threshold: pending_overlay_opacity_threshold, */
 				tabbar_color: pending_tabbar,
 				tab_selected_color: pending_tab_selected,
 				toolbar_color: pending_toolbar,
@@ -405,12 +438,12 @@ function initialise() {
 				dark_color: pending_home_dark,
 				light_fallback_color: pending_fallback_light,
 				dark_fallback_color: pending_fallback_dark,
-				reservedColor_cs: pending_reservedColour_cs,
+				reservedColor_webPage: pending_reservedColour_webPage,
 				last_version: pending_last_version,
 			})
 			.then(() => {
 				loadPrefAndUpdate();
-				if (firstTime) browser.runtime.openOptionsPage();
+				if (firstTimeInstall) browser.runtime.openOptionsPage();
 				return Promise.resolve("Initialisation done");
 			});
 	});
@@ -446,7 +479,7 @@ if (lightModeDetection)
 /**
  * @returns true if in light mode, false if in dark mode or cannot detect.
  */
-function lightModeDetected() {
+function systemLightModeDetected() {
 	return lightModeDetection && lightModeDetection.matches;
 }
 
@@ -460,7 +493,7 @@ function update() {
 		} else {
 			// If the pref is corrupted, initialises pref
 			initialise().then(() => {
-				setCurrent();
+				updateVars();
 				setBrowserColourScheme(pref_scheme);
 				tabs.forEach(updateEachWindow);
 			});
@@ -472,9 +505,9 @@ function update() {
  * Updates pref cache and triggers colour change in all windows.
  */
 function loadPrefAndUpdate() {
-	browser.storage.local.get((pref) => {
-		cachePref(pref);
-		setCurrent();
+	browser.storage.local.get((pref_storage) => {
+		pref = pref_storage;
+		updateVars();
 		update();
 	});
 }
@@ -510,8 +543,8 @@ function updateEachWindow(tab) {
 				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversed_scheme][key]), reversed_scheme == "dark");
 			} else if (url.startsWith("about:")) {
 				setFrameColour(windowId, "DEFAULT");
-			} else if (key.startsWith("Add-on ID: ") && current_reservedColour_cs[key]) {
-				let frameColour = rgba(current_reservedColour_cs[key]);
+			} else if (key.startsWith("Add-on ID: ") && current_reservedColour_webPage[key]) {
+				let frameColour = rgba(current_reservedColour_webPage[key]);
 				setFrameColour(windowId, frameColour);
 			} else if (url.startsWith("moz-extension:")) {
 				setFrameColour(windowId, "ADDON");
@@ -524,7 +557,7 @@ function updateEachWindow(tab) {
 						reason: "COLOUR_REQUEST",
 						dynamic: pref_dynamic,
 						no_theme_color: pref_no_theme_colour,
-						reservedColor_cs: current_reservedColour_cs,
+						reservedColor_webPage: current_reservedColour_webPage,
 					},
 					(response) => {
 						if (response) {
@@ -561,7 +594,7 @@ function updateEachWindow(tab) {
 }
 
 /**
- * Gets the search key for reservedColour (_cs).
+ * Gets the search key for reservedColour (_webPage).
  * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
  * @returns e.g. "about:page", "addons.mozilla.org", "Add-on ID: ATBC@EasonWong".
  */

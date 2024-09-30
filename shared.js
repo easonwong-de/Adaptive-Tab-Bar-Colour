@@ -4,11 +4,14 @@ export const default_home_dark = "#2B2A33";
 export const default_fallback_light = "#FFFFFF";
 export const default_fallback_dark = "#2B2A33";
 
-/* reserved colour is a colour => the colour is the theme colour for the web
-reserved colour is IGNORE_THEME => use calculated colour as theme colour
-reserved colour is a tag name => theme colour is stored under that tag
-reserved colour is a class name => theme colour is stored under that class */
-export const default_reservedColour_cs = Object.freeze({
+/**
+ * The default values of reserved colours;
+ * reserved colour is a colour => uses the given colour as tab colour;
+ * reserved colour is IGNORE_THEME => sets calculated colour as tab colour;
+ * reserved colour is UN_IGNORE_THEME => sets theme colour as tab colour;
+ * reserved colour starts with QS_ => gets colour from the element found with the querySelector;
+ */
+export const default_reservedColour_webPage = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
 	"www.facebook.com": "UN_IGNORE_THEME",
@@ -19,12 +22,14 @@ export const default_reservedColour_cs = Object.freeze({
 	"www.spiegel.de": "IGNORE_THEME",
 });
 
-/* Pages where content script can't be injected
-other reserved colour are in content_script.js
-url listed only in "light"/"dark" => only use that colour regardless of the colour scheme
-url listed in both => choose colour scheme as needed
-url listed as "DEFAULT" => use default_light/dark_colour
-url listed as "DARKNOISE" => use "darknoise" theme */
+/**
+ * Colour of pages where content script can't be injected;
+ * url listed only in "light/dark" => only use that colour regardless of the colour scheme (there is one colour scheme for the page);
+ * url listed in both => choose colour scheme as needed (there is a light and a dark version of the page);
+ * url listed as "DEFAULT" => use default_light/dark_colour;
+ * url listed as "HOME" => use home page colour;
+ * url listed as "DARKNOISE" => use "darknoise" theme;
+ */
 export const reservedColour_aboutPage = Object.freeze({
 	light: {
 		"about:checkerboard": "DEFAULT",
@@ -66,7 +71,9 @@ export const reservedColour_aboutPage = Object.freeze({
 	},
 });
 
-// Recommended colour for Add-ons' built-in page
+/**
+ * Recommended colour for Add-ons' built-in page
+ */
 export const recommendedColour_addon = Object.freeze({
 	"uBlock0@raymondhill.net": "#1b1a23",
 	"adguardadblocker@adguard.com": "#131313",
@@ -79,7 +86,9 @@ export const recommendedColour_addon = Object.freeze({
 	"{e7476172-097c-4b77-b56e-f56a894adca9}": "#151f2a",
 });
 
-// List of protected non-about:xxx domains
+/**
+ * List of protected non-about:xxx domains
+ */
 export const protectedDomain = Object.freeze({
 	"accounts-static.cdn.mozilla.net": "PROTECTED",
 	"accounts.firefox.com": "PROTECTED",
@@ -92,14 +101,12 @@ export const protectedDomain = Object.freeze({
 });
 
 /**
- * @returns Firefox version. 999 if cannot be found.
+ * @returns Firefox version. 0 if cannot be found.
  */
 export function checkVersion() {
 	let userAgent = navigator.userAgent;
-	let version = 999;
+	let version = 0;
 	let ind = userAgent.lastIndexOf("Firefox");
-	if (ind != -1) {
-		version = userAgent.substring(ind + 8);
-	}
+	if (ind != -1) version = userAgent.substring(ind + 8);
 	return version;
 }

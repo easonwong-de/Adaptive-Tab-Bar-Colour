@@ -2,7 +2,7 @@
 // If A in RGBA is not 1, falls back to default colour.
 
 // Default colour lookup table
-const default_reservedColour_cs = Object.freeze({
+const default_reservedColour_webPage = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
 	"www.facebook.com": "UN_IGNORE_THEME",
@@ -15,16 +15,16 @@ const default_reservedColour_cs = Object.freeze({
 
 // Settings cache: updated on message
 var pref_no_theme_colour;
-var current_reservedColour_cs = default_reservedColour_cs;
+var current_reservedColour_webPage = default_reservedColour_webPage;
 
 /**
  * Loads preferences into cache and check integrity.
  */
-function cachePref_cs(pref) {
+function cachePref_webPage(pref) {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_colour = pref.no_theme_color;
-	current_reservedColour_cs = pref.custom ? pref.reservedColor_cs : default_reservedColour_cs;
-	return pref_no_theme_colour != null && current_reservedColour_cs != null;
+	current_reservedColour_webPage = pref.custom ? pref.reservedColor_webPage : default_reservedColour_webPage;
+	return pref_no_theme_colour != null && current_reservedColour_webPage != null;
 }
 
 // Initializes response colour
@@ -35,7 +35,7 @@ var RESPONSE_INFO = "";
 
 // Send colour to background as soon as page loads
 browser.storage.local.get((pref) => {
-	if (cachePref_cs(pref)) findAndSendColour();
+	if (cachePref_webPage(pref)) findAndSendColour();
 });
 
 var debouncePrevRun = 0;
@@ -137,7 +137,7 @@ onStyleInjection.observe(document.head, { childList: true });
 browser.runtime.onMessage.addListener((pref, sender, sendResponse) => {
 	setDynamicUpdate(pref.dynamic);
 	pref_no_theme_colour = pref.no_theme_color;
-	current_reservedColour_cs = pref.reservedColor_cs;
+	current_reservedColour_webPage = pref.reservedColor_webPage;
 	if (pref.reason == "INFO_REQUEST") {
 		findColour();
 		sendResponse(RESPONSE_INFO);
@@ -180,12 +180,12 @@ function findAndSendColour_animation() {
 }
 
 /**
- * Sets RESPONSE_COLOUR with the help of host actions stored in current_reservedColour_cs.
+ * Sets RESPONSE_COLOUR with the help of host actions stored in current_reservedColour_webPage.
  * @returns True if a legal reserved colour for the webpage can be found.
  */
 function findColourReserved() {
 	let domain = document.location.host; // "host" can be "www.irgendwas.com"
-	let action = current_reservedColour_cs[domain];
+	let action = current_reservedColour_webPage[domain];
 	if (action == null || (!pref_no_theme_colour && action == "UN_IGNORE_THEME") || (pref_no_theme_colour && action == "IGNORE_THEME")) {
 		return false;
 	} else if (pref_no_theme_colour && action == "UN_IGNORE_THEME") {
