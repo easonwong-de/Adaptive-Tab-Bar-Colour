@@ -10,7 +10,7 @@ import {
 import { rgba, dimColour, /* contrastFactor, contrastAdjustedOverlayOpacity, */ overlayColour } from "./colour.js";
 
 // Settings cache: always synced with settings page (followed by handles in storage)
-/* var pref_scheme; // scheme
+var pref_scheme; // scheme
 var pref_allow_dark_light; // force
 var pref_dynamic; // dynamic
 var pref_no_theme_colour; // no_theme_color
@@ -32,7 +32,7 @@ var pref_home_dark; // dark_color
 var pref_fallback_light; // light_fallback_color
 var pref_fallback_dark; // dark_fallback_color
 var pref_reservedColour_webPage; // reservedColor_webPage
-var pref_last_version; // last_version */
+var pref_last_version; // last_version
 
 var pref = {
 	scheme: systemLightModeDetected() ? "light" : "dark",
