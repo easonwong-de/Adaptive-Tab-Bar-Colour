@@ -1,21 +1,31 @@
 import {
-	default_home_light,
-	default_home_dark,
-	default_fallback_light,
-	default_fallback_dark,
+	default_homeBackground_light,
+	default_homeBackground_dark,
+	default_fallbackColour_light,
+	default_fallbackColour_dark,
 	default_reservedColour_webPage,
 	reservedColour_aboutPage,
+	legacyPrefKey,
 	checkVersion,
 } from "./shared.js";
-import { rgba, dimColour, /* contrastFactor, contrastAdjustedOverlayOpacity, */ overlayColour } from "./colour.js";
+
+import {
+	rgba,
+	dimColour,
+	/* contrastFactor,
+	contrastAdjustedOverlayOpacity, */
+	overlayColour,
+} from "./colour.js";
 
 // Settings cache: always synced with settings page (followed by handles in storage)
 /* var pref.scheme; // scheme
 var pref.allow_dark_light; // force
 var pref.dynamic; // dynamic
 var pref.no_theme_colour; // no_theme_color
+
 var pref.overlay_opacity_factor; // overlay_opacity_factor
 var pref.overlay_opacity_threshold; // overlay_opacity_threshold
+
 var pref.tabbar; // tabbar_color
 var pref.tab_selected; // tab_selected_color
 var pref.toolbar; // toolbar_color
@@ -35,25 +45,25 @@ var pref.reservedColour_webPage; // reservedColor_webPage
 var pref.last_version; // last_version */
 
 var pref = {
-	scheme: systemLightModeDetected() ? "light" : "dark",
-	allow_dark_light: true,
+	scheme: systemDisplayMode(),
+	allowDarkLight: true,
 	dynamic: false,
-	no_theme_colour: false,
+	noThemeColour: false,
 	tabbar: 0,
-	tab_selected: 0.1,
+	tabSelected: 0.1,
 	toolbar: 0,
-	toolbar_border_bottom: 0,
-	toolbar_field: 0.05,
-	toolbar_field_focus: 0.05,
+	toolbarBorderBottom: 0,
+	toolbarField: 0.05,
+	toolbarFieldOnFocus: 0.05,
 	sidebar: 0.05,
-	sidebar_border: 0.05,
+	sidebarBorder: 0.05,
 	popup: 0.05,
-	popup_border: 0.05,
+	popupBorder: 0.05,
 	custom: false,
-	home_light: default_home_light,
-	home_dark: default_fallback_dark,
-	fallback_light: default_fallback_light,
-	fallback_dark: default_fallback_dark,
+	homeBackground_light: default_homeBackground_light,
+	homeBackground_dark: default_homeBackground_dark,
+	fallbackColour_light: default_fallbackColour_light,
+	fallbackColour_dark: default_fallbackColour_dark,
 	reservedColour_webPage: default_reservedColour_webPage,
 	last_version: [2, 2],
 };
@@ -110,24 +120,24 @@ var vars.reservedColour_webPage; */
 function verifyPref() {
 	return (
 		pref.scheme != null &&
-		pref.allow_dark_light != null &&
+		pref.allowDarkLight != null &&
 		pref.dynamic != null &&
-		pref.no_theme_colour != null &&
+		pref.noThemeColour != null &&
 		pref.tabbar != null &&
-		pref.tab_selected != null &&
+		pref.tabSelected != null &&
 		pref.toolbar != null &&
-		pref.toolbar_border_bottom != null &&
-		pref.toolbar_field != null &&
-		pref.toolbar_field_focus != null &&
+		pref.toolbarBorderBottom != null &&
+		pref.toolbarField != null &&
+		pref.toolbarFieldOnFocus != null &&
 		pref.sidebar != null &&
-		pref.sidebar_border != null &&
+		pref.sidebarBorder != null &&
 		pref.popup != null &&
-		pref.popup_border != null &&
+		pref.popupBorder != null &&
 		pref.custom != null &&
-		pref.home_light != null &&
-		pref.home_dark != null &&
-		pref.fallback_light != null &&
-		pref.fallback_dark != null &&
+		pref.homeBackground_light != null &&
+		pref.homeBackground_dark != null &&
+		pref.fallbackColour_light != null &&
+		pref.fallbackColour_dark != null &&
 		pref.reservedColour_webPage != null
 	);
 }
@@ -137,16 +147,16 @@ function verifyPref() {
  */
 function updateVars() {
 	if (pref.custom) {
-		vars.home_light = rgba(pref.home_light);
-		vars.home_dark = rgba(pref.home_dark);
-		vars.fallback_light = rgba(pref.fallback_light);
-		vars.fallback_dark = rgba(pref.fallback_dark);
+		vars.home_light = rgba(pref.homeBackground_light);
+		vars.home_dark = rgba(pref.homeBackground_dark);
+		vars.fallback_light = rgba(pref.fallbackColour_light);
+		vars.fallback_dark = rgba(pref.fallbackColour_dark);
 		vars.reservedColour_webPage = pref.reservedColour_webPage;
 	} else {
-		vars.home_light = rgba(default_home_light);
-		vars.home_dark = rgba(default_home_dark);
-		vars.fallback_light = rgba(default_fallback_light);
-		vars.fallback_dark = rgba(default_fallback_dark);
+		vars.home_light = rgba(default_homeBackground_light);
+		vars.home_dark = rgba(default_homeBackground_dark);
+		vars.fallback_light = rgba(default_fallbackColour_light);
+		vars.fallback_dark = rgba(default_fallbackColour_dark);
 		vars.reservedColour_webPage = default_reservedColour_webPage;
 	}
 	switch (pref.scheme) {
@@ -156,8 +166,8 @@ function updateVars() {
 		case "dark":
 			vars.scheme = "dark";
 			break;
-		case "system":
-			vars.scheme = systemLightModeDetected() ? "light" : "dark";
+		case "auto":
+			vars.scheme = systemDisplayMode();
 			break;
 		default:
 			break;
@@ -301,146 +311,168 @@ initialise();
  */
 function initialise() {
 	browser.storage.local.get((storedPref) => {
-		pref = storedPref;
-		let pending_scheme = pref.scheme;
-		let pending_allow_dark_light = pref.allow_dark_light;
-		let pending_dynamic = pref.dynamic;
-		let pending_no_theme_colour = pref.no_theme_colour;
-		/* let pending_overlay_opacity_factor = pref.overlay_opacity_factor;
-		let pending_overlay_opacity_threshold = pref.overlay_opacity_threshold; */
-		let pending_tabbar = pref.tabbar;
-		let pending_tab_selected = pref.tab_selected;
-		let pending_toolbar = pref.toolbar;
-		let pending_toolbar_border_bottom = pref.toolbar_border_bottom;
-		let pending_toolbar_field = pref.toolbar_field;
-		let pending_toolbar_field_focus = pref.toolbar_field_focus;
-		let pending_sidebar = pref.sidebar;
-		let pending_sidebar_border = pref.sidebar_border;
-		let pending_popup = pref.popup;
-		let pending_popup_border = pref.popup_border;
-		let pending_custom = pref.custom;
-		let pending_home_light = pref.home_light;
-		let pending_home_dark = pref.home_dark;
-		let pending_fallback_light = pref.fallback_light;
-		let pending_fallback_dark = pref.fallback_dark;
-		let pending_reservedColour_webPage = pref.reservedColour_webPage;
-		let pending_last_version = [2, 2];
+		Object.keys(storedPref).forEach((key) => {
+			if (key in pref) {
+				pref[key] = storedPref[key];
+			} else {
+				switch (key) {
+					case "force":
+						pref["allowDarkLight"] = storedPref[key];
+						break;
+					case "tabbar_color":
+						pref["tabbar"] = storedPref[key];
+					default:
+						break;
+				}
+			}
+		});
+		//pref = storedPref;
+		/* let storedPref.scheme = storedPref.scheme;
+		let storedPref.allow_dark_light = storedPref.allow_dark_light;
+		let storedPref.dynamic = storedPref.dynamic;
+		let storedPref.no_theme_colour = storedPref.no_theme_colour; */
+		/* let storedPref.overlay_opacity_factor = pref.overlay_opacity_factor;
+		let storedPref.overlay_opacity_threshold = pref.overlay_opacity_threshold; */
+		/* let storedPref.tabbar = storedPref.tabbar;
+		let storedPref.tab_selected = storedPref.tab_selected;
+		let storedPref.toolbar = storedPref.toolbar;
+		let storedPref.toolbar_border_bottom = storedPref.toolbar_border_bottom;
+		let storedPref.toolbar_field = storedPref.toolbar_field;
+		let storedPref.toolbar_field_focus = storedPref.toolbar_field_focus;
+		let storedPref.sidebar = storedPref.sidebar;
+		let storedPref.sidebar_border = storedPref.sidebar_border;
+		let storedPref.popup = storedPref.popup;
+		let storedPref.popup_border = storedPref.popup_border;
+		let storedPref.custom = storedPref.custom;
+		let storedPref.home_light = storedPref.home_light;
+		let storedPref.home_dark = storedPref.home_dark;
+		let storedPref.fallback_light = storedPref.fallback_light;
+		let storedPref.fallback_dark = storedPref.fallback_dark;
+		let storedPref.reservedColour_webPage = storedPref.reservedColour_webPage;
+		let storedPref.last_version = [2, 2]; */
 		// updates from v2.1 or earlier
 		/* if (pref.overlay_opacity_factor == null || pref.overlay_opacity_threshold == null) {
-			pending_overlay_opacity_factor = 0.2;
-			pending_overlay_opacity_threshold = 0.1;
+			storedPref.overlay_opacity_factor = 0.2;
+			storedPref.overlay_opacity_threshold = 0.1;
 		} */
 		// updates from v1.7.5 or earlier
-		if (pref.tab_selected == null || pref.toolbar_field == null || pref.toolbar_field_focus == null || pref.popup_border == null) {
-			pending_tab_selected = 0.1;
-			pending_toolbar_field = 0.05;
-			pending_toolbar_field_focus = 0.05;
-			pending_popup_border = 0.05;
-		}
+		/* if (
+			storedPref.tab_selected == null ||
+			storedPref.toolbar_field == null ||
+			storedPref.toolbar_field_focus == null ||
+			storedPref.popup_border == null
+		) {
+			storedPref.tab_selected = 0.1;
+			storedPref.toolbar_field = 0.05;
+			storedPref.toolbar_field_focus = 0.05;
+			storedPref.popup_border = 0.05;
+		} */
 		// updates from v1.7.4 or earlier
 		// Converts legacy rules to query selector format
-		if (pref.last_version <= [1, 7, 4] && pref.reservedColour_webPage) {
-			Object.keys(pending_reservedColour_webPage).forEach((domain) => {
-				let temp = pref.reservedColour_webPage[domain];
-				if (temp.startsWith("TAG_")) {
-					pending_reservedColour_webPage[domain] = temp.replace("TAG_", "QS_");
-				} else if (temp.startsWith("CLASS_")) {
-					pending_reservedColour_webPage[domain] = temp.replace("CLASS_", "QS_.");
-				} else if (temp.startsWith("ID_")) {
-					pending_reservedColour_webPage[domain] = temp.replace("ID_", "QS_#");
-				} else if (temp.startsWith("NAME_")) {
-					pending_reservedColour_webPage[domain] = `${temp.replace("NAME_", "QS_[name='")}']`;
-				} else if (temp === "") {
-					delete pending_reservedColour_webPage[domain];
+		if (storedPref.last_version <= [1, 7, 4] && storedPref.reservedColour_webPage) {
+			Object.keys(storedPref.reservedColour_webPage).forEach((domain) => {
+				let legacySyntax = storedPref.reservedColour_webPage[domain];
+				if (legacySyntax.startsWith("TAG_")) {
+					storedPref.reservedColour_webPage[domain] = legacySyntax.replace("TAG_", "QS_");
+				} else if (legacySyntax.startsWith("CLASS_")) {
+					storedPref.reservedColour_webPage[domain] = legacySyntax.replace("CLASS_", "QS_.");
+				} else if (legacySyntax.startsWith("ID_")) {
+					storedPref.reservedColour_webPage[domain] = legacySyntax.replace("ID_", "QS_#");
+				} else if (legacySyntax.startsWith("NAME_")) {
+					storedPref.reservedColour_webPage[domain] = `${legacySyntax.replace("NAME_", "QS_[name='")}']`;
+				} else if (legacySyntax === "") {
+					delete storedPref.reservedColour_webPage[domain];
 				}
 			});
 		}
 		// updates from v1.7.3 or earlier
-		if (pref.reservedColour_webPage) delete pending_reservedColour_webPage[undefined];
+		if (storedPref.reservedColour_webPage) delete storedPref.reservedColour_webPage[undefined];
 		// updates from v1.7 or earlier
-		if (pref.fallback_light == null || pref.fallback_dark == null) {
-			pending_fallback_light = default_fallback_light;
-			pending_fallback_dark = default_fallback_dark;
-		}
+		/* if (storedPref.fallback_light == null || storedPref.fallback_dark == null) {
+			storedPref.fallback_light = default_fallback_light;
+			storedPref.fallback_dark = default_fallback_dark;
+		} */
 		// updates from v1.6.16 or earlier
-		if (pref.no_theme_colour == null) {
-			pending_no_theme_colour = false;
-		}
+		/* if (storedPref.no_theme_colour == null) {
+			storedPref.no_theme_colour = false;
+		} */
 		// updates from v1.6.13 or earlier
-		if (pref.sidebar == null || pref.sidebar_border == null) {
-			pending_sidebar = 0.05;
-			pending_sidebar_border = 0.05;
-		}
+		/* if (storedPref.sidebar == null || storedPref.sidebar_border == null) {
+			storedPref.sidebar = 0.05;
+			storedPref.sidebar_border = 0.05;
+		} */
 		// updates from v1.6.5 or earlier
-		if (pref.toolbar_border_bottom == null) {
-			pending_toolbar_border_bottom = 0;
-		}
+		/* if (storedPref.toolbar_border_bottom == null) {
+			storedPref.toolbar_border_bottom = 0;
+		} */
 		// updates from v1.6.4 or earlier
-		if (pref.last_version <= [1, 6, 4] && pref.home_dark && pref.home_dark.toUpperCase() == "#1C1B22") {
-			pending_home_dark = default_home_dark;
+		if (storedPref.last_version <= [1, 6, 4] && storedPref.home_dark && storedPref.home_dark.toUpperCase() == "#1C1B22") {
+			storedPref.home_dark = default_homeBackground_dark;
 		}
 		// updates from v1.6.3 or earlier
-		if (pref.toolbar == null) {
-			pending_toolbar = 0;
-		}
+		/* if (storedPref.toolbar == null) {
+			storedPref.toolbar = 0;
+		} */
 		// updates from v1.6.2 or earlier
-		if (pref.tabbar == null || pref.popup == null) {
-			pending_tabbar = 0;
-			pending_popup = 0.05;
-		}
+		/* if (storedPref.tabbar == null || storedPref.popup == null) {
+			storedPref.tabbar = 0;
+			storedPref.popup = 0.05;
+		} */
 		// updates from v1.5.7 or earlier
-		if (pref.reservedColour_webPage == null) {
-			pending_reservedColour_webPage = default_reservedColour_webPage;
-		}
+		/* if (storedPref.reservedColour_webPage == null) {
+			storedPref.reservedColour_webPage = default_reservedColour_webPage;
+		} */
 		// updates from v1.5.3 or earlier
-		if (pref.dynamic == null) {
-			pending_dynamic = false;
-		}
+		/* if (storedPref.dynamic == null) {
+			storedPref.dynamic = false;
+		} */
 		// updates from v1.3.1 or earlier
-		if (pref.last_version == null) {
-			pending_allow_dark_light = false;
-		}
+		/* if (storedPref.last_version == null) {
+			storedPref.allow_dark_light = false;
+		} */
 		// updates from v1.3 or earlier
-		if (pref.custom == null || pref.home_light == null || pref.home_dark == null) {
-			pending_custom = false;
-			pending_home_light = default_home_light;
-			pending_home_dark = default_home_dark;
-		}
+		/* if (storedPref.custom == null || storedPref.home_light == null || storedPref.home_dark == null) {
+			storedPref.custom = false;
+			storedPref.home_light = default_home_light;
+			storedPref.home_dark = default_home_dark;
+		} */
 		let firstTimeInstall = false;
 		// first time install
-		if (pref.scheme == null || pref.allow_dark_light == null) {
+		if (storedPref.scheme == null || storedPref.allow_dark_light == null) {
 			firstTimeInstall = true;
-			pending_allow_dark_light = true;
-			pending_scheme = systemLightModeDetected() ? "light" : "dark";
-			setBrowserColourScheme(pending_scheme);
+			storedPref.allow_dark_light = true;
+			storedPref.scheme = systemDisplayMode();
+			setBrowserColourScheme(storedPref.scheme);
 		}
-		if (checkVersion() < 95) pending_allow_dark_light = true;
+		if (checkVersion() < 95) storedPref.allow_dark_light = true;
 		browser.storage.local
-			.set({
-				scheme: pending_scheme,
-				force: pending_allow_dark_light,
-				dynamic: pending_dynamic,
-				no_theme_color: pending_no_theme_colour,
-				/* overlay_opacity_factor: pending_overlay_opacity_factor,
-				overlay_opacity_threshold: pending_overlay_opacity_threshold, */
-				tabbar_color: pending_tabbar,
-				tab_selected_color: pending_tab_selected,
-				toolbar_color: pending_toolbar,
-				separator_opacity: pending_toolbar_border_bottom,
-				toolbar_field_color: pending_toolbar_field,
-				toolbar_field_focus_color: pending_toolbar_field_focus,
-				sidebar_color: pending_sidebar,
-				sidebar_border_color: pending_sidebar_border,
-				popup_color: pending_popup,
-				popup_border_color: pending_popup_border,
-				custom: pending_custom,
-				light_color: pending_home_light,
-				dark_color: pending_home_dark,
-				light_fallback_color: pending_fallback_light,
-				dark_fallback_color: pending_fallback_dark,
-				reservedColor_webPage: pending_reservedColour_webPage,
-				last_version: pending_last_version,
-			})
+			.set(
+				pref /* {
+				scheme: storedPref.scheme,
+				force: storedPref.allow_dark_light,
+				dynamic: storedPref.dynamic,
+				no_theme_color: storedPref.no_theme_colour,
+				overlay_opacity_factor: storedPref.overlay_opacity_factor,
+				overlay_opacity_threshold: storedPref.overlay_opacity_threshold,
+				tabbar_color: storedPref.tabbar,
+				tab_selected_color: storedPref.tab_selected,
+				toolbar_color: storedPref.toolbar,
+				separator_opacity: storedPref.toolbar_border_bottom,
+				toolbar_field_color: storedPref.toolbar_field,
+				toolbar_field_focus_color: storedPref.toolbar_field_focus,
+				sidebar_color: storedPref.sidebar,
+				sidebar_border_color: storedPref.sidebar_border,
+				popup_color: storedPref.popup,
+				popup_border_color: storedPref.popup_border,
+				custom: storedPref.custom,
+				light_color: storedPref.home_light,
+				dark_color: storedPref.home_dark,
+				light_fallback_color: storedPref.fallback_light,
+				dark_fallback_color: storedPref.fallback_dark,
+				reservedColor_webPage: storedPref.reservedColour_webPage,
+				last_version: storedPref.last_version,
+			} */
+			)
 			.then(() => {
 				loadPrefAndUpdate();
 				if (firstTimeInstall) browser.runtime.openOptionsPage();
@@ -477,10 +509,11 @@ if (lightModeDetection)
 	};
 
 /**
- * @returns true if in light mode, false if in dark mode or cannot detect.
+ * @returns "light" or "dark" depending on the system's setting.
+ * @returns "light" if it cannot be detected.
  */
-function systemLightModeDetected() {
-	return lightModeDetection && lightModeDetection.matches;
+function systemDisplayMode() {
+	return lightModeDetection && lightModeDetection.matches ? "light" : "dark";
 }
 
 /**
@@ -556,7 +589,7 @@ function updateEachWindow(tab) {
 					{
 						reason: "COLOUR_REQUEST",
 						dynamic: pref.dynamic,
-						no_theme_color: pref.no_theme_colour,
+						no_theme_color: pref.noThemeColour,
 						reservedColor_webPage: vars.reservedColour_webPage,
 					},
 					(response) => {
@@ -728,12 +761,12 @@ function setFrameColour(windowId, colour, darkMode) {
 			break;
 		default:
 			if (
-				!pref.allow_dark_light ||
-				(pref.allow_dark_light && vars.scheme == "dark" && darkMode) ||
-				(pref.allow_dark_light && vars.scheme == "light" && !darkMode)
+				!pref.allowDarkLight ||
+				(pref.allowDarkLight && vars.scheme == "dark" && darkMode) ||
+				(pref.allowDarkLight && vars.scheme == "light" && !darkMode)
 			) {
 				// Adaptive colouring based on contrast between the colour and the base colour
-				let baseColour = vars.scheme == "dark" ? rgba(default_home_dark) : rgba(default_home_light);
+				let baseColour = vars.scheme == "dark" ? rgba(default_homeBackground_dark) : rgba(default_homeBackground_light);
 				// Compute the contrast between the colour and the base colour
 				let contrast = contrastFactor(colour, baseColour);
 				// Adjust the overlay opacity based on the contrast
@@ -748,7 +781,7 @@ function setFrameColour(windowId, colour, darkMode) {
 					changeThemePara(result, "light");
 					applyTheme(windowId, adaptive_themes["light"]);
 				}
-			} else if (!colour || pref.allow_dark_light) {
+			} else if (!colour || pref.allowDarkLight) {
 				// Force colouring (use fallback colour)
 				if (vars.scheme == "dark") {
 					changeThemePara(vars.fallback_dark, "dark");
@@ -772,42 +805,42 @@ function changeThemePara(colour, colourScheme) {
 	switch (colourScheme) {
 		case "dark":
 			tabbar = dimColour(colour, pref.tabbar);
-			tab_selected = dimColour(colour, pref.tab_selected);
+			tab_selected = dimColour(colour, pref.tabSelected);
 			ntp = dimColour(colour, 0);
 			toolbar = dimColour(colour, pref.toolbar);
-			toolbar_border_bottom = dimColour(colour, pref.toolbar_border_bottom + pref.toolbar);
-			toolbar_field = dimColour(colour, pref.toolbar_field);
-			toolbar_field_focus = dimColour(colour, pref.toolbar_field_focus);
+			toolbar_border_bottom = dimColour(colour, pref.toolbarBorderBottom + pref.toolbar);
+			toolbar_field = dimColour(colour, pref.toolbarField);
+			toolbar_field_focus = dimColour(colour, pref.toolbarFieldOnFocus);
 			sidebar = dimColour(colour, pref.sidebar);
-			sidebar_border = dimColour(colour, pref.sidebar + pref.sidebar_border);
+			sidebar_border = dimColour(colour, pref.sidebar + pref.sidebarBorder);
 			popup = dimColour(colour, pref.popup);
-			popup_border = dimColour(colour, pref.popup + pref.popup_border);
+			popup_border = dimColour(colour, pref.popup + pref.popupBorder);
 			break;
 		case "light":
 			tabbar = dimColour(colour, -pref.tabbar * 1.5);
-			tab_selected = dimColour(colour, -pref.tab_selected * 1.5);
+			tab_selected = dimColour(colour, -pref.tabSelected * 1.5);
 			ntp = dimColour(colour, 0);
 			toolbar = dimColour(colour, -pref.toolbar * 1.5);
-			toolbar_border_bottom = dimColour(colour, (-pref.toolbar_border_bottom - pref.toolbar) * 1.5);
-			toolbar_field = dimColour(colour, -pref.toolbar_field * 1.5);
-			toolbar_field_focus = dimColour(colour, -pref.toolbar_field_focus * 1.5);
+			toolbar_border_bottom = dimColour(colour, (-pref.toolbarBorderBottom - pref.toolbar) * 1.5);
+			toolbar_field = dimColour(colour, -pref.toolbarField * 1.5);
+			toolbar_field_focus = dimColour(colour, -pref.toolbarFieldOnFocus * 1.5);
 			sidebar = dimColour(colour, -pref.sidebar * 1.5);
-			sidebar_border = dimColour(colour, (-pref.sidebar - pref.sidebar_border) * 1.5);
+			sidebar_border = dimColour(colour, (-pref.sidebar - pref.sidebarBorder) * 1.5);
 			popup = dimColour(colour, -pref.popup * 1.5);
-			popup_border = dimColour(colour, (-pref.popup - pref.popup_border) * 1.5);
+			popup_border = dimColour(colour, (-pref.popup - pref.popupBorder) * 1.5);
 			break;
 		case "darknoise":
 			tabbar = "rgb(33, 33, 33)";
-			tab_selected = dimColour(colour, pref.tab_selected);
+			tab_selected = dimColour(colour, pref.tabSelected);
 			ntp = dimColour(colour, 0);
 			toolbar = dimColour(colour, pref.toolbar);
-			toolbar_border_bottom = dimColour(colour, pref.toolbar_border_bottom + pref.toolbar);
-			toolbar_field = dimColour(colour, pref.toolbar_field);
-			toolbar_field_focus = dimColour(colour, pref.toolbar_field_focus);
+			toolbar_border_bottom = dimColour(colour, pref.toolbarBorderBottom + pref.toolbar);
+			toolbar_field = dimColour(colour, pref.toolbarField);
+			toolbar_field_focus = dimColour(colour, pref.toolbarFieldOnFocus);
 			sidebar = dimColour(colour, pref.sidebar);
-			sidebar_border = dimColour(colour, pref.sidebar + pref.sidebar_border);
+			sidebar_border = dimColour(colour, pref.sidebar + pref.sidebarBorder);
 			popup = dimColour(colour, pref.popup);
-			popup_border = dimColour(colour, pref.popup + pref.popup_border);
+			popup_border = dimColour(colour, pref.popup + pref.popupBorder);
 			break;
 	}
 	adaptive_themes[colourScheme]["colors"]["frame"] = tabbar;
@@ -839,12 +872,12 @@ function applyTheme(windowId, theme) {
 
 /**
  * Overrides content colour scheme.
- * @param {string} scheme "light", "dark", or "system". Converts "system" to "auto" if above v106.
+ * @param {string} scheme "light", "dark", or "auto". Converts "auto" to "system" if the brouser's version sits below v106.
  */
-function setBrowserColourScheme(pending_scheme) {
+function setBrowserColourScheme(scheme) {
 	let version = checkVersion();
 	if (version >= 95)
 		browser.browserSettings.overrideContentColorScheme.set({
-			value: pending_scheme === "system" && version >= 106 ? "auto" : pending_scheme,
+			value: scheme === "auto" && version < 106 ? "system" : scheme,
 		});
 }

@@ -1,8 +1,8 @@
 // Default homepage & fallback colours
-export const default_home_light = "#FFFFFF";
-export const default_home_dark = "#2B2A33";
-export const default_fallback_light = "#FFFFFF";
-export const default_fallback_dark = "#2B2A33";
+export const default_homeBackground_light = "#FFFFFF";
+export const default_homeBackground_dark = "#2B2A33";
+export const default_fallbackColour_light = "#FFFFFF";
+export const default_fallbackColour_dark = "#2B2A33";
 
 /**
  * The default values of reserved colours;
@@ -87,7 +87,7 @@ export const recommendedColour_addon = Object.freeze({
 });
 
 /**
- * List of protected non-about:xxx domains
+ * List of protected non-about:xxx domains.
  */
 export const protectedDomain = Object.freeze({
 	"accounts-static.cdn.mozilla.net": "PROTECTED",
@@ -98,6 +98,20 @@ export const protectedDomain = Object.freeze({
 	"discovery.addons.mozilla.org": "PROTECTED",
 	"install.mozilla.org": "PROTECTED",
 	"support.mozilla.org": "PROTECTED",
+});
+
+/**
+ * Legacy pref keys and their current version.
+ */
+export const legacyPrefKey = Object.freeze({
+	force: "allowDarkLight",
+	tabbar_color: "tabbar",
+	tab_selected_color: "tabSelected",
+	tab_selected_color: "tabSelected",
+	tab_selected_color: "tabSelected",
+	tab_selected_color: "tabSelected",
+	tab_selected_color: "tabSelected",
+	tab_selected_color: "tabSelected",
 });
 
 /**
