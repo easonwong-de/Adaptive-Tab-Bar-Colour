@@ -9,38 +9,41 @@
 		<div id="loading">
 			<h4 data-text="loading">Loading…</h4>
 			<p id="reinstall_tip" data-text="reinstallTip">
-				Preference data could be corrupted. If the issue preserves, please re-install the add-on. I’m sorry for your inconvenience!
+				Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for your inconvenience!
 			</p>
 		</div>
 		<div id="settings" hidden="true">
 			<div>
-				<div id="info_display" data-text="pageIsProtected">This page is protected by browser</div>
+				<div class="info_display_wrapper">
+					<div id="info_display" data-text="pageIsProtected">This page is protected by browser</div>
+					<label id="info_action" title="Use default colour"></label>
+				</div>
 				<hr />
 				<h4 data-text="colourSchemePreference">Colour scheme preference</h4>
-				<label for="color_scheme_system" data-title="useSystemColourScheme">
-					<input id="color_scheme_system" type="radio" />
+				<label for="colour_scheme_auto" data-title="useSystemColourScheme">
+					<input id="colour_scheme_auto" type="radio" />
 					<span data-text="automatic">Automatic</span>
 				</label>
-				<label for="color_scheme_no_dark" data-title="useLightColourScheme">
-					<input id="color_scheme_no_dark" type="radio" />
+				<label for="colour_scheme_light" data-title="useLightColourScheme">
+					<input id="colour_scheme_light" type="radio" />
 					<span data-text="light">Light</span>
 				</label>
-				<label for="color_scheme_no_light" data-title="useDarkColourScheme">
-					<input id="color_scheme_no_light" type="radio" />
+				<label for="colour_scheme_dark" data-title="useDarkColourScheme">
+					<input id="colour_scheme_dark" type="radio" />
 					<span data-text="dark">Dark</span>
 				</label>
 				<hr />
-				<label for="force_mode" data-title="forceModeTooltip_bright">
-					<input id="force_mode" type="checkbox" />
+				<label for="allow_dark_light" data-title="forceModeTooltip_bright">
+					<input id="allow_dark_light" type="checkbox" />
 					<span id="force_mode_caption" data-text="allowLightTabBar">Allow light tab bar</span>
 				</label>
 				<label for="dynamic" data-title="dynamicModeTooltip">
 					<input id="dynamic" type="checkbox" />
-					<span data-text="dynamicColourUpdate">Dynamic color update</span>
+					<span data-text="dynamicColourUpdate">Dynamic colour update</span>
 				</label>
 				<label for="no_theme_color" data-title="noThemeColourModeTooltip">
 					<input id="no_theme_color" type="checkbox" />
-					<span data-text="ignoreDesignatedThemeColour">Ignore all theme color</span>
+					<span data-text="ignoreDesignatedThemeColour">Ignore all theme colour</span>
 				</label>
 				<label id="custom_popup" data-text="moreSettings" data-title="moreSettingsTooltip">More settings…</label>
 			</div>

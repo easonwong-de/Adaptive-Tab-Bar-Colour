@@ -1,4 +1,13 @@
-import { default_reservedColour_webPage, recommendedColour_addon, protectedDomain, checkVersion } from "./shared.js";
+import {
+	default_homeBackground_light,
+	default_homeBackground_dark,
+	default_fallbackColour_light,
+	default_fallbackColour_dark,
+	default_reservedColour_webPage,
+	recommendedColour_addon,
+	protectedDomain,
+	checkVersion,
+} from "./shared.js";
 
 // Localisation
 document.addEventListener("DOMContentLoaded", function () {
@@ -74,13 +83,13 @@ function cachePref_op(storedPref) {
 let body = document.getElementsByTagName("body")[0];
 let loading = document.getElementById("loading");
 let settings = document.getElementById("settings");
-let colour_scheme_light = document.getElementById("color_scheme_no_dark");
-let colour_scheme_dark = document.getElementById("color_scheme_no_light");
-let colour_scheme_system = document.getElementById("color_scheme_system");
-let allow_dark_light = document.getElementById("force_mode");
-let force_mode_caption = document.getElementById("force_mode_caption");
-let dynamic = document.getElementById("dynamic");
-let no_theme_colour = document.getElementById("no_theme_color");
+let colourSchemeLight = document.getElementById("colour_scheme_light");
+let colourSchemeDark = document.getElementById("colour_scheme_dark");
+let colourSchemeAuto = document.getElementById("colour_scheme_auto");
+let allowDarkLightCheckbox = document.getElementById("allow_dark_light");
+let allowDarkLightCheckboxText = document.getElementById("force_mode_caption");
+let dynamicCheckbox = document.getElementById("dynamic");
+let noThemeColourCheckbox = document.getElementById("no_theme_color");
 /* let op_overlay_opacity_factor = document.getElementById("overlay_opacity_factor");
 let op_overlay_opacity_threshold = document.getElementById("overlay_opacity_threshold"); */
 let op_tabbar = document.getElementById("tabbar_color");
@@ -106,8 +115,6 @@ let op_reset_light_fallback = document.getElementById("reset_light_fallback_colo
 let op_reset_dark_fallback = document.getElementById("reset_dark_fallback_color");
 let op_reset_all = document.getElementById("reset_all");
 let op_add = document.getElementById("add");
-let pp_more_custom = document.getElementById("custom_popup");
-let pp_info_display = document.getElementById("info_display");
 
 settings.hidden = true;
 loading.hidden = false;
@@ -130,43 +137,40 @@ browser.storage.onChanged.addListener(() => {
 function load() {
 	browser.storage.local.get((storedPref) => {
 		if (cachePref_op(storedPref)) {
-			colour_scheme_dark.checked = pref.scheme === "dark";
-			colour_scheme_light.checked = pref.scheme === "light";
-			colour_scheme_system.checked = pref.scheme === "system";
-			allow_dark_light.checked = !pref.allowDarkLight;
-			dynamic.checked = pref.dynamic;
-			no_theme_colour.checked = pref.noThemeColour;
-			if (!popupDetected()) {
-				// when the script is run by option page
-				/* op_overlay_opacity_factor.value = pref.overlay_opacity_factor;
-				op_overlay_opacity_threshold.value = pref.overlay_opacity_threshold; */
-				op_tabbar.value = pref.tabbar;
-				op_tab_selected.value = pref.tabSelected;
-				op_toolbar.value = pref.toolbar;
-				op_toolbar_border_bottom.value = pref.toolbarBorderBottom;
-				op_toolbar_field.value = pref.toolbarField;
-				op_toolbar_field_focus.value = pref.toolbarFieldOnFocus;
-				op_sidebar.value = pref.sidebar;
-				op_sidebar_border.value = pref.sidebarBorder;
-				op_popup.value = pref.popup;
-				op_popup_border.value = pref.popupBorder;
-				op_more_custom.checked = pref.custom;
-				op_custom_options.className = pref.custom ? "enabled" : "disabled";
-				op_light_colour.value = pref.homeBackground_light;
-				op_dark_colour.value = pref.homeBackground_dark;
-				op_light_fallback_colour.value = pref.fallbackColour_light;
-				op_dark_fallback_colour.value = pref.fallbackColour_dark;
-				let table_rows = op_custom_options_table.rows;
-				for (let i = table_rows.length - 1; i > 3; i--) op_custom_options_table.deleteRow(i);
-				let domains = Object.keys(pref.reservedColour_webPage);
-				domains.forEach((domain, i) => {
-					let new_row = op_custom_options_table.insertRow(i + 4);
-					generateNewRow(domain, i).then((new_row_HTML) => {
-						new_row.innerHTML += new_row_HTML;
-						addAction(i);
-					});
+			colourSchemeDark.checked = pref.scheme === "dark";
+			colourSchemeLight.checked = pref.scheme === "light";
+			colourSchemeAuto.checked = pref.scheme === "auto";
+			allowDarkLightCheckbox.checked = !pref.allowDarkLight;
+			dynamicCheckbox.checked = pref.dynamic;
+			noThemeColourCheckbox.checked = pref.noThemeColour;
+			/* op_overlay_opacity_factor.value = pref.overlay_opacity_factor;
+			op_overlay_opacity_threshold.value = pref.overlay_opacity_threshold; */
+			op_tabbar.value = pref.tabbar;
+			op_tab_selected.value = pref.tabSelected;
+			op_toolbar.value = pref.toolbar;
+			op_toolbar_border_bottom.value = pref.toolbarBorderBottom;
+			op_toolbar_field.value = pref.toolbarField;
+			op_toolbar_field_focus.value = pref.toolbarFieldOnFocus;
+			op_sidebar.value = pref.sidebar;
+			op_sidebar_border.value = pref.sidebarBorder;
+			op_popup.value = pref.popup;
+			op_popup_border.value = pref.popupBorder;
+			op_more_custom.checked = pref.custom;
+			op_custom_options.className = pref.custom ? "enabled" : "disabled";
+			op_light_colour.value = pref.homeBackground_light;
+			op_dark_colour.value = pref.homeBackground_dark;
+			op_light_fallback_colour.value = pref.fallbackColour_light;
+			op_dark_fallback_colour.value = pref.fallbackColour_dark;
+			let table_rows = op_custom_options_table.rows;
+			for (let i = table_rows.length - 1; i > 3; i--) op_custom_options_table.deleteRow(i);
+			let domains = Object.keys(pref.reservedColour_webPage);
+			domains.forEach((domain, i) => {
+				let new_row = op_custom_options_table.insertRow(i + 4);
+				generateNewRow(domain, i).then((new_row_HTML) => {
+					new_row.innerHTML += new_row_HTML;
+					addAction(i);
 				});
-			}
+			});
 			autoPageColour();
 			loading.hidden = true;
 			settings.hidden = false;
@@ -182,12 +186,12 @@ function load() {
 function load_lite() {
 	browser.storage.local.get((storedPref) => {
 		if (cachePref_op(storedPref)) {
-			colour_scheme_dark.checked = pref.scheme === "dark";
-			colour_scheme_light.checked = pref.scheme === "light";
-			colour_scheme_system.checked = pref.scheme === "system";
-			allow_dark_light.checked = pref.allowDarkLight;
-			dynamic.checked = pref.dynamic;
-			no_theme_colour.checked = pref.noThemeColour;
+			colourSchemeDark.checked = pref.scheme === "dark";
+			colourSchemeLight.checked = pref.scheme === "light";
+			colourSchemeAuto.checked = pref.scheme === "system";
+			allowDarkLightCheckbox.checked = pref.allowDarkLight;
+			dynamicCheckbox.checked = pref.dynamic;
+			noThemeColourCheckbox.checked = pref.noThemeColour;
 			autoPageColour();
 			loading.hidden = true;
 			settings.hidden = false;
@@ -195,26 +199,26 @@ function load_lite() {
 	});
 }
 
-colour_scheme_dark.addEventListener("input", () => {
-	if (colour_scheme_dark.checked) {
-		colour_scheme_light.checked = false;
-		colour_scheme_system.checked = false;
+colourSchemeDark.addEventListener("input", () => {
+	if (colourSchemeDark.checked) {
+		colourSchemeLight.checked = false;
+		colourSchemeAuto.checked = false;
 		changeColourScheme("dark");
 	}
 });
 
-colour_scheme_light.addEventListener("input", () => {
-	if (colour_scheme_light.checked) {
-		colour_scheme_dark.checked = false;
-		colour_scheme_system.checked = false;
+colourSchemeLight.addEventListener("input", () => {
+	if (colourSchemeLight.checked) {
+		colourSchemeDark.checked = false;
+		colourSchemeAuto.checked = false;
 		changeColourScheme("light");
 	}
 });
 
-colour_scheme_system.addEventListener("input", () => {
-	if (colour_scheme_system.checked) {
-		colour_scheme_dark.checked = false;
-		colour_scheme_light.checked = false;
+colourSchemeAuto.addEventListener("input", () => {
+	if (colourSchemeAuto.checked) {
+		colourSchemeDark.checked = false;
+		colourSchemeLight.checked = false;
 		changeColourScheme("system");
 	}
 });
@@ -232,23 +236,23 @@ function changeColourScheme(pending_scheme) {
 
 // If it's below v95.0, grey out "allow..." option
 if (checkVersion() < 95) {
-	allow_dark_light.checked = false;
-	allow_dark_light.disabled = true;
+	allowDarkLightCheckbox.checked = false;
+	allowDarkLightCheckbox.disabled = true;
 } else {
-	allow_dark_light.onclick = () => {
-		pref.allowDarkLight = allow_dark_light.checked;
-		browser.storage.local.set({ allowDarkLight: allow_dark_light.checked });
+	allowDarkLightCheckbox.onclick = () => {
+		pref.allowDarkLight = allowDarkLightCheckbox.checked;
+		browser.storage.local.set({ allowDarkLight: allowDarkLightCheckbox.checked });
 	};
 }
 
-dynamic.onclick = () => {
-	pref.dynamic = dynamic.checked;
-	browser.storage.local.set({ dynamic: dynamic.checked });
+dynamicCheckbox.onclick = () => {
+	pref.dynamic = dynamicCheckbox.checked;
+	browser.storage.local.set({ dynamic: dynamicCheckbox.checked });
 };
 
-no_theme_colour.onclick = () => {
-	pref.noThemeColour = no_theme_colour.checked;
-	browser.storage.local.set({ noThemeColour: no_theme_colour.checked });
+noThemeColourCheckbox.onclick = () => {
+	pref.noThemeColour = noThemeColourCheckbox.checked;
+	browser.storage.local.set({ noThemeColour: noThemeColourCheckbox.checked });
 };
 
 /**
@@ -574,11 +578,11 @@ function autoPopupColour() {
 		}
 	});
 	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
-		force_mode_caption.innerHTML = msg("allowDarkTabBar");
-		force_mode_caption.parentElement.title = msg("forceModeTooltip_dark");
+		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
+		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
-		force_mode_caption.innerHTML = msg("allowLightTabBar");
-		force_mode_caption.parentElement.title = msg("forceModeTooltip_bright");
+		allowDarkLightCheckboxText.innerHTML = msg("allowLightTabBar");
+		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_bright");
 	}
 }
 
@@ -589,13 +593,13 @@ function autoOptionsColour() {
 	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
-		force_mode_caption.innerHTML = msg("allowDarkTabBar");
-		force_mode_caption.parentElement.title = msg("forceModeTooltip_dark");
+		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
+		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
 		body.classList.add("dark");
 		body.classList.remove("light");
-		force_mode_caption.innerHTML = msg("allowLightTabBar");
-		force_mode_caption.parentElement.title = msg("forceModeTooltip_bright");
+		allowDarkLightCheckboxText.innerHTML = msg("allowLightTabBar");
+		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_bright");
 	}
 }
 
@@ -610,7 +614,7 @@ function popupDetected() {
 const lightModeDetection_p = window.matchMedia("(prefers-color-scheme: light)");
 if (lightModeDetection_p)
 	lightModeDetection_p.onchange = () => {
-		if (colour_scheme_system.checked) autoOptionsColour();
+		if (colourSchemeAuto.checked) autoOptionsColour();
 	};
 
 /**

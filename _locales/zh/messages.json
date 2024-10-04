@@ -271,7 +271,7 @@
 		"message": "，皆因網站指定的主題色被默認忽略<label id='info_action' title='採用此網站指定的主題色' data-action='UN_IGNORE_THEME'><span>解除忽略此主題色</span></label>"
 	},
 
-	"usingDarkNoise": {
+	"usingImageViewer": {
 		"message": "採用 <b>chrome://global/skin/media/imagedoc-darknoise.png</b> 作為背景"
 	},
 

@@ -206,7 +206,7 @@ function initialise() {
 		// Version number is recorded starting from v1.3.1, updating from older versions is treated as fresh install
 		let noVersionNumber = !("last_version" in storedPref || "version" in storedPref);
 		if (!freshInstall || !noVersionNumber) {
-			for (key in storedPref) {
+			for (let key in storedPref) {
 				if (key in pref) pref[key] = storedPref[key];
 				else if (key in legacyPrefKey) pref[legacyPrefKey[key]] = storedPref[key];
 			}
@@ -220,7 +220,7 @@ function initialise() {
 			// updates from v1.7.4 or earlier
 			// Converts legacy rules to query selector format
 			if (pref.version <= [1, 7, 4]) {
-				for (domain in pref.reservedColour_webPage) {
+				for (let domain in pref.reservedColour_webPage) {
 					let legacyRule = pref.reservedColour_webPage[domain];
 					if (legacyRule.startsWith("TAG_")) {
 						pref.reservedColour_webPage[domain] = legacyRule.replace("TAG_", "QS_");
@@ -400,7 +400,7 @@ function updateEachWindow(tab) {
 function getSearchKey(url) {
 	if (url.startsWith("about:")) {
 		return Promise.resolve(url.split(/\/|\?/)[0]); // e.g. "about:page"
-	} else if (url.startsWith("moz-extension:")) {
+	} else if (url.startsWith("moz-extension:")) { // Searches for add-on ID
 		let uuid = url.split(/\/|\?/)[2];
 		return new Promise((resolve) => {
 			browser.management.getAll().then((addonList) => {
@@ -427,12 +427,14 @@ function getSearchKey(url) {
 /**
  * Changes tab bar to the appointed colour (with windowId).
  *
- * "allowDarkLight" and "scheme" come from preferences.
- *
  * allowDarkLight: true => normal;
+ *
  * allowDarkLight: false, scheme: dark, darkMode: true => normal;
+ *
  * allowDarkLight: false, scheme: light, darkMode: false => normal;
+ *
  * allowDarkLight: false, scheme: dark, darkMode: false => dark;
+ *
  * allowDarkLight: false, scheme: light, darkMode: true => light;
  *
  * if colour is empty, then roll back to default colour.
@@ -450,7 +452,7 @@ function setFrameColour(windowId, colour, darkMode) {
 		case "HOME":
 			// Home page and new tab
 			if (darkMode) {
-				changeThemePara(vars.home_dark, "dark");
+				changeThemePara(vars.homeBackground_dark, "dark");
 				applyTheme(windowId, adaptive_themes["dark"]);
 			} else {
 				changeThemePara(vars.homeBackground_light, "light");
@@ -460,10 +462,10 @@ function setFrameColour(windowId, colour, darkMode) {
 		case "FALLBACK":
 			// Fallback colour
 			if (darkMode) {
-				changeThemePara(vars.fallback_dark, "dark");
+				changeThemePara(vars.fallbackColour_dark, "dark");
 				applyTheme(windowId, adaptive_themes["dark"]);
 			} else {
-				changeThemePara(vars.fallback_light, "light");
+				changeThemePara(vars.fallbackColour_light, "light");
 				applyTheme(windowId, adaptive_themes["light"]);
 			}
 			break;

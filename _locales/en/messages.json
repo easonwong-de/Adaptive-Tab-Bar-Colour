@@ -12,7 +12,7 @@
 	},
 
 	"reinstallTip": {
-		"message": "Preference data could be corrupted. Please remove the add-on, and re-install the add-on after rebooting Firefox. I’m sorry for your inconvenience!"
+		"message": "Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for your inconvenience!"
 	},
 
 	"loading": {
@@ -143,7 +143,7 @@
 		"message": "Open option page"
 	},
 
-	"option.js": {
+	"options.js && popup.js": {
 		"message": "=============================="
 	},
 
@@ -271,7 +271,7 @@
 		"message": ", because theme colour defined by the website is ignored<label id='info_action' title='Use theme colour defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme colour</span></label>"
 	},
 
-	"usingDarkNoise": {
+	"usingImageViewer": {
 		"message": "Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background"
 	},
 

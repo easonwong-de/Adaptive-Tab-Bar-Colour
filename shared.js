@@ -6,9 +6,13 @@ export const default_fallbackColour_dark = "#2B2A33";
 
 /**
  * The default values of reserved colours;
+ * 
  * reserved colour is a colour => uses the given colour as tab colour;
+ * 
  * reserved colour is IGNORE_THEME => sets calculated colour as tab colour;
+ * 
  * reserved colour is UN_IGNORE_THEME => sets theme colour as tab colour;
+ * 
  * reserved colour starts with QS_ => gets colour from the element found with the querySelector;
  */
 export const default_reservedColour_webPage = Object.freeze({
@@ -24,11 +28,16 @@ export const default_reservedColour_webPage = Object.freeze({
 
 /**
  * Colour of pages where content script can't be injected;
+ * 
  * url listed only in "light/dark" => only use that colour regardless of the colour scheme (there is one colour scheme for the page);
+ * 
  * url listed in both => choose colour scheme as needed (there is a light and a dark version of the page);
+ * 
  * url listed as "DEFAULT" => use default_light/dark_colour;
+ * 
  * url listed as "HOME" => use home page colour;
- * url listed as "IMAGEVIEWER" => use "darknoise" theme;
+ * 
+ * url listed as "IMAGEVIEWER" => use image viewer theme;
  */
 export const reservedColour_aboutPage = Object.freeze({
 	light: {

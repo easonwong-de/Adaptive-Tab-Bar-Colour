@@ -271,7 +271,7 @@
 		"message": ", da die vom Webseiten-Design definierte Theme-Farbe ignoriert wird<label id='info_action' title='Vom Webseiten-Design definierte Theme-Farbe verwenden' data-action='UN_IGNORE_THEME'><span>Theme-Farbe doch verwenden</span></label>"
 	},
 
-	"usingDarkNoise": {
+	"usingImageViewer": {
 		"message": "Verwende <b>chrome://global/skin/media/imagedoc-darknoise.png</b> als Hintergrund"
 	},
 

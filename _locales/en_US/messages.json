@@ -271,7 +271,7 @@
 		"message": ", because theme color defined by the website is ignored<label id='info_action' title='Use theme color defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme color</span></label>"
 	},
 
-	"usingDarkNoise": {
+	"usingImageViewer": {
 		"message": "Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background"
 	},
 

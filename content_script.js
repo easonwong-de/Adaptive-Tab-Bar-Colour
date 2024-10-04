@@ -14,7 +14,7 @@ const default_reservedColour_webPage = Object.freeze({
 });
 
 // Settings cache: updated on message
-var noThemeColour;
+var noThemeColour = true;
 var reservedColour_webPage = default_reservedColour_webPage;
 
 /**
@@ -31,7 +31,7 @@ function cachePref_webPage(pref) {
 var RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
 
 // This will be displayed in the pop-up
-var RESPONSE_INFO = "";
+var RESPONSE_INFO = { display: "This page is protected by browser", buttonText: "", action: "" };
 
 // Send colour to background as soon as page loads
 browser.storage.local.get((pref) => {
@@ -181,7 +181,7 @@ function findAndSendColour_animation() {
 
 /**
  * Sets RESPONSE_COLOUR with the help of host actions stored in current_reservedColour_webPage.
- * @returns True if a legal reserved colour for the webpage can be found.
+ * @returns True if a meta theme-color or a reserved colour for the webpage can be found.
  */
 function findColourReserved() {
 	let domain = document.location.host; // "host" can be "www.irgendwas.com"
@@ -189,30 +189,27 @@ function findColourReserved() {
 	if (action == null || (!noThemeColour && action == "UN_IGNORE_THEME") || (noThemeColour && action == "IGNORE_THEME")) {
 		return false;
 	} else if (noThemeColour && action == "UN_IGNORE_THEME") {
-		// User prefers igoring theme colour, but sets to use theme colour for this host
-		if (findThemeColour()) {
-			RESPONSE_INFO = msg("themeColourIsUnignored");
-		} else {
+		// User prefers igoring theme colour, but sets to use meta theme-color for this host
+		if (findThemeColour()) RESPONSE_INFO.display = msg("themeColourIsUnignored");
+		else {
 			findComputedColour();
-			RESPONSE_INFO = msg("themeColourNotFound");
+			RESPONSE_INFO.display = msg("themeColourNotFound");
 		}
 		return true;
 	} else if (!noThemeColour && action == "IGNORE_THEME") {
-		// User sets to ignore the theme colour of this host
+		// User sets to ignore the meta theme-color of this host
 		if (findThemeColour()) {
 			findComputedColour();
-			RESPONSE_INFO = msg("themeColourIsIgnored");
-		} else {
-			findComputedColour();
-		}
+			RESPONSE_INFO.display = msg("themeColourIsIgnored");
+		} else findComputedColour();
 		return true;
 	} else if (action.startsWith("QS_")) {
 		let selector = action.replace("QS_", "");
 		RESPONSE_COLOUR = getColourFromElement(document.querySelector(selector));
-		RESPONSE_INFO = msg("colourIsPickedFrom", selector);
+		RESPONSE_INFO.display = msg("colourIsPickedFrom", selector);
 	} else {
 		RESPONSE_COLOUR = rgba(action);
-		RESPONSE_INFO = msg("colourIsSpecified");
+		RESPONSE_INFO.display = msg("colourIsSpecified");
 	}
 	// Return ture if reponse colour is legal and can be sent to background.js
 	return RESPONSE_COLOUR != null && RESPONSE_COLOUR.a == 1;
@@ -226,7 +223,7 @@ function findColourUnreserved() {
 		if (findThemeColour()) {
 			if (RESPONSE_COLOUR != "IMAGEVIEWER" && RESPONSE_COLOUR != "PLAINTEXT") {
 				findComputedColour();
-				RESPONSE_INFO += msg("bacauseThemeColourIsIgnored");
+				RESPONSE_INFO.display += msg("bacauseThemeColourIsIgnored");
 			}
 		} else findComputedColour();
 	} else {
@@ -244,7 +241,7 @@ function findThemeColour() {
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url
 		RESPONSE_COLOUR = "IMAGEVIEWER";
-		RESPONSE_INFO = msg("usingDarkNoise");
+		RESPONSE_INFO.display = msg("usingImageViewer");
 		return true;
 	} else if (
 		document.getElementsByTagName("link").length > 0 &&
@@ -255,7 +252,7 @@ function findThemeColour() {
 		// Thus this may only works for viewing local text file
 		if (getColourFromElement(document.body).a != 1) {
 			RESPONSE_COLOUR = "PLAINTEXT";
-			RESPONSE_INFO = msg("usingColourForPlainText");
+			RESPONSE_INFO.display = msg("usingColourForPlainText");
 			return true;
 		} else {
 			return false;
@@ -269,7 +266,7 @@ function findThemeColour() {
 			// Return true if it is legal (opaque) and can be sent to background.js
 			// Otherwise, return false and trigger getComputedColour()
 			if (RESPONSE_COLOUR.a == 1) {
-				RESPONSE_INFO = msg("usingThemeColour");
+				RESPONSE_INFO.display = msg("usingThemeColour");
 				return true;
 			} else return false;
 		} else return false;
@@ -301,18 +298,18 @@ function findComputedColour() {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
 			RESPONSE_COLOUR = "FALLBACK";
-			RESPONSE_INFO = msg("usingFallbackColour");
+			RESPONSE_INFO.display = msg("usingFallbackColour");
 		} else {
 			let BodyColour = getColourFromElement(body);
 			if (BodyColour.a == 1) {
 				RESPONSE_COLOUR = overlayColour(RESPONSE_COLOUR, BodyColour);
-				RESPONSE_INFO = msg("colourPickedFromWebpage");
+				RESPONSE_INFO.display = msg("colourPickedFromWebpage");
 			} else {
 				RESPONSE_COLOUR = "FALLBACK";
-				RESPONSE_INFO = msg("usingFallbackColour");
+				RESPONSE_INFO.display = msg("usingFallbackColour");
 			}
 		}
-	} else RESPONSE_INFO = msg("colourPickedFromWebpage");
+	} else RESPONSE_INFO.display = msg("colourPickedFromWebpage");
 }
 
 /**
