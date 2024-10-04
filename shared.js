@@ -28,7 +28,7 @@ export const default_reservedColour_webPage = Object.freeze({
  * url listed in both => choose colour scheme as needed (there is a light and a dark version of the page);
  * url listed as "DEFAULT" => use default_light/dark_colour;
  * url listed as "HOME" => use home page colour;
- * url listed as "DARKNOISE" => use "darknoise" theme;
+ * url listed as "IMAGEVIEWER" => use "darknoise" theme;
  */
 export const reservedColour_aboutPage = Object.freeze({
 	light: {
@@ -55,7 +55,7 @@ export const reservedColour_aboutPage = Object.freeze({
 		"about:devtools-toolbox": "rgb(12, 12, 13)",
 		"about:firefoxview": "HOME",
 		"about:home": "HOME",
-		"about:logo": "DARKNOISE",
+		"about:logo": "IMAGEVIEWER",
 		"about:mozilla": "rgb(143, 15, 7)",
 		"about:newtab": "HOME",
 		"about:performance": "rgb(35, 34, 42)",
@@ -72,7 +72,7 @@ export const reservedColour_aboutPage = Object.freeze({
 });
 
 /**
- * Recommended colour for Add-ons' built-in page
+ * Recommended colours for Add-ons' built-in pages
  */
 export const recommendedColour_addon = Object.freeze({
 	"uBlock0@raymondhill.net": "#1b1a23",
@@ -107,11 +107,20 @@ export const legacyPrefKey = Object.freeze({
 	force: "allowDarkLight",
 	tabbar_color: "tabbar",
 	tab_selected_color: "tabSelected",
-	tab_selected_color: "tabSelected",
-	tab_selected_color: "tabSelected",
-	tab_selected_color: "tabSelected",
-	tab_selected_color: "tabSelected",
-	tab_selected_color: "tabSelected",
+	toolbar_color: "toolbar",
+	separator_opacity: "toolbarBorderBottom",
+	toolbar_field_color: "toolbarField",
+	toolbar_field_focus_color: "toolbarFieldOnFocus",
+	sidebar_color: "sidebar",
+	sidebar_border_color: "sidebarBorder",
+	popup_color: "popup",
+	popup_border_color: "popupBorder",
+	light_color: "homeBackground_light",
+	dark_color: "homeBackground_dark",
+	light_fallback_color: "fallbackColour_light",
+	dark_fallback_color: "fallbackColour_dark",
+	reservedColour_cs: "reservedColour_webPage",
+	last_version: "version",
 });
 
 /**

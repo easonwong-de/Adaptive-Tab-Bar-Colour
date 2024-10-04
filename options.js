@@ -1,5 +1,3 @@
-// This script is shared by option page and popup
-
 import { default_reservedColour_webPage, recommendedColour_addon, protectedDomain, checkVersion } from "./shared.js";
 
 // Localisation

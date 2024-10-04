@@ -6,7 +6,7 @@
  */
 export function rgba(colour) {
 	if (typeof colour == "string") {
-		if (colour == "DEFAULT" || colour == "DARKNOISE" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
+		if (colour == "DEFAULT" || colour == "IMAGEVIEWER" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		let colour_temp = canvas.fillStyle;

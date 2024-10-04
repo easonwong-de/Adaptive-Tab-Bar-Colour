@@ -14,17 +14,17 @@ const default_reservedColour_webPage = Object.freeze({
 });
 
 // Settings cache: updated on message
-var pref_no_theme_colour;
-var current_reservedColour_webPage = default_reservedColour_webPage;
+var noThemeColour;
+var reservedColour_webPage = default_reservedColour_webPage;
 
 /**
  * Loads preferences into cache and check integrity.
  */
 function cachePref_webPage(pref) {
 	setDynamicUpdate(pref.dynamic);
-	pref_no_theme_colour = pref.no_theme_color;
-	current_reservedColour_webPage = pref.custom ? pref.reservedColor_webPage : default_reservedColour_webPage;
-	return pref_no_theme_colour != null && current_reservedColour_webPage != null;
+	noThemeColour = pref.noThemeColour;
+	reservedColour_webPage = pref.custom ? pref.reservedColor_webPage : default_reservedColour_webPage;
+	return noThemeColour != null && reservedColour_webPage != null;
 }
 
 // Initializes response colour
@@ -43,11 +43,11 @@ var debounceTimeoutID = null;
 
 /**
  * Runs the given function with a maximum rate of 100ms.
- * @param {function} fn Fuction without debounce.
+ * @param {function} action Fuction without debounce.
  * @returns Function with debounce.
  * @author cloone8 on GitHub.
  */
-function addDebounce(fn) {
+function addDebounce(action) {
 	const timeoutMs = 250;
 	return () => {
 		const currentTime = Date.now();
@@ -59,13 +59,13 @@ function addDebounce(fn) {
 		if (currentTime - timeoutMs > debouncePrevRun) {
 			// No timeout => call the function right away
 			debouncePrevRun = currentTime;
-			fn();
+			action();
 		} else {
 			// Blocked by timeout => delay the function call
 			debounceTimeoutID = setTimeout(() => {
 				debouncePrevRun = Date.now();
 				debounceTimeoutID = null;
-				fn();
+				action();
 			}, timeoutMs - (currentTime - debouncePrevRun));
 		}
 	};
@@ -102,7 +102,7 @@ function setDynamicUpdate(dynamic) {
 	}
 }
 
-// Detects theme-color changes
+// Detects "meta[name=theme-color]" changes
 var onThemeColourChange = new MutationObserver(findAndSendColour);
 if (document.querySelector("meta[name=theme-color]") != null)
 	onThemeColourChange.observe(document.querySelector("meta[name=theme-color]"), {
@@ -116,7 +116,7 @@ onDarkReaderChange.observe(document.documentElement, {
 	attributeFilter: ["data-darkreader-mode"],
 });
 
-// Detects style injections & theme-color being added
+// Detects style injections & "meta[name=theme-color]" being added
 var onStyleInjection = new MutationObserver((mutations) => {
 	mutations.forEach((mutation) => {
 		if (
@@ -136,8 +136,8 @@ onStyleInjection.observe(document.head, { childList: true });
 // Loads newly applied settings
 browser.runtime.onMessage.addListener((pref, sender, sendResponse) => {
 	setDynamicUpdate(pref.dynamic);
-	pref_no_theme_colour = pref.no_theme_color;
-	current_reservedColour_webPage = pref.reservedColor_webPage;
+	noThemeColour = pref.noThemeColour;
+	reservedColour_webPage = pref.reservedColor_webPage;
 	if (pref.reason == "INFO_REQUEST") {
 		findColour();
 		sendResponse(RESPONSE_INFO);
@@ -185,10 +185,10 @@ function findAndSendColour_animation() {
  */
 function findColourReserved() {
 	let domain = document.location.host; // "host" can be "www.irgendwas.com"
-	let action = current_reservedColour_webPage[domain];
-	if (action == null || (!pref_no_theme_colour && action == "UN_IGNORE_THEME") || (pref_no_theme_colour && action == "IGNORE_THEME")) {
+	let action = reservedColour_webPage[domain];
+	if (action == null || (!noThemeColour && action == "UN_IGNORE_THEME") || (noThemeColour && action == "IGNORE_THEME")) {
 		return false;
-	} else if (pref_no_theme_colour && action == "UN_IGNORE_THEME") {
+	} else if (noThemeColour && action == "UN_IGNORE_THEME") {
 		// User prefers igoring theme colour, but sets to use theme colour for this host
 		if (findThemeColour()) {
 			RESPONSE_INFO = msg("themeColourIsUnignored");
@@ -197,7 +197,7 @@ function findColourReserved() {
 			RESPONSE_INFO = msg("themeColourNotFound");
 		}
 		return true;
-	} else if (!pref_no_theme_colour && action == "IGNORE_THEME") {
+	} else if (!noThemeColour && action == "IGNORE_THEME") {
 		// User sets to ignore the theme colour of this host
 		if (findThemeColour()) {
 			findComputedColour();
@@ -222,15 +222,13 @@ function findColourReserved() {
  * Sets RESPONSE_COLOUR using findThemeColour() and findComputedColour().
  */
 function findColourUnreserved() {
-	if (pref_no_theme_colour) {
+	if (noThemeColour) {
 		if (findThemeColour()) {
-			if (RESPONSE_COLOUR != "DARKNOISE" && RESPONSE_COLOUR != "PLAINTEXT") {
+			if (RESPONSE_COLOUR != "IMAGEVIEWER" && RESPONSE_COLOUR != "PLAINTEXT") {
 				findComputedColour();
 				RESPONSE_INFO += msg("bacauseThemeColourIsIgnored");
 			}
-		} else {
-			findComputedColour();
-		}
+		} else findComputedColour();
 	} else {
 		if (!findThemeColour()) findComputedColour();
 	}
@@ -245,7 +243,7 @@ function findThemeColour() {
 		// Image viewer
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url
-		RESPONSE_COLOUR = "DARKNOISE";
+		RESPONSE_COLOUR = "IMAGEVIEWER";
 		RESPONSE_INFO = msg("usingDarkNoise");
 		return true;
 	} else if (
@@ -273,12 +271,8 @@ function findThemeColour() {
 			if (RESPONSE_COLOUR.a == 1) {
 				RESPONSE_INFO = msg("usingThemeColour");
 				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
+			} else return false;
+		} else return false;
 	}
 }
 
@@ -318,9 +312,7 @@ function findComputedColour() {
 				RESPONSE_INFO = msg("usingFallbackColour");
 			}
 		}
-	} else {
-		RESPONSE_INFO = msg("colourPickedFromWebpage");
-	}
+	} else RESPONSE_INFO = msg("colourPickedFromWebpage");
 }
 
 /**
@@ -341,17 +333,16 @@ function getColourFromElement(element) {
  */
 function overlayColour(colourTop, colourBottom) {
 	let a = (1 - colourTop.a) * colourBottom.a + colourTop.a;
-	if (a == 0) {
+	if (a == 0)
 		// Firefox renders transparent background in rgb(236, 236, 236)
 		return rgba([236, 236, 236, 0]);
-	} else {
+	else
 		return {
 			r: ((1 - colourTop.a) * colourBottom.a * colourBottom.r + colourTop.a * colourTop.r) / a,
 			g: ((1 - colourTop.a) * colourBottom.a * colourBottom.g + colourTop.a * colourTop.g) / a,
 			b: ((1 - colourTop.a) * colourBottom.a * colourBottom.b + colourTop.a * colourTop.b) / a,
 			a: a,
 		};
-	}
 }
 
 /**
@@ -362,7 +353,7 @@ function overlayColour(colourTop, colourBottom) {
  */
 function rgba(colour) {
 	if (typeof colour == "string") {
-		if (colour == "DEFAULT" || colour == "DARKNOISE" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
+		if (colour == "DEFAULT" || colour == "IMAGEVIEWER" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		let colour_temp = canvas.fillStyle;
@@ -385,11 +376,8 @@ function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour == "object") {
-		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
-	} else {
-		return null;
-	}
+	} else if (typeof colour == "object") return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
+	else return null;
 }
 
 /**
