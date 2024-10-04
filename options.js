@@ -10,30 +10,32 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 });
 
-// Settings cache: always synced with settings page
-var pref_scheme; // scheme
-var pref_allow_dark_light; // force
-var pref_dynamic; // dynamic
-var pref_no_theme_colour; // no_theme_color
-var pref_tabbar; // tabbar_color
-var pref_tab_selected; // tab_selected
-var pref_toolbar; // toolbar_color
-var pref_toolbar_border_bottom; // separator_opacity
-var pref_toolbar_field; // toolbar_field_color
-var pref_toolbar_field_focus; // toolbar_field_focus_color
-var pref_sidebar; // sidebar_color
-var pref_sidebar_border; // sidebar_border_color
-var pref_popup; // popup_color
-var pref_popup_border; // popup_color
-var pref_custom; // custom
-var pref_home_light; // light_color
-var pref_home_dark; // dark_color
-var pref_fallback_light; // light_fallback_color
-var pref_fallback_dark; // dark_fallback_color
-var pref_reservedColour_webPage; // reservedColor_webPage
+var pref = {
+	scheme: "auto",
+	allowDarkLight: false,
+	dynamic: true,
+	noThemeColour: true,
+	tabbar: 0,
+	tabSelected: 0.1,
+	toolbar: 0,
+	toolbarBorderBottom: 0,
+	toolbarField: 0.05,
+	toolbarFieldOnFocus: 0.05,
+	sidebar: 0.05,
+	sidebarBorder: 0.05,
+	popup: 0.05,
+	popupBorder: 0.05,
+	custom: false,
+	homeBackground_light: default_homeBackground_light,
+	homeBackground_dark: default_homeBackground_dark,
+	fallbackColour_light: default_fallbackColour_light,
+	fallbackColour_dark: default_fallbackColour_dark,
+	reservedColour_webPage: default_reservedColour_webPage,
+	version: [2, 2],
+};
 
 // Current colour lookup table
-var current_reservedColour_webPage;
+var reservedColour_webPage;
 
 const svg_bin = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
 const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
@@ -41,50 +43,31 @@ const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0
 /**
  * Caches pref into local variables and checks integrity.
  */
-function cachePref_op(pref) {
-	// loads prefs
-	pref_scheme = pref.scheme;
-	pref_allow_dark_light = pref.force;
-	pref_dynamic = pref.dynamic;
-	pref_no_theme_colour = pref.no_theme_color;
-	pref_tabbar = pref.tabbar_color;
-	pref_tab_selected = pref.tab_selected_color;
-	pref_toolbar = pref.toolbar_color;
-	pref_toolbar_border_bottom = pref.separator_opacity;
-	pref_toolbar_field = pref.toolbar_field_color;
-	pref_toolbar_field_focus = pref.toolbar_field_focus_color;
-	pref_sidebar = pref.sidebar_color;
-	pref_sidebar_border = pref.sidebar_border_color;
-	pref_popup = pref.popup_color;
-	pref_popup_border = pref.popup_border_color;
-	pref_custom = pref.custom;
-	pref_home_light = pref.light_color;
-	pref_home_dark = pref.dark_color;
-	pref_fallback_light = pref.light_fallback_color;
-	pref_fallback_dark = pref.dark_fallback_color;
-	pref_reservedColour_webPage = pref.reservedColor_webPage;
-	current_reservedColour_webPage = pref_custom ? pref_reservedColour_webPage : default_reservedColour_webPage;
+function cachePref_op(storedPref) {
+	pref = storedPref;
+	reservedColour_webPage = pref.custom ? pref.reservedColour_webPage : default_reservedColour_webPage;
 	return (
-		pref_scheme != null &&
-		pref_allow_dark_light != null &&
-		pref_dynamic != null &&
-		pref_no_theme_colour != null &&
-		pref_tabbar != null &&
-		pref_tab_selected != null &&
-		pref_toolbar != null &&
-		pref_toolbar_border_bottom != null &&
-		pref_toolbar_field != null &&
-		pref_toolbar_field_focus != null &&
-		pref_sidebar != null &&
-		pref_sidebar_border != null &&
-		pref_popup != null &&
-		pref_popup_border != null &&
-		pref_custom != null &&
-		pref_home_light != null &&
-		pref_home_dark != null &&
-		pref_fallback_light != null &&
-		pref_fallback_dark != null &&
-		pref_reservedColour_webPage != null
+		pref.scheme != null &&
+		pref.allowDarkLight != null &&
+		pref.dynamic != null &&
+		pref.noThemeColour != null &&
+		pref.tabbar != null &&
+		pref.tabSelected != null &&
+		pref.toolbar != null &&
+		pref.toolbarBorderBottom != null &&
+		pref.toolbarField != null &&
+		pref.toolbarFieldOnFocus != null &&
+		pref.sidebar != null &&
+		pref.sidebarBorder != null &&
+		pref.popup != null &&
+		pref.popupBorder != null &&
+		pref.custom != null &&
+		pref.homeBackground_light != null &&
+		pref.homeBackground_dark != null &&
+		pref.fallbackColour_light != null &&
+		pref.fallbackColour_dark != null &&
+		pref.reservedColour_webPage != null &&
+		pref.version != null
 	);
 }
 
@@ -145,37 +128,37 @@ browser.storage.onChanged.addListener(() => {
  * Loads all prefs.
  */
 function load() {
-	browser.storage.local.get((pref) => {
-		if (cachePref_op(pref)) {
-			colour_scheme_dark.checked = pref_scheme === "dark";
-			colour_scheme_light.checked = pref_scheme === "light";
-			colour_scheme_system.checked = pref_scheme === "system";
-			allow_dark_light.checked = !pref_allow_dark_light;
-			dynamic.checked = pref_dynamic;
-			no_theme_colour.checked = pref_no_theme_colour;
+	browser.storage.local.get((storedPref) => {
+		if (cachePref_op(storedPref)) {
+			colour_scheme_dark.checked = pref.scheme === "dark";
+			colour_scheme_light.checked = pref.scheme === "light";
+			colour_scheme_system.checked = pref.scheme === "system";
+			allow_dark_light.checked = !pref.allowDarkLight;
+			dynamic.checked = pref.dynamic;
+			no_theme_colour.checked = pref.noThemeColour;
 			if (!popupDetected()) {
 				// when the script is run by option page
 				/* op_overlay_opacity_factor.value = pref.overlay_opacity_factor;
 				op_overlay_opacity_threshold.value = pref.overlay_opacity_threshold; */
-				op_tabbar.value = pref_tabbar;
-				op_tab_selected.value = pref_tab_selected;
-				op_toolbar.value = pref_toolbar;
-				op_toolbar_border_bottom.value = pref_toolbar_border_bottom;
-				op_toolbar_field.value = pref_toolbar_field;
-				op_toolbar_field_focus.value = pref_toolbar_field_focus;
-				op_sidebar.value = pref_sidebar;
-				op_sidebar_border.value = pref_sidebar_border;
-				op_popup.value = pref_popup;
-				op_popup_border.value = pref_popup_border;
-				op_more_custom.checked = pref_custom;
-				op_custom_options.className = pref_custom ? "enabled" : "disabled";
-				op_light_colour.value = pref_home_light;
-				op_dark_colour.value = pref_home_dark;
-				op_light_fallback_colour.value = pref_fallback_light;
-				op_dark_fallback_colour.value = pref_fallback_dark;
+				op_tabbar.value = pref.tabbar;
+				op_tab_selected.value = pref.tabSelected;
+				op_toolbar.value = pref.toolbar;
+				op_toolbar_border_bottom.value = pref.toolbarBorderBottom;
+				op_toolbar_field.value = pref.toolbarField;
+				op_toolbar_field_focus.value = pref.toolbarFieldOnFocus;
+				op_sidebar.value = pref.sidebar;
+				op_sidebar_border.value = pref.sidebarBorder;
+				op_popup.value = pref.popup;
+				op_popup_border.value = pref.popupBorder;
+				op_more_custom.checked = pref.custom;
+				op_custom_options.className = pref.custom ? "enabled" : "disabled";
+				op_light_colour.value = pref.homeBackground_light;
+				op_dark_colour.value = pref.homeBackground_dark;
+				op_light_fallback_colour.value = pref.fallbackColour_light;
+				op_dark_fallback_colour.value = pref.fallbackColour_dark;
 				let table_rows = op_custom_options_table.rows;
 				for (let i = table_rows.length - 1; i > 3; i--) op_custom_options_table.deleteRow(i);
-				let domains = Object.keys(pref_reservedColour_webPage);
+				let domains = Object.keys(pref.reservedColour_webPage);
 				domains.forEach((domain, i) => {
 					let new_row = op_custom_options_table.insertRow(i + 4);
 					generateNewRow(domain, i).then((new_row_HTML) => {
@@ -197,14 +180,14 @@ function load() {
  * Only loads colour scheme, force mode, dynamic mode, ignore theme colour pref.
  */
 function load_lite() {
-	browser.storage.local.get((pref) => {
-		if (cachePref_op(pref)) {
-			colour_scheme_dark.checked = pref_scheme === "dark";
-			colour_scheme_light.checked = pref_scheme === "light";
-			colour_scheme_system.checked = pref_scheme === "system";
-			allow_dark_light.checked = !pref_allow_dark_light;
-			dynamic.checked = pref_dynamic;
-			no_theme_colour.checked = pref_no_theme_colour;
+	browser.storage.local.get((storedPref) => {
+		if (cachePref_op(storedPref)) {
+			colour_scheme_dark.checked = pref.scheme === "dark";
+			colour_scheme_light.checked = pref.scheme === "light";
+			colour_scheme_system.checked = pref.scheme === "system";
+			allow_dark_light.checked = pref.allowDarkLight;
+			dynamic.checked = pref.dynamic;
+			no_theme_colour.checked = pref.noThemeColour;
 			autoPageColour();
 			loading.hidden = true;
 			settings.hidden = false;
@@ -241,7 +224,7 @@ colour_scheme_system.addEventListener("input", () => {
  * @param {string} pending_scheme "light", "dark", or "system".
  */
 function changeColourScheme(pending_scheme) {
-	pref_scheme = pending_scheme;
+	pref.scheme = pending_scheme;
 	browser.storage.local.set({ scheme: pending_scheme });
 	setBrowserColourScheme(pending_scheme);
 	autoPageColour();
@@ -253,19 +236,19 @@ if (checkVersion() < 95) {
 	allow_dark_light.disabled = true;
 } else {
 	allow_dark_light.onclick = () => {
-		pref_allow_dark_light = !allow_dark_light.checked;
-		browser.storage.local.set({ force: !allow_dark_light.checked });
+		pref.allowDarkLight = allow_dark_light.checked;
+		browser.storage.local.set({ allowDarkLight: allow_dark_light.checked });
 	};
 }
 
 dynamic.onclick = () => {
-	pref_dynamic = dynamic.checked;
+	pref.dynamic = dynamic.checked;
 	browser.storage.local.set({ dynamic: dynamic.checked });
 };
 
 no_theme_colour.onclick = () => {
-	pref_no_theme_colour = no_theme_colour.checked;
-	browser.storage.local.set({ no_theme_color: no_theme_colour.checked });
+	pref.noThemeColour = no_theme_colour.checked;
+	browser.storage.local.set({ noThemeColour: no_theme_colour.checked });
 };
 
 /**
@@ -311,28 +294,28 @@ if (popupDetected()) {
 	// option page
 	/* op_overlay_opacity_factor.oninput = () => browser.storage.local.set({ overlay_opacity_factor: Number(op_overlay_opacity_factor.value) });
 	op_overlay_opacity_threshold.oninput = () => browser.storage.local.set({ overlay_opacity_threshold: Number(op_overlay_opacity_threshold.value) }); */
-	op_tabbar.oninput = () => browser.storage.local.set({ tabbar_color: Number(op_tabbar.value) });
-	op_tab_selected.oninput = () => browser.storage.local.set({ tab_selected_color: Number(op_tab_selected.value) });
-	op_toolbar.oninput = () => browser.storage.local.set({ toolbar_color: Number(op_toolbar.value) });
-	op_toolbar_border_bottom.oninput = () => browser.storage.local.set({ separator_opacity: Number(op_toolbar_border_bottom.value) });
-	op_toolbar_field.oninput = () => browser.storage.local.set({ toolbar_field_color: Number(op_toolbar_field.value) });
-	op_toolbar_field_focus.oninput = () => browser.storage.local.set({ toolbar_field_focus_color: Number(op_toolbar_field_focus.value) });
-	op_sidebar.oninput = () => browser.storage.local.set({ sidebar_color: Number(op_sidebar.value) });
-	op_sidebar_border.oninput = () => browser.storage.local.set({ sidebar_border_color: Number(op_sidebar_border.value) });
-	op_popup.oninput = () => browser.storage.local.set({ popup_color: Number(op_popup.value) });
-	op_popup_border.oninput = () => browser.storage.local.set({ popup_border_color: Number(op_popup_border.value) });
+	op_tabbar.oninput = () => browser.storage.local.set({ tabbar: Number(op_tabbar.value) });
+	op_tab_selected.oninput = () => browser.storage.local.set({ tabSelected: Number(op_tab_selected.value) });
+	op_toolbar.oninput = () => browser.storage.local.set({ toolbar: Number(op_toolbar.value) });
+	op_toolbar_border_bottom.oninput = () => browser.storage.local.set({ toolbarBorderBottom: Number(op_toolbar_border_bottom.value) });
+	op_toolbar_field.oninput = () => browser.storage.local.set({ toolbarField: Number(op_toolbar_field.value) });
+	op_toolbar_field_focus.oninput = () => browser.storage.local.set({ toolbarFieldOnFocus: Number(op_toolbar_field_focus.value) });
+	op_sidebar.oninput = () => browser.storage.local.set({ sidebar: Number(op_sidebar.value) });
+	op_sidebar_border.oninput = () => browser.storage.local.set({ sidebarBorder: Number(op_sidebar_border.value) });
+	op_popup.oninput = () => browser.storage.local.set({ popup: Number(op_popup.value) });
+	op_popup_border.oninput = () => browser.storage.local.set({ popupBorder: Number(op_popup_border.value) });
 	op_more_custom.onchange = () => {
 		op_custom_options.className = op_more_custom.checked ? "enabled" : "disabled";
 		browser.storage.local.set({ custom: op_more_custom.checked });
 	};
-	op_light_colour.onchange = () => browser.storage.local.set({ light_color: op_light_colour.value });
-	op_dark_colour.onchange = () => browser.storage.local.set({ dark_color: op_dark_colour.value });
-	op_reset_light.onclick = () => browser.storage.local.set({ light_color: "#FFFFFF" }).then(load);
-	op_reset_dark.onclick = () => browser.storage.local.set({ dark_color: "#2B2A33" }).then(load);
-	op_light_fallback_colour.onchange = () => browser.storage.local.set({ light_fallback_color: op_light_fallback_colour.value });
-	op_dark_fallback_colour.onchange = () => browser.storage.local.set({ dark_fallback_color: op_dark_fallback_colour.value });
-	op_reset_light_fallback.onclick = () => browser.storage.local.set({ light_fallback_color: "#FFFFFF" }).then(load);
-	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ dark_fallback_color: "#2B2A33" }).then(load);
+	op_light_colour.onchange = () => browser.storage.local.set({ homeBackground_light: op_light_colour.value });
+	op_dark_colour.onchange = () => browser.storage.local.set({ homeBackground_dark: op_dark_colour.value });
+	op_reset_light.onclick = () => browser.storage.local.set({ homeBackground_light: "#FFFFFF" }).then(load);
+	op_reset_dark.onclick = () => browser.storage.local.set({ homeBackground_dark: "#2B2A33" }).then(load);
+	op_light_fallback_colour.onchange = () => browser.storage.local.set({ fallbackColour_light: op_light_fallback_colour.value });
+	op_dark_fallback_colour.onchange = () => browser.storage.local.set({ fallbackColour_light: op_dark_fallback_colour.value });
+	op_reset_light_fallback.onclick = () => browser.storage.local.set({ fallbackColour_light: "#FFFFFF" }).then(load);
+	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ fallbackColour_dark: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => {
 		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColor_webPage: default_reservedColour_webPage }).then(load);
 	};
@@ -404,7 +387,7 @@ function generateNewRow(domain, i) {
 				let part_2 = `<select id="SEL_${i}">
 					<option selected>${msg("specifyAColour")}</option>
 				</select>`;
-				let part_3 = `<input type="color" class="FiveEm" value="${pref_reservedColour_webPage[domain]}">`;
+				let part_3 = `<input type="color" class="FiveEm" value="${pref.reservedColour_webPage[domain]}">`;
 				let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
 				resolve(`<td class="TenFiveEm">${part_1}</td>
 				<td>${part_2}</td>
@@ -418,7 +401,7 @@ function generateNewRow(domain, i) {
 			domain = "example.com";
 			action = "#ECECEC";
 		} else {
-			action = pref_reservedColour_webPage[domain];
+			action = pref.reservedColour_webPage[domain];
 		}
 		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
 		let part_2 = ``;
@@ -494,9 +477,9 @@ function autoPopupColour() {
 				id,
 				{
 					reason: "INFO_REQUEST",
-					dynamic: pref_dynamic,
-					no_theme_color: pref_no_theme_colour,
-					reservedColor_webPage: current_reservedColour_webPage,
+					dynamic: pref.dynamic,
+					noThemeColour: pref.noThemeColour,
+					reservedColor_webPage: reservedColour_webPage,
 				},
 				(RESPONSE_INFO) => {
 					if (RESPONSE_INFO) {
@@ -504,11 +487,11 @@ function autoPopupColour() {
 						let pp_info_action = document.getElementById("info_action");
 						if (pp_info_action) {
 							pp_info_action.onclick = () => {
-								pref_reservedColour_webPage[domain] = pp_info_action.dataset.action;
-								current_reservedColour_webPage = pref_reservedColour_webPage;
+								pref.reservedColour_webPage[domain] = pp_info_action.dataset.action;
+								reservedColour_webPage = pref.reservedColour_webPage;
 								browser.storage.local.set({
 									custom: true,
-									reservedColor_webPage: pref_reservedColour_webPage,
+									reservedColor_webPage: pref.reservedColour_webPage,
 								});
 								load_lite();
 							};
@@ -534,35 +517,35 @@ function autoPopupColour() {
 					if (addon.type === "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-								if (current_reservedColour_webPage[`Add-on ID: ${addon.id}`]) {
+								if (reservedColour_webPage[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										delete pref_reservedColour_webPage[`Add-on ID: ${addon.id}`];
-										current_reservedColour_webPage = pref_reservedColour_webPage;
+										delete pref.reservedColour_webPage[`Add-on ID: ${addon.id}`];
+										reservedColour_webPage = pref.reservedColour_webPage;
 										browser.storage.local.set({
 											custom: true,
-											reservedColor_webPage: pref_reservedColour_webPage,
+											reservedColor_webPage: pref.reservedColour_webPage,
 										});
 									};
 								} else if (recommendedColour_addon[addon.id]) {
 									pp_info_display.innerHTML = msg("useRecommendedColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref_reservedColour_webPage[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
-										current_reservedColour_webPage = pref_reservedColour_webPage;
+										pref.reservedColour_webPage[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
+										reservedColour_webPage = pref.reservedColour_webPage;
 										browser.storage.local.set({
 											custom: true,
-											reservedColor_webPage: pref_reservedColour_webPage,
+											reservedColor_webPage: pref.reservedColour_webPage,
 										});
 									};
 								} else {
 									pp_info_display.innerHTML = msg("specifyColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref_reservedColour_webPage[`Add-on ID: ${addon.id}`] = "#333333";
-										current_reservedColour_webPage = pref_reservedColour_webPage;
+										pref.reservedColour_webPage[`Add-on ID: ${addon.id}`] = "#333333";
+										reservedColour_webPage = pref.reservedColour_webPage;
 										browser.storage.local
 											.set({
 												custom: true,
-												reservedColor_webPage: pref_reservedColour_webPage,
+												reservedColor_webPage: pref.reservedColour_webPage,
 											})
 											.then(() => browser.runtime.openOptionsPage());
 									};
@@ -590,7 +573,7 @@ function autoPopupColour() {
 			body.classList.remove("light");
 		}
 	});
-	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
+	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
 		force_mode_caption.innerHTML = msg("allowDarkTabBar");
 		force_mode_caption.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
@@ -603,7 +586,7 @@ function autoPopupColour() {
  * Updates option page's colour depends on colour scheme.
  */
 function autoOptionsColour() {
-	if (pref_scheme === "light" || (pref_scheme === "system" && lightModeDetected())) {
+	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		force_mode_caption.innerHTML = msg("allowDarkTabBar");
