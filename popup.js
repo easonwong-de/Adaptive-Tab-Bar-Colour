@@ -11,12 +11,8 @@ import {
 
 // Localisation
 document.addEventListener("DOMContentLoaded", function () {
-	document.querySelectorAll("[data-text]").forEach((element) => {
-		element.textContent = msg(element.dataset.text);
-	});
-	document.querySelectorAll("[data-title]").forEach((element) => {
-		element.title = msg(element.dataset.title);
-	});
+	document.querySelectorAll("[data-text]").forEach((element) => (element.textContent = msg(element.dataset.text)));
+	document.querySelectorAll("[data-title]").forEach((element) => (element.title = msg(element.dataset.title)));
 });
 
 var pref = {
@@ -208,7 +204,7 @@ function autoPageColour() {
 				(RESPONSE_INFO) => {
 					if (RESPONSE_INFO) {
 						infoDisplay.innerText = RESPONSE_INFO.display;
-                        
+
 						if (infoAction) {
 							infoAction.onclick = () => {
 								pref.reservedColour_webPage[domain] = infoAction.dataset.action;

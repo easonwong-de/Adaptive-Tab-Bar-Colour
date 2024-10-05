@@ -11,12 +11,8 @@ import {
 
 // Localisation
 document.addEventListener("DOMContentLoaded", function () {
-	document.querySelectorAll("[data-text]").forEach((element) => {
-		element.textContent = msg(element.dataset.text);
-	});
-	document.querySelectorAll("[data-title]").forEach((element) => {
-		element.title = msg(element.dataset.title);
-	});
+	document.querySelectorAll("[data-text]").forEach((element) => (element.textContent = msg(element.dataset.text)));
+	document.querySelectorAll("[data-title]").forEach((element) => (element.title = msg(element.dataset.title)));
 });
 
 var pref = {
