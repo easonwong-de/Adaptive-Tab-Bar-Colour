@@ -202,24 +202,26 @@ initialise();
  */
 function initialise() {
 	browser.storage.local.get((storedPref) => {
+		// If the add-on is freshly installed, then the storage will be empty
 		let freshInstall = Object.keys(storedPref).length == 0;
 		// Version number is recorded starting from v1.3.1, updating from older versions is treated as fresh install
 		let noVersionNumber = !("last_version" in storedPref || "version" in storedPref);
+		// If the add-on is updated from above v1.3.1, process the existing preferences
 		if (!freshInstall || !noVersionNumber) {
 			for (let key in storedPref) {
 				if (key in pref) pref[key] = storedPref[key];
 				else if (key in legacyPrefKey) pref[legacyPrefKey[key]] = storedPref[key];
 			}
-			// updates from v2.1 or earlier
-			if (pref.version <= [2, 1]) {
+			// Updating from before v2.2
+			if (pref.version < [2, 2]) {
 				// Converts "force" to "allowDarkLight"
 				pref.allowDarkLight = !pref.allowDarkLight;
 				// Converts "system" to "auto"
 				if (pref.scheme === "system") pref.scheme = "auto";
 			}
-			// updates from v1.7.4 or earlier
+			// Updating from before v1.7.5
 			// Converts legacy rules to query selector format
-			if (pref.version <= [1, 7, 4]) {
+			if (pref.version <= [1, 7, 5]) {
 				for (let domain in pref.reservedColour_webPage) {
 					let legacyRule = pref.reservedColour_webPage[domain];
 					if (legacyRule.startsWith("TAG_")) {
@@ -235,30 +237,36 @@ function initialise() {
 					}
 				}
 			}
-			// updates from v1.7.3 or earlier
+			// Updating from before v1.7.4
 			// Clears possible empty reserved colour rules caused by a bug
-			if (pref.version <= [1, 7, 3]) delete pref.reservedColour_webPage[undefined];
-			// updates from v1.6.4 or earlier
+			if (pref.version < [1, 7, 4]) delete pref.reservedColour_webPage[undefined];
+			// Updating from before v1.6.4
 			// Corrects the dark home page colour, unless the user has set something different
-			if (pref.version <= [1, 6, 4] && pref.homeBackground_dark.toUpperCase() === "#1C1B22")
+			if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() === "#1C1B22")
 				pref.homeBackground_dark = default_homeBackground_dark;
-			// If the brouser version is below v95, disables allowDarkLight
-			if (checkVersion() < 95) pref.allowDarkLight = false;
 		}
+		// If the brouser version is below v95, disables allowDarkLight
+		if (checkVersion() < 95) pref.allowDarkLight = false;
 		setBrowserColourScheme(pref.scheme);
 		updateVars();
 		update();
 		browser.storage.local.set(pref).then(() => {
-			if (freshInstall || noVersionNumber) browser.runtime.openOptionsPage(); // If it's the first time the add-on is installed, open the option page
+			// If the add-on is installed for the first time, opens the option page
+			if (freshInstall || noVersionNumber) browser.runtime.openOptionsPage();
 			return Promise.resolve("Initialisation done");
 		});
 	});
 }
 
-browser.tabs.onUpdated.addListener(update); // When new tab is opened / reloaded
-browser.tabs.onActivated.addListener(update); // When switching tabs
-browser.tabs.onAttached.addListener(update); // When a tab is attatched to another window
-browser.windows.onFocusChanged.addListener(update); // When a new window is opened
+// When new tab is opened / reloaded
+browser.tabs.onUpdated.addListener(update);
+// When switching tabs
+browser.tabs.onActivated.addListener(update);
+// When a tab is attatched to another window
+browser.tabs.onAttached.addListener(update);
+// When a new window is opened
+browser.windows.onFocusChanged.addListener(update);
+
 browser.runtime.onMessage.addListener((message, sender) => {
 	switch (message.reason) {
 		case "INIT_REQUEST": // When pref is corrupted
@@ -400,7 +408,8 @@ function updateEachWindow(tab) {
 function getSearchKey(url) {
 	if (url.startsWith("about:")) {
 		return Promise.resolve(url.split(/\/|\?/)[0]); // e.g. "about:page"
-	} else if (url.startsWith("moz-extension:")) { // Searches for add-on ID
+	} else if (url.startsWith("moz-extension:")) {
+		// Searches for add-on ID
 		let uuid = url.split(/\/|\?/)[2];
 		return new Promise((resolve) => {
 			browser.management.getAll().then((addonList) => {
