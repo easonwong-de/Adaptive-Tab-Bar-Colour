@@ -77,7 +77,7 @@ function cachePref_op(storedPref) {
 }
 
 let body = document.getElementsByTagName("body")[0];
-let loading = document.getElementById("loading");
+let loading = document.getElementById("loading_wrapper");
 let settings = document.getElementById("settings");
 let colourSchemeLight = document.getElementById("colour_scheme_light");
 let colourSchemeDark = document.getElementById("colour_scheme_dark");

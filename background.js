@@ -269,21 +269,26 @@ browser.windows.onFocusChanged.addListener(update);
 
 browser.runtime.onMessage.addListener((message, sender) => {
 	switch (message.reason) {
-		case "INIT_REQUEST": // When pref is corrupted
+		// When pref is detected corrupted
+		case "INIT_REQUEST":
 			initialise();
 			break;
-		case "UPDATE_REQUEST": // When pref changes
+		// When pref changes
+		case "UPDATE_REQUEST":
 			loadPrefAndUpdate();
 			break;
+		// Content script sends a colour
 		case "COLOUR_UPDATE":
 			sender.tab.active ? setFrameColour(sender.tab.windowId, message.colour) : update();
 			break;
 	}
 });
 
-// Light Mode Match Media
+// Light mode match media, which is supposed to detect the system level colour scheme
+// Seems to not work on Firefox Developer Edition
 const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
 if (lightModeDetection)
+	// System colour scheme changes
 	lightModeDetection.onchange = () => {
 		if (pref.scheme == "auto") loadPrefAndUpdate();
 	};
@@ -340,6 +345,8 @@ function updateEachWindow(tab) {
 		}
 	} else {
 		// Visiting normal websites, PDF viewer (content script blocked), websites that failed to load, or local files
+		// WIP: add support for setting colours for about:pages
+		// WIP: add support for regex / wildcard characters
 		getSearchKey(url).then((key) => {
 			let reversedVarsScheme = vars.scheme == "light" ? "dark" : "light";
 			if (reservedColour_aboutPage[vars.scheme][key]) {
@@ -410,6 +417,7 @@ function getSearchKey(url) {
 		return Promise.resolve(url.split(/\/|\?/)[0]); // e.g. "about:page"
 	} else if (url.startsWith("moz-extension:")) {
 		// Searches for add-on ID
+		// Colours for add-on pages are stored with the add-on ID as their keys
 		let uuid = url.split(/\/|\?/)[2];
 		return new Promise((resolve) => {
 			browser.management.getAll().then((addonList) => {
@@ -429,7 +437,8 @@ function getSearchKey(url) {
 			});
 		});
 	} else {
-		return Promise.resolve(url.split(/\/|\?/)[2]); // e.g. "addons.mozilla.org"
+		// In case of a regular website, returns its domain, e.g. "addons.mozilla.org"
+		return Promise.resolve(url.split(/\/|\?/)[2]);
 	}
 }
 
@@ -454,7 +463,7 @@ function getSearchKey(url) {
  * @param {boolean} darkMode Decides text colour. Leaves "null" to let add-on prefs decide.
  */
 function setFrameColour(windowId, colour, darkMode) {
-	// "darkMode" is null means the colour is not light or dark. If so, set "darkMode" following the settings
+	// "darkMode" being null means the colour is not light or dark. If so, set "darkMode" following the settings
 	// "darkMode" decides the text colour
 	if (darkMode == null) darkMode = vars.scheme === "dark";
 	switch (colour) {
@@ -579,6 +588,7 @@ function setFrameColour(windowId, colour, darkMode) {
  * @param {object} colour Colour of the frame.
  * @param {string} scheme Colour scheme, "dark", "light", or "darknoise".
  */
+// WIP: consider using HSL format for quicker transformation
 function changeThemePara(colour, scheme) {
 	let frameColour,
 		tabSelectedColour,
@@ -640,9 +650,6 @@ function changeThemePara(colour, scheme) {
  */
 function applyTheme(windowId, theme) {
 	browser.theme.update(windowId, theme);
-	browser.runtime.sendMessage("OHTP@EasonWong", "TPOH_UPDATE").catch((e) => {
-		if (e.message != "Could not establish connection. Receiving end does not exist.") console.error(e);
-	});
 }
 
 /**

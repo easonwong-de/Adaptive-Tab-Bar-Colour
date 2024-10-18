@@ -6,20 +6,95 @@
 	</head>
 
 	<body class="dark">
-		<div id="loading">
-			<h4 data-text="loading">Loading…</h4>
+		<div id="loading_wrapper">
+			<div id="loading" data-text="loading">Loading…</div>
 			<p id="reinstall_tip" data-text="reinstallTip">
 				Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for your inconvenience!
 			</p>
 		</div>
 		<div id="settings" hidden="true">
 			<div>
-				<div id="info_display">
-					<div id="page_is_protected" data-text="pageIsProtected">This page is protected by browser</div>
-					<div id="colour_for_pdf_viewer" data-text="colourForPDFViewer">Using colour for PDF viewer</div>
-					<div id="colour_for_pdf_viewer" data-text="colourForPlainTextViewer">Using colour for PDF viewer</div>
-					<!-- WIP -->
-					<!-- <label class="info_action" data-text="ignoreThemeColour" data-title="Use default colour"></label> -->
+				<div id="info_display_wrapper">
+					<div class="info_display" name="protected_page">
+						<div data-text="pageIsProtected"></div>
+					</div>
+					<div class="info_display" name="home_page">
+						<div data-text="colourForHomePage"></div>
+					</div>
+					<div class="info_display" name="text_viewer">
+						<div data-text="colourForPlainTextViewer"></div>
+					</div>
+					<div class="info_display" name="image_viewer">
+						<div data-text="usingImageViewer"></div>
+					</div>
+					<div class="info_display" name="pdf_viewer">
+						<div data-text="colourForPDFViewer"></div>
+					</div>
+					<div class="info_display" name="error_occurred">
+						<div data-text="errorOccured"></div>
+					</div>
+					<div class="info_display" name="fallback_colour">
+						<div data-text="usingFallbackColour"></div>
+					</div>
+					<div class="info_display" name="colour_picked">
+						<div data-text="colourPickedFromWebpage"></div>
+					</div>
+					<div class="info_display" name="addon_default">
+						<div data-text="useDefaultColourForAddon"></div>
+						<div class="additional_info"></div>
+						<div data-text="useDefaultColourForAddonEnd"></div>
+						<label class="info_action" data-title="useDefaultColourForAddonTitle" data-text="useDefaultColourForAddonButton"></label>
+					</div>
+					<div class="info_display" name="addon_recom">
+						<div data-text="useRecommendedColourForAddon"></div>
+						<div class="additional_info"></div>
+						<div data-text="useRecommendedColourForAddonEnd"></div>
+						<label class="info_action" data-title="useRecommendedColourForAddonTitle" data-text="useRecommendedColourForAddonButton"></label>
+					</div>
+					<div class="info_display" name="addon_specify">
+						<div data-text="specifyColourForAddon"></div>
+						<div class="additional_info"></div>
+						<div data-text="specifyColourForAddonEnd"></div>
+						<label class="info_action" data-title="specifyColourForAddonTitle" data-text="specifyColourForAddonButton"></label>
+					</div>
+					<div class="info_display" name="theme_unignored">
+						<div data-text="themeColourIsUnignored"></div>
+						<label
+							class="info_action"
+							data-title="ignoreThemeColourTitle"
+							data-text="ignoreThemeColourButton"
+							data-action="IGNORE_THEME"
+						></label>
+					</div>
+					<div class="info_display" name="theme_missing">
+						<div data-text="themeColourNotFound"></div>
+					</div>
+					<div class="info_display" name="theme_ignored">
+						<div data-text="themeColourIsIgnored"></div>
+						<label
+							class="info_action"
+							data-title="useThemeColourTitle"
+							data-text="useThemeColourButton"
+							data-action="UN_IGNORE_THEME"
+						></label>
+					</div>
+					<div class="info_display" name="theme_used">
+						<div data-text="usingThemeColour"></div>
+						<label
+							class="info_action"
+							data-title="ignoreThemeColourTitle"
+							data-text="ignoreThemeColourButton"
+							data-action="IGNORE_THEME"
+						></label>
+					</div>
+					<div class="info_display" name="using_qs">
+						<div data-text="colourIsPickedFrom"></div>
+						<div class="additional_info"></div>
+						<div data-text="colourIsPickedFromEnd"></div>
+					</div>
+					<div class="info_display" name="colour_specified">
+						<div data-text="colourIsSpecified"></div>
+					</div>
 				</div>
 				<hr />
 				<h4 data-text="colourSchemePreference">Colour scheme preference</h4>

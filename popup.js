@@ -74,7 +74,7 @@ function cachePref(storedPref) {
 }
 
 let body = document.getElementsByTagName("body")[0];
-let loading = document.getElementById("loading");
+let loading = document.getElementById("loading_wrapper");
 let settings = document.getElementById("settings");
 let colourSchemeLight = document.getElementById("colour_scheme_light");
 let colourSchemeDark = document.getElementById("colour_scheme_dark");
@@ -84,7 +84,7 @@ let allowDarkLightCheckboxText = document.getElementById("force_mode_caption");
 let dynamicCheckbox = document.getElementById("dynamic");
 let noThemeColourCheckbox = document.getElementById("no_theme_color");
 let moreCustomButton = document.getElementById("custom_popup");
-let infoDisplay = document.getElementById("info_display");
+let infoDisplay = document.getElementById("info_display_wrapper");
 let infoAction = document.getElementById("info_action");
 
 settings.hidden = true;
@@ -92,10 +92,11 @@ loading.hidden = false;
 
 load();
 
-browser.theme.onUpdated.addListener(autoPageColour);
-// Load prefs when popup is opened
+// Updates popup's colour upon theme updates
+browser.theme.onUpdated.addListener(updatePopupColour);
+// Loads prefs when popup is opened
 document.addEventListener("pageshow", load);
-// Sync prefs on popup
+// Syncs prefs on popup
 browser.storage.onChanged.addListener(applySettings);
 
 /**
@@ -110,12 +111,10 @@ function load() {
 			allowDarkLightCheckbox.checked = pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
-			autoPageColour();
+			updatePopupColour();
 			loading.hidden = true;
 			settings.hidden = false;
-		} else {
-			browser.runtime.sendMessage({ reason: "INIT_REQUEST" });
-		}
+		} else browser.runtime.sendMessage({ reason: "INIT_REQUEST" });
 	});
 }
 
@@ -139,7 +138,7 @@ colourSchemeAuto.addEventListener("input", () => {
 	if (colourSchemeAuto.checked) {
 		colourSchemeDark.checked = false;
 		colourSchemeLight.checked = false;
-		changeColourScheme("system");
+		changeColourScheme("auto");
 	}
 });
 
@@ -150,7 +149,7 @@ colourSchemeAuto.addEventListener("input", () => {
 function changeColourScheme(scheme) {
 	pref.scheme = scheme;
 	browser.storage.local.set({ scheme: scheme }).then(applySettings);
-	autoPageColour();
+	updatePopupColour();
 }
 
 // If it's below v95.0, grey out "allow..." option
@@ -184,117 +183,111 @@ function applySettings() {
 }
 
 /**
- * Updates popup's colour depends on tab bar colour.
+ * Updates infobox's content and popup's text and background colour.
  */
-function autoPageColour() {
+function updatePopupColour() {
 	// Sets text in info box
 	browser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
-		let id = tabs[0].id;
-		if (((url.startsWith("http:") || url.startsWith("https:")) && protectedDomain[domain] != "PROTECTED") || url.startsWith("file:")) {
-			browser.tabs.sendMessage(
-				id,
-				{
-					reason: "INFO_REQUEST",
-					dynamic: pref.dynamic,
-					noThemeColour: pref.noThemeColour,
-					reservedColor_webPage: reservedColour_webPage,
-				},
-				(RESPONSE_INFO) => {
-					if (RESPONSE_INFO) {
-						infoDisplay.innerText = RESPONSE_INFO.display;
-
-						if (infoAction) {
-							infoAction.onclick = () => {
-								pref.reservedColour_webPage[domain] = infoAction.dataset.action;
-								reservedColour_webPage = pref.reservedColour_webPage;
-								browser.storage.local.set({
-									custom: true,
-									reservedColor_webPage: pref.reservedColour_webPage,
-								});
-								load();
-							};
-						}
-					} else if (url.endsWith(".pdf") || tabs[0].title.endsWith(".pdf")) {
-						infoDisplay.innerText = msg("colourForPDFViewer");
-					} else if (tabs[0].favIconUrl && tabs[0].favIconUrl.startsWith("chrome:")) {
-						infoDisplay.innerText = msg("pageIsProtected");
-					} else if (url.endsWith("http://" + tabs[0].title) || url.endsWith("https://" + tabs[0].title)) {
-						infoDisplay.innerText = msg("colourForPlainTextViewer");
-					} else {
-						infoDisplay.innerText = msg("errorOccured");
-					}
-				}
-			);
-		} else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) {
-			infoDisplay.innerText = msg("colourForHomePage");
-		} else if (url.startsWith("moz-extension:")) {
-			let uuid = url.split(/\/|\?/)[2];
-			browser.management.getAll().then((addon_list) => {
-				let breakLoop = false;
-				for (let addon of addon_list) {
-					if (addon.type === "extension" && addon.hostPermissions) {
-						for (let host of addon.hostPermissions) {
-							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-								if (reservedColour_webPage[`Add-on ID: ${addon.id}`]) {
-									infoDisplay.innerHTML = msg("useDefaultColourForAddon", addon.name);
-									document.getElementById("info_action").onclick = () => {
-										delete pref.reservedColour_webPage[`Add-on ID: ${addon.id}`];
-										reservedColour_webPage = pref.reservedColour_webPage;
-										browser.storage.local.set({
-											custom: true,
-											reservedColor_webPage: pref.reservedColour_webPage,
-										});
-									};
-								} else if (recommendedColour_addon[addon.id]) {
-									infoDisplay.innerHTML = msg("useRecommendedColourForAddon", addon.name);
-									document.getElementById("info_action").onclick = () => {
-										pref.reservedColour_webPage[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
-										reservedColour_webPage = pref.reservedColour_webPage;
-										browser.storage.local.set({
-											custom: true,
-											reservedColor_webPage: pref.reservedColour_webPage,
-										});
-									};
-								} else {
-									infoDisplay.innerHTML = msg("specifyColourForAddon", addon.name);
-									document.getElementById("info_action").onclick = () => {
-										pref.reservedColour_webPage[`Add-on ID: ${addon.id}`] = "#333333";
-										reservedColour_webPage = pref.reservedColour_webPage;
-										browser.storage.local
-											.set({
-												custom: true,
-												reservedColor_webPage: pref.reservedColour_webPage,
-											})
-											.then(() => browser.runtime.openOptionsPage());
-									};
-								}
-								breakLoop = true;
-								break;
-							}
-						}
-					}
-					if (breakLoop) break;
-				}
-			});
-		} else {
-			infoDisplay.innerHTML = msg("pageIsProtected");
-		}
+		if (domain in protectedDomain) setInfoDisplay("protected_page");
+		else if (url.startsWith("http:") || url.startsWith("https:") || url.startsWith("file:")) loadInfoForWebpage(tabs[0]);
+		else if (url.startsWith("moz-extension:")) loadInfoForAddonPage(tabs[0]);
+		else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) setInfoDisplay("home_page");
+		else setInfoDisplay("protected_page");
 	});
+	// Sets text and background colour for the popup
 	browser.theme.getCurrent().then((currentTheme) => {
 		body.style.backgroundColor = currentTheme["colors"]["popup"];
 		body.style.color = currentTheme["colors"]["popup_text"];
 		if (currentTheme["colors"]["popup_text"] === "rgb(0, 0, 0)") body.classList.replace("dark", "light");
 		else body.classList.replace("light", "dark");
 	});
-	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
-		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
+	// Changes the text of the allow dark/light tab bar button
+	if (pref.scheme === "light" || (pref.scheme === "auto" && lightModeDetected())) {
+		allowDarkLightCheckboxText.innerText = msg("allowDarkTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
-		allowDarkLightCheckboxText.innerHTML = msg("allowLightTabBar");
+		allowDarkLightCheckboxText.innerText = msg("allowLightTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_bright");
 	}
+}
+
+function setInfoDisplay(reason, additionalInfo = null, infoAction = null) {
+	infoDisplay.className = reason;
+	if (additionalInfo) infoDisplay.querySelector(`[name='${reason}'] .additional_info`).innerText = additionalInfo;
+	if (infoAction) infoDisplay.querySelector(`[name='${reason}'] .info_action`).onclick = infoAction;
+}
+
+function loadInfoForWebpage(tab) {
+	let url = tab.url;
+	let domain = url.split(/\/|\?/)[2];
+	let tabID = tab.id;
+	browser.tabs.sendMessage(
+		tabID,
+		{
+			reason: "INFO_REQUEST",
+			dynamic: pref.dynamic,
+			noThemeColour: pref.noThemeColour,
+			reservedColor_webPage: reservedColour_webPage,
+		},
+		(RESPONSE_INFO) => {
+			if (RESPONSE_INFO) {
+				setInfoDisplay(RESPONSE_INFO.reason);
+
+				if (infoAction) {
+					// Need to change
+					infoAction.onclick = () => {
+						pref.reservedColour_webPage[domain] = infoAction.dataset.action;
+						reservedColour_webPage = pref.reservedColour_webPage;
+						browser.storage.local.set({
+							custom: true,
+							reservedColor_webPage: pref.reservedColour_webPage,
+						});
+						load();
+					};
+				}
+			} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) setInfoDisplay("pdf_viewer");
+			else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) setInfoDisplay("protected_page");
+			else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) setInfoDisplay("text_viewer");
+			else setInfoDisplay("error_occurred");
+		}
+	);
+}
+
+function loadInfoForAddonPage(tab) {
+	let uuid = tab.url.split(/\/|\?/)[2];
+	browser.management.getAll().then((addonList) => {
+		let foundAssociatedAddon = false;
+		for (let addon of addonList) {
+			if (addon.type !== "extension" || !addon.hostPermissions) continue;
+			for (let host of addon.hostPermissions) {
+				if (!host.startsWith("moz-extension:") || uuid !== host.split(/\/|\?/)[2]) continue;
+				else if (reservedColour_webPage[`Add-on ID: ${addon.id}`])
+					setInfoDisplay("addon_default", addon.name, () => specifyColourForAddon(addon.id, null));
+				else if (recommendedColour_addon[addon.id])
+					setInfoDisplay("addon_recom", addon.name, () => specifyColourForAddon(addon.id, recommendedColour_addon[addon.id]));
+				else setInfoDisplay("addon_specify", addon.name, () => specifyColourForAddon(addon.id, "#333333", true));
+				foundAssociatedAddon = true;
+				break;
+			}
+			if (foundAssociatedAddon) break;
+		}
+	});
+}
+
+function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
+	if (colour) pref.reservedColour_webPage[`Add-on ID: ${addonID}`] = colour;
+	else delete pref.reservedColour_webPage[`Add-on ID: ${addonID}`];
+	reservedColour_webPage = pref.reservedColour_webPage;
+	browser.storage.local
+		.set({
+			custom: true,
+			reservedColor_webPage: pref.reservedColour_webPage,
+		})
+		.then(() => {
+			if (openOptionsPage) browser.runtime.openOptionsPage();
+		});
 }
 
 // Light Mode Match Media on option page

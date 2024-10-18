@@ -30,8 +30,12 @@ function cachePref_webPage(pref) {
 // Initializes response colour
 var RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
 
-// This will be displayed in the pop-up
-var RESPONSE_INFO = { display: "This page is protected by browser", buttonText: "", action: "" };
+/**
+ * Information to be sent to the popup. "reason" determines the content shown in the popup infobox & text in the button.
+ *
+ * All possible "reason"s are: protected_page, home_page, text_viewer, image_viewer, pdf_viewer, error_occurred, fallback_colour, colour_picked, addon_default, addon_recom, addon_specify, theme_unignored, theme_missing, theme_ignored, theme_used, using_qs, colour_specified
+ */
+var RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, action: null };
 
 // Send colour to background as soon as page loads
 browser.storage.local.get((pref) => {
@@ -190,26 +194,26 @@ function findColourReserved() {
 		return false;
 	} else if (noThemeColour && action == "UN_IGNORE_THEME") {
 		// User prefers igoring theme colour, but sets to use meta theme-color for this host
-		if (findThemeColour()) RESPONSE_INFO.display = msg("themeColourIsUnignored");
+		if (findThemeColour()) RESPONSE_INFO.reason = msg("themeColourIsUnignored");
 		else {
 			findComputedColour();
-			RESPONSE_INFO.display = msg("themeColourNotFound");
+			RESPONSE_INFO.reason = msg("themeColourNotFound");
 		}
 		return true;
 	} else if (!noThemeColour && action == "IGNORE_THEME") {
 		// User sets to ignore the meta theme-color of this host
 		if (findThemeColour()) {
 			findComputedColour();
-			RESPONSE_INFO.display = msg("themeColourIsIgnored");
+			RESPONSE_INFO.reason = msg("themeColourIsIgnored");
 		} else findComputedColour();
 		return true;
 	} else if (action.startsWith("QS_")) {
 		let selector = action.replace("QS_", "");
 		RESPONSE_COLOUR = getColourFromElement(document.querySelector(selector));
-		RESPONSE_INFO.display = msg("colourIsPickedFrom", selector);
+		RESPONSE_INFO.reason = msg("colourIsPickedFrom", selector);
 	} else {
 		RESPONSE_COLOUR = rgba(action);
-		RESPONSE_INFO.display = msg("colourIsSpecified");
+		RESPONSE_INFO.reason = msg("colourIsSpecified");
 	}
 	// Return ture if reponse colour is legal and can be sent to background.js
 	return RESPONSE_COLOUR != null && RESPONSE_COLOUR.a == 1;
@@ -223,7 +227,7 @@ function findColourUnreserved() {
 		if (findThemeColour()) {
 			if (RESPONSE_COLOUR != "IMAGEVIEWER" && RESPONSE_COLOUR != "PLAINTEXT") {
 				findComputedColour();
-				RESPONSE_INFO.display += msg("bacauseThemeColourIsIgnored");
+				RESPONSE_INFO.reason += msg("bacauseThemeColourIsIgnored");
 			}
 		} else findComputedColour();
 	} else {
@@ -241,7 +245,7 @@ function findThemeColour() {
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url
 		RESPONSE_COLOUR = "IMAGEVIEWER";
-		RESPONSE_INFO.display = msg("usingImageViewer");
+		RESPONSE_INFO.reason = msg("usingImageViewer");
 		return true;
 	} else if (
 		document.getElementsByTagName("link").length > 0 &&
@@ -252,7 +256,7 @@ function findThemeColour() {
 		// Thus this may only works for viewing local text file
 		if (getColourFromElement(document.body).a != 1) {
 			RESPONSE_COLOUR = "PLAINTEXT";
-			RESPONSE_INFO.display = msg("usingColourForPlainText");
+			RESPONSE_INFO.reason = msg("usingColourForPlainText");
 			return true;
 		} else {
 			return false;
@@ -266,7 +270,7 @@ function findThemeColour() {
 			// Return true if it is legal (opaque) and can be sent to background.js
 			// Otherwise, return false and trigger getComputedColour()
 			if (RESPONSE_COLOUR.a == 1) {
-				RESPONSE_INFO.display = msg("usingThemeColour");
+				RESPONSE_INFO.reason = msg("usingThemeColour");
 				return true;
 			} else return false;
 		} else return false;
@@ -298,18 +302,18 @@ function findComputedColour() {
 		let body = document.getElementsByTagName("body")[0];
 		if (body == undefined) {
 			RESPONSE_COLOUR = "FALLBACK";
-			RESPONSE_INFO.display = msg("usingFallbackColour");
+			RESPONSE_INFO.reason = msg("usingFallbackColour");
 		} else {
 			let BodyColour = getColourFromElement(body);
 			if (BodyColour.a == 1) {
 				RESPONSE_COLOUR = overlayColour(RESPONSE_COLOUR, BodyColour);
-				RESPONSE_INFO.display = msg("colourPickedFromWebpage");
+				RESPONSE_INFO.reason = msg("colourPickedFromWebpage");
 			} else {
 				RESPONSE_COLOUR = "FALLBACK";
-				RESPONSE_INFO.display = msg("usingFallbackColour");
+				RESPONSE_INFO.reason = msg("usingFallbackColour");
 			}
 		}
-	} else RESPONSE_INFO.display = msg("colourPickedFromWebpage");
+	} else RESPONSE_INFO.reason = msg("colourPickedFromWebpage");
 }
 
 /**

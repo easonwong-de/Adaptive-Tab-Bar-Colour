@@ -14,14 +14,28 @@ body {
 	color: rgb(255, 255, 255);
 }
 
-#info_display,
-h4,
+#info_display_wrapper,
+#loading,
 label {
 	display: block;
 	margin: 0;
 	padding: 0.5em;
 	border-radius: 4px;
 	text-align: left;
+}
+
+#loading {
+	text-align: center;
+}
+
+#reinstall_tip {
+	overflow-wrap: break-word;
+	animation-fill-mode: forwards;
+	opacity: 0;
+	animation-name: appear;
+	animation-duration: 0s;
+	animation-delay: 5s;
+	white-space: normal;
 }
 
 .light label:hover {
@@ -40,31 +54,78 @@ label {
 	background-color: rgba(255, 255, 255, 0.25);
 }
 
-#info_action {
-	margin-top: 0.5em;
+#info_display_wrapper {
+	margin-block-end: 5px;
+	line-height: 1.2em;
 }
 
-.light #info_action {
+.light #info_display_wrapper {
+	border: 1px solid rgba(0, 0, 0, 0.13);
+}
+
+.dark #info_display_wrapper {
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info_display {
+	display: none;
+}
+
+.protected_page > .info_display[name="protected_page"],
+.home_page > .info_display[name="home_page"],
+.text_viewer > .info_display[name="text_viewer"],
+.image_viewer > .info_display[name="image_viewer"],
+.pdf_viewer > .info_display[name="pdf_viewer"],
+.error_occurred > .info_display[name="error_occurred"],
+.fallback_colour > .info_display[name="fallback_colour"],
+.colour_picked > .info_display[name="colour_picked"],
+.addon_default > .info_display[name="addon_default"],
+.addon_recom > .info_display[name="addon_recom"],
+.addon_specify > .info_display[name="addon_specify"],
+.theme_unignored > .info_display[name="theme_unignored"],
+.theme_missing > .info_display[name="theme_missing"],
+.theme_ignored > .info_display[name="theme_ignored"],
+.theme_used > .info_display[name="theme_used"],
+.using_qs > .info_display[name="using_qs"],
+.colour_specified > .info_display[name="colour_specified"] {
+	display: block;
+}
+
+.info_display > div {
+	display: inline;
+}
+
+.additional_info {
+	font-weight: 600;
+}
+
+label.info_action {
+	display: block;
+	margin-top: 0.5em;
+	text-align: center;
+}
+
+.light .info_action {
 	background-color: rgba(0, 0, 0, 0.15);
 }
 
-.light #info_action:hover {
+.light .info_action:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
-.light #info_action:active {
+.light .info_action:active {
 	background-color: rgba(0, 0, 0, 0.35);
 }
 
-.dark #info_action {
+.dark .info_action {
 	background-color: rgba(255, 255, 255, 0.15);
 }
 
-.dark #info_action:hover {
+.dark .info_action:hover {
 	background-color: rgba(255, 255, 255, 0.2);
 }
 
-.dark #info_action:active {
+.dark .info_action:active {
 	background-color: rgba(255, 255, 255, 0.35);
 }
 
@@ -83,33 +144,6 @@ label {
 
 .dark .tip {
 	background-color: rgba(255, 255, 255, 0.1);
-}
-
-#info_display {
-	margin-block-end: 5px;
-	line-height: 1.2em;
-}
-
-.light #info_display {
-	border: 1px solid rgba(0, 0, 0, 0.13);
-}
-
-.dark #info_display {
-	border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-h4 {
-	text-align: center;
-}
-
-#reinstall_tip {
-	overflow-wrap: break-word;
-	animation-fill-mode: forwards;
-	opacity: 0;
-	animation-name: appear;
-	animation-duration: 0s;
-	animation-delay: 5s;
-	white-space: normal;
 }
 
 hr {
