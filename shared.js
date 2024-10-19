@@ -15,7 +15,7 @@ export const default_fallbackColour_dark = "#2B2A33";
  * 
  * reserved colour starts with QS_ => gets colour from the element found with the querySelector;
  */
-export const default_reservedColour_webPage = Object.freeze({
+export const default_reservedColour = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
 	"www.facebook.com": "UN_IGNORE_THEME",
@@ -128,7 +128,7 @@ export const legacyPrefKey = Object.freeze({
 	dark_color: "homeBackground_dark",
 	light_fallback_color: "fallbackColour_light",
 	dark_fallback_color: "fallbackColour_dark",
-	reservedColour_cs: "reservedColour_webPage",
+	reservedColour_cs: "reservedColour",
 	last_version: "version",
 });
 

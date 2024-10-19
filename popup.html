@@ -49,7 +49,11 @@
 						<div data-text="useRecommendedColourForAddon"></div>
 						<div class="additional_info"></div>
 						<div data-text="useRecommendedColourForAddonEnd"></div>
-						<label class="info_action" data-title="useRecommendedColourForAddonTitle" data-text="useRecommendedColourForAddonButton"></label>
+						<label
+							class="info_action"
+							data-title="useRecommendedColourForAddonTitle"
+							data-text="useRecommendedColourForAddonButton"
+						></label>
 					</div>
 					<div class="info_display" name="addon_specify">
 						<div data-text="specifyColourForAddon"></div>
@@ -97,35 +101,36 @@
 					</div>
 				</div>
 				<hr />
-				<h4 data-text="colourSchemePreference">Colour scheme preference</h4>
+				<div id="scheme_pref_title" data-text="colourSchemePreference"></div>
 				<label for="colour_scheme_auto" data-title="useSystemColourScheme">
 					<input id="colour_scheme_auto" type="radio" />
-					<span data-text="automatic">Automatic</span>
+					<span data-text="automatic"></span>
 				</label>
 				<label for="colour_scheme_light" data-title="useLightColourScheme">
 					<input id="colour_scheme_light" type="radio" />
-					<span data-text="light">Light</span>
+					<span data-text="light"></span>
 				</label>
 				<label for="colour_scheme_dark" data-title="useDarkColourScheme">
 					<input id="colour_scheme_dark" type="radio" />
-					<span data-text="dark">Dark</span>
+					<span data-text="dark"></span>
 				</label>
 				<hr />
 				<label for="allow_dark_light" data-title="forceModeTooltip_bright">
 					<input id="allow_dark_light" type="checkbox" />
-					<span id="force_mode_caption" data-text="allowLightTabBar">Allow light tab bar</span>
+					<span id="force_mode_caption" data-text="allowLightTabBar"></span>
 				</label>
 				<label for="dynamic" data-title="dynamicModeTooltip">
 					<input id="dynamic" type="checkbox" />
-					<span data-text="dynamicColourUpdate">Dynamic colour update</span>
+					<span data-text="dynamicColourUpdate"></span>
 				</label>
 				<label for="no_theme_color" data-title="noThemeColourModeTooltip">
 					<input id="no_theme_color" type="checkbox" />
-					<span data-text="ignoreDesignatedThemeColour">Ignore all theme colour</span>
+					<span data-text="ignoreDesignatedThemeColour"></span>
 				</label>
-				<label id="custom_popup" data-text="moreSettings" data-title="moreSettingsTooltip">More settings…</label>
+				<hr />
+				<label id="custom_popup" data-text="moreSettings" data-title="moreSettingsTooltip"></label>
 			</div>
 		</div>
-		<script type="module" src="../options.js"></script>
+		<script type="module" src="../popup.js"></script>
 	</body>
 </html>

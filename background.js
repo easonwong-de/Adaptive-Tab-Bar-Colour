@@ -3,7 +3,7 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_reservedColour_webPage,
+	default_reservedColour,
 	reservedColour_aboutPage,
 	legacyPrefKey,
 	checkVersion,
@@ -38,18 +38,18 @@ var pref = {
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	reservedColour_webPage: default_reservedColour_webPage,
+	reservedColour: default_reservedColour,
 	version: [2, 2],
 };
 
 // Variables
 var vars = {
-	scheme: "light", // "light" or "dark"
+	scheme: "light", // only "light" or "dark"
 	homeBackground_light: default_homeBackground_light,
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	reservedColour_webPage: default_reservedColour_webPage,
+	reservedColour: default_reservedColour,
 };
 
 /**
@@ -76,7 +76,7 @@ function verifyPref() {
 		pref.homeBackground_dark != null &&
 		pref.fallbackColour_light != null &&
 		pref.fallbackColour_dark != null &&
-		pref.reservedColour_webPage != null &&
+		pref.reservedColour != null &&
 		pref.version != null
 	);
 }
@@ -90,13 +90,13 @@ function updateVars() {
 		vars.homeBackground_dark = rgba(pref.homeBackground_dark);
 		vars.fallbackColour_light = rgba(pref.fallbackColour_light);
 		vars.fallbackColour_dark = rgba(pref.fallbackColour_dark);
-		vars.reservedColour_webPage = pref.reservedColour_webPage;
+		vars.reservedColour = pref.reservedColour;
 	} else {
 		vars.homeBackground_light = rgba(default_homeBackground_light);
 		vars.homeBackground_dark = rgba(default_homeBackground_dark);
 		vars.fallbackColour_light = rgba(default_fallbackColour_light);
 		vars.fallbackColour_dark = rgba(default_fallbackColour_dark);
-		vars.reservedColour_webPage = default_reservedColour_webPage;
+		vars.reservedColour = default_reservedColour;
 	}
 	switch (pref.scheme) {
 		case "light":
@@ -217,32 +217,32 @@ function initialise() {
 				// Converts "force" to "allowDarkLight"
 				pref.allowDarkLight = !pref.allowDarkLight;
 				// Converts "system" to "auto"
-				if (pref.scheme === "system") pref.scheme = "auto";
+				if (pref.scheme == "system") pref.scheme = "auto";
 			}
 			// Updating from before v1.7.5
 			// Converts legacy rules to query selector format
 			if (pref.version <= [1, 7, 5]) {
-				for (let domain in pref.reservedColour_webPage) {
-					let legacyRule = pref.reservedColour_webPage[domain];
+				for (let domain in pref.reservedColour) {
+					let legacyRule = pref.reservedColour[domain];
 					if (legacyRule.startsWith("TAG_")) {
-						pref.reservedColour_webPage[domain] = legacyRule.replace("TAG_", "QS_");
+						pref.reservedColour[domain] = legacyRule.replace("TAG_", "QS_");
 					} else if (legacyRule.startsWith("CLASS_")) {
-						pref.reservedColour_webPage[domain] = legacyRule.replace("CLASS_", "QS_.");
+						pref.reservedColour[domain] = legacyRule.replace("CLASS_", "QS_.");
 					} else if (legacyRule.startsWith("ID_")) {
-						pref.reservedColour_webPage[domain] = legacyRule.replace("ID_", "QS_#");
+						pref.reservedColour[domain] = legacyRule.replace("ID_", "QS_#");
 					} else if (legacyRule.startsWith("NAME_")) {
-						pref.reservedColour_webPage[domain] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
-					} else if (legacyRule === "") {
-						delete pref.reservedColour_webPage[domain];
+						pref.reservedColour[domain] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
+					} else if (legacyRule == "") {
+						delete pref.reservedColour[domain];
 					}
 				}
 			}
 			// Updating from before v1.7.4
 			// Clears possible empty reserved colour rules caused by a bug
-			if (pref.version < [1, 7, 4]) delete pref.reservedColour_webPage[undefined];
+			if (pref.version < [1, 7, 4]) delete pref.reservedColour[undefined];
 			// Updating from before v1.6.4
 			// Corrects the dark home page colour, unless the user has set something different
-			if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() === "#1C1B22")
+			if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() == "#1C1B22")
 				pref.homeBackground_dark = default_homeBackground_dark;
 		}
 		// If the brouser version is below v95, disables allowDarkLight
@@ -357,8 +357,8 @@ function updateEachWindow(tab) {
 				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversedVarsScheme][key]), reversedVarsScheme == "dark");
 			} else if (url.startsWith("about:")) {
 				setFrameColour(windowId, "DEFAULT");
-			} else if (key.startsWith("Add-on ID: ") && vars.reservedColour_webPage[key]) {
-				let frameColour = rgba(vars.reservedColour_webPage[key]);
+			} else if (key.startsWith("Add-on ID: ") && vars.reservedColour[key]) {
+				let frameColour = rgba(vars.reservedColour[key]);
 				setFrameColour(windowId, frameColour);
 			} else if (url.startsWith("moz-extension:")) {
 				setFrameColour(windowId, "ADDON");
@@ -371,7 +371,7 @@ function updateEachWindow(tab) {
 						reason: "COLOUR_REQUEST",
 						dynamic: pref.dynamic,
 						noThemeColour: pref.noThemeColour,
-						reservedColor_webPage: vars.reservedColour_webPage,
+						reservedColour: vars.reservedColour,
 					},
 					(response) => {
 						if (response) {
@@ -408,7 +408,7 @@ function updateEachWindow(tab) {
 }
 
 /**
- * Gets the search key for reservedColour (_webPage).
+ * Gets the search key for reservedColour (webpage).
  * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
  * @returns e.g. for about pages: "about:page", for websites: "addons.mozilla.org", for add-on pages "Add-on ID: ATBC@EasonWong".
  */
@@ -423,9 +423,9 @@ function getSearchKey(url) {
 			browser.management.getAll().then((addonList) => {
 				let breakLoop = false;
 				for (let addon of addonList) {
-					if (addon.type === "extension" && addon.hostPermissions) {
+					if (addon.type == "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
-							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
+							if (host.startsWith("moz-extension:") && uuid == host.split(/\/|\?/)[2]) {
 								resolve(`Add-on ID: ${addon.id}`);
 								breakLoop = true;
 								break;
@@ -465,7 +465,7 @@ function getSearchKey(url) {
 function setFrameColour(windowId, colour, darkMode) {
 	// "darkMode" being null means the colour is not light or dark. If so, set "darkMode" following the settings
 	// "darkMode" decides the text colour
-	if (darkMode == null) darkMode = vars.scheme === "dark";
+	if (darkMode == null) darkMode = vars.scheme == "dark";
 	switch (colour) {
 		case "HOME":
 			// Home page and new tab
@@ -660,6 +660,6 @@ function setBrowserColourScheme(scheme) {
 	let version = checkVersion();
 	if (version >= 95)
 		browser.browserSettings.overrideContentColorScheme.set({
-			value: scheme === "auto" && version < 106 ? "system" : scheme,
+			value: scheme == "auto" && version < 106 ? "system" : scheme,
 		});
 }

@@ -3,7 +3,7 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_reservedColour_webPage,
+	default_reservedColour,
 	recommendedColour_addon,
 	protectedDomain,
 	checkVersion,
@@ -35,19 +35,19 @@ var pref = {
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	reservedColour_webPage: default_reservedColour_webPage,
+	reservedColour: default_reservedColour,
 	version: [2, 2],
 };
 
 // Current colour lookup table
-var reservedColour_webPage;
+var reservedColour;
 
 /**
  * Caches pref into local variables and checks integrity.
  */
 function cachePref(storedPref) {
 	pref = storedPref;
-	reservedColour_webPage = pref.custom ? pref.reservedColour_webPage : default_reservedColour_webPage;
+	reservedColour = Object.assign({}, pref.custom ? pref.reservedColour : default_reservedColour);
 	return (
 		pref.scheme != null &&
 		pref.allowDarkLight != null &&
@@ -68,7 +68,7 @@ function cachePref(storedPref) {
 		pref.homeBackground_dark != null &&
 		pref.fallbackColour_light != null &&
 		pref.fallbackColour_dark != null &&
-		pref.reservedColour_webPage != null &&
+		pref.reservedColour != null &&
 		pref.version != null
 	);
 }
@@ -105,9 +105,9 @@ browser.storage.onChanged.addListener(applySettings);
 function load() {
 	browser.storage.local.get((storedPref) => {
 		if (cachePref(storedPref)) {
-			colourSchemeDark.checked = pref.scheme === "dark";
-			colourSchemeLight.checked = pref.scheme === "light";
-			colourSchemeAuto.checked = pref.scheme === "auto";
+			colourSchemeDark.checked = pref.scheme == "dark";
+			colourSchemeLight.checked = pref.scheme == "light";
+			colourSchemeAuto.checked = pref.scheme == "auto";
 			allowDarkLightCheckbox.checked = pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
@@ -200,11 +200,11 @@ function updatePopupColour() {
 	browser.theme.getCurrent().then((currentTheme) => {
 		body.style.backgroundColor = currentTheme["colors"]["popup"];
 		body.style.color = currentTheme["colors"]["popup_text"];
-		if (currentTheme["colors"]["popup_text"] === "rgb(0, 0, 0)") body.classList.replace("dark", "light");
+		if (currentTheme["colors"]["popup_text"] == "rgb(0, 0, 0)") body.classList.replace("dark", "light");
 		else body.classList.replace("light", "dark");
 	});
 	// Changes the text of the allow dark/light tab bar button
-	if (pref.scheme === "light" || (pref.scheme === "auto" && lightModeDetected())) {
+	if (pref.scheme == "light" || (pref.scheme == "auto" && lightModeDetected())) {
 		allowDarkLightCheckboxText.innerText = msg("allowDarkTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
@@ -229,7 +229,7 @@ function loadInfoForWebpage(tab) {
 			reason: "INFO_REQUEST",
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
-			reservedColor_webPage: reservedColour_webPage,
+			reservedColour: pref.reservedColour,
 		},
 		(RESPONSE_INFO) => {
 			if (RESPONSE_INFO) {
@@ -238,11 +238,11 @@ function loadInfoForWebpage(tab) {
 				if (infoAction) {
 					// Need to change
 					infoAction.onclick = () => {
-						pref.reservedColour_webPage[domain] = infoAction.dataset.action;
-						reservedColour_webPage = pref.reservedColour_webPage;
+						pref.reservedColour[domain] = infoAction.dataset.action;
+						reservedColour = pref.reservedColour;
 						browser.storage.local.set({
 							custom: true,
-							reservedColor_webPage: pref.reservedColour_webPage,
+							reservedColour: pref.reservedColour,
 						});
 						load();
 					};
@@ -260,10 +260,10 @@ function loadInfoForAddonPage(tab) {
 	browser.management.getAll().then((addonList) => {
 		let foundAssociatedAddon = false;
 		for (let addon of addonList) {
-			if (addon.type !== "extension" || !addon.hostPermissions) continue;
+			if (addon.type != "extension" || !addon.hostPermissions) continue;
 			for (let host of addon.hostPermissions) {
-				if (!host.startsWith("moz-extension:") || uuid !== host.split(/\/|\?/)[2]) continue;
-				else if (reservedColour_webPage[`Add-on ID: ${addon.id}`])
+				if (!host.startsWith("moz-extension:") || uuid != host.split(/\/|\?/)[2]) continue;
+				else if (reservedColour[`Add-on ID: ${addon.id}`])
 					setInfoDisplay("addon_default", addon.name, () => specifyColourForAddon(addon.id, null));
 				else if (recommendedColour_addon[addon.id])
 					setInfoDisplay("addon_recom", addon.name, () => specifyColourForAddon(addon.id, recommendedColour_addon[addon.id]));
@@ -277,13 +277,12 @@ function loadInfoForAddonPage(tab) {
 }
 
 function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
-	if (colour) pref.reservedColour_webPage[`Add-on ID: ${addonID}`] = colour;
-	else delete pref.reservedColour_webPage[`Add-on ID: ${addonID}`];
-	reservedColour_webPage = pref.reservedColour_webPage;
+	if (colour) reservedColour[`Add-on ID: ${addonID}`] = colour;
+	else delete reservedColour[`Add-on ID: ${addonID}`];
 	browser.storage.local
 		.set({
 			custom: true,
-			reservedColor_webPage: pref.reservedColour_webPage,
+			reservedColour: reservedColour,
 		})
 		.then(() => {
 			if (openOptionsPage) browser.runtime.openOptionsPage();

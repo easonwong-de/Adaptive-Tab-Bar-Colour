@@ -3,7 +3,7 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_reservedColour_webPage,
+	default_reservedColour,
 	recommendedColour_addon,
 	protectedDomain,
 	checkVersion,
@@ -35,12 +35,12 @@ var pref = {
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	reservedColour_webPage: default_reservedColour_webPage,
+	reservedColour: default_reservedColour,
 	version: [2, 2],
 };
 
 // Current colour lookup table
-var reservedColour_webPage;
+var reservedColour;
 
 const svg_bin = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
 const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
@@ -48,9 +48,9 @@ const svg_warning = `<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0
 /**
  * Caches pref into local variables and checks integrity.
  */
-function cachePref_op(storedPref) {
+function cachePref(storedPref) {
 	pref = storedPref;
-	reservedColour_webPage = pref.custom ? pref.reservedColour_webPage : default_reservedColour_webPage;
+	reservedColour = pref.custom ? pref.reservedColour : default_reservedColour;
 	return (
 		pref.scheme != null &&
 		pref.allowDarkLight != null &&
@@ -71,7 +71,7 @@ function cachePref_op(storedPref) {
 		pref.homeBackground_dark != null &&
 		pref.fallbackColour_light != null &&
 		pref.fallbackColour_dark != null &&
-		pref.reservedColour_webPage != null &&
+		pref.reservedColour != null &&
 		pref.version != null
 	);
 }
@@ -132,10 +132,10 @@ browser.storage.onChanged.addListener(() => {
  */
 function load() {
 	browser.storage.local.get((storedPref) => {
-		if (cachePref_op(storedPref)) {
-			colourSchemeDark.checked = pref.scheme === "dark";
-			colourSchemeLight.checked = pref.scheme === "light";
-			colourSchemeAuto.checked = pref.scheme === "auto";
+		if (cachePref(storedPref)) {
+			colourSchemeDark.checked = pref.scheme == "dark";
+			colourSchemeLight.checked = pref.scheme == "light";
+			colourSchemeAuto.checked = pref.scheme == "auto";
 			allowDarkLightCheckbox.checked = !pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
@@ -159,7 +159,7 @@ function load() {
 			op_dark_fallback_colour.value = pref.fallbackColour_dark;
 			let table_rows = op_custom_options_table.rows;
 			for (let i = table_rows.length - 1; i > 3; i--) op_custom_options_table.deleteRow(i);
-			let domains = Object.keys(pref.reservedColour_webPage);
+			let domains = Object.keys(pref.reservedColour);
 			domains.forEach((domain, i) => {
 				let new_row = op_custom_options_table.insertRow(i + 4);
 				generateNewRow(domain, i).then((new_row_HTML) => {
@@ -181,10 +181,10 @@ function load() {
  */
 function load_lite() {
 	browser.storage.local.get((storedPref) => {
-		if (cachePref_op(storedPref)) {
-			colourSchemeDark.checked = pref.scheme === "dark";
-			colourSchemeLight.checked = pref.scheme === "light";
-			colourSchemeAuto.checked = pref.scheme === "system";
+		if (cachePref(storedPref)) {
+			colourSchemeDark.checked = pref.scheme == "dark";
+			colourSchemeLight.checked = pref.scheme == "light";
+			colourSchemeAuto.checked = pref.scheme == "system";
 			allowDarkLightCheckbox.checked = pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
@@ -317,7 +317,7 @@ if (popupDetected()) {
 	op_reset_light_fallback.onclick = () => browser.storage.local.set({ fallbackColour_light: "#FFFFFF" }).then(load);
 	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ fallbackColour_dark: "#2B2A33" }).then(load);
 	op_reset_all.onclick = () => {
-		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColor_webPage: default_reservedColour_webPage }).then(load);
+		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColour: default_reservedColour }).then(load);
 	};
 	op_add.onclick = () => {
 		let i = 0;
@@ -335,13 +335,13 @@ if (popupDetected()) {
  * Reads lookup table and stores data in storage.
  */
 function autoSaveSettings() {
-	let pending_reservedColour_webPage = {};
+	let pending_reservedColour = {};
 	let all_table_rows = op_custom_options_table.firstElementChild.children;
 	for (let i = 4; i < all_table_rows.length; i++) {
 		let table_cells = all_table_rows[i].children;
 		let domain = table_cells[0].firstElementChild.title;
 		if (!domain) domain = table_cells[0].firstElementChild.value;
-		if (domain != "" && isNaN(domain) && pending_reservedColour_webPage[domain] == null) {
+		if (domain != "" && isNaN(domain) && pending_reservedColour[domain] == null) {
 			let action;
 			switch (table_cells[1].firstElementChild.selectedIndex) {
 				case 0:
@@ -360,7 +360,7 @@ function autoSaveSettings() {
 					break;
 			}
 			if (action != "QS_") {
-				pending_reservedColour_webPage[domain] = action;
+				pending_reservedColour[domain] = action;
 				if (table_cells[4] != null) table_cells[4].remove();
 			} else {
 				if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
@@ -369,7 +369,7 @@ function autoSaveSettings() {
 			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
 		}
 	}
-	browser.storage.local.set({ reservedColor_webPage: pending_reservedColour_webPage });
+	browser.storage.local.set({ reservedColour: pending_reservedColour });
 }
 
 /**
@@ -387,7 +387,7 @@ function generateNewRow(domain, i) {
 				let part_2 = `<select id="SEL_${i}">
 					<option selected>${msg("specifyAColour")}</option>
 				</select>`;
-				let part_3 = `<input type="color" class="FiveEm" value="${pref.reservedColour_webPage[domain]}">`;
+				let part_3 = `<input type="color" class="FiveEm" value="${pref.reservedColour[domain]}">`;
 				let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
 				resolve(`<td class="TenFiveEm">${part_1}</td>
 				<td>${part_2}</td>
@@ -397,17 +397,17 @@ function generateNewRow(domain, i) {
 		});
 	} else {
 		let action;
-		if (domain === "") {
+		if (domain == "") {
 			domain = "example.com";
 			action = "#ECECEC";
 		} else {
-			action = pref.reservedColour_webPage[domain];
+			action = pref.reservedColour[domain];
 		}
 		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
 		let part_2 = ``;
 		let part_3 = ``;
 		let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
-		if (action === "IGNORE_THEME") {
+		if (action == "IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}">
 				<option>${msg("specifyAColour")}</option>
 				<option selected>${msg("ignoreThemeColour")}</option>
@@ -415,7 +415,7 @@ function generateNewRow(domain, i) {
 				<option>${msg("useQuerySelector")}</option>
 			</select>`;
 			part_3 = `<span class="FiveEm"></span>`;
-		} else if (action === "UN_IGNORE_THEME") {
+		} else if (action == "UN_IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}">
 				<option>${msg("specifyAColour")}</option>
 				<option>${msg("ignoreThemeColour")}</option>
@@ -479,7 +479,7 @@ function autoPopupColour() {
 					reason: "INFO_REQUEST",
 					dynamic: pref.dynamic,
 					noThemeColour: pref.noThemeColour,
-					reservedColor_webPage: reservedColour_webPage,
+					reservedColour: reservedColour,
 				},
 				(RESPONSE_INFO) => {
 					if (RESPONSE_INFO) {
@@ -487,11 +487,11 @@ function autoPopupColour() {
 						let pp_info_action = document.getElementById("info_action");
 						if (pp_info_action) {
 							pp_info_action.onclick = () => {
-								pref.reservedColour_webPage[domain] = pp_info_action.dataset.action;
-								reservedColour_webPage = pref.reservedColour_webPage;
+								pref.reservedColour[domain] = pp_info_action.dataset.action;
+								reservedColour = pref.reservedColour;
 								browser.storage.local.set({
 									custom: true,
-									reservedColor_webPage: pref.reservedColour_webPage,
+									reservedColour: pref.reservedColour,
 								});
 								load_lite();
 							};
@@ -514,38 +514,38 @@ function autoPopupColour() {
 			browser.management.getAll().then((addon_list) => {
 				let breakLoop = false;
 				for (let addon of addon_list) {
-					if (addon.type === "extension" && addon.hostPermissions) {
+					if (addon.type == "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
-							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-								if (reservedColour_webPage[`Add-on ID: ${addon.id}`]) {
+							if (host.startsWith("moz-extension:") && uuid == host.split(/\/|\?/)[2]) {
+								if (reservedColour[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										delete pref.reservedColour_webPage[`Add-on ID: ${addon.id}`];
-										reservedColour_webPage = pref.reservedColour_webPage;
+										delete pref.reservedColour[`Add-on ID: ${addon.id}`];
+										reservedColour = pref.reservedColour;
 										browser.storage.local.set({
 											custom: true,
-											reservedColor_webPage: pref.reservedColour_webPage,
+											reservedColour: pref.reservedColour,
 										});
 									};
 								} else if (recommendedColour_addon[addon.id]) {
 									pp_info_display.innerHTML = msg("useRecommendedColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref.reservedColour_webPage[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
-										reservedColour_webPage = pref.reservedColour_webPage;
+										pref.reservedColour[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
+										reservedColour = pref.reservedColour;
 										browser.storage.local.set({
 											custom: true,
-											reservedColor_webPage: pref.reservedColour_webPage,
+											reservedColour: pref.reservedColour,
 										});
 									};
 								} else {
 									pp_info_display.innerHTML = msg("specifyColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref.reservedColour_webPage[`Add-on ID: ${addon.id}`] = "#333333";
-										reservedColour_webPage = pref.reservedColour_webPage;
+										pref.reservedColour[`Add-on ID: ${addon.id}`] = "#333333";
+										reservedColour = pref.reservedColour;
 										browser.storage.local
 											.set({
 												custom: true,
-												reservedColor_webPage: pref.reservedColour_webPage,
+												reservedColour: pref.reservedColour,
 											})
 											.then(() => browser.runtime.openOptionsPage());
 									};
@@ -565,7 +565,7 @@ function autoPopupColour() {
 	browser.theme.getCurrent().then((current_theme) => {
 		body.style.backgroundColor = current_theme["colors"]["popup"];
 		body.style.color = current_theme["colors"]["popup_text"];
-		if (current_theme["colors"]["popup_text"] === "rgb(0, 0, 0)") {
+		if (current_theme["colors"]["popup_text"] == "rgb(0, 0, 0)") {
 			body.classList.add("light");
 			body.classList.remove("dark");
 		} else {
@@ -573,7 +573,7 @@ function autoPopupColour() {
 			body.classList.remove("light");
 		}
 	});
-	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
+	if (pref.scheme == "light" || (pref.scheme == "system" && lightModeDetected())) {
 		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
@@ -586,7 +586,7 @@ function autoPopupColour() {
  * Updates option page's colour depends on colour scheme.
  */
 function autoOptionsColour() {
-	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
+	if (pref.scheme == "light" || (pref.scheme == "system" && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
@@ -628,7 +628,7 @@ function setBrowserColourScheme(pending_scheme) {
 	let version = checkVersion();
 	if (version >= 95)
 		browser.browserSettings.overrideContentColorScheme.set({
-			value: pending_scheme === "system" && version >= 106 ? "auto" : pending_scheme,
+			value: pending_scheme == "system" && version >= 106 ? "auto" : pending_scheme,
 		});
 }
 

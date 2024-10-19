@@ -8,11 +8,11 @@
 	},
 
 	"option.html & popup.html": {
-		"message": "=============================="
+		"message": "===================="
 	},
 
 	"reinstallTip": {
-		"message": "Preference data could be corrupted. Please remove the add-on, and re-install the add-on after rebooting Firefox. I’m sorry for your inconvenience!"
+		"message": "Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for your inconvenience!"
 	},
 
 	"loading": {
@@ -24,7 +24,7 @@
 	},
 
 	"customisation": {
-		"message": "Customization"
+		"message": "Customisation"
 	},
 
 	"advanced": {
@@ -143,8 +143,8 @@
 		"message": "Open option page"
 	},
 
-	"option.js": {
-		"message": "=============================="
+	"options.js && popup.js": {
+		"message": "===================="
 	},
 
 	"resetRuleConfirm": {
@@ -232,23 +232,59 @@
 	},
 
 	"useDefaultColourForAddon": {
-		"message": "Using specified color for pages related to <b>$1</b><label id='info_action' title='Use default color'><span>Use default color</span></label>"
+		"message": "Using specified color for pages related to "
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": ""
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Use default color"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Use default color"
 	},
 
 	"useRecommendedColourForAddon": {
-		"message": "Recommended color for pages related to <b>$1</b> is available<label id='info_action' title='Use recommended color'><span>Use recommended color</span></label>"
+		"message": "Recommended color for pages related to "
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " is available"
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Use recommended color"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Use the recommended color"
 	},
 
 	"specifyColourForAddon": {
-		"message": "Click “Specify a color” to open settings and specify tab bar color for pages related to <b>$1</b><label id='info_action' title='Open settings and specify a color to pages related to $1'><span>Specify a color</span></label>"
+		"message": "Click “Specify a color” to open settings and specify tab bar color for pages related to "
+	},
+
+	"specifyColourForAddonEnd": {
+		"message": ""
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Specify a color"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Open settings and specify a color to pages related to the add-on"
 	},
 
 	"content_script.js": {
-		"message": "=============================="
+		"message": "===================="
 	},
 
 	"themeColourIsUnignored": {
-		"message": "Theme color defined by the website is un-ignored<label id='info_action' title='Do not use theme color defined by the website' data-action='IGNORE_THEME'><span>Do not use theme color</span></label>"
+		"message": "Theme color defined by the website is un-ignored"
 	},
 
 	"themeColourNotFound": {
@@ -256,31 +292,43 @@
 	},
 
 	"themeColourIsIgnored": {
-		"message": "Theme color defined by the website is ignored<label id='info_action' title='Use theme color defined by the website' data-action='UN_IGNORE_THEME'><span>Use theme color</span></label>"
+		"message": "Theme color defined by the website is ignored"
+	},
+
+	"useThemeColourButton": {
+		"message": "Use theme color"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Use theme color defined by the website"
 	},
 
 	"colourIsPickedFrom": {
-		"message": "Color is picked from an HTML element matching <b>$1</b>"
+		"message": "Color is picked from an HTML element matching "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": ""
 	},
 
 	"colourIsSpecified": {
 		"message": "Color for this domain is specified in the settings"
 	},
 
-	"bacauseThemeColourIsIgnored": {
-		"message": ", because theme color defined by the website is ignored<label id='info_action' title='Use theme color defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme color</span></label>"
-	},
-
 	"usingImageViewer": {
-		"message": "Using <b>chrome://global/skin/media/imagedoc-darknoise.png</b> as background"
-	},
-
-	"usingColourForPlainText": {
-		"message": "Using color from <b>resource://content-accessible/plaintext.css</b>"
+		"message": "Using color for image viewer"
 	},
 
 	"usingThemeColour": {
-		"message": "Using theme color defined by the website<label id='info_action' title='Ignore theme color defined by the website' data-action='IGNORE_THEME'><span>Ignore theme color</span></label>"
+		"message": "Using theme color defined by the website"
+	},
+
+	"ignoreThemeColourButton": {
+		"message": "Ignore theme color"
+	},
+
+	"ignoreThemeColourTitle": {
+		"message": "Ignore theme color defined by the website"
 	},
 
 	"usingFallbackColour": {
@@ -292,6 +340,6 @@
 	},
 
 	"end": {
-		"message": "=============================="
+		"message": "===================="
 	}
 }

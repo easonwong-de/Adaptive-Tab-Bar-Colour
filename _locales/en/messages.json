@@ -8,7 +8,7 @@
 	},
 
 	"option.html & popup.html": {
-		"message": "=============================="
+		"message": "===================="
 	},
 
 	"reinstallTip": {
@@ -144,7 +144,7 @@
 	},
 
 	"options.js && popup.js": {
-		"message": "=============================="
+		"message": "===================="
 	},
 
 	"resetRuleConfirm": {
@@ -280,7 +280,7 @@
 	},
 
 	"content_script.js": {
-		"message": "=============================="
+		"message": "===================="
 	},
 
 	"themeColourIsUnignored": {
@@ -315,16 +315,8 @@
 		"message": "Colour for this domain is specified in the settings"
 	},
 
-	"bacauseThemeColourIsIgnored (obsolete)": {
-		"message": ", because theme colour defined by the website is ignored<label id='info_action' title='Use theme colour defined by the website' data-action='UN_IGNORE_THEME'><span>Un-ignore theme colour</span></label>"
-	},
-
 	"usingImageViewer": {
 		"message": "Using colour for image viewer"
-	},
-
-	"usingColourForPlainText (obsoleted)": {
-		"message": "Using colour from <b>resource://content-accessible/plaintext.css</b>"
 	},
 
 	"usingThemeColour": {
@@ -348,6 +340,6 @@
 	},
 
 	"end": {
-		"message": "=============================="
+		"message": "===================="
 	}
 }
