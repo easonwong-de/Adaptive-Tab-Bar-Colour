@@ -1,28 +1,26 @@
 /*
-
-Definitions of some concepts
-
-System colour scheme:
-The colour scheme of the operating system, usually light or dark.
-
-Brouser colour scheme / pref.scheme:
-The "web site appearance" settings of Firefox (controlled by ATBC), can be light, dark, or auto.
-
-vars.scheme:
-The colour scheme derived from both system and brouser colour scheme, can be light or dark.
-It decides whether light theme or dark theme is prefered.
-
-pref.allowDarkLight:
-A setting to decide if a light theme is allowed to be used when vars.scheme is dark, or vice versa.
-
-theme-color / meta theme colour:
-A meta tag defined by some websites, usually static.
-It's sometimes more related to the branding than the appearance of the website.
-
-Theme:
-An object that defines the appearance of the Firefox chrome.
-
-*/
+ * Definitions of some concepts
+ *
+ * System colour scheme:
+ * The colour scheme of the operating system, usually light or dark.
+ *
+ * Browser colour scheme / pref.scheme:
+ * The "website appearance" settings of Firefox (controlled by ATBC), which can be light, dark, or auto.
+ *
+ * vars.scheme:
+ * The colour scheme derived from both system and browser colour schemes, which can be light or dark.
+ * It decides whether the light theme or dark theme is preferred.
+ *
+ * pref.allowDarkLight:
+ * A setting that decides if a light theme is allowed to be used when vars.scheme is dark, or vice versa.
+ *
+ * theme-color / meta theme colour:
+ * A meta tag defined by some websites, usually static.
+ * It is often more related to the branding than the appearance of the website.
+ *
+ * Theme:
+ * An object that defines the appearance of the Firefox chrome.
+ */
 
 import {
 	default_homeBackground_light,
@@ -35,13 +33,7 @@ import {
 	checkVersion,
 } from "./shared.js";
 
-import {
-	rgba,
-	dimColour,
-	/* contrastFactor,
-	contrastAdjustedOverlayOpacity,
-	overlayColour, */
-} from "./colour.js";
+import { rgba, dimColour, contrastRatio } from "./colour.js";
 
 // Settings cache: always synced with settings
 var pref = {
@@ -59,6 +51,8 @@ var pref = {
 	sidebarBorder: 0.05,
 	popup: 0.05,
 	popupBorder: 0.05,
+	minContrast_light: 4.5,
+	minContrast_dark: 4.5,
 	custom: false,
 	homeBackground_light: default_homeBackground_light,
 	homeBackground_dark: default_homeBackground_dark,
@@ -97,6 +91,8 @@ function verifyPref() {
 		pref.sidebarBorder != null &&
 		pref.popup != null &&
 		pref.popupBorder != null &&
+		pref.minContrast_light != null &&
+		pref.minContrast_dark != null &&
 		pref.custom != null &&
 		pref.homeBackground_light != null &&
 		pref.homeBackground_dark != null &&
@@ -223,7 +219,7 @@ var adaptive_themes = {
 initialise();
 
 /**
- * Initialise the script.
+ * Initialises the pref and vars.
  * If storedPref.scheme, storedPref.force (legacy), or storedPref.allowDarkLight is missing, opens the option page.
  */
 function initialise() {
@@ -271,7 +267,7 @@ function initialise() {
 			if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() == "#1C1B22")
 				pref.homeBackground_dark = default_homeBackground_dark;
 		}
-		// If the brouser version is below v95, disables allowDarkLight
+		// If the browser version is below v95, disables allowDarkLight
 		if (checkVersion() < 95) pref.allowDarkLight = false;
 		setBrowserColourScheme(pref.scheme);
 		updateVars();
@@ -384,9 +380,9 @@ function getSearchKey(url) {
 function updateEachWindow(tab) {
 	let url = tab.url;
 	let windowId = tab.windowId;
-	// Visiting brouser's internal files (content script blocked)
+	// Visiting browser's internal files (content script blocked)
 	if (url.startsWith("view-source:")) setFrameColour(windowId, "PLAINTEXT");
-	// Visiting brouser's internal files (content script blocked)
+	// Visiting browser's internal files (content script blocked)
 	else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
 		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) setFrameColour(windowId, "PLAINTEXT");
 		else if (url.endsWith(".png") || url.endsWith(".jpg")) setFrameColour(windowId, "IMAGEVIEWER");
@@ -397,7 +393,7 @@ function updateEachWindow(tab) {
 		// WIP: add support for regex / wildcard characters
 		getSearchKey(url).then((key) => {
 			let reversedVarsScheme = vars.scheme == "light" ? "dark" : "light";
-			// For prefered scheme there's a reserved colour
+			// For preferred scheme there's a reserved colour
 			if (reservedColour_aboutPage[vars.scheme][key]) setFrameColour(windowId, rgba(reservedColour_aboutPage[vars.scheme][key]));
 			// Site has reserved colour only in the other mode, and it's allowed to change mode
 			else if (reservedColour_aboutPage[reversedVarsScheme][key] && pref.allowDarkLight)
@@ -444,15 +440,25 @@ function contactTab(tab) {
 	);
 }
 
+function getSuitableColourScheme(colour) {
+	let eligibility_dark = contrastRatio(colour, rgba([255, 255, 255, 1])) > pref.minContrast_dark;
+	let eligibility_light = contrastRatio(colour, rgba([0, 0, 0, 1])) > pref.minContrast_light;
+	if (vars.scheme == "light") {
+		if (eligibility_light) return "light";
+		if (pref.allowDarkLight && eligibility_dark) return "dark";
+	} else {
+		if (eligibility_dark) return "dark";
+		if (pref.allowDarkLight && eligibility_light) return "light";
+	}
+	return "fallback";
+}
+
 /**
- * Changes tab bar to the appointed colour (with windowId).
+ * Changes tab bar to the appointed colour. If the colour is not eligible, uses fallback colour.
  * @param {number} windowId The ID of the window.
  * @param {object | string} colour The colour to change to (in rgb object) or a command string. If colour is empty, rolls back to default colour. Command strings are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
  */
 function setFrameColour(windowId, colour) {
-	// "darkMode" being null means the colour is not light or dark. If so, set "darkMode" following the settings
-	// "darkMode" decides the text colour
-	if (darkMode == null) darkMode = vars.scheme == "dark";
 	switch (colour) {
 		case "HOME":
 			// Home page and new tab
@@ -641,7 +647,7 @@ function applyTheme(windowId, theme) {
 
 /**
  * Overrides content colour scheme.
- * @param {string} scheme "light", "dark", or "auto". Converts "auto" to "system" if the brouser's version sits below v106.
+ * @param {string} scheme "light", "dark", or "auto". Converts "auto" to "system" if the browser's version sits below v106.
  */
 function setBrowserColourScheme(scheme) {
 	let version = checkVersion();

@@ -29,47 +29,26 @@ export function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour == "object") {
-		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
-	} else {
-		return null;
-	}
+	} else if (typeof colour == "object") return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
+	else return null;
 }
 
 /**
- * Calculates the euclidean distance between colours adjusted for luminous efficacy. The result is then normalised to a range of 0-1. Represents how different the colours will appear to the human eye.
- * @author bensaine on GitHub.
- * @link https://en.wikipedia.org/wiki/Euclidean_distance
- * @link https://en.wikipedia.org/wiki/Luminous_efficacy
+ * Calculates the contrast ratio between two colours. Contrast ratio over 4.5 is considered adequate.
+ * @author bensaine on GitHub (modified by Eason Wong).
  * @link https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
+ * @link https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
  * @param {Object} colour1 First colour.
  * @param {Object} colour2 Second colour.
- * @returns Contrast factor. 0 is identical, 1 is maximally different.
+ * @returns Contrast ratio, ranges from 1.05 (low contrast) to 21 (high contrast).
  */
-/* export function contrastFactor(colour1, colour2) {
-	// Note: the sRGB values are not linear, affecting the accuracy of the luminance calculation, but it is close enough for our purposes
-	// and less computationally expensive
-	// Compute delta for each channel
-	let r_delta = colour1.r - colour2.r;
-	let g_delta = colour1.g - colour2.g;
-	let b_delta = colour1.b - colour2.b;
-	// Compute the euclidean distance between the two colours adjusted for luminous efficacy
-	let distance = Math.sqrt(0.2126 * r_delta * r_delta + 0.7152 * g_delta * g_delta + 0.0722 * b_delta * b_delta);
-	// Normalise the distance to a range of 0-1
-	return distance/255;
-} */
-
-/**
- * Calculates the overlay opacity for a given contrast factor. The higher the contrast, the lower the opacity.
- * This is a non-linear function that favours lower contrast values.
- * @author bensaine on Github.
- * @param {number} contrast Contrast factor. 0 is identical, 1 is maximally different.
- * @param {number} overlayFactor Factor of the non-linear function. The higher the factor, the slower the opacity drops.
- * @returns Overlay opacity. 0 is fully transparent, 1 is fully opaque.
- */
-/* export function contrastAdjustedOverlayOpacity(contrast, overlayFactor = 0.25, threshold = 0.25) {
-	return contrast <= threshold ? 1 : 1 - Math.pow(contrast, overlayFactor);
-} */
+export function contrastRatio(colour1, colour2) {
+	let luminance1Times255 = 0.2126 * colour1.r + 0.7152 * colour1.g + 0.0722 * colour1.b;
+	let luminance2Times255 = 0.2126 * colour2.r + 0.7152 * colour2.g + 0.0722 * colour2.b;
+	return luminance1Times255 > luminance2Times255
+		? (luminance1Times255 + 12.75) / (luminance2Times255 + 12.75)
+		: (luminance2Times255 + 12.75) / (luminance1Times255 + 12.75);
+}
 
 /**
  * Dims or lightens colour.
@@ -88,7 +67,7 @@ export function dimColour(colour, dim) {
 		result.g = (dim + 1) * colour.g;
 		result.b = (dim + 1) * colour.b;
 	}
-	return "rgb(" + Math.floor(result.r) + ", " + Math.floor(result.g) + ", " + Math.floor(result.b) + ")";
+	return `rgb(${Math.floor(result.r)}, ${Math.floor(result.g)}, ${Math.floor(result.b)})`;
 }
 
 /**
@@ -99,17 +78,15 @@ export function dimColour(colour, dim) {
  */
 export function overlayColour(colourTop, colourBottom) {
 	let a = (1 - colourTop.a) * colourBottom.a + colourTop.a;
-	if (a == 0) {
-		// Firefox renders transparent background in rgb(236, 236, 236)
-		return rgba([236, 236, 236, 0]);
-	} else {
+	// Firefox renders transparent background in rgb(236, 236, 236)
+	if (a == 0) return rgba([236, 236, 236, 0]);
+	else
 		return {
 			r: ((1 - colourTop.a) * colourBottom.a * colourBottom.r + colourTop.a * colourTop.r) / a,
 			g: ((1 - colourTop.a) * colourBottom.a * colourBottom.g + colourTop.a * colourTop.g) / a,
 			b: ((1 - colourTop.a) * colourBottom.a * colourBottom.b + colourTop.a * colourTop.b) / a,
 			a: a,
 		};
-	}
 }
 
 /**

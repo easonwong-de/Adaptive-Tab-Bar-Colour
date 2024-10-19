@@ -30,6 +30,8 @@ var pref = {
 	sidebarBorder: 0.05,
 	popup: 0.05,
 	popupBorder: 0.05,
+	minContrast_light: 4.5,
+	minContrast_dark: 4.5,
 	custom: false,
 	homeBackground_light: default_homeBackground_light,
 	homeBackground_dark: default_homeBackground_dark,
@@ -63,6 +65,8 @@ function cachePref(storedPref) {
 		pref.sidebarBorder != null &&
 		pref.popup != null &&
 		pref.popupBorder != null &&
+		pref.minContrast_light != null &&
+		pref.minContrast_dark != null &&
 		pref.custom != null &&
 		pref.homeBackground_light != null &&
 		pref.homeBackground_dark != null &&
@@ -205,17 +209,17 @@ function updatePopupColour() {
 	});
 	// Changes the text of the allow dark/light tab bar button
 	if (pref.scheme == "light" || (pref.scheme == "auto" && lightModeDetected())) {
-		allowDarkLightCheckboxText.innerText = msg("allowDarkTabBar");
+		allowDarkLightCheckboxText.textContent = msg("allowDarkTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
-		allowDarkLightCheckboxText.innerText = msg("allowLightTabBar");
+		allowDarkLightCheckboxText.textContent = msg("allowLightTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_bright");
 	}
 }
 
 function setInfoDisplay(reason, additionalInfo = null, infoAction = null) {
 	infoDisplay.className = reason;
-	if (additionalInfo) infoDisplay.querySelector(`[name='${reason}'] .additional_info`).innerText = additionalInfo;
+	if (additionalInfo) infoDisplay.querySelector(`[name='${reason}'] .additional_info`).textContent = additionalInfo;
 	if (infoAction) infoDisplay.querySelector(`[name='${reason}'] .info_action`).onclick = infoAction;
 }
 
