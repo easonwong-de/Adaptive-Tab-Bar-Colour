@@ -17,10 +17,10 @@
 		"type": "module",
 		"persistent": true
 	},
-	"content_scripts": [
+	"atbcs": [
 		{
 			"matches": ["<all_urls>"],
-			"js": ["content_script.js"]
+			"js": ["atbc.js"]
 		}
 	],
 	"options_ui": {

@@ -243,7 +243,7 @@
 		"message": "Klicken Sie auf „Farbe festlegen“, um die Einstellungen zu öffnen und die Tab-Leistenfarbe für Seiten im Zusammenhang mit <b>$1</b> festzulegen<label id='info_action' title='Einstellungen öffnen und Farbe für $1 festlegen'><span>Farbe festlegen</span></label>"
 	},
 
-	"content_script.js": {
+	"atbc.js": {
 		"message": "===================="
 	},
 

@@ -243,7 +243,7 @@
 		"message": "點擊「指定顏色」以開啟設定頁。您可為 <b>$1</b> 相關頁面指定顏色<label id='info_action' title='開啟設定頁來為 $1 相關頁面指定顏色'><span>指定顏色</span></label>"
 	},
 
-	"content_script.js": {
+	"atbc.js": {
 		"message": "===================="
 	},
 

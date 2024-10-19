@@ -1,3 +1,29 @@
+/*
+
+Definitions of some concepts
+
+System colour scheme:
+The colour scheme of the operating system, usually light or dark.
+
+Brouser colour scheme / pref.scheme:
+The "web site appearance" settings of Firefox (controlled by ATBC), can be light, dark, or auto.
+
+vars.scheme:
+The colour scheme derived from both system and brouser colour scheme, can be light or dark.
+It decides whether light theme or dark theme is prefered.
+
+pref.allowDarkLight:
+A setting to decide if a light theme is allowed to be used when vars.scheme is dark, or vice versa.
+
+theme-color / meta theme colour:
+A meta tag defined by some websites, usually static.
+It's sometimes more related to the branding than the appearance of the website.
+
+Theme:
+An object that defines the appearance of the Firefox chrome.
+
+*/
+
 import {
 	default_homeBackground_light,
 	default_homeBackground_dark,
@@ -221,7 +247,7 @@ function initialise() {
 			}
 			// Updating from before v1.7.5
 			// Converts legacy rules to query selector format
-			if (pref.version <= [1, 7, 5]) {
+			if (pref.version < [1, 7, 5]) {
 				for (let domain in pref.reservedColour) {
 					let legacyRule = pref.reservedColour[domain];
 					if (legacyRule.startsWith("TAG_")) {
@@ -258,13 +284,9 @@ function initialise() {
 	});
 }
 
-// When new tab is opened / reloaded
 browser.tabs.onUpdated.addListener(update);
-// When switching tabs
 browser.tabs.onActivated.addListener(update);
-// When a tab is attatched to another window
 browser.tabs.onAttached.addListener(update);
-// When a new window is opened
 browser.windows.onFocusChanged.addListener(update);
 
 browser.runtime.onMessage.addListener((message, sender) => {
@@ -325,144 +347,109 @@ function loadPrefAndUpdate() {
 }
 
 /**
+ * Converts an URL to a search key for reservedColour.
+ * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
+ * @returns e.g. for about pages: "about:page", for websites: "addons.mozilla.org", for add-on pages "Add-on ID: ATBC@EasonWong".
+ */
+function getSearchKey(url) {
+	if (url.startsWith("about:")) return Promise.resolve(url.split(/\/|\?/)[0]); // e.g. "about:page"
+	else if (url.startsWith("moz-extension:")) {
+		// Searches for add-on ID
+		// Colours for add-on pages are stored with the add-on ID as their keys
+		let uuid = url.split(/\/|\?/)[2];
+		return new Promise((resolve) => {
+			browser.management.getAll().then((addonList) => {
+				let foundAddonID = false;
+				for (let addon of addonList) {
+					if (addon.type != "extension" || !addon.hostPermissions) continue;
+					for (let host of addon.hostPermissions) {
+						if (!host.startsWith("moz-extension:") || uuid != host.split(/\/|\?/)[2]) continue;
+						resolve(`Add-on ID: ${addon.id}`);
+						foundAddonID = true;
+						break;
+					}
+					if (foundAddonID) break;
+				}
+			});
+		});
+	}
+	// In case of a regular website, returns its domain, e.g. "addons.mozilla.org"
+	else return Promise.resolve(url.split(/\/|\?/)[2]);
+}
+
+/**
  * Updates the colour for a window.
  * @param {tabs.Tab} tab The tab the window is showing.
  */
 function updateEachWindow(tab) {
 	let url = tab.url;
 	let windowId = tab.windowId;
-	if (url.startsWith("view-source:")) {
-		// Visiting brouser's internal files (content script blocked)
-		setFrameColour(windowId, "PLAINTEXT");
-	} else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
-		// Visiting brouser's internal files (content script blocked)
-		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
-			setFrameColour(windowId, "PLAINTEXT");
-		} else if (url.endsWith(".png") || url.endsWith(".jpg")) {
-			setFrameColour(windowId, "IMAGEVIEWER");
-		} else {
-			setFrameColour(windowId, "SYSTEM");
-		}
+	// Visiting brouser's internal files (content script blocked)
+	if (url.startsWith("view-source:")) setFrameColour(windowId, "PLAINTEXT");
+	// Visiting brouser's internal files (content script blocked)
+	else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
+		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) setFrameColour(windowId, "PLAINTEXT");
+		else if (url.endsWith(".png") || url.endsWith(".jpg")) setFrameColour(windowId, "IMAGEVIEWER");
+		else setFrameColour(windowId, "SYSTEM");
 	} else {
 		// Visiting normal websites, PDF viewer (content script blocked), websites that failed to load, or local files
 		// WIP: add support for setting colours for about:pages
 		// WIP: add support for regex / wildcard characters
 		getSearchKey(url).then((key) => {
 			let reversedVarsScheme = vars.scheme == "light" ? "dark" : "light";
-			if (reservedColour_aboutPage[vars.scheme][key]) {
-				// For prefered scheme there's a reserved colour
-				setFrameColour(windowId, rgba(reservedColour_aboutPage[vars.scheme][key]), vars.scheme == "dark");
-			} else if (reservedColour_aboutPage[reversedVarsScheme][key]) {
-				// Site has reserved colour in the other mode
-				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversedVarsScheme][key]), reversedVarsScheme == "dark");
-			} else if (url.startsWith("about:")) {
-				setFrameColour(windowId, "DEFAULT");
-			} else if (key.startsWith("Add-on ID: ") && vars.reservedColour[key]) {
-				let frameColour = rgba(vars.reservedColour[key]);
-				setFrameColour(windowId, frameColour);
-			} else if (url.startsWith("moz-extension:")) {
-				setFrameColour(windowId, "ADDON");
-			} else {
-				// Sends pref to content script and tests if the script is responsive
-				// The content script sends colour back by themselves
-				browser.tabs.sendMessage(
-					tab.id,
-					{
-						reason: "COLOUR_REQUEST",
-						dynamic: pref.dynamic,
-						noThemeColour: pref.noThemeColour,
-						reservedColour: vars.reservedColour,
-					},
-					(response) => {
-						if (response) {
-							// The colour is successfully returned
-							return null;
-						} else if (url.startsWith("data:image")) {
-							// Content script is blocked on data:pages
-							// Viewing an image on data:image
-							console.log(url + "\nMight be image viewer.");
-							setFrameColour(windowId, "IMAGEVIEWER");
-						} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-							// When viewing a pdf file, Firefox blocks content script
-							console.log(url + "\nMight be pdf viewer.");
-							setFrameColour(windowId, "PDFVIEWER");
-						} else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
-							// The page probably failed to load
-							// Content script is also blocked on website that failed to load
-							console.log(url + "\nTab failed to load.");
-							setFrameColour(windowId, "DEFAULT");
-						} else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) {
-							// When viewing plain text online, Firefox blocks content script
-							// In this case, the tab title is the same as the URL
-							console.log(url + "\nMight be plain text viewer.");
-							setFrameColour(windowId, "PLAINTEXT");
-						} else {
-							console.error(url + "\nNo connection to content script.");
-							setFrameColour(windowId, "FALLBACK");
-						}
-					}
-				);
-			}
+			// For prefered scheme there's a reserved colour
+			if (reservedColour_aboutPage[vars.scheme][key]) setFrameColour(windowId, rgba(reservedColour_aboutPage[vars.scheme][key]));
+			// Site has reserved colour only in the other mode, and it's allowed to change mode
+			else if (reservedColour_aboutPage[reversedVarsScheme][key] && pref.allowDarkLight)
+				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversedVarsScheme][key]));
+			// If changing mode is not allowed
+			else if (url.startsWith("about:")) setFrameColour(windowId, "DEFAULT");
+			else if (key.startsWith("Add-on ID: ") && vars.reservedColour[key]) setFrameColour(windowId, rgba(vars.reservedColour[key]));
+			else if (url.startsWith("moz-extension:")) setFrameColour(windowId, "ADDON");
+			else contactTab(tab);
 		});
 	}
 }
 
 /**
- * Gets the search key for reservedColour (webpage).
- * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
- * @returns e.g. for about pages: "about:page", for websites: "addons.mozilla.org", for add-on pages "Add-on ID: ATBC@EasonWong".
+ * Sends pref to tab and tests if the content script is responsive. If so, The tab will then send colour back by itself.
+ * @param {tabs.Tab} tab the tab to contact.
  */
-function getSearchKey(url) {
-	if (url.startsWith("about:")) {
-		return Promise.resolve(url.split(/\/|\?/)[0]); // e.g. "about:page"
-	} else if (url.startsWith("moz-extension:")) {
-		// Searches for add-on ID
-		// Colours for add-on pages are stored with the add-on ID as their keys
-		let uuid = url.split(/\/|\?/)[2];
-		return new Promise((resolve) => {
-			browser.management.getAll().then((addonList) => {
-				let breakLoop = false;
-				for (let addon of addonList) {
-					if (addon.type == "extension" && addon.hostPermissions) {
-						for (let host of addon.hostPermissions) {
-							if (host.startsWith("moz-extension:") && uuid == host.split(/\/|\?/)[2]) {
-								resolve(`Add-on ID: ${addon.id}`);
-								breakLoop = true;
-								break;
-							}
-						}
-					}
-					if (breakLoop) break;
-				}
-			});
-		});
-	} else {
-		// In case of a regular website, returns its domain, e.g. "addons.mozilla.org"
-		return Promise.resolve(url.split(/\/|\?/)[2]);
-	}
+function contactTab(tab) {
+	let url = tab.url;
+	let windowId = tab.windowId;
+	browser.tabs.sendMessage(
+		tab.id,
+		{
+			reason: "COLOUR_REQUEST",
+			dynamic: pref.dynamic,
+			noThemeColour: pref.noThemeColour,
+			reservedColour: vars.reservedColour,
+		},
+		(response) => {
+			// The colour is successfully returned
+			if (response) return null;
+			// Viewing an image on data:image (content script is blocked on data:pages)
+			else if (url.startsWith("data:image")) setFrameColour(windowId, "IMAGEVIEWER");
+			// When viewing a PDF file, Firefox blocks content script
+			else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) setFrameColour(windowId, "PDFVIEWER");
+			// The page probably failed to load (content script is also blocked on website that failed to load)
+			else if (tab.favIconUrl?.startsWith("chrome:")) setFrameColour(windowId, "DEFAULT");
+			// When viewing plain text online, Firefox blocks content script
+			// In this case, the tab title is the same as the URL
+			else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) setFrameColour(windowId, "PLAINTEXT");
+			// Uses fallback colour
+			else setFrameColour(windowId, "FALLBACK");
+		}
+	);
 }
 
 /**
  * Changes tab bar to the appointed colour (with windowId).
- *
- * allowDarkLight: true => normal;
- *
- * allowDarkLight: false, scheme: dark, darkMode: true => normal;
- *
- * allowDarkLight: false, scheme: light, darkMode: false => normal;
- *
- * allowDarkLight: false, scheme: dark, darkMode: false => dark;
- *
- * allowDarkLight: false, scheme: light, darkMode: true => light;
- *
- * if colour is empty, then roll back to default colour.
- *
  * @param {number} windowId The ID of the window.
- * @param {object | string} colour The colour to change to (in rgb object) or a command string.
- * Command strings are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT"
- * @param {boolean} darkMode Decides text colour. Leaves "null" to let add-on prefs decide.
+ * @param {object | string} colour The colour to change to (in rgb object) or a command string. If colour is empty, rolls back to default colour. Command strings are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
  */
-function setFrameColour(windowId, colour, darkMode) {
+function setFrameColour(windowId, colour) {
 	// "darkMode" being null means the colour is not light or dark. If so, set "darkMode" following the settings
 	// "darkMode" decides the text colour
 	if (darkMode == null) darkMode = vars.scheme == "dark";

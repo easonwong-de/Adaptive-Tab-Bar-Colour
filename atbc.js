@@ -1,18 +1,6 @@
 // Sends colour in RGBA object to background.js
 // If A in RGBA is not 1, falls back to default colour.
 
-// Default colour lookup table
-const default_reservedColour = Object.freeze({
-	"apnews.com": "IGNORE_THEME",
-	"developer.mozilla.org": "IGNORE_THEME",
-	"www.facebook.com": "UN_IGNORE_THEME",
-	"github.com": "IGNORE_THEME",
-	"mail.google.com": "QS_div.wl",
-	"open.spotify.com": "#000000",
-	"www.linkedin.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME",
-});
-
 // Settings cache: updated on message
 var dynamic = true;
 var noThemeColour = true;
@@ -24,7 +12,18 @@ var reservedColour = null;
 function cachePref(pref) {
 	dynamic = pref.dynamic;
 	noThemeColour = pref.noThemeColour;
-	reservedColour = Object.assign({}, pref.custom ? pref.reservedColour : default_reservedColour);
+	reservedColour = pref.custom
+		? pref.reservedColour
+		: {
+				"apnews.com": "IGNORE_THEME",
+				"developer.mozilla.org": "IGNORE_THEME",
+				"www.facebook.com": "UN_IGNORE_THEME",
+				"github.com": "IGNORE_THEME",
+				"mail.google.com": "QS_div.wl",
+				"open.spotify.com": "#000000",
+				"www.linkedin.com": "IGNORE_THEME",
+				"www.spiegel.de": "IGNORE_THEME",
+		  };
 	setDynamicUpdate(dynamic);
 	return dynamic != null && noThemeColour != null && reservedColour != null;
 }
@@ -308,9 +307,9 @@ function findComputedColour() {
  * @returns The colour of the element in object, transparent if null.
  */
 function getColourFromElement(element) {
-	if (element == null) return rgba([0, 0, 0, 0]);
+	if (!element) return rgba([0, 0, 0, 0]);
 	let colour = getComputedStyle(element).backgroundColor;
-	return colour == null ? rgba([0, 0, 0, 0]) : rgba(colour);
+	return colour ? rgba(colour) : rgba([0, 0, 0, 0]);
 }
 
 /**

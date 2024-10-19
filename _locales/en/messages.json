@@ -279,7 +279,7 @@
 		"message": "Open settings and specify a colour to pages related to the add-on"
 	},
 
-	"content_script.js": {
+	"atbc.js": {
 		"message": "===================="
 	},
 
