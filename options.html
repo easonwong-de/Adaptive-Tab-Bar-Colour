@@ -5,27 +5,36 @@
 		<link href="../options.css" rel="stylesheet" type="text/css" />
 	</head>
 
+	<pre>
+		<svg class="bin" viewBox="0 0 24 24">
+			<polyline points="3 6 5 6 21 6"></polyline>
+			<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+			<line x1="10" y1="11" x2="10" y2="17"></line>
+			<line x1="14" y1="11" x2="14" y2="17"></line>
+		</svg>
+		<svg class="warning" viewBox="0 0 24 24">
+			<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+			<line x1="12" y1="9" x2="12" y2="13"></line>
+			<line x1="12" y1="17" x2="12.01" y2="17"></line>
+		</svg>
+	</pre>
+
 	<body class="dark">
 		<div id="loading_wrapper">
 			<div id="loading" data-text="loading">Loading…</div>
 			<p id="reinstall_tip" data-text="reinstallTip">
-				Preference data could be corrupted. Please remove the add-on, and re-install the add-on after rebooting
-				Firefox. I’m sorry for your inconvenience!
+				Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for
+				your inconvenience!
 			</p>
-			<h1>&nbsp;</h1>
-			<h1>&nbsp;</h1>
-			<h1>&nbsp;</h1>
-			<h1>&nbsp;</h1>
-			<h1>&nbsp;</h1>
 		</div>
 		<div id="settings" hidden="true">
 			<div class="tab_wrapper">
 				<input type="radio" name="tab_switch" id="tab_switch_1" class="tab_switch" checked />
-				<label for="tab_switch_1" class="tab_label" data-text="general">General</label>
+				<label for="tab_switch_1" class="tab_label" data-text="general"></label>
 				<input type="radio" name="tab_switch" id="tab_switch_2" class="tab_switch" />
-				<label for="tab_switch_2" class="tab_label" data-text="customisation">Customisation</label>
+				<label for="tab_switch_2" class="tab_label" data-text="customisation"></label>
 				<input type="radio" name="tab_switch" id="tab_switch_3" class="tab_switch" />
-				<label for="tab_switch_3" class="tab_label" data-text="advanced">Advanced</label>
+				<label for="tab_switch_3" class="tab_label" data-text="advanced"></label>
 				<hr />
 				<div id="tab_1" class="tab">
 					<h2 data-text="colourSchemePreference">Colour scheme preference</h2>
@@ -78,36 +87,25 @@
 					</h2>
 				</div>
 				<div id="tab_2" class="tab">
-					<!-- <div id="cus_overlay">
-						<h2 data-text="overlay">Overlay</h2>
-						<h3>
-							<label for="overlay_opacity_factor" class="TenEm" data-text="opacityFactor">Opacity factor</label>
-							<input type="range" id="overlay_opacity_factor" min="0" max="1" step="0.1" value="0.2" />
-						</h3>
-						<h3>
-							<label for="overlay_opacity_threshold" class="TenEm" data-text="opacityThreshold">Threshold</label>
-							<input type="range" id="overlay_opacity_threshold" min="0" max="1" step="0.1" value="0.1" />
-						</h3>
-					</div> -->
 					<div id="cus_tabbar">
 						<h2 data-text="tabBar">Tab bar</h2>
 						<h3>
-							<label for="tabbar_color" class="TenEm" data-text="background">Background</label>
+							<label for="tabbar_color" data-text="background">Background</label>
 							<input type="range" id="tabbar_color" min="0" max="0.2" step="0.05" value="0" />
 						</h3>
 						<h3>
-							<label for="tab_selected_color" class="TenEm" data-text="selectedTab">Selected tab</label>
+							<label for="tab_selected_color" data-text="selectedTab">Selected tab</label>
 							<input type="range" id="tab_selected_color" min="0" max="0.2" step="0.05" value="0" />
 						</h3>
 					</div>
 					<div id="cus_toolbar">
 						<h2 data-text="toolbar">Toolbar</h2>
 						<h3>
-							<label for="toolbar_color" class="TenEm" data-text="background">Background</label>
+							<label for="toolbar_color" data-text="background">Background</label>
 							<input type="range" id="toolbar_color" min="0" max="0.2" step="0.05" value="0" />
 						</h3>
 						<h3>
-							<label for="toolbar_border_bottom_color" class="TenEm" data-text="border">Border</label>
+							<label for="toolbar_border_bottom_color" data-text="border">Border</label>
 							<input
 								type="range"
 								id="toolbar_border_bottom_color"
@@ -121,11 +119,11 @@
 					<div id="cus_urlbar">
 						<h2 data-text="URLBar">URL bar</h2>
 						<h3>
-							<label for="toolbar_field_color" class="TenEm" data-text="background">Background</label>
+							<label for="toolbar_field_color" data-text="background">Background</label>
 							<input type="range" id="toolbar_field_color" min="0" max="0.2" step="0.05" value="0.05" />
 						</h3>
 						<h3>
-							<label for="toolbar_field_focus_color" class="TenEm" data-text="backgroundOnFocus"
+							<label for="toolbar_field_focus_color" data-text="backgroundOnFocus"
 								>Background on focus</label
 							>
 							<input
@@ -141,22 +139,22 @@
 					<div id="cus_sidebar">
 						<h2 data-text="sidebar">Sidebar</h2>
 						<h3>
-							<label for="sidebar_color" class="TenEm" data-text="background">Background</label>
+							<label for="sidebar_color" data-text="background">Background</label>
 							<input type="range" id="sidebar_color" min="0" max="0.2" step="0.05" value="0.05" />
 						</h3>
 						<h3>
-							<label for="sidebar_border_color" class="TenEm" data-text="border">Border</label>
+							<label for="sidebar_border_color" data-text="border">Border</label>
 							<input type="range" id="sidebar_border_color" min="0" max="0.2" step="0.05" value="0.05" />
 						</h3>
 					</div>
 					<div id="cus_popup">
 						<h2 data-text="popUp">Pop-up</h2>
 						<h3>
-							<label for="popup_color" class="TenEm" data-text="background">Background</label>
+							<label for="popup_color" data-text="background">Background</label>
 							<input type="range" id="popup_color" min="0" max="0.2" step="0.05" value="0.05" />
 						</h3>
 						<h3>
-							<label for="popup_border_color" class="TenEm" data-text="border">Border</label>
+							<label for="popup_border_color" data-text="border">Border</label>
 							<input type="range" id="popup_border_color" min="0" max="0.2" step="0.05" value="0.05" />
 						</h3>
 					</div>
@@ -173,7 +171,7 @@
 							<tr>
 								<td colspan="2"><span data-text="homepageColourLight">Homepage colour: light</span></td>
 								<td>
-									<input class="FiveEm" type="color" value="#FFFFFF" id="light_color" />
+									<input type="color" value="#FFFFFF" id="light_color" />
 								</td>
 								<td>
 									<button id="reset_light_color" data-title="reset">
@@ -187,7 +185,7 @@
 							<tr>
 								<td colspan="2"><span data-text="homepageColourDark">Homepage colour: dark</span></td>
 								<td>
-									<input class="FiveEm" type="color" value="#2B2A33" id="dark_color" />
+									<input type="color" value="#2B2A33" id="dark_color" />
 								</td>
 								<td>
 									<button id="reset_dark_color" data-title="reset">
@@ -201,7 +199,7 @@
 							<tr>
 								<td colspan="2"><span data-text="fallbackColourLight">Fallback colour: light</span></td>
 								<td>
-									<input class="FiveEm" type="color" value="#FFFFFF" id="light_fallback_color" />
+									<input type="color" value="#FFFFFF" id="light_fallback_color" />
 								</td>
 								<td>
 									<button id="reset_light_fallback_color" data-title="reset">
@@ -215,7 +213,7 @@
 							<tr>
 								<td colspan="2"><span data-text="fallbackColourDark">Fallback colour: dark</span></td>
 								<td>
-									<input class="FiveEm" type="color" value="#2B2A33" id="dark_fallback_color" />
+									<input type="color" value="#2B2A33" id="dark_fallback_color" />
 								</td>
 								<td>
 									<button id="reset_dark_fallback_color" data-title="reset">

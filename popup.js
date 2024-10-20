@@ -88,8 +88,6 @@ let allowDarkLightCheckboxText = document.getElementById("force_mode_caption");
 let dynamicCheckbox = document.getElementById("dynamic");
 let noThemeColourCheckbox = document.getElementById("no_theme_color");
 let moreCustomButton = document.getElementById("custom_popup");
-let infoDisplay = document.getElementById("info_display_wrapper");
-let infoAction = document.getElementById("info_action");
 
 settings.hidden = true;
 loading.hidden = false;
@@ -220,9 +218,12 @@ function updatePopup() {
 }
 
 function setInfoDisplay(reason, additionalInfo = null, infoAction = null) {
+	let infoDisplay = document.getElementById("info_display_wrapper");
+	let additionalInfoDisplay = infoDisplay.querySelector(`[name='${reason}'] .additional_info`);
+	let infoActionButton = infoDisplay.querySelector(`[name='${reason}'] .info_action`);
 	infoDisplay.className = reason;
-	if (additionalInfo) infoDisplay.querySelector(`[name='${reason}'] .additional_info`).textContent = additionalInfo;
-	if (infoAction) infoDisplay.querySelector(`[name='${reason}'] .info_action`).onclick = infoAction;
+	if (additionalInfo) additionalInfoDisplay.textContent = additionalInfo;
+	if (infoAction) infoActionButton.onclick = infoAction;
 }
 
 function loadInfoForWebpage(tab) {
@@ -239,19 +240,23 @@ function loadInfoForWebpage(tab) {
 		},
 		(RESPONSE_INFO) => {
 			if (RESPONSE_INFO) {
-				setInfoDisplay(RESPONSE_INFO.reason);
-
-				if (infoAction) {
-					// Need to change
-					infoAction.onclick = () => {
-						pref.reservedColour[domain] = infoAction.dataset.action;
+				let reason = RESPONSE_INFO.reason;
+				let action = null;
+				if (reason == "theme_unignored" || reason == "theme_used") action = "IGNORE_THEME";
+				else if (reason == "theme_ignored") action = "UN_IGNORE_THEME";
+				if (action) {
+					setInfoDisplay(reason, null, () => {
+						pref.reservedColour[domain] = action;
 						currentReservedColour = pref.reservedColour;
-						browser.storage.local.set({
-							custom: true,
-							reservedColour: pref.reservedColour,
-						});
-						load();
-					};
+						browser.storage.local
+							.set({
+								custom: true,
+								reservedColour: pref.reservedColour,
+							})
+							.then(load);
+					});
+				} else {
+					setInfoDisplay(reason);
 				}
 			} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) setInfoDisplay("pdf_viewer");
 			else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) setInfoDisplay("protected_page");
@@ -287,12 +292,13 @@ function loadInfoForAddonPage(tab) {
 }
 
 function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
-	if (colour) currentReservedColour[`Add-on ID: ${addonID}`] = colour;
-	else delete currentReservedColour[`Add-on ID: ${addonID}`];
+	if (colour) pref.reservedColour[`Add-on ID: ${addonID}`] = colour;
+	else delete pref.reservedColour[`Add-on ID: ${addonID}`];
+	currentReservedColour = pref.reservedColour;
 	browser.storage.local
 		.set({
 			custom: true,
-			reservedColour: currentReservedColour,
+			reservedColour: pref.reservedColour,
 		})
 		.then(() => {
 			if (openOptionsPage) browser.runtime.openOptionsPage();

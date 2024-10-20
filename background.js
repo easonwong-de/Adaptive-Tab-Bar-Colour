@@ -69,7 +69,7 @@ var current = {
 	homeBackground_dark: rgba(default_homeBackground_dark),
 	fallbackColour_light: rgba(default_fallbackColour_light),
 	fallbackColour_dark: rgba(default_fallbackColour_dark),
-	reservedColour: default_reservedColour,
+	reservedColour: {},
 };
 
 // Colour codes

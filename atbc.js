@@ -24,7 +24,7 @@ var RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
  *
  * All possible "reason"s are: protected_page, home_page, text_viewer, image_viewer, pdf_viewer, error_occurred, fallback_colour, colour_picked, addon_default, addon_recom, addon_specify, theme_unignored, theme_missing, theme_ignored, theme_used, using_qs, colour_specified
  */
-var RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, action: null };
+var RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, colour: null };
 
 // Sends colour to background as soon as the page loads
 browser.storage.local.get((pref) => {
@@ -149,7 +149,7 @@ function findColour() {
 	// Resets RESPONSE_COLOUR
 	RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
 	// Resets RESPONSE_INFO
-	RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, action: null };
+	RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, colour: null };
 	// If there isn't a colour reserved for the website, then find one from it
 	if (!findColourReserved()) findColourUnreserved();
 	return true;
@@ -372,5 +372,6 @@ function rgba(colour) {
 	else return null;
 }
 
+RESPONSE_INFO.colour = RESPONSE_COLOUR;
 // Passes colouring info to pop-up
 RESPONSE_INFO;

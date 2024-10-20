@@ -2,16 +2,16 @@ body {
 	margin: 0;
 	padding: 0;
 	background-color: var(--bg-body);
-	color: var(--color);
+	color: var(--colour);
 }
 
 body.light {
-	--color: #000000;
-	--color-link: rgb(55, 141, 255);
-	--color-link-hover: rgb(46, 96, 223);
+	--colour: #000000;
+	--colour-link: rgb(55, 141, 255);
+	--colour-link-hover: rgb(46, 96, 223);
 	--color-link-active: rgb(19, 34, 117);
-	--color-accent: rgb(34, 100, 216);
-	--color-line: rgb(215, 215, 219);
+	--colour-accent: rgb(34, 100, 216);
+	--colour-line: rgb(215, 215, 219);
 	--bg-body: #ffffff;
 	--bg-button: rgb(239, 239, 242);
 	--bg-button-hover: rgb(223, 223, 229);
@@ -19,12 +19,12 @@ body.light {
 }
 
 body.dark {
-	--color: #ffffff;
-	--color-link: rgb(59, 221, 255);
-	--color-link-hover: rgb(128, 235, 255);
+	--colour: #ffffff;
+	--colour-link: rgb(59, 221, 255);
+	--colour-link-hover: rgb(128, 235, 255);
 	--color-link-active: rgb(169, 242, 255);
-	--color-accent: rgb(98, 218, 251);
-	--color-line: rgb(78, 77, 84);
+	--colour-accent: rgb(98, 218, 251);
+	--colour-line: rgb(78, 77, 84);
 	--bg-body: rgb(35, 34, 42);
 	--bg-button: rgb(43, 42, 50);
 	--bg-button-hover: rgb(82, 82, 94);
@@ -40,12 +40,6 @@ body.dark {
 	animation-duration: 0s;
 	animation-delay: 5s;
 	white-space: normal;
-}
-
-td {
-	padding-inline: 2px;
-	padding-block: 4px;
-	vertical-align: middle;
 }
 
 span {
@@ -74,26 +68,18 @@ h3 {
 button,
 select {
 	height: 1.75em;
+	width: 1.75em;
 	border: none;
 	border-radius: 4px;
 	vertical-align: middle;
-}
-
-button {
-	width: 1.75em;
+	background-color: var(--bg-button);
+	color: var(--colour);
 	text-align: center;
 }
 
 select {
 	width: 11em;
 	padding-left: 0.25em;
-	vertical-align: middle;
-}
-
-button,
-select {
-	background-color: var(--bg-button);
-	color: var(--color);
 }
 
 button:hover,
@@ -108,6 +94,7 @@ select:active {
 
 svg {
 	fill: none;
+	stroke: var(--colour);
 	stroke-width: 2px;
 	stroke-linecap: round;
 	stroke-linejoin: round;
@@ -117,18 +104,14 @@ svg {
 	margin: auto;
 }
 
-svg {
-	stroke: var(--color);
-}
-
 a:link,
 a:visited {
-	color: var(--color-link);
+	color: var(--colour-link);
 	text-decoration: none;
 }
 
 a:hover {
-	color: var(--color-link-hover);
+	color: var(--colour-link-hover);
 	text-decoration: underline;
 }
 
@@ -140,32 +123,8 @@ a:active {
 hr {
 	margin-block: 1rem;
 	height: 1px;
-	background-color: var(--color-line);
+	background-color: var(--colour-line);
 	border-width: 0;
-}
-
-.FiveEm {
-	display: inline-block;
-	overflow: hidden;
-	width: 5em !important;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.TenEm {
-	display: inline-block;
-	overflow: hidden;
-	width: 10em !important;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.TenFiveEm {
-	display: inline-block;
-	overflow: hidden;
-	width: clamp(5em, 15em, calc(100vw - 20em)) !important;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 }
 
 input[type="range"] {
@@ -188,7 +147,7 @@ input[type="text"] {
 	width: 100%;
 	height: 1.75em;
 	background-color: inherit;
-	border: solid 1px var(--color-line);
+	border: solid 1px var(--colour-line);
 	border-radius: 4px;
 	color: inherit;
 	vertical-align: middle;
@@ -197,12 +156,7 @@ input[type="text"] {
 input[type="checkbox"],
 input[type="radio"],
 input[type="range"] {
-	accent-color: var(--color-accent);
-}
-
-div.sponsor {
-	display: flex;
-	gap: 0.5em;
+	accent-color: var(--colour-accent);
 }
 
 .tab_switch {
@@ -231,37 +185,32 @@ div.sponsor {
 
 .tab_switch:checked + .tab_label {
 	background-color: var(--bg-button-active);
-	color: var(--color-link);
+	color: var(--colour-link);
 }
 
 .tab {
 	display: none;
+	flex-direction: column;
 	width: 100%;
 }
 
-#tab_switch_1:checked ~ #tab_1 {
-	display: block;
-}
-
-#tab_switch_2:checked ~ #tab_2 {
+#tab_switch_1:checked ~ #tab_1,
+#tab_switch_2:checked ~ #tab_2,
+#tab_switch_3:checked ~ #tab_3 {
 	display: flex;
 }
 
-#tab_switch_3:checked ~ #tab_3 {
-	display: block;
+/* Preference tab */
+
+div.sponsor {
+	display: flex;
+	gap: 0.5em;
 }
 
-#custom_options.disabled {
-	opacity: 0.5;
-}
-
-#custom_options.disabled select,
-#custom_options.disabled button,
-#custom_options.disabled input {
-	pointer-events: none;
-}
+/* Customisation tab */
 
 #tab_2 {
+	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 1rem;
 }
@@ -342,12 +291,23 @@ div.sponsor {
 
 .web-appearance-choice,
 .web-appearance-choice img {
-	border: 1px solid var(--color-line);
+	border: 1px solid var(--colour-line);
 }
 
 .web-appearance-choice-footer {
 	overflow-wrap: anywhere;
 	display: flex;
 	padding: 0.5em;
-	border-top: 1px solid var(--color-line);
+	border-top: 1px solid var(--colour-line);
+}
+
+/* Advanced tab */
+
+#custom_options.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+#custom_options.disabled * {
+	pointer-events: none;
 }
