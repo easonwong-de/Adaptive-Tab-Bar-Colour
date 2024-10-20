@@ -7,15 +7,15 @@
  * Browser colour scheme / pref.scheme:
  * The "website appearance" settings of Firefox (controlled by ATBC), which can be light, dark, or auto.
  *
- * vars.scheme:
+ * current.scheme:
  * The colour scheme derived from both system and browser colour schemes, which can be light or dark.
  * It decides whether the light theme or dark theme is preferred.
  *
  * pref.allowDarkLight:
- * A setting that decides if a light theme is allowed to be used when vars.scheme is dark, or vice versa.
+ * A setting that decides if a light theme is allowed to be used when current.scheme is dark, or vice versa.
  *
  * theme-color / meta theme colour:
- * A meta tag defined by some websites, usually static.
+ * A colour defined with a meta tag by some websites, usually static.
  * It is often more related to the branding than the appearance of the website.
  *
  * Theme:
@@ -63,7 +63,7 @@ var pref = {
 };
 
 // Variables
-var vars = {
+var current = {
 	scheme: "light", // only "light" or "dark"
 	homeBackground_light: rgba(default_homeBackground_light),
 	homeBackground_dark: rgba(default_homeBackground_dark),
@@ -75,9 +75,9 @@ var vars = {
 // Colour codes
 var colourCode = {
 	light: {
-		HOME: vars.homeBackground_light,
-		FALLBACK: vars.fallbackColour_light,
-		IMAGEVIEWER: vars.fallbackColour_light,
+		HOME: current.homeBackground_light,
+		FALLBACK: current.fallbackColour_light,
+		IMAGEVIEWER: current.fallbackColour_light,
 		PLAINTEXT: rgba([236, 236, 236, 1]),
 		SYSTEM: rgba([255, 255, 255, 1]),
 		ADDON: rgba([236, 236, 236, 1]),
@@ -85,9 +85,9 @@ var colourCode = {
 		DEFAULT: rgba([255, 255, 255, 1]),
 	},
 	dark: {
-		HOME: vars.homeBackground_dark,
-		FALLBACK: vars.fallbackColour_dark,
-		IMAGEVIEWER: vars.fallbackColour_dark,
+		HOME: current.homeBackground_dark,
+		FALLBACK: current.fallbackColour_dark,
+		IMAGEVIEWER: current.fallbackColour_dark,
 		PLAINTEXT: rgba([50, 50, 50, 1]),
 		SYSTEM: rgba([30, 30, 30, 1]),
 		ADDON: rgba([50, 50, 50, 1]),
@@ -128,31 +128,31 @@ function verifyPref() {
 }
 
 /**
- * Sets "vars" values after pref being loaded.
+ * Sets "current" values after pref being loaded.
  */
-function updateVars() {
+function updateCurrent() {
 	if (pref.custom) {
-		vars.homeBackground_light = rgba(pref.homeBackground_light);
-		vars.homeBackground_dark = rgba(pref.homeBackground_dark);
-		vars.fallbackColour_light = rgba(pref.fallbackColour_light);
-		vars.fallbackColour_dark = rgba(pref.fallbackColour_dark);
-		vars.reservedColour = pref.reservedColour;
+		current.homeBackground_light = rgba(pref.homeBackground_light);
+		current.homeBackground_dark = rgba(pref.homeBackground_dark);
+		current.fallbackColour_light = rgba(pref.fallbackColour_light);
+		current.fallbackColour_dark = rgba(pref.fallbackColour_dark);
+		current.reservedColour = pref.reservedColour;
 	} else {
-		vars.homeBackground_light = rgba(default_homeBackground_light);
-		vars.homeBackground_dark = rgba(default_homeBackground_dark);
-		vars.fallbackColour_light = rgba(default_fallbackColour_light);
-		vars.fallbackColour_dark = rgba(default_fallbackColour_dark);
-		vars.reservedColour = default_reservedColour;
+		current.homeBackground_light = rgba(default_homeBackground_light);
+		current.homeBackground_dark = rgba(default_homeBackground_dark);
+		current.fallbackColour_light = rgba(default_fallbackColour_light);
+		current.fallbackColour_dark = rgba(default_fallbackColour_dark);
+		current.reservedColour = {};
 	}
 	switch (pref.scheme) {
 		case "light":
-			vars.scheme = "light";
+			current.scheme = "light";
 			break;
 		case "dark":
-			vars.scheme = "dark";
+			current.scheme = "dark";
 			break;
 		case "auto":
-			vars.scheme = systemColourScheme();
+			current.scheme = systemColourScheme();
 			break;
 	}
 }
@@ -160,7 +160,7 @@ function updateVars() {
 initialise();
 
 /**
- * Initialises the pref and vars.
+ * Initialises the pref and current.
  * If storedPref.scheme, storedPref.force (legacy), or storedPref.allowDarkLight is missing, opens the option page.
  */
 function initialise() {
@@ -211,7 +211,7 @@ function initialise() {
 		// If the browser version is below v95, disables allowDarkLight
 		if (checkVersion() < 95) pref.allowDarkLight = false;
 		setBrowserColourScheme(pref.scheme);
-		updateVars();
+		updateCurrent();
 		update();
 		browser.storage.local.set(pref).then(() => {
 			// If the add-on is installed for the first time, opens the option page
@@ -283,7 +283,7 @@ function loadPrefAndUpdate() {
 	browser.storage.local.get((storedPref) => {
 		pref = storedPref;
 		setBrowserColourScheme(pref.scheme);
-		updateVars();
+		updateCurrent();
 		update();
 	});
 }
@@ -339,17 +339,17 @@ function updateEachWindow(tab) {
 		// WIP: add support for setting colours for about:pages
 		// WIP: add support for regex / wildcard characters
 		getSearchKey(url).then((key) => {
-			let reversedVarsScheme = vars.scheme == "light" ? "dark" : "light";
+			let reversedCurrentScheme = current.scheme == "light" ? "dark" : "light";
 			// For preferred scheme there's a reserved colour
-			if (reservedColour_aboutPage[vars.scheme][key])
-				setFrameColour(windowId, rgba(reservedColour_aboutPage[vars.scheme][key]));
+			if (reservedColour_aboutPage[current.scheme][key])
+				setFrameColour(windowId, rgba(reservedColour_aboutPage[current.scheme][key]));
 			// Site has reserved colour only in the other mode, and it's allowed to change mode
-			else if (reservedColour_aboutPage[reversedVarsScheme][key] && pref.allowDarkLight)
-				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversedVarsScheme][key]));
+			else if (reservedColour_aboutPage[reversedCurrentScheme][key] && pref.allowDarkLight)
+				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversedCurrentScheme][key]));
 			// If changing mode is not allowed
 			else if (url.startsWith("about:")) setFrameColour(windowId, "DEFAULT");
-			else if (key.startsWith("Add-on ID: ") && vars.reservedColour[key])
-				setFrameColour(windowId, rgba(vars.reservedColour[key]));
+			else if (key.startsWith("Add-on ID: ") && current.reservedColour[key])
+				setFrameColour(windowId, rgba(current.reservedColour[key]));
 			else if (url.startsWith("moz-extension:")) setFrameColour(windowId, "ADDON");
 			else contactTab(tab);
 		});
@@ -369,7 +369,7 @@ function contactTab(tab) {
 			reason: "COLOUR_REQUEST",
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
-			reservedColour: vars.reservedColour,
+			reservedColour: current.reservedColour,
 		},
 		(response) => {
 			// The colour is successfully returned
@@ -392,7 +392,7 @@ function contactTab(tab) {
 function getSuitableColourScheme(colour) {
 	let eligibility_dark = contrastRatio(colour, rgba([255, 255, 255, 1])) > pref.minContrast_dark;
 	let eligibility_light = contrastRatio(colour, rgba([0, 0, 0, 1])) > pref.minContrast_light;
-	if (vars.scheme == "light") {
+	if (current.scheme == "light") {
 		if (eligibility_light) return "light";
 		if (pref.allowDarkLight && eligibility_dark) return "dark";
 	} else {
@@ -408,7 +408,7 @@ function getSuitableColourScheme(colour) {
  * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
  */
 function setFrameColour(windowId, colour) {
-	if (typeof colour == "string") applyTheme(windowId, colourCode[vars.scheme][colour], vars.scheme);
+	if (typeof colour == "string") applyTheme(windowId, colourCode[current.scheme][colour], current.scheme);
 	else {
 		let suitableColourScheme = getSuitableColourScheme(colour);
 		if (suitableColourScheme) applyTheme(windowId, colour, suitableColourScheme);

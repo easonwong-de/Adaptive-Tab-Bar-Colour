@@ -1,5 +1,4 @@
 // Sends colour in RGBA object to background.js
-// If A in RGBA is not 1, falls back to default colour.
 
 // Settings cache: updated on message
 var dynamic = true;
@@ -12,18 +11,7 @@ var reservedColour = null;
 function cachePref(pref) {
 	dynamic = pref.dynamic;
 	noThemeColour = pref.noThemeColour;
-	reservedColour = pref.custom
-		? pref.reservedColour
-		: {
-				"apnews.com": "IGNORE_THEME",
-				"developer.mozilla.org": "IGNORE_THEME",
-				"www.facebook.com": "UN_IGNORE_THEME",
-				"github.com": "IGNORE_THEME",
-				"mail.google.com": "QS_div.wl",
-				"open.spotify.com": "#000000",
-				"www.linkedin.com": "IGNORE_THEME",
-				"www.spiegel.de": "IGNORE_THEME",
-		  };
+	reservedColour = pref.custom ? pref.reservedColour : {};
 	setDynamicUpdate(dynamic);
 	return dynamic != null && noThemeColour != null && reservedColour != null;
 }

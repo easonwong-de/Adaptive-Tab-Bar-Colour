@@ -42,14 +42,14 @@ var pref = {
 };
 
 // Current colour lookup table
-var reservedColour;
+var currentReservedColour;
 
 /**
  * Caches pref into local variables and checks integrity.
  */
 function cachePref(storedPref) {
-	pref = storedPref;
-	reservedColour = Object.assign({}, pref.custom ? pref.reservedColour : default_reservedColour);
+	pref = Object.assign({}, storedPref);
+	currentReservedColour = pref.custom ? pref.reservedColour : {};
 	return (
 		pref.scheme != null &&
 		pref.allowDarkLight != null &&
@@ -235,7 +235,7 @@ function loadInfoForWebpage(tab) {
 			reason: "INFO_REQUEST",
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
-			reservedColour: pref.reservedColour,
+			reservedColour: currentReservedColour,
 		},
 		(RESPONSE_INFO) => {
 			if (RESPONSE_INFO) {
@@ -245,7 +245,7 @@ function loadInfoForWebpage(tab) {
 					// Need to change
 					infoAction.onclick = () => {
 						pref.reservedColour[domain] = infoAction.dataset.action;
-						reservedColour = pref.reservedColour;
+						currentReservedColour = pref.reservedColour;
 						browser.storage.local.set({
 							custom: true,
 							reservedColour: pref.reservedColour,
@@ -270,7 +270,7 @@ function loadInfoForAddonPage(tab) {
 			if (addon.type != "extension" || !addon.hostPermissions) continue;
 			for (let host of addon.hostPermissions) {
 				if (!host.startsWith("moz-extension:") || uuid != host.split(/\/|\?/)[2]) continue;
-				else if (reservedColour[`Add-on ID: ${addon.id}`])
+				else if (currentReservedColour[`Add-on ID: ${addon.id}`])
 					setInfoDisplay("addon_default", addon.name, () => specifyColourForAddon(addon.id, null));
 				else if (recommendedColour_addon[addon.id])
 					setInfoDisplay("addon_recom", addon.name, () =>
@@ -287,12 +287,12 @@ function loadInfoForAddonPage(tab) {
 }
 
 function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
-	if (colour) reservedColour[`Add-on ID: ${addonID}`] = colour;
-	else delete reservedColour[`Add-on ID: ${addonID}`];
+	if (colour) currentReservedColour[`Add-on ID: ${addonID}`] = colour;
+	else delete currentReservedColour[`Add-on ID: ${addonID}`];
 	browser.storage.local
 		.set({
 			custom: true,
-			reservedColour: reservedColour,
+			reservedColour: currentReservedColour,
 		})
 		.then(() => {
 			if (openOptionsPage) browser.runtime.openOptionsPage();
