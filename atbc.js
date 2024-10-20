@@ -124,7 +124,11 @@ var onStyleInjection = new MutationObserver((mutations) => {
 	mutations.forEach((mutation) => {
 		if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName == "STYLE") findAndSendColour();
 		else if (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName == "STYLE") findAndSendColour();
-		else if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName == "META" && mutation.addedNodes[0].name == "theme-color")
+		else if (
+			mutation.addedNodes.length > 0 &&
+			mutation.addedNodes[0].nodeName == "META" &&
+			mutation.addedNodes[0].name == "theme-color"
+		)
 			onThemeColourChange.observe(document.querySelector("meta[name=theme-color]"), { attributes: true });
 	});
 });
@@ -167,7 +171,8 @@ function findColour() {
  * Finds colour and send to background.
  */
 function findAndSendColour() {
-	if (document.visibilityState == "visible" && findColour()) browser.runtime.sendMessage({ reason: "COLOUR_UPDATE", colour: RESPONSE_COLOUR });
+	if (document.visibilityState == "visible" && findColour())
+		browser.runtime.sendMessage({ reason: "COLOUR_UPDATE", colour: RESPONSE_COLOUR });
 }
 
 /**
@@ -224,7 +229,10 @@ function findColourReserved() {
  * Detects image viewer and text viewer, otherwise looks for theme-color / computed colour.
  */
 function findColourUnreserved() {
-	if (getComputedStyle(document.documentElement).backgroundImage == `url("chrome://global/skin/media/imagedoc-darknoise.png")`) {
+	if (
+		getComputedStyle(document.documentElement).backgroundImage ==
+		`url("chrome://global/skin/media/imagedoc-darknoise.png")`
+	) {
 		// Image viewer
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url, which will be dealt with in background.js
@@ -252,7 +260,9 @@ function findColourUnreserved() {
  */
 function findThemeColour() {
 	let colourScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-	let metaThemeColour = document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`);
+	let metaThemeColour = document.querySelector(
+		`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`
+	);
 	if (metaThemeColour == null) metaThemeColour = document.querySelector(`meta[name="theme-color"]`);
 	if (metaThemeColour != null) {
 		RESPONSE_COLOUR = rgba(metaThemeColour.content);
@@ -340,7 +350,14 @@ function overlayColour(colourTop, colourBottom) {
  */
 function rgba(colour) {
 	if (typeof colour == "string") {
-		if (colour == "DEFAULT" || colour == "IMAGEVIEWER" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
+		if (
+			colour == "DEFAULT" ||
+			colour == "IMAGEVIEWER" ||
+			colour == "PLAINTEXT" ||
+			colour == "HOME" ||
+			colour == "FALLBACK"
+		)
+			return colour;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		let colour_temp = canvas.fillStyle;

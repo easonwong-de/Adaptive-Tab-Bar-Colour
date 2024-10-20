@@ -6,7 +6,14 @@
  */
 export function rgba(colour) {
 	if (typeof colour == "string") {
-		if (colour == "DEFAULT" || colour == "IMAGEVIEWER" || colour == "PLAINTEXT" || colour == "HOME" || colour == "FALLBACK") return colour;
+		if (
+			colour == "DEFAULT" ||
+			colour == "IMAGEVIEWER" ||
+			colour == "PLAINTEXT" ||
+			colour == "HOME" ||
+			colour == "FALLBACK"
+		)
+			return colour;
 		var canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		let colour_temp = canvas.fillStyle;
@@ -52,22 +59,17 @@ export function contrastRatio(colour1, colour2) {
 
 /**
  * Dims or lightens colour.
- * @param {object} colour Colour to process, in rgb object.
+ * @param {object} colour Colour to process, in rgb(a) object.
  * @param {number} dim between -1.0 (black) to 1.0 (white).
  * @returns Dimmed or lightened colour string e.g. "rgb(xxx)".
  */
 export function dimColour(colour, dim) {
-	let result = Object.assign({}, colour);
-	if (dim > 0) {
-		result.r = colour.r + dim * (255 - colour.r);
-		result.g = colour.g + dim * (255 - colour.g);
-		result.b = colour.b + dim * (255 - colour.b);
-	} else if (dim < 0) {
-		result.r = (dim + 1) * colour.r;
-		result.g = (dim + 1) * colour.g;
-		result.b = (dim + 1) * colour.b;
-	}
-	return `rgb(${Math.floor(result.r)}, ${Math.floor(result.g)}, ${Math.floor(result.b)})`;
+	if (dim > 0)
+		return `rgb(${dim * 255 + (1 - dim) * colour.r}, ${dim * 255 + (1 - dim) * colour.g}, ${
+			dim * 255 + (1 - dim) * colour.b
+		})`;
+	if (dim < 0) return `rgb(${(dim + 1) * colour.r}, ${(dim + 1) * colour.g}, ${(dim + 1) * colour.b})`;
+	return `rgb(${colour.r}, ${colour.g}, ${colour.b})`;
 }
 
 /**

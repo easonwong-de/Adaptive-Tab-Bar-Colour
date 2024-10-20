@@ -97,7 +97,7 @@ loading.hidden = false;
 load();
 
 // Updates popup's colour upon theme updates
-browser.theme.onUpdated.addListener(updatePopupColour);
+browser.theme.onUpdated.addListener(updatePopup);
 // Loads prefs when popup is opened
 document.addEventListener("pageshow", load);
 // Syncs prefs on popup
@@ -115,7 +115,7 @@ function load() {
 			allowDarkLightCheckbox.checked = pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
-			updatePopupColour();
+			updatePopup();
 			loading.hidden = true;
 			settings.hidden = false;
 		} else browser.runtime.sendMessage({ reason: "INIT_REQUEST" });
@@ -153,7 +153,7 @@ colourSchemeAuto.addEventListener("input", () => {
 function changeColourScheme(scheme) {
 	pref.scheme = scheme;
 	browser.storage.local.set({ scheme: scheme }).then(applySettings);
-	updatePopupColour();
+	updatePopup();
 }
 
 // If it's below v95.0, grey out "allow..." option
@@ -189,15 +189,17 @@ function applySettings() {
 /**
  * Updates infobox's content and popup's text and background colour.
  */
-function updatePopupColour() {
+function updatePopup() {
 	// Sets text in info box
 	browser.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
 		if (domain in protectedDomain) setInfoDisplay("protected_page");
-		else if (url.startsWith("http:") || url.startsWith("https:") || url.startsWith("file:")) loadInfoForWebpage(tabs[0]);
+		else if (url.startsWith("http:") || url.startsWith("https:") || url.startsWith("file:"))
+			loadInfoForWebpage(tabs[0]);
 		else if (url.startsWith("moz-extension:")) loadInfoForAddonPage(tabs[0]);
-		else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab")) setInfoDisplay("home_page");
+		else if (url.startsWith("about:firefoxview") || url.startsWith("about:home") || url.startsWith("about:newtab"))
+			setInfoDisplay("home_page");
 		else setInfoDisplay("protected_page");
 	});
 	// Sets text and background colour for the popup
@@ -253,7 +255,8 @@ function loadInfoForWebpage(tab) {
 				}
 			} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) setInfoDisplay("pdf_viewer");
 			else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) setInfoDisplay("protected_page");
-			else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) setInfoDisplay("text_viewer");
+			else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title))
+				setInfoDisplay("text_viewer");
 			else setInfoDisplay("error_occurred");
 		}
 	);
@@ -270,8 +273,11 @@ function loadInfoForAddonPage(tab) {
 				else if (reservedColour[`Add-on ID: ${addon.id}`])
 					setInfoDisplay("addon_default", addon.name, () => specifyColourForAddon(addon.id, null));
 				else if (recommendedColour_addon[addon.id])
-					setInfoDisplay("addon_recom", addon.name, () => specifyColourForAddon(addon.id, recommendedColour_addon[addon.id]));
-				else setInfoDisplay("addon_specify", addon.name, () => specifyColourForAddon(addon.id, "#333333", true));
+					setInfoDisplay("addon_recom", addon.name, () =>
+						specifyColourForAddon(addon.id, recommendedColour_addon[addon.id])
+					);
+				else
+					setInfoDisplay("addon_specify", addon.name, () => specifyColourForAddon(addon.id, "#333333", true));
 				foundAssociatedAddon = true;
 				break;
 			}

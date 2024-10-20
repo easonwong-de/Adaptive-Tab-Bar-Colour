@@ -65,11 +65,35 @@ var pref = {
 // Variables
 var vars = {
 	scheme: "light", // only "light" or "dark"
-	homeBackground_light: default_homeBackground_light,
-	homeBackground_dark: default_homeBackground_dark,
-	fallbackColour_light: default_fallbackColour_light,
-	fallbackColour_dark: default_fallbackColour_dark,
+	homeBackground_light: rgba(default_homeBackground_light),
+	homeBackground_dark: rgba(default_homeBackground_dark),
+	fallbackColour_light: rgba(default_fallbackColour_light),
+	fallbackColour_dark: rgba(default_fallbackColour_dark),
 	reservedColour: default_reservedColour,
+};
+
+// Colour codes
+var colourCode = {
+	light: {
+		HOME: vars.homeBackground_light,
+		FALLBACK: vars.fallbackColour_light,
+		IMAGEVIEWER: vars.fallbackColour_light,
+		PLAINTEXT: rgba([236, 236, 236, 1]),
+		SYSTEM: rgba([255, 255, 255, 1]),
+		ADDON: rgba([236, 236, 236, 1]),
+		PDFVIEWER: rgba([249, 249, 250, 1]),
+		DEFAULT: rgba([255, 255, 255, 1]),
+	},
+	dark: {
+		HOME: vars.homeBackground_dark,
+		FALLBACK: vars.fallbackColour_dark,
+		IMAGEVIEWER: vars.fallbackColour_dark,
+		PLAINTEXT: rgba([50, 50, 50, 1]),
+		SYSTEM: rgba([30, 30, 30, 1]),
+		ADDON: rgba([50, 50, 50, 1]),
+		PDFVIEWER: rgba([56, 56, 61, 1]),
+		DEFAULT: rgba([28, 27, 34, 1]),
+	},
 };
 
 /**
@@ -132,89 +156,6 @@ function updateVars() {
 			break;
 	}
 }
-
-var adaptive_themes = {
-	light: {
-		colors: {
-			// Tabbar & tab
-			frame: "rgb(255, 255, 255)",
-			frame_inactive: "rgb(255, 255, 255)",
-			tab_selected: "rgba(0, 0, 0, 0.15)",
-			ntp_background: "rgb(255, 255, 255)",
-			// Toolbar
-			toolbar: "rgba(0, 0, 0, 0)",
-			toolbar_top_separator: "rgba(0, 0, 0, 0)",
-			toolbar_bottom_separator: "rgba(0, 0, 0, 0)",
-			// URL bar
-			toolbar_field: "rgb(242, 242, 242)",
-			toolbar_field_border: "rgba(0, 0, 0, 0)",
-			toolbar_field_focus: "rgb(242, 242, 242)",
-			toolbar_field_border_focus: "rgb(130, 180, 245)",
-			// Sidebar
-			sidebar: "rgb(255, 255, 255)",
-			sidebar_border: "rgba(0, 0, 0, 0)",
-			// Popup
-			popup: "rgb(255, 255, 255)",
-			popup_border: "rgba(0, 0, 0, 0)",
-			// Static
-			tab_background_text: "rgb(30, 30, 30)",
-			tab_loading: "rgba(0, 0, 0, 0)",
-			tab_line: "rgba(0, 0, 0, 0)",
-			ntp_text: "rgb(0, 0, 0)",
-			toolbar_text: "rgb(0, 0, 0)",
-			toolbar_field_text: "rgba(0, 0, 0)",
-			popup_text: "rgb(0, 0, 0)",
-			sidebar_text: "rgb(0, 0, 0)",
-			button_background_hover: "rgba(0, 0, 0, 0.10)",
-			button_background_active: "rgba(0, 0, 0, 0.15)",
-			icons: "rgb(30, 30, 30)",
-		},
-		properties: {
-			color_scheme: "light",
-			content_color_scheme: "auto",
-		},
-	},
-	dark: {
-		colors: {
-			// Tabbar & tab
-			frame: "rgb(28, 27, 34)",
-			frame_inactive: "rgb(28, 27, 34)",
-			tab_selected: "rgba(255, 255, 255, 0.15)",
-			ntp_background: "rgb(28, 27, 34)",
-			// Toolbar
-			toolbar: "rgba(0, 0, 0, 0)",
-			toolbar_top_separator: "rgba(0, 0, 0, 0)",
-			toolbar_bottom_separator: "rgba(255, 255, 255, 0)",
-			// URL bar
-			toolbar_field: "rgb(39, 38, 45)",
-			toolbar_field_border: "rgba(0, 0, 0, 0)",
-			toolbar_field_focus: "rgb(39, 38, 45)",
-			toolbar_field_border_focus: "rgb(70, 118, 160)",
-			// Sidebar
-			sidebar: "rgb(28, 27, 34)",
-			sidebar_border: "rgba(0, 0, 0, 0)",
-			// Popup
-			popup: "rgb(28, 27, 34)",
-			popup_border: "rgba(0, 0, 0, 0)",
-			// Static
-			tab_background_text: "rgb(225, 225, 225)",
-			tab_loading: "rgba(0, 0, 0, 0)",
-			tab_line: "rgba(0, 0, 0, 0)",
-			ntp_text: "rgb(255, 255, 255)",
-			toolbar_text: "rgb(255, 255, 255)",
-			toolbar_field_text: "rgb(255, 255, 255)",
-			popup_text: "rgb(225, 225, 225)",
-			sidebar_text: "rgb(225, 225, 225)",
-			button_background_active: "rgba(255, 255, 255, 0.15)",
-			button_background_hover: "rgba(255, 255, 255, 0.10)",
-			icons: "rgb(225, 225, 225)",
-		},
-		properties: {
-			color_scheme: "dark",
-			content_color_scheme: "auto",
-		},
-	},
-};
 
 initialise();
 
@@ -303,11 +244,16 @@ browser.runtime.onMessage.addListener((message, sender) => {
 });
 
 // Light mode match media, which is supposed to detect the system level colour scheme
-// Seems to not work on Firefox Developer Edition
 const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
 if (lightModeDetection)
-	// System colour scheme changes
 	lightModeDetection.onchange = () => {
+		if (pref.scheme == "auto") loadPrefAndUpdate();
+	};
+
+// Dark mode match media, which is supposed to detect the system level colour scheme
+const darkModeDetection = window.matchMedia("(prefers-color-scheme: dark)");
+if (darkModeDetection)
+	darkModeDetection.onchange = () => {
 		if (pref.scheme == "auto") loadPrefAndUpdate();
 	};
 
@@ -316,7 +262,7 @@ if (lightModeDetection)
  * @returns "light" if it cannot be detected.
  */
 function systemColourScheme() {
-	return lightModeDetection && lightModeDetection.matches ? "light" : "dark";
+	return lightModeDetection?.matches ? "light" : "dark";
 }
 
 /**
@@ -384,7 +330,8 @@ function updateEachWindow(tab) {
 	if (url.startsWith("view-source:")) setFrameColour(windowId, "PLAINTEXT");
 	// Visiting browser's internal files (content script blocked)
 	else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
-		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) setFrameColour(windowId, "PLAINTEXT");
+		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js"))
+			setFrameColour(windowId, "PLAINTEXT");
 		else if (url.endsWith(".png") || url.endsWith(".jpg")) setFrameColour(windowId, "IMAGEVIEWER");
 		else setFrameColour(windowId, "SYSTEM");
 	} else {
@@ -394,13 +341,15 @@ function updateEachWindow(tab) {
 		getSearchKey(url).then((key) => {
 			let reversedVarsScheme = vars.scheme == "light" ? "dark" : "light";
 			// For preferred scheme there's a reserved colour
-			if (reservedColour_aboutPage[vars.scheme][key]) setFrameColour(windowId, rgba(reservedColour_aboutPage[vars.scheme][key]));
+			if (reservedColour_aboutPage[vars.scheme][key])
+				setFrameColour(windowId, rgba(reservedColour_aboutPage[vars.scheme][key]));
 			// Site has reserved colour only in the other mode, and it's allowed to change mode
 			else if (reservedColour_aboutPage[reversedVarsScheme][key] && pref.allowDarkLight)
 				setFrameColour(windowId, rgba(reservedColour_aboutPage[reversedVarsScheme][key]));
 			// If changing mode is not allowed
 			else if (url.startsWith("about:")) setFrameColour(windowId, "DEFAULT");
-			else if (key.startsWith("Add-on ID: ") && vars.reservedColour[key]) setFrameColour(windowId, rgba(vars.reservedColour[key]));
+			else if (key.startsWith("Add-on ID: ") && vars.reservedColour[key])
+				setFrameColour(windowId, rgba(vars.reservedColour[key]));
 			else if (url.startsWith("moz-extension:")) setFrameColour(windowId, "ADDON");
 			else contactTab(tab);
 		});
@@ -450,199 +399,114 @@ function getSuitableColourScheme(colour) {
 		if (eligibility_dark) return "dark";
 		if (pref.allowDarkLight && eligibility_light) return "light";
 	}
-	return "fallback";
+	return false;
 }
 
 /**
  * Changes tab bar to the appointed colour. If the colour is not eligible, uses fallback colour.
  * @param {number} windowId The ID of the window.
- * @param {object | string} colour The colour to change to (in rgb object) or a command string. If colour is empty, rolls back to default colour. Command strings are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
+ * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
  */
 function setFrameColour(windowId, colour) {
-	switch (colour) {
-		case "HOME":
-			// Home page and new tab
-			if (darkMode) {
-				changeThemePara(vars.homeBackground_dark, "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(vars.homeBackground_light, "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "FALLBACK":
-			// Fallback colour
-			if (darkMode) {
-				changeThemePara(vars.fallbackColour_dark, "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(vars.fallbackColour_light, "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "IMAGEVIEWER":
-			// Image viewer
-			if (darkMode) {
-				changeThemePara(rgba([33, 33, 33, 1]), "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				// Using fallback colour here
-				changeThemePara(vars.fallback_light, "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "PLAINTEXT":
-			// Plain text viewer
-			if (darkMode) {
-				changeThemePara(rgba([50, 50, 50, 1]), "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(rgba([236, 236, 236, 1]), "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "SYSTEM":
-			// Internal page
-			if (darkMode) {
-				changeThemePara(rgba([30, 30, 30, 1]), "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(rgba([255, 255, 255, 1]), "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "ADDON":
-			// Add-on page
-			if (darkMode) {
-				changeThemePara(rgba([50, 50, 50, 1]), "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(rgba([236, 236, 236, 1]), "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "PDFVIEWER":
-			// PDF viewer
-			if (darkMode) {
-				changeThemePara(rgba([56, 56, 61, 1]), "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(rgba([249, 249, 250, 1]), "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		case "DEFAULT":
-			// Reset to default colour
-			if (darkMode) {
-				changeThemePara(rgba([28, 27, 34, 1]), "dark");
-				applyTheme(windowId, adaptive_themes["dark"]);
-			} else {
-				changeThemePara(rgba([255, 255, 255, 1]), "light");
-				applyTheme(windowId, adaptive_themes["light"]);
-			}
-			break;
-		default:
-			if (
-				!pref.allowDarkLight ||
-				(pref.allowDarkLight && vars.scheme == "dark" && darkMode) ||
-				(pref.allowDarkLight && vars.scheme == "light" && !darkMode)
-			) {
-				/* // Adaptive colouring based on contrast between the colour and the base colour
-				let baseColour = vars.scheme == "dark" ? rgba(default_homeBackground_dark) : rgba(default_homeBackground_light);
-				// Compute the contrast between the colour and the base colour
-				let contrast = contrastFactor(colour, baseColour);
-				// Adjust the overlay opacity based on the contrast
-				colour.a = contrastAdjustedOverlayOpacity(contrast, pref.overlay_opacity_factor, pref.overlay_opacity_threshold);
-				// Compute the overlay colour
-				let result = overlayColour(colour, baseColour); */
-				if (darkMode) {
-					changeThemePara(colour, "dark");
-					applyTheme(windowId, adaptive_themes["dark"]);
-				} else {
-					changeThemePara(colour, "light");
-					applyTheme(windowId, adaptive_themes["light"]);
-				}
-			} else if (!colour || pref.allowDarkLight) {
-				// Force colouring (use fallback colour)
-				if (vars.scheme == "dark") {
-					changeThemePara(vars.fallback_dark, "dark");
-					applyTheme(windowId, adaptive_themes["dark"]);
-				} else {
-					changeThemePara(vars.fallback_light, "light");
-					applyTheme(windowId, adaptive_themes["light"]);
-				}
-			}
-			break;
+	if (typeof colour == "string") applyTheme(windowId, colourCode[vars.scheme][colour], vars.scheme);
+	else {
+		let suitableColourScheme = getSuitableColourScheme(colour);
+		if (suitableColourScheme) applyTheme(windowId, colour, suitableColourScheme);
+		else setFrameColour(windowId, "FALLBACK");
 	}
 }
 
 /**
- * Adjusts the parameters in adaptive_themes.
- * @param {object} colour Colour of the frame.
- * @param {string} scheme Colour scheme, "dark", "light", or "darknoise".
+ * Constructs and applies a theme to a given window.
+ * @param {number} windowId The ID of the window.
+ * @param {object} colour Colour of the frame, in rgba object.
+ * @param {string} colourScheme "light" or "dark".
  */
-// WIP: consider using HSL format for quicker transformation
-function changeThemePara(colour, scheme) {
-	let frameColour,
-		tabSelectedColour,
-		ntpColour,
-		toolbarColour,
-		toolbarBottomSeparatorColour,
-		toolbarFieldColour,
-		toolbarFieldFocusColour,
-		sidebarColour,
-		sidebarBorderColour,
-		popupColour,
-		popupBorderColour;
-	switch (scheme) {
-		case "dark":
-			frameColour = dimColour(colour, pref.tabbar);
-			tabSelectedColour = dimColour(colour, pref.tabSelected);
-			ntpColour = dimColour(colour, 0);
-			toolbarColour = dimColour(colour, pref.toolbar);
-			toolbarBottomSeparatorColour = dimColour(colour, pref.toolbarBorderBottom + pref.toolbar);
-			toolbarFieldColour = dimColour(colour, pref.toolbarField);
-			toolbarFieldFocusColour = dimColour(colour, pref.toolbarFieldOnFocus);
-			sidebarColour = dimColour(colour, pref.sidebar);
-			sidebarBorderColour = dimColour(colour, pref.sidebar + pref.sidebarBorder);
-			popupColour = dimColour(colour, pref.popup);
-			popupBorderColour = dimColour(colour, pref.popup + pref.popupBorder);
-			break;
-		case "light":
-			frameColour = dimColour(colour, -pref.tabbar * 1.5);
-			tabSelectedColour = dimColour(colour, -pref.tabSelected * 1.5);
-			ntpColour = dimColour(colour, 0);
-			toolbarColour = dimColour(colour, -pref.toolbar * 1.5);
-			toolbarBottomSeparatorColour = dimColour(colour, (-pref.toolbarBorderBottom - pref.toolbar) * 1.5);
-			toolbarFieldColour = dimColour(colour, -pref.toolbarField * 1.5);
-			toolbarFieldFocusColour = dimColour(colour, -pref.toolbarFieldOnFocus * 1.5);
-			sidebarColour = dimColour(colour, -pref.sidebar * 1.5);
-			sidebarBorderColour = dimColour(colour, (-pref.sidebar - pref.sidebarBorder) * 1.5);
-			popupColour = dimColour(colour, -pref.popup * 1.5);
-			popupBorderColour = dimColour(colour, (-pref.popup - pref.popupBorder) * 1.5);
-			break;
+function applyTheme(windowId, colour, colourScheme) {
+	if (colourScheme == "light") {
+		let theme = {
+			colors: {
+				// Tabbar & tab
+				frame: dimColour(colour, -pref.tabbar * 1.5),
+				frame_inactive: dimColour(colour, (-pref.tabbar - 0.05) * 1.5),
+				tab_selected: dimColour(colour, -pref.tabSelected * 1.5),
+				ntp_background: dimColour(colour, 0),
+				// Toolbar
+				toolbar: dimColour(colour, -pref.toolbar * 1.5),
+				toolbar_top_separator: "rgba(0, 0, 0, 0)",
+				toolbar_bottom_separator: dimColour(colour, (-pref.toolbarBorderBottom - pref.toolbar) * 1.5),
+				// URL bar
+				toolbar_field: dimColour(colour, -pref.toolbarField * 1.5),
+				toolbar_field_border: "rgba(0, 0, 0, 0)",
+				toolbar_field_focus: dimColour(colour, -pref.toolbarFieldOnFocus * 1.5),
+				toolbar_field_border_focus: "rgb(130, 180, 245)",
+				// Sidebar & popup
+				sidebar: dimColour(colour, -pref.sidebar * 1.5),
+				sidebar_border: dimColour(colour, (-pref.sidebar - pref.sidebarBorder) * 1.5),
+				popup: dimColour(colour, -pref.popup * 1.5),
+				popup_border: dimColour(colour, (-pref.popup - pref.popupBorder) * 1.5),
+				// Static
+				tab_background_text: "rgb(30, 30, 30)",
+				tab_loading: "rgba(0, 0, 0, 0)",
+				tab_line: "rgba(0, 0, 0, 0)",
+				ntp_text: "rgb(0, 0, 0)",
+				toolbar_text: "rgb(0, 0, 0)",
+				toolbar_field_text: "rgba(0, 0, 0)",
+				popup_text: "rgb(0, 0, 0)",
+				sidebar_text: "rgb(0, 0, 0)",
+				button_background_hover: "rgba(0, 0, 0, 0.10)",
+				button_background_active: "rgba(0, 0, 0, 0.15)",
+				icons: "rgb(30, 30, 30)",
+			},
+			properties: {
+				color_scheme: "light",
+				content_color_scheme: "auto",
+			},
+		};
+		browser.theme.update(windowId, theme);
 	}
-	adaptive_themes[scheme]["colors"]["frame"] = frameColour;
-	adaptive_themes[scheme]["colors"]["frame_inactive"] = frameColour;
-	adaptive_themes[scheme]["colors"]["tab_selected"] = tabSelectedColour;
-	adaptive_themes[scheme]["colors"]["ntp_background"] = ntpColour;
-	adaptive_themes[scheme]["colors"]["toolbar"] = toolbarColour;
-	adaptive_themes[scheme]["colors"]["toolbar_bottom_separator"] = toolbarBottomSeparatorColour;
-	adaptive_themes[scheme]["colors"]["toolbar_field"] = toolbarFieldColour;
-	adaptive_themes[scheme]["colors"]["toolbar_field_focus"] = toolbarFieldFocusColour;
-	adaptive_themes[scheme]["colors"]["sidebar"] = sidebarColour;
-	adaptive_themes[scheme]["colors"]["sidebar_border"] = sidebarBorderColour;
-	adaptive_themes[scheme]["colors"]["popup"] = popupColour;
-	adaptive_themes[scheme]["colors"]["popup_border"] = popupBorderColour;
-}
-
-/**
- * Applies theme to certain window.
- * @param {number} windowId The ID of the target window.
- * @param {object} theme The theme to apply.
- */
-function applyTheme(windowId, theme) {
-	browser.theme.update(windowId, theme);
+	if (colourScheme == "dark") {
+		let theme = {
+			colors: {
+				// Tabbar & tab
+				frame: dimColour(colour, pref.tabbar),
+				frame_inactive: dimColour(colour, pref.tabbar + 0.05),
+				tab_selected: dimColour(colour, pref.tabSelected),
+				ntp_background: dimColour(colour, 0),
+				// Toolbar
+				toolbar: dimColour(colour, pref.toolbar),
+				toolbar_top_separator: "rgba(0, 0, 0, 0)",
+				toolbar_bottom_separator: dimColour(colour, pref.toolbarBorderBottom + pref.toolbar),
+				// URL bar
+				toolbar_field: dimColour(colour, pref.toolbarField),
+				toolbar_field_border: "rgba(0, 0, 0, 0)",
+				toolbar_field_focus: dimColour(colour, pref.toolbarFieldOnFocus),
+				toolbar_field_border_focus: "rgb(70, 118, 160)",
+				// Sidebar
+				sidebar: dimColour(colour, pref.sidebar),
+				sidebar_border: dimColour(colour, pref.sidebar + pref.sidebarBorder),
+				popup: dimColour(colour, pref.popup),
+				popup_border: dimColour(colour, pref.popup + pref.popupBorder),
+				// Static
+				tab_background_text: "rgb(225, 225, 225)",
+				tab_loading: "rgba(0, 0, 0, 0)",
+				tab_line: "rgba(0, 0, 0, 0)",
+				ntp_text: "rgb(255, 255, 255)",
+				toolbar_text: "rgb(255, 255, 255)",
+				toolbar_field_text: "rgb(255, 255, 255)",
+				popup_text: "rgb(225, 225, 225)",
+				sidebar_text: "rgb(225, 225, 225)",
+				button_background_active: "rgba(255, 255, 255, 0.15)",
+				button_background_hover: "rgba(255, 255, 255, 0.10)",
+				icons: "rgb(225, 225, 225)",
+			},
+			properties: {
+				color_scheme: "dark",
+				content_color_scheme: "auto",
+			},
+		};
+		browser.theme.update(windowId, theme);
+	}
 }
 
 /**

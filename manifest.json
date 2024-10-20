@@ -17,7 +17,7 @@
 		"type": "module",
 		"persistent": true
 	},
-	"atbcs": [
+	"content_script": [
 		{
 			"matches": ["<all_urls>"],
 			"js": ["atbc.js"]
