@@ -17,6 +17,7 @@ function cachePref(pref) {
 }
 
 // Initializes response colour
+// WIP: consider merging response_colour and response_info
 var RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
 
 /**

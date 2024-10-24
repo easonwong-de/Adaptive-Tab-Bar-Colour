@@ -23,8 +23,9 @@ var pref = {
 	tabbar: 0,
 	tabSelected: 0.1,
 	toolbar: 0,
-	toolbarBorderBottom: 0,
+	toolbarBorder: 0,
 	toolbarField: 0.05,
+	toolbarFieldBorder: 0.1,
 	toolbarFieldOnFocus: 0.05,
 	sidebar: 0.05,
 	sidebarBorder: 0.05,
@@ -58,7 +59,7 @@ function cachePref(storedPref) {
 		pref.tabbar != null &&
 		pref.tabSelected != null &&
 		pref.toolbar != null &&
-		pref.toolbarBorderBottom != null &&
+		pref.toolbarBorder != null &&
 		pref.toolbarField != null &&
 		pref.toolbarFieldOnFocus != null &&
 		pref.sidebar != null &&
@@ -83,10 +84,10 @@ let settings = document.getElementById("settings");
 let colourSchemeLight = document.getElementById("colour_scheme_light");
 let colourSchemeDark = document.getElementById("colour_scheme_dark");
 let colourSchemeAuto = document.getElementById("colour_scheme_auto");
-let allowDarkLightCheckbox = document.getElementById("allow_dark_light");
+let allowDarkLightCheckbox = document.getElementById("allow-dark-light");
 let allowDarkLightCheckboxText = document.getElementById("force_mode_caption");
 let dynamicCheckbox = document.getElementById("dynamic");
-let noThemeColourCheckbox = document.getElementById("no_theme_color");
+let noThemeColourCheckbox = document.getElementById("no-theme-color");
 let moreCustomButton = document.getElementById("custom_popup");
 
 settings.hidden = true;

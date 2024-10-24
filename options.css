@@ -1,267 +1,299 @@
+html {
+	font-family: sans-serif;
+	--accent-colour: hsl(218, 73%, 49%);
+	--colour-0: hsl(0, 0%, 100%);
+	--colour-1: hsl(240, 10%, 95%);
+	--colour-2: hsl(240, 10%, 90%);
+	--colour-3: hsl(240, 10%, 85%);
+	--colour-4: hsl(240, 10%, 80%);
+	--colour-5: hsl(240, 10%, 75%);
+	--link-colour-active: hsl(231, 72%, 27%);
+	--link-colour-hover: hsl(223, 73%, 53%);
+	--link-colour-normal: hsl(214, 100%, 61%);
+	--text-colour-normal: hsl(0, 0%, 0%);
+	--text-colour-secondary: hsl(0, 0%, 20%);
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		--accent-colour: hsl(193, 95%, 68%);
+		--colour-0: hsl(248, 11%, 15%);
+		--colour-1: hsl(248, 11%, 20%);
+		--colour-2: hsl(248, 11%, 25%);
+		--colour-3: hsl(248, 11%, 30%);
+		--colour-4: hsl(248, 11%, 35%);
+		--colour-5: hsl(248, 11%, 40%);
+		--link-colour-active: hsl(190, 80%, 83%);
+		--link-colour-hover: hsl(190, 80%, 75%);
+		--link-colour-normal: hsl(190, 80%, 62%);
+		--text-colour-normal: hsl(0, 0%, 100%);
+		--text-colour-secondary: hsl(0, 0%, 80%);
+	}
+}
+
 body {
+	background-color: var(--colour-0);
+	color: var(--text-colour-normal);
 	margin: 0;
 	padding: 0;
-	background-color: var(--bg-body);
-	color: var(--colour);
-}
-
-body.light {
-	--colour: #000000;
-	--colour-link: rgb(55, 141, 255);
-	--colour-link-hover: rgb(46, 96, 223);
-	--color-link-active: rgb(19, 34, 117);
-	--colour-accent: rgb(34, 100, 216);
-	--colour-line: rgb(215, 215, 219);
-	--bg-body: #ffffff;
-	--bg-button: rgb(239, 239, 242);
-	--bg-button-hover: rgb(223, 223, 229);
-	--bg-button-active: rgb(207, 207, 216);
-}
-
-body.dark {
-	--colour: #ffffff;
-	--colour-link: rgb(59, 221, 255);
-	--colour-link-hover: rgb(128, 235, 255);
-	--color-link-active: rgb(169, 242, 255);
-	--colour-accent: rgb(98, 218, 251);
-	--colour-line: rgb(78, 77, 84);
-	--bg-body: rgb(35, 34, 42);
-	--bg-button: rgb(43, 42, 50);
-	--bg-button-hover: rgb(82, 82, 94);
-	--bg-button-active: rgb(91, 91, 102);
 }
 
 #reinstall_tip {
-	overflow-wrap: break-word;
-	animation-fill-mode: forwards;
-	opacity: 0;
-	width: 50%;
-	animation-name: appear;
-	animation-duration: 0s;
 	animation-delay: 5s;
+	animation-duration: 0s;
+	animation-fill-mode: forwards;
+	animation-name: appear;
+	opacity: 0;
+	overflow-wrap: break-word;
 	white-space: normal;
-}
-
-span {
-	padding-inline: 0.25em;
-	vertical-align: middle;
-}
-
-h2 {
-	margin-block: 1em;
-	padding: 0;
-	font-size: 14px;
-	font-weight: 600;
-	line-height: normal;
-}
-
-h3 {
-	margin-block: 0.25em;
-	padding: 0;
-	font-size: inherit;
-	font-weight: inherit;
-	line-height: normal;
-	display: flex;
-	align-items: center;
+	width: 50%;
 }
 
 button,
 select {
-	height: 1.75em;
-	width: 1.75em;
+	align-items: center;
+	background-color: var(--colour-2);
 	border: none;
 	border-radius: 4px;
-	vertical-align: middle;
-	background-color: var(--bg-button);
-	color: var(--colour);
+	color: var(--text-colour-normal);
+	display: flex;
+	height: 2rem;
+	justify-content: center;
 	text-align: center;
+	vertical-align: middle;
+	width: 2rem;
 }
 
 select {
+	padding-inline: 0.25em;
 	width: 11em;
-	padding-left: 0.25em;
 }
 
 button:hover,
 select:hover {
-	background-color: var(--bg-button-hover);
+	background-color: var(--colour-3);
 }
 
 button:active,
 select:active {
-	background-color: var(--bg-button-active);
+	background-color: var(--colour-5);
 }
 
 svg {
 	fill: none;
-	stroke: var(--colour);
-	stroke-width: 2px;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-	display: block;
-	width: 1em;
 	height: 1em;
 	margin: auto;
+	stroke: var(--text-colour-normal);
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 2px;
+	width: 1em;
 }
 
 a:link,
 a:visited {
-	color: var(--colour-link);
+	color: var(--link-colour-normal);
 	text-decoration: none;
 }
 
 a:hover {
-	color: var(--colour-link-hover);
+	color: var(--link-colour-hover);
 	text-decoration: underline;
 }
 
 a:active {
-	color: var(--bg-button-active);
+	color: var(--colour-4);
 	text-decoration: underline;
 }
 
 hr {
-	margin-block: 1rem;
-	height: 1px;
-	background-color: var(--colour-line);
+	background-color: var(--colour-3);
 	border-width: 0;
+	height: 1px;
+	margin-block: 1rem;
+	width: 100%;
 }
 
-input[type="range"] {
-	margin-inline: 1em;
-	width: 6em;
+.tab hr {
+	margin: 0;
 }
 
 input[type="color"] {
-	height: 1.5em;
-	padding: 0;
-	cursor: pointer;
-	border: none;
-	vertical-align: middle;
-}
-
-input[type="text"] {
-	padding-inline: 0.25em;
-	outline: none;
-	display: inline-block;
-	width: 100%;
-	height: 1.75em;
-	background-color: inherit;
-	border: solid 1px var(--colour-line);
-	border-radius: 4px;
-	color: inherit;
-	vertical-align: middle;
-}
-
-input[type="checkbox"],
-input[type="radio"],
-input[type="range"] {
-	accent-color: var(--colour-accent);
-}
-
-.tab_switch {
 	display: none;
 }
 
-.tab_label {
-	margin-inline-end: 4px;
-	margin-block-start: 1rem;
-	display: inline-block;
-	padding: 4px 1em;
-	background-color: var(--bg-button);
+input[type="text"] {
+	background-color: inherit;
+	border: solid 1px var(--colour-3);
 	border-radius: 4px;
-	font-size: 14px;
+	color: inherit;
+	display: inline-block;
+	height: 1.75em;
+	outline: none;
+	padding-inline: 0.25em;
+	vertical-align: middle;
+	width: 100%;
+}
+
+input[type="checkbox"] {
+	accent-color: var(--accent-colour);
+	margin-inline-end: 0.5rem;
+}
+
+input[type="radio"],
+input[type="range"] {
+	accent-color: var(--accent-colour);
+	margin: 0;
+}
+
+.grid {
+	display: grid;
+	gap: 1rem;
+}
+
+.two-columns {
+	grid-template-columns: 1fr 1fr;
+}
+
+.tab-switch {
+	display: none;
+}
+
+.tab-label {
+	background-color: var(--colour-1);
+	border-radius: 4px;
+	display: inline-block;
 	font-weight: 600;
+	margin-block-start: 1rem;
+	margin-inline-end: 4px;
+	padding: 4px 1em;
 	text-align: center;
 }
 
-.tab_label:hover {
-	background-color: var(--bg-button-hover);
+.tab-label:hover {
+	background-color: var(--colour-2);
 }
 
-.tab_label:active {
-	background-color: var(--bg-button-active);
+.tab-label:active {
+	background-color: var(--colour-4);
 }
 
-.tab_switch:checked + .tab_label {
-	background-color: var(--bg-button-active);
-	color: var(--colour-link);
+.tab-switch:checked + .tab-label {
+	background-color: var(--colour-3);
+	color: var(--link-colour-normal);
+}
+
+.tab-switch:checked + .tab-label:hover {
+	background-color: var(--colour-4);
 }
 
 .tab {
 	display: none;
-	flex-direction: column;
 	width: 100%;
+	gap: 1rem;
+	flex-direction: column;
 }
 
-#tab_switch_1:checked ~ #tab_1,
-#tab_switch_2:checked ~ #tab_2,
-#tab_switch_3:checked ~ #tab_3 {
+#tab-switch-1:checked ~ #tab-1,
+#tab-switch-2:checked ~ #tab-2,
+#tab-switch-3:checked ~ #tab-3 {
 	display: flex;
 }
-
-/* Preference tab */
 
 div.sponsor {
 	display: flex;
-	gap: 0.5em;
+	gap: 0.5rem;
 }
 
-/* Customisation tab */
-
-#tab_2 {
-	flex-direction: row;
-	flex-wrap: wrap;
-	gap: 1rem;
-}
-
-#tab_2 > div {
-	width: fit-content;
-	padding: 0.1rem 1rem;
-	background-color: var(--bg-button);
+.section {
+	align-items: center;
+	background-color: var(--colour-1);
 	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	padding: 1.25rem;
+	gap: 0.25rem;
 }
+
+.section-title {
+	font-weight: 600;
+}
+
+.section-text {
+	color: var(--text-colour-secondary);
+}
+
+.section-subtitle {
+	align-items: center;
+	display: flex;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: normal;
+	margin-block: 0.25rem;
+	padding: 0;
+}
+
+.slider {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	margin-block-start: 0.5rem;
+}
+
+.slider-title {
+	font-size: 80%;
+	color: var(--text-colour-secondary);
+	text-align: center;
+}
+
+.slider-body {
+	background-color: var(--colour-2);
+	border-radius: 4px;
+	height: 2rem;
+	line-height: 2rem;
+	text-align: center;
+	width: 10rem;
+}
+
+/* General tab */
 
 /* - This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this file,
-   - You can obtain one at http://mozilla.org/MPL/2.0/. */
+   - You can obtain one at http://mozilla.org/MPL/2.0/
+*/
 
 /* preferences.css modified */
-
 #web-appearance-chooser {
 	display: flex;
 	gap: 0.5em;
 }
 
 .web-appearance-choice {
-	overflow: clip;
-	border-radius: 4px;
-}
-
-.web-appearance-choice-image-container {
 	position: relative;
-	padding: 1em;
+	border-radius: 4px;
+	overflow: clip;
 }
 
 .web-appearance-choice-image-container {
-	background-color: var(--bg-button);
+	padding: 1em;
+	background-color: var(--colour-1);
 }
 
 .web-appearance-choice:hover .web-appearance-choice-image-container {
-	background-color: var(--bg-button-hover);
+	background-color: var(--colour-2);
 }
 
 .web-appearance-choice:active .web-appearance-choice-image-container {
-	background-color: var(--bg-button-active);
+	background-color: var(--colour-4);
 }
 
 .web-appearance-choice img {
+	border-radius: 4px;
 	box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.2);
 	content: url("chrome://browser/content/preferences/web-appearance-light.svg");
 	display: block;
-	transform: scaleX(1);
 	margin: 0 2em;
-	border-radius: 4px;
+	transform: scaleX(1);
 }
 
 .web-appearance-choice img.dark-icon {
@@ -269,14 +301,14 @@ div.sponsor {
 }
 
 .web-appearance-choice img.auto-icon {
+	animation-direction: alternate;
+	animation-duration: 2.5s;
+	animation-iteration-count: infinite;
+	animation-name: appear;
+	animation-timing-function: ease-in-out;
 	content: url("chrome://browser/content/preferences/web-appearance-dark.svg");
 	position: absolute;
 	top: 1em;
-	animation-name: appear;
-	animation-duration: 2.5s;
-	animation-timing-function: ease-in-out;
-	animation-iteration-count: infinite;
-	animation-direction: alternate;
 }
 
 @keyframes appear {
@@ -291,23 +323,52 @@ div.sponsor {
 
 .web-appearance-choice,
 .web-appearance-choice img {
-	border: 1px solid var(--colour-line);
+	border: 1px solid var(--colour-3);
 }
 
 .web-appearance-choice-footer {
-	overflow-wrap: anywhere;
+	border-top: 1px solid var(--colour-3);
 	display: flex;
+	align-items: center;
+	overflow-wrap: anywhere;
 	padding: 0.5em;
-	border-top: 1px solid var(--colour-line);
+	gap: 0.5em;
+}
+
+/* Customisation tab */
+
+#tab-2 .column {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+#tab-2 .section {
+	flex: 0 0 auto;
 }
 
 /* Advanced tab */
 
-#custom_options.disabled {
+#custom-options-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+#custom-options-wrapper.disabled {
 	opacity: 0.5;
 	pointer-events: none;
 }
 
-#custom_options.disabled * {
+#custom-options-wrapper.disabled * {
 	pointer-events: none;
+}
+
+#custom-options section {
+	flex-direction: row;
+}
+
+.button-group {
+	display: flex;
+	gap: 0.5rem;
 }

@@ -1,7 +1,7 @@
 body {
-	width: 20em !important;
 	margin: 0;
 	padding: 8px;
+	width: 20em !important;
 }
 
 .light {
@@ -17,10 +17,10 @@ body {
 #info_display_wrapper,
 #loading,
 label {
+	border-radius: 4px;
 	display: block;
 	margin: 0;
 	padding: 0.5em;
-	border-radius: 4px;
 	text-align: left;
 }
 
@@ -29,12 +29,12 @@ label {
 }
 
 #reinstall_tip {
-	overflow-wrap: break-word;
-	animation-fill-mode: forwards;
-	opacity: 0;
-	animation-name: appear;
-	animation-duration: 0s;
 	animation-delay: 5s;
+	animation-duration: 0s;
+	animation-fill-mode: forwards;
+	animation-name: appear;
+	opacity: 0;
+	overflow-wrap: break-word;
 	white-space: normal;
 }
 
@@ -55,8 +55,8 @@ label {
 }
 
 #info_display_wrapper {
-	margin-block-end: 5px;
 	line-height: 1.2em;
+	margin-block-end: 5px;
 }
 
 .light #info_display_wrapper {
@@ -130,17 +130,17 @@ label.info_action {
 }
 
 #scheme_pref_title {
-	text-align: center;
 	font-weight: 600;
 	margin-block: 1em;
+	text-align: center;
 }
 
 .tip {
-	padding-inline: 1em;
-	display: inline-block;
-	margin: 0;
 	border-radius: 5px;
+	display: inline-block;
 	font-size: 50%;
+	margin: 0;
+	padding-inline: 1em;
 	vertical-align: middle;
 }
 
@@ -153,8 +153,8 @@ label.info_action {
 }
 
 hr {
-	height: 1px;
 	border-width: 0;
+	height: 1px;
 }
 
 .light hr {

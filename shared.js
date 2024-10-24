@@ -121,7 +121,7 @@ export const legacyPrefKey = Object.freeze({
 	tabbar_color: "tabbar",
 	tab_selected_color: "tabSelected",
 	toolbar_color: "toolbar",
-	separator_opacity: "toolbarBorderBottom",
+	separator_opacity: "toolbarBorder",
 	toolbar_field_color: "toolbarField",
 	toolbar_field_focus_color: "toolbarFieldOnFocus",
 	sidebar_color: "sidebar",

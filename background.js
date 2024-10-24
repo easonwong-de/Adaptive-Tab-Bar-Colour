@@ -42,10 +42,13 @@ var pref = {
 	dynamic: true,
 	noThemeColour: true,
 	tabbar: 0,
+	tabbarBorder: 0,
 	tabSelected: 0.1,
+	tabSelectedBorder: 0.0,
 	toolbar: 0,
-	toolbarBorderBottom: 0,
+	toolbarBorder: 0,
 	toolbarField: 0.05,
+	toolbarFieldBorder: 0.1,
 	toolbarFieldOnFocus: 0.05,
 	sidebar: 0.05,
 	sidebarBorder: 0.05,
@@ -108,7 +111,7 @@ function verifyPref() {
 		pref.tabbar != null &&
 		pref.tabSelected != null &&
 		pref.toolbar != null &&
-		pref.toolbarBorderBottom != null &&
+		pref.toolbarBorder != null &&
 		pref.toolbarField != null &&
 		pref.toolbarFieldOnFocus != null &&
 		pref.sidebar != null &&
@@ -428,13 +431,13 @@ function applyTheme(windowId, colour, colourScheme) {
 			colors: {
 				// Tabbar & tab
 				frame: dimColour(colour, -pref.tabbar * 1.5),
-				frame_inactive: dimColour(colour, (-pref.tabbar - 0.05) * 1.5),
+				frame_inactive: dimColour(colour, -pref.tabbar * 1.5),
 				tab_selected: dimColour(colour, -pref.tabSelected * 1.5),
 				ntp_background: dimColour(colour, 0),
 				// Toolbar
 				toolbar: dimColour(colour, -pref.toolbar * 1.5),
 				toolbar_top_separator: "rgba(0, 0, 0, 0)",
-				toolbar_bottom_separator: dimColour(colour, (-pref.toolbarBorderBottom - pref.toolbar) * 1.5),
+				toolbar_bottom_separator: dimColour(colour, (-pref.toolbarBorder - pref.toolbar) * 1.5),
 				// URL bar
 				toolbar_field: dimColour(colour, -pref.toolbarField * 1.5),
 				toolbar_field_border: "rgba(0, 0, 0, 0)",
@@ -470,16 +473,16 @@ function applyTheme(windowId, colour, colourScheme) {
 			colors: {
 				// Tabbar & tab
 				frame: dimColour(colour, pref.tabbar),
-				frame_inactive: dimColour(colour, pref.tabbar + 0.05),
+				frame_inactive: dimColour(colour, pref.tabbar),
 				tab_selected: dimColour(colour, pref.tabSelected),
 				ntp_background: dimColour(colour, 0),
 				// Toolbar
 				toolbar: dimColour(colour, pref.toolbar),
 				toolbar_top_separator: "rgba(0, 0, 0, 0)",
-				toolbar_bottom_separator: dimColour(colour, pref.toolbarBorderBottom + pref.toolbar),
+				toolbar_bottom_separator: dimColour(colour, pref.toolbarBorder + pref.toolbar),
 				// URL bar
 				toolbar_field: dimColour(colour, pref.toolbarField),
-				toolbar_field_border: "rgba(0, 0, 0, 0)",
+				toolbar_field_border: dimColour(colour, pref.toolbarFieldBorder),
 				toolbar_field_focus: dimColour(colour, pref.toolbarFieldOnFocus),
 				toolbar_field_border_focus: "rgb(70, 118, 160)",
 				// Sidebar

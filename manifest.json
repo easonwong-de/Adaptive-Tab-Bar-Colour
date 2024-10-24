@@ -25,6 +25,7 @@
 	],
 	"options_ui": {
 		"page": "options.html",
+		"open_in_tab": false,
 		"browser_style": true
 	},
 	"browser_action": {
