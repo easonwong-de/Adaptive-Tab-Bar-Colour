@@ -1,39 +1,28 @@
-// Sends colour in RGBA object to background.js
-
-// Settings cache: updated on message
-var dynamic = true;
-var noThemeColour = true;
-var reservedColour = null;
-
-/**
- * Loads preferences into cache and check integrity.
+/*
+ * Workflow of content script
+ *
+ * On load:
+ * 		notifies background -> background sends back configurations -> sends colours
+ *
+ * After load:
+ * 		1. pref is changed, background sends configurations -> sends colour;
+ * 		2. (dynamic colour is on) sends colour automaticaly
  */
-function cachePref(pref) {
-	dynamic = pref.dynamic;
-	noThemeColour = pref.noThemeColour;
-	reservedColour = pref.custom ? pref.reservedColour : {};
-	setDynamicUpdate(dynamic);
-	return dynamic != null && noThemeColour != null && reservedColour != null;
-}
 
-// Initializes response colour
-// WIP: consider merging response_colour and response_info
-var RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
+// Configurations of the content script
+var conf = { dynamic: true, noThemeColour: true, customRule: null };
 
 /**
- * Information to be sent to the popup. "reason" determines the content shown in the popup infobox & text in the button.
+ * Information to be sent the the background / popup
+ *
+ * "reason" determines the content shown in the popup infobox & text in the button.
  *
  * All possible "reason"s are: protected_page, home_page, text_viewer, image_viewer, pdf_viewer, error_occurred, fallback_colour, colour_picked, addon_default, addon_recom, addon_specify, theme_unignored, theme_missing, theme_ignored, theme_used, using_qs, colour_specified
  */
-var RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, colour: null };
+var response = { reason: null, additionalInfo: null, colour: rgba([0, 0, 0, 0]) };
 
 // Sends colour to background as soon as the page loads
-browser.storage.local.get((pref) => {
-	if (cachePref(pref)) findAndSendColour();
-});
-
-var debouncePrevRun = 0;
-var debounceTimeoutID = null;
+browser.runtime.sendMessage({ reason: "SCRIPT_LOADED" });
 
 /**
  * Runs the given function with a maximum rate of 100ms.
@@ -65,15 +54,16 @@ function addDebounce(action) {
 	};
 }
 
+var debouncePrevRun = 0;
+var debounceTimeoutID = null;
 const findAndSendColour_debounce = addDebounce(findAndSendColour);
 const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_animation);
 
 /**
  * Sets up / Turns off dynamic update.
- * @param {boolean} dynamic Dynamic update.
  */
-function setDynamicUpdate(dynamic) {
-	if (dynamic) {
+function setDynamicUpdate() {
+	if (conf.dynamic) {
 		document.addEventListener("animationend", findAndSendColour_animation_debounce);
 		document.addEventListener("animationcancel", findAndSendColour_animation_debounce);
 		document.addEventListener("pageshow", findAndSendColour);
@@ -98,8 +88,8 @@ function setDynamicUpdate(dynamic) {
 
 // Detects "meta[name=theme-color]" changes
 var onThemeColourChange = new MutationObserver(findAndSendColour);
-var themeColourMeta = document.querySelector("meta[name=theme-color]");
-if (themeColourMeta) onThemeColourChange.observe(themeColourMeta, { attributes: true });
+var themeColourMetaTag = document.querySelector("meta[name=theme-color]");
+if (themeColourMetaTag) onThemeColourChange.observe(themeColourMetaTag, { attributes: true });
 
 // Detects Dark Reader
 var onDarkReaderChange = new MutationObserver(findAndSendColour);
@@ -111,47 +101,40 @@ onDarkReaderChange.observe(document.documentElement, {
 // Detects style injections & "meta[name=theme-color]" being added or altered
 var onStyleInjection = new MutationObserver((mutations) => {
 	mutations.forEach((mutation) => {
-		if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName == "STYLE") findAndSendColour();
-		else if (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName == "STYLE") findAndSendColour();
-		else if (
+		if (
+			(mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName == "STYLE") ||
+			(mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName == "STYLE")
+		) {
+			findAndSendColour();
+		} else if (
 			mutation.addedNodes.length > 0 &&
 			mutation.addedNodes[0].nodeName == "META" &&
 			mutation.addedNodes[0].name == "theme-color"
-		)
+		) {
 			onThemeColourChange.observe(document.querySelector("meta[name=theme-color]"), { attributes: true });
+		}
 	});
 });
 onStyleInjection.observe(document.documentElement, { childList: true });
 onStyleInjection.observe(document.head, { childList: true });
 
-// Fired by update() from background.js
-// Loads newly applied settings
-browser.runtime.onMessage.addListener((pref, sender, sendResponse) => {
-	dynamic = pref.dynamic;
-	noThemeColour = pref.noThemeColour;
-	reservedColour = pref.reservedColour;
-	setDynamicUpdate(dynamic);
-	if (pref.reason == "INFO_REQUEST") {
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	conf = message.conf;
+	setDynamicUpdate();
+	if (message.reason == "INFO_REQUEST") {
 		findColour();
-		sendResponse(RESPONSE_INFO);
-	} else if (pref.reason == "COLOUR_REQUEST") {
+	} else if (message.reason == "COLOUR_REQUEST") {
 		findAndSendColour();
-		// Sends back anything to prove activity
-		sendResponse(RESPONSE_COLOUR);
 	}
+	sendResponse(response);
 });
 
 /**
  * Finds colour.
  */
 function findColour() {
-	// Aborts operation if the page is in full screen mode
 	if (document.fullscreenElement) return null;
-	// Resets RESPONSE_COLOUR
-	RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
-	// Resets RESPONSE_INFO
-	RESPONSE_INFO = { reason: "protected_page", additionalInfo: null, colour: null };
-	// If there isn't a colour reserved for the website, then find one from it
+	response = { reason: null, additionalInfo: null, colour: rgba([0, 0, 0, 0]) };
 	if (!findColourReserved()) findColourUnreserved();
 	return true;
 }
@@ -161,7 +144,7 @@ function findColour() {
  */
 function findAndSendColour() {
 	if (document.visibilityState == "visible" && findColour())
-		browser.runtime.sendMessage({ reason: "COLOUR_UPDATE", colour: RESPONSE_COLOUR });
+		browser.runtime.sendMessage({ reason: "COLOUR_UPDATE", response: response });
 }
 
 /**
@@ -172,46 +155,50 @@ function findAndSendColour_animation() {
 }
 
 /**
- * Sets RESPONSE_COLOUR with the help of host actions stored in current_reservedColour.
+ * Sets RESPONSE.colour with the help of host actions stored in current_customRule.
  * @returns True if a meta theme-color or a reserved colour for the webpage can be found.
  */
 function findColourReserved() {
 	// "host" can be "www.irgendwas.com"
 	let domain = document.location.host;
-	let domainReservedColour = reservedColour[domain];
+	// let conf.customRule = customRule[domain];
 	if (
-		domainReservedColour == null ||
-		(!noThemeColour && domainReservedColour == "UN_IGNORE_THEME") ||
-		(noThemeColour && domainReservedColour == "IGNORE_THEME")
-	)
+		conf.customRule == null ||
+		(!noThemeColour && conf.customRule == "UN_IGNORE_THEME") ||
+		(noThemeColour && conf.customRule == "IGNORE_THEME")
+	) {
 		// Picks colour from the website
 		return false;
-	else if (noThemeColour && domainReservedColour == "UN_IGNORE_THEME") {
+	} else if (noThemeColour && conf.customRule == "UN_IGNORE_THEME") {
 		// User prefers igoring theme colour, but sets to use meta theme-color for this host
-		if (findThemeColour()) RESPONSE_INFO.reason = "theme_ignored";
-		else {
+		if (findThemeColour()) {
+			response.reason = "theme_ignored";
+		} else {
 			findComputedColour();
-			RESPONSE_INFO.reason = "theme_missing";
+			response.reason = "theme_missing";
 		}
 		return true;
-	} else if (!noThemeColour && domainReservedColour == "IGNORE_THEME") {
+	} else if (!noThemeColour && conf.customRule == "IGNORE_THEME") {
 		// User sets to ignore the meta theme-color of this host
 		if (findThemeColour()) {
 			findComputedColour();
-			RESPONSE_INFO.reason = "theme_ignored";
-		} else findComputedColour();
+			response.reason = "theme_ignored";
+		} else {
+			findComputedColour();
+		}
 		return true;
-	} else if (domainReservedColour.startsWith("QS_")) {
-		let querySelector = domainReservedColour.replace("QS_", "");
-		RESPONSE_COLOUR = getColourFromElement(document.querySelector(querySelector));
-		RESPONSE_INFO.reason = "using_qs";
-		RESPONSE_INFO.additionalInfo = querySelector;
+	} else if (conf.customRule.startsWith("QS_")) {
+		let querySelector = conf.customRule.replace("QS_", "");
+		response = {
+			reason: "using_qs",
+			additionalInfo: querySelector,
+			colour: getColourFromElement(document.querySelector(querySelector)),
+		};
 	} else {
-		RESPONSE_COLOUR = rgba(domainReservedColour);
-		RESPONSE_INFO.reason = "colour_specified";
+		response = { reason: "colour_specified", additionalInfo: null, colour: rgba(conf.customRule) };
 	}
 	// Return ture if reponse colour is legal and can be sent to background.js
-	return RESPONSE_COLOUR != null && RESPONSE_COLOUR.a == 1;
+	return response.colour != null && response.colour.a == 1;
 }
 
 /**
@@ -225,8 +212,8 @@ function findColourUnreserved() {
 		// Image viewer
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url, which will be dealt with in background.js
-		RESPONSE_COLOUR = "IMAGEVIEWER";
-		RESPONSE_INFO.reason = "image_viewer";
+		response.colour = "IMAGEVIEWER";
+		response.reason = "image_viewer";
 	} else if (
 		document.getElementsByTagName("link").length > 0 &&
 		document.getElementsByTagName("link")[0].href == "resource://content-accessible/plaintext.css"
@@ -235,8 +222,8 @@ function findColourUnreserved() {
 		// Firefox seems to have blocked content script when viewing plain text online
 		// Thus this may only works for viewing local text file
 		if (getColourFromElement(document.body).a != 1) {
-			RESPONSE_COLOUR = "PLAINTEXT";
-			RESPONSE_INFO.reason = "text_viewer";
+			response.colour = "PLAINTEXT";
+			response.reason = "text_viewer";
 		}
 	} else if (noThemeColour) findComputedColour();
 	// Or if theme colour can't be found
@@ -254,11 +241,11 @@ function findThemeColour() {
 	);
 	if (metaThemeColour == null) metaThemeColour = document.querySelector(`meta[name="theme-color"]`);
 	if (metaThemeColour != null) {
-		RESPONSE_COLOUR = rgba(metaThemeColour.content);
+		response.colour = rgba(metaThemeColour.content);
 		// Returns true if it is legal (opaque) and can be sent to background.js
 		// Otherwise, return false and trigger getComputedColour()
-		if (RESPONSE_COLOUR.a == 1) {
-			RESPONSE_INFO.reason = "theme_used";
+		if (response.colour.a == 1) {
+			response.reason = "theme_used";
 			return true;
 		} else return false;
 	} else return false;
@@ -269,36 +256,36 @@ function findThemeColour() {
  * @author emilio on GitHub (modified by easonwong-de).
  */
 function findComputedColour() {
-	RESPONSE_COLOUR = rgba([0, 0, 0, 0]);
+	response.colour = rgba([0, 0, 0, 0]);
 	// Selects the element 3 pixels below the middle point of the top edge of the screen
 	let element = document.elementFromPoint(window.innerWidth / 2, 3);
 	for (element; element; element = element.parentElement) {
-		if (RESPONSE_COLOUR.a == 1) break;
+		if (response.colour.a == 1) break;
 		// Only if the element is wide (90 % of screen) and thick (20 pixels) enough will it be included in the calculation
 		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20) {
 			let colourBottom = getColourFromElement(element);
 			if (colourBottom.a == 0) continue;
-			RESPONSE_COLOUR = overlayColour(RESPONSE_COLOUR, colourBottom);
+			response.colour = overlayColour(response.colour, colourBottom);
 		}
 	}
 	// If the colour is still not opaque, overlay it over the webpage body
 	// If the body is still not opaque, use fallback colour
-	if (RESPONSE_COLOUR.a != 1) {
+	if (response.colour.a != 1) {
 		let body = document.getElementsByTagName("body")[0];
 		if (body) {
 			let BodyColour = getColourFromElement(body);
 			if (BodyColour.a == 1) {
-				RESPONSE_COLOUR = overlayColour(RESPONSE_COLOUR, BodyColour);
-				RESPONSE_INFO.reason = "colour_picked";
+				response.colour = overlayColour(response.colour, BodyColour);
+				response.reason = "colour_picked";
 			} else {
-				RESPONSE_COLOUR = "FALLBACK";
-				RESPONSE_INFO.reason = "fallback_colour";
+				response.colour = "FALLBACK";
+				response.reason = "fallback_colour";
 			}
 		} else {
-			RESPONSE_COLOUR = "FALLBACK";
-			RESPONSE_INFO.reason = "fallback_colour";
+			response.colour = "FALLBACK";
+			response.reason = "fallback_colour";
 		}
-	} else RESPONSE_INFO.reason = "colour_picked";
+	} else response.reason = "colour_picked";
 }
 
 /**
@@ -373,6 +360,6 @@ function rgba(colour) {
 	else return null;
 }
 
-RESPONSE_INFO.colour = RESPONSE_COLOUR;
 // Passes colouring info to pop-up
-RESPONSE_INFO;
+//WIP: scratch this
+response;

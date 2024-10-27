@@ -463,16 +463,28 @@
 					<div id="custom-options-wrapper">
 						<div id="custom-options">
 							<div class="section">
-								<div data-text="homepageColour">Homepage colour</div>
-								<label for="home-bg-light">#FFFFFF</label>
-								<input type="color" value="#FFFFFF" id="home-bg-light" />
-								<button id="reset_light_color" data-title="reset">
+								<div class="option-header" data-text="homepageColourLight">Homepage colour: light</div>
+								<div>
+									<label class="colour-picker" for="home-bg-light">#FFFFFF</label>
+									<input type="color" value="#FFFFFF" id="home-bg-light" />
+								</div>
+								<button id="reset-light-colour" data-title="reset">
 									<svg viewBox="0 0 24 24">
 										<use xlink:href="#svg-reset" />
 									</svg>
 								</button>
-								<label for="home-bg-dark">#2B2A33</label>
-								<input type="color" value="#2B2A33" id="home-bg-dark" />
+							</div>
+							<div class="section">
+								<div class="option-header" data-text="homepageColourDark">Homepage colour: dark</div>
+								<div>
+									<label class="colour-picker" for="home-bg-dark">#2B2A33</label>
+									<input type="color" value="#2B2A33" id="home-bg-dark" />
+								</div>
+								<button id="reset-dark-colour" data-title="reset">
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-reset" />
+									</svg>
+								</button>
 							</div>
 						</div>
 						<!-- <table id="custom-options">

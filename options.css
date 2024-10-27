@@ -246,7 +246,11 @@ div.sponsor {
 	text-align: center;
 }
 
-.slider-body {
+.slider-body,
+.colour-picker {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	background-color: var(--colour-2);
 	border-radius: 4px;
 	height: 2rem;
@@ -350,6 +354,11 @@ div.sponsor {
 /* Advanced tab */
 
 #custom-options-wrapper {
+	padding-inline: 1rem;
+}
+
+#custom-options-wrapper,
+#custom-options {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
@@ -364,8 +373,14 @@ div.sponsor {
 	pointer-events: none;
 }
 
-#custom-options section {
+#custom-options .section {
 	flex-direction: row;
+	gap: 0.5rem;
+	padding: 0.5rem;
+}
+
+.option-header {
+	margin-inline-end: auto;
 }
 
 .button-group {

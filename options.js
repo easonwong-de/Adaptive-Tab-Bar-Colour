@@ -3,7 +3,7 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_reservedColour,
+	default_customRule,
 	recommendedColour_addon,
 	protectedDomain,
 	checkVersion,
@@ -35,19 +35,19 @@ var pref = {
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	reservedColour: default_reservedColour,
+	customRule: default_customRule,
 	version: [2, 2],
 };
 
 // Current colour lookup table
-var reservedColour;
+var customRule;
 
 /**
  * Caches pref into local variables and checks integrity.
  */
 function cachePref(storedPref) {
 	pref = storedPref;
-	reservedColour = pref.custom ? pref.reservedColour : default_reservedColour;
+	customRule = pref.custom ? pref.customRule : default_customRule;
 	return (
 		pref.scheme != null &&
 		pref.allowDarkLight != null &&
@@ -68,7 +68,7 @@ function cachePref(storedPref) {
 		pref.homeBackground_dark != null &&
 		pref.fallbackColour_light != null &&
 		pref.fallbackColour_dark != null &&
-		pref.reservedColour != null &&
+		pref.customRule != null &&
 		pref.version != null
 	);
 }
@@ -156,7 +156,7 @@ function load() {
 			op_dark_fallback_colour.value = pref.fallbackColour_dark;
 			let table_rows = op_custom-options.rows;
 			for (let i = table_rows.length - 1; i > 3; i--) op_custom-options.deleteRow(i);
-			let domains = Object.keys(pref.reservedColour);
+			let domains = Object.keys(pref.customRule);
 			domains.forEach((domain, i) => {
 				let new_row = op_custom-options.insertRow(i + 4);
 				generateNewRow(domain, i).then((new_row_HTML) => {
@@ -314,7 +314,7 @@ if (popupDetected()) {
 	op_reset_light_fallback.onclick = () => browser.storage.local.set({ fallbackColour_light: "#FFFFFF" }).then(load);
 	op_reset_dark_fallback.onclick = () => browser.storage.local.set({ fallbackColour_dark: "#2B2A33" }).then(load);
 	op_reset-all.onclick = () => {
-		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ reservedColour: default_reservedColour }).then(load);
+		if (confirm(msg("resetRuleConfirm"))) browser.storage.local.set({ customRule: default_customRule }).then(load);
 	};
 	op_add.onclick = () => {
 		let i = 0;
@@ -332,13 +332,13 @@ if (popupDetected()) {
  * Reads lookup table and stores data in storage.
  */
 function autoSaveSettings() {
-	let pending_reservedColour = {};
+	let pending_customRule = {};
 	let all_table_rows = op_custom-options.firstElementChild.children;
 	for (let i = 4; i < all_table_rows.length; i++) {
 		let table_cells = all_table_rows[i].children;
 		let domain = table_cells[0].firstElementChild.title;
 		if (!domain) domain = table_cells[0].firstElementChild.value;
-		if (domain != "" && isNaN(domain) && pending_reservedColour[domain] == null) {
+		if (domain != "" && isNaN(domain) && pending_customRule[domain] == null) {
 			let action;
 			switch (table_cells[1].firstElementChild.selectedIndex) {
 				case 0:
@@ -357,7 +357,7 @@ function autoSaveSettings() {
 					break;
 			}
 			if (action != "QS_") {
-				pending_reservedColour[domain] = action;
+				pending_customRule[domain] = action;
 				if (table_cells[4] != null) table_cells[4].remove();
 			} else {
 				if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
@@ -366,7 +366,7 @@ function autoSaveSettings() {
 			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
 		}
 	}
-	browser.storage.local.set({ reservedColour: pending_reservedColour });
+	browser.storage.local.set({ customRule: pending_customRule });
 }
 
 /**
@@ -384,7 +384,7 @@ function generateNewRow(domain, i) {
 				let part_2 = `<select id="SEL_${i}">
 					<option selected>${msg("specifyAColour")}</option>
 				</select>`;
-				let part_3 = `<input type="color" class="FiveEm" value="${pref.reservedColour[domain]}">`;
+				let part_3 = `<input type="color" class="FiveEm" value="${pref.customRule[domain]}">`;
 				let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
 				resolve(`<td class="TenFiveEm">${part_1}</td>
 				<td>${part_2}</td>
@@ -398,7 +398,7 @@ function generateNewRow(domain, i) {
 			domain = "example.com";
 			action = "#ECECEC";
 		} else {
-			action = pref.reservedColour[domain];
+			action = pref.customRule[domain];
 		}
 		let part_1 = `<input id="DOM_${i}" type="text" value="${domain}">`;
 		let part_2 = ``;
@@ -476,7 +476,7 @@ function autoPopupColour() {
 					reason: "INFO_REQUEST",
 					dynamic: pref.dynamic,
 					noThemeColour: pref.noThemeColour,
-					reservedColour: reservedColour,
+					customRule: customRule,
 				},
 				(RESPONSE_INFO) => {
 					if (RESPONSE_INFO) {
@@ -484,11 +484,11 @@ function autoPopupColour() {
 						let pp_info_action = document.getElementById("info_action");
 						if (pp_info_action) {
 							pp_info_action.onclick = () => {
-								pref.reservedColour[domain] = pp_info_action.dataset.action;
-								reservedColour = pref.reservedColour;
+								pref.customRule[domain] = pp_info_action.dataset.action;
+								customRule = pref.customRule;
 								browser.storage.local.set({
 									custom: true,
-									reservedColour: pref.reservedColour,
+									customRule: pref.customRule,
 								});
 								load_lite();
 							};
@@ -514,35 +514,35 @@ function autoPopupColour() {
 					if (addon.type == "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
 							if (host.startsWith("moz-extension:") && uuid == host.split(/\/|\?/)[2]) {
-								if (reservedColour[`Add-on ID: ${addon.id}`]) {
+								if (customRule[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										delete pref.reservedColour[`Add-on ID: ${addon.id}`];
-										reservedColour = pref.reservedColour;
+										delete pref.customRule[`Add-on ID: ${addon.id}`];
+										customRule = pref.customRule;
 										browser.storage.local.set({
 											custom: true,
-											reservedColour: pref.reservedColour,
+											customRule: pref.customRule,
 										});
 									};
 								} else if (recommendedColour_addon[addon.id]) {
 									pp_info_display.innerHTML = msg("useRecommendedColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref.reservedColour[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
-										reservedColour = pref.reservedColour;
+										pref.customRule[`Add-on ID: ${addon.id}`] = recommendedColour_addon[addon.id];
+										customRule = pref.customRule;
 										browser.storage.local.set({
 											custom: true,
-											reservedColour: pref.reservedColour,
+											customRule: pref.customRule,
 										});
 									};
 								} else {
 									pp_info_display.innerHTML = msg("specifyColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
-										pref.reservedColour[`Add-on ID: ${addon.id}`] = "#333333";
-										reservedColour = pref.reservedColour;
+										pref.customRule[`Add-on ID: ${addon.id}`] = "#333333";
+										customRule = pref.customRule;
 										browser.storage.local
 											.set({
 												custom: true,
-												reservedColour: pref.reservedColour,
+												customRule: pref.customRule,
 											})
 											.then(() => browser.runtime.openOptionsPage());
 									};

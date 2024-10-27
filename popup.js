@@ -3,7 +3,7 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_reservedColour,
+	default_customRule,
 	recommendedColour_addon,
 	protectedDomain,
 	checkVersion,
@@ -38,7 +38,7 @@ var pref = {
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	reservedColour: default_reservedColour,
+	customRule: default_customRule,
 	version: [2, 2],
 };
 
@@ -50,7 +50,7 @@ var currentReservedColour;
  */
 function cachePref(storedPref) {
 	pref = Object.assign({}, storedPref);
-	currentReservedColour = pref.custom ? pref.reservedColour : {};
+	currentReservedColour = pref.custom ? pref.customRule : {};
 	return (
 		pref.scheme != null &&
 		pref.allowDarkLight != null &&
@@ -73,7 +73,7 @@ function cachePref(storedPref) {
 		pref.homeBackground_dark != null &&
 		pref.fallbackColour_light != null &&
 		pref.fallbackColour_dark != null &&
-		pref.reservedColour != null &&
+		pref.customRule != null &&
 		pref.version != null
 	);
 }
@@ -155,17 +155,6 @@ function changeColourScheme(scheme) {
 	updatePopup();
 }
 
-// If it's below v95.0, grey out "allow..." option
-if (checkVersion() < 95) {
-	allowDarkLightCheckbox.checked = false;
-	allowDarkLightCheckbox.disabled = true;
-} else {
-	allowDarkLightCheckbox.onclick = () => {
-		pref.allowDarkLight = allowDarkLightCheckbox.checked;
-		browser.storage.local.set({ allowDarkLight: allowDarkLightCheckbox.checked }).then(applySettings);
-	};
-}
-
 dynamicCheckbox.onclick = () => {
 	pref.dynamic = dynamicCheckbox.checked;
 	browser.storage.local.set({ dynamic: dynamicCheckbox.checked }).then(applySettings);
@@ -237,7 +226,7 @@ function loadInfoForWebpage(tab) {
 			reason: "INFO_REQUEST",
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
-			reservedColour: currentReservedColour,
+			customRule: currentReservedColour,
 		},
 		(RESPONSE_INFO) => {
 			if (RESPONSE_INFO) {
@@ -247,12 +236,12 @@ function loadInfoForWebpage(tab) {
 				else if (reason == "theme_ignored") action = "UN_IGNORE_THEME";
 				if (action) {
 					setInfoDisplay(reason, null, () => {
-						pref.reservedColour[domain] = action;
-						currentReservedColour = pref.reservedColour;
+						pref.customRule[domain] = action;
+						currentReservedColour = pref.customRule;
 						browser.storage.local
 							.set({
 								custom: true,
-								reservedColour: pref.reservedColour,
+								customRule: pref.customRule,
 							})
 							.then(load);
 					});
@@ -293,13 +282,13 @@ function loadInfoForAddonPage(tab) {
 }
 
 function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
-	if (colour) pref.reservedColour[`Add-on ID: ${addonID}`] = colour;
-	else delete pref.reservedColour[`Add-on ID: ${addonID}`];
-	currentReservedColour = pref.reservedColour;
+	if (colour) pref.customRule[`Add-on ID: ${addonID}`] = colour;
+	else delete pref.customRule[`Add-on ID: ${addonID}`];
+	currentReservedColour = pref.customRule;
 	browser.storage.local
 		.set({
 			custom: true,
-			reservedColour: pref.reservedColour,
+			customRule: pref.customRule,
 		})
 		.then(() => {
 			if (openOptionsPage) browser.runtime.openOptionsPage();

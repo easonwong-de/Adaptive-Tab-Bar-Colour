@@ -18,7 +18,7 @@ export const default_fallbackColour_dark = "#2B2A33";
  *
  * reserved colour starts with QS_ => gets colour from the element found with the querySelector;
  */
-export const default_reservedColour = Object.freeze({
+export const default_customRule = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
 	"www.facebook.com": "UN_IGNORE_THEME",
@@ -42,7 +42,7 @@ export const default_reservedColour = Object.freeze({
  *
  * url listed as "IMAGEVIEWER" => use image viewer theme;
  */
-export const reservedColour_aboutPage = Object.freeze({
+export const customRule_aboutPage = Object.freeze({
 	light: {
 		"about:checkerboard": "DEFAULT",
 		"about:debugging#": "rgb(236, 236, 236)",
@@ -132,7 +132,7 @@ export const legacyPrefKey = Object.freeze({
 	dark_color: "homeBackground_dark",
 	light_fallback_color: "fallbackColour_light",
 	dark_fallback_color: "fallbackColour_dark",
-	reservedColour_cs: "reservedColour",
+	customRule_cs: "customRule",
 	last_version: "version",
 });
 
