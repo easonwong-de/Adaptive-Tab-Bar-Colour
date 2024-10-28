@@ -1,0 +1,10 @@
+/**
+ * @returns Firefox version. 0 if cannot be found.
+ */
+export function checkVersion() {
+	let userAgent = navigator.userAgent;
+	let version = 0;
+	let ind = userAgent.lastIndexOf("Firefox");
+	if (ind != -1) version = userAgent.substring(ind + 8);
+	return version;
+}

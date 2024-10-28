@@ -6,8 +6,7 @@ import {
 	default_customRule,
 	recommendedColour_addon,
 	protectedDomain,
-	checkVersion,
-} from "./shared.js";
+} from "../../shared.js";
 
 // Localisation
 document.addEventListener("DOMContentLoaded", function () {

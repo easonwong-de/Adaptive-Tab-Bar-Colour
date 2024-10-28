@@ -8,7 +8,7 @@ export const default_fallbackColour_light = "#FFFFFF";
 export const default_fallbackColour_dark = "#2B2A33";
 
 /**
- * The default values of reserved colours;
+ * The default values of custom rules for webpages.
  *
  * reserved colour is a colour => uses the given colour as tab colour;
  *
@@ -18,7 +18,7 @@ export const default_fallbackColour_dark = "#2B2A33";
  *
  * reserved colour starts with QS_ => gets colour from the element found with the querySelector;
  */
-export const default_customRule = Object.freeze({
+export const default_customRule_webPage = Object.freeze({
 	"apnews.com": "IGNORE_THEME",
 	"developer.mozilla.org": "IGNORE_THEME",
 	"www.facebook.com": "UN_IGNORE_THEME",
@@ -42,7 +42,7 @@ export const default_customRule = Object.freeze({
  *
  * url listed as "IMAGEVIEWER" => use image viewer theme;
  */
-export const customRule_aboutPage = Object.freeze({
+export const default_customRule_aboutPage = Object.freeze({
 	light: {
 		"about:checkerboard": "DEFAULT",
 		"about:debugging#": "rgb(236, 236, 236)",
@@ -113,36 +113,3 @@ export const protectedDomain = Object.freeze({
 	"support.mozilla.org": "PROTECTED",
 });
 
-/**
- * Legacy pref keys and their current version.
- */
-export const legacyPrefKey = Object.freeze({
-	force: "allowDarkLight",
-	tabbar_color: "tabbar",
-	tab_selected_color: "tabSelected",
-	toolbar_color: "toolbar",
-	separator_opacity: "toolbarBorder",
-	toolbar_field_color: "toolbarField",
-	toolbar_field_focus_color: "toolbarFieldOnFocus",
-	sidebar_color: "sidebar",
-	sidebar_border_color: "sidebarBorder",
-	popup_color: "popup",
-	popup_border_color: "popupBorder",
-	light_color: "homeBackground_light",
-	dark_color: "homeBackground_dark",
-	light_fallback_color: "fallbackColour_light",
-	dark_fallback_color: "fallbackColour_dark",
-	customRule_cs: "customRule",
-	last_version: "version",
-});
-
-/**
- * @returns Firefox version. 0 if cannot be found.
- */
-export function checkVersion() {
-	let userAgent = navigator.userAgent;
-	let version = 0;
-	let ind = userAgent.lastIndexOf("Firefox");
-	if (ind != -1) version = userAgent.substring(ind + 8);
-	return version;
-}

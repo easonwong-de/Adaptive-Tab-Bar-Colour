@@ -4,11 +4,8 @@
  * System colour scheme:
  * The colour scheme of the operating system, usually light or dark.
  *
- * Browser colour scheme / pref.scheme:
- * The "website appearance" settings of Firefox (controlled by ATBC), which can be light, dark, or auto.
- *
- * current.scheme:
- * The colour scheme derived from both system and browser colour schemes, which can be light or dark.
+ * Browser colour scheme / current.scheme:
+ * The "website appearance" settings of Firefox, which can be light, dark, or auto.
  * It decides whether the light theme or dark theme is preferred.
  *
  * pref.allowDarkLight:
@@ -27,18 +24,17 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_customRule,
-	customRule_aboutPage,
-	legacyPrefKey,
-	checkVersion,
-} from "./shared.js";
+	default_customRule_webPage,
+	default_customRule_aboutPage,
+} from "./default_values.js";
+
+import { legacyPrefKey, verifyPref } from "./pref.js";
 
 import { rgba, dimColour, contrastRatio } from "./colour.js";
 
 // Settings cache: always synced with settings
 var pref = {
-	scheme: "auto",
-	allowDarkLight: false,
+	allowDarkLight: true,
 	dynamic: true,
 	noThemeColour: true,
 	tabbar: 0,
@@ -61,13 +57,13 @@ var pref = {
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	customRule: default_customRule,
+	customRule_webPage: default_customRule_webPage,
 	version: [2, 2],
 };
 
 // Variables
 var current = {
-	scheme: "light", // only "light" or "dark"
+	scheme: "light", // "light", "dark", or "auto"
 	homeBackground_light: rgba(default_homeBackground_light),
 	homeBackground_dark: rgba(default_homeBackground_dark),
 	fallbackColour_light: rgba(default_fallbackColour_light),
@@ -100,37 +96,6 @@ var colourCode = {
 };
 
 /**
- * @returns Integrity of pref cache.
- */
-function verifyPref() {
-	return (
-		pref.scheme != null &&
-		pref.allowDarkLight != null &&
-		pref.dynamic != null &&
-		pref.noThemeColour != null &&
-		pref.tabbar != null &&
-		pref.tabSelected != null &&
-		pref.toolbar != null &&
-		pref.toolbarBorder != null &&
-		pref.toolbarField != null &&
-		pref.toolbarFieldOnFocus != null &&
-		pref.sidebar != null &&
-		pref.sidebarBorder != null &&
-		pref.popup != null &&
-		pref.popupBorder != null &&
-		pref.minContrast_light != null &&
-		pref.minContrast_dark != null &&
-		pref.custom != null &&
-		pref.homeBackground_light != null &&
-		pref.homeBackground_dark != null &&
-		pref.fallbackColour_light != null &&
-		pref.fallbackColour_dark != null &&
-		pref.customRule != null &&
-		pref.version != null
-	);
-}
-
-/**
  * Sets "current" values after pref being loaded.
  */
 function updateCurrent() {
@@ -139,7 +104,7 @@ function updateCurrent() {
 		current.homeBackground_dark = rgba(pref.homeBackground_dark);
 		current.fallbackColour_light = rgba(pref.fallbackColour_light);
 		current.fallbackColour_dark = rgba(pref.fallbackColour_dark);
-		current.customRule = pref.customRule;
+		current.customRule = pref.customRule_webPage;
 	} else {
 		current.homeBackground_light = rgba(default_homeBackground_light);
 		current.homeBackground_dark = rgba(default_homeBackground_dark);
@@ -147,79 +112,74 @@ function updateCurrent() {
 		current.fallbackColour_dark = rgba(default_fallbackColour_dark);
 		current.customRule = {};
 	}
-	switch (pref.scheme) {
-		case "light":
-			current.scheme = "light";
-			break;
-		case "dark":
-			current.scheme = "dark";
-			break;
-		case "auto":
-			current.scheme = systemColourScheme();
-			break;
-	}
+	getBrowserColourScheme((scheme) => {
+		current.scheme = scheme;
+	});
 }
+
+/**
+ * Overrides content colour scheme.
+ * @return
+ */
+async function getBrowserColourScheme() {
+	const result = await browser.browserSettings.overrideContentColorScheme.get({});
+	return result.value;
+}
+
+browser.browserSettings.overrideContentColorScheme.onChange.addListener(updateCurrent);
 
 initialise();
 
 /**
  * Initialises the pref and current.
- * If storedPref.scheme, storedPref.force (legacy), or storedPref.allowDarkLight is missing, opens the option page.
  */
-function initialise() {
-	browser.storage.local.get((storedPref) => {
-		// If the add-on is freshly installed, then the storage will be empty
-		let freshInstall = Object.keys(storedPref).length == 0;
-		// Version number is recorded starting from v1.3.1, updating from older versions is treated as fresh install
-		let noVersionNumber = !("last_version" in storedPref || "version" in storedPref);
-		// If the add-on is updated from above v1.3.1, process the existing preferences
-		if (!freshInstall || !noVersionNumber) {
-			for (let key in storedPref) {
-				if (key in pref) pref[key] = storedPref[key];
-				else if (key in legacyPrefKey) pref[legacyPrefKey[key]] = storedPref[key];
-			}
-			// Updating from before v2.2
-			if (pref.version < [2, 2]) {
-				// Converts "force" to "allowDarkLight"
-				pref.allowDarkLight = !pref.allowDarkLight;
-				// Converts "system" to "auto"
-				if (pref.scheme == "system") pref.scheme = "auto";
-			}
-			// Updating from before v1.7.5
-			// Converts legacy rules to query selector format
-			if (pref.version < [1, 7, 5]) {
-				for (let domain in pref.customRule) {
-					let legacyRule = pref.customRule[domain];
-					if (legacyRule.startsWith("TAG_")) {
-						pref.customRule[domain] = legacyRule.replace("TAG_", "QS_");
-					} else if (legacyRule.startsWith("CLASS_")) {
-						pref.customRule[domain] = legacyRule.replace("CLASS_", "QS_.");
-					} else if (legacyRule.startsWith("ID_")) {
-						pref.customRule[domain] = legacyRule.replace("ID_", "QS_#");
-					} else if (legacyRule.startsWith("NAME_")) {
-						pref.customRule[domain] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
-					} else if (legacyRule == "") {
-						delete pref.customRule[domain];
-					}
+async function initialise() {
+	const storedPref = await browser.storage.local.get();
+	// If the storage is empty / no version number is recorded, treats it as a fresh installation
+	const freshInstall =
+		Object.keys(storedPref).length == 0 || !("last_version" in storedPref) || !("version" in storedPref);
+	if (!freshInstall) {
+		for (let key in storedPref) {
+			if (key in pref) pref[key] = storedPref[key];
+			else if (key in legacyPrefKey) pref[legacyPrefKey[key]] = storedPref[key];
+		}
+		// Updating from before v2.2
+		if (pref.version < [2, 2]) {
+			pref.dynamic = true;
+			pref.allowDarkLight = true;
+			pref.noThemeColour = true;
+			if (pref.scheme == "system") pref.scheme = "auto";
+		}
+		// Updating from before v1.7.5
+		// Converts legacy rules to query selector format
+		if (pref.version < [1, 7, 5]) {
+			for (let domain in pref.customRule_webPage) {
+				let legacyRule = pref.customRule_webPage[domain];
+				if (legacyRule.startsWith("TAG_")) {
+					pref.customRule_webPage[domain] = legacyRule.replace("TAG_", "QS_");
+				} else if (legacyRule.startsWith("CLASS_")) {
+					pref.customRule_webPage[domain] = legacyRule.replace("CLASS_", "QS_.");
+				} else if (legacyRule.startsWith("ID_")) {
+					pref.customRule_webPage[domain] = legacyRule.replace("ID_", "QS_#");
+				} else if (legacyRule.startsWith("NAME_")) {
+					pref.customRule_webPage[domain] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
+				} else if (legacyRule == "") {
+					delete pref.customRule_webPage[domain];
 				}
 			}
-			// Updating from before v1.7.4
-			// Clears possible empty reserved colour rules caused by a bug
-			if (pref.version < [1, 7, 4]) delete pref.customRule[undefined];
-			// Updating from before v1.6.4
-			// Corrects the dark home page colour, unless the user has set something different
-			if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() == "#1C1B22")
-				pref.homeBackground_dark = default_homeBackground_dark;
 		}
-		setBrowserColourScheme(pref.scheme);
-		updateCurrent();
-		update();
-		browser.storage.local.set(pref).then(() => {
-			// If the add-on is installed for the first time, opens the option page
-			if (freshInstall || noVersionNumber) browser.runtime.openOptionsPage();
-			return Promise.resolve("Initialisation done");
-		});
-	});
+		// Updating from before v1.7.4
+		// Clears possible empty reserved colour rules caused by a bug
+		if (pref.version < [1, 7, 4]) delete pref.customRule_webPage[undefined];
+		// Updating from before v1.6.4
+		// Corrects the dark home page colour, unless the user has set something different
+		if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() == "#1C1B22")
+			pref.homeBackground_dark = default_homeBackground_dark;
+	}
+	updateCurrent();
+	update();
+	await browser.storage.local.set(pref);
+	return true;
 }
 
 browser.tabs.onUpdated.addListener(update);
@@ -269,12 +229,10 @@ function systemColourScheme() {
 /**
  * Triggers colour change in all windows.
  */
-function update() {
-	browser.tabs.query({ active: true, status: "complete" }, (tabs) => {
-		if (verifyPref()) tabs.forEach(updateEachWindow);
-		// If the pref is corrupted, initialises pref
-		else initialise().then(() => tabs.forEach(updateEachWindow));
-	});
+async function update() {
+	const tabs = await browser.tabs.query({ active: true, status: "complete" });
+	if (!verifyPref(pref)) await initialise();
+	tabs.forEach(updateEachWindow);
 }
 
 /**
@@ -283,7 +241,7 @@ function update() {
 function loadPrefAndUpdate() {
 	browser.storage.local.get((storedPref) => {
 		pref = storedPref;
-		setBrowserColourScheme(pref.scheme);
+		getBrowserColourScheme(pref.scheme);
 		updateCurrent();
 		update();
 	});
@@ -343,11 +301,11 @@ function updateEachWindow(tab) {
 		getSearchKey(url).then((key) => {
 			let reversedCurrentScheme = current.scheme == "light" ? "dark" : "light";
 			// For preferred scheme there's a reserved colour
-			if (customRule_aboutPage[current.scheme][key])
-				setFrameColour(windowId, rgba(customRule_aboutPage[current.scheme][key]));
+			if (default_customRule_aboutPage[current.scheme][key])
+				setFrameColour(windowId, rgba(default_customRule_aboutPage[current.scheme][key]));
 			// Site has reserved colour only in the other mode, and it's allowed to change mode
-			else if (customRule_aboutPage[reversedCurrentScheme][key] && pref.allowDarkLight)
-				setFrameColour(windowId, rgba(customRule_aboutPage[reversedCurrentScheme][key]));
+			else if (default_customRule_aboutPage[reversedCurrentScheme][key] && pref.allowDarkLight)
+				setFrameColour(windowId, rgba(default_customRule_aboutPage[reversedCurrentScheme][key]));
 			// If changing mode is not allowed
 			else if (url.startsWith("about:")) setFrameColour(windowId, "DEFAULT");
 			else if (key.startsWith("Add-on ID: ") && current.customRule[key])
@@ -520,14 +478,4 @@ function applyTheme(windowId, colour, colourScheme) {
 		};
 		browser.theme.update(windowId, theme);
 	}
-}
-
-/**
- * Overrides content colour scheme.
- * @param {string} scheme "light", "dark", or "auto". Converts "auto" to "system" if the browser's version sits below v106.
- */
-function setBrowserColourScheme(scheme) {
-	browser.browserSettings.overrideContentColorScheme.set({
-		value: scheme == "auto" && checkVersion() < 106 ? "system" : scheme,
-	});
 }
