@@ -24,12 +24,12 @@
 		}
 	],
 	"options_ui": {
-		"page": "options.html",
+		"page": "options/options.html",
 		"open_in_tab": false,
 		"browser_style": true
 	},
 	"browser_action": {
-		"default_popup": "popup.html",
+		"default_popup": "popup/popup.html",
 		"default_title": "__MSG_extensionName__",
 		"browser_style": true,
 		"default_icon": {

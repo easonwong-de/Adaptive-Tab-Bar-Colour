@@ -101,10 +101,12 @@ const current = {
 const darkModeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 
 async function getCurrentScheme() {
-	const scheme = await browser.browserSettings.overrideContentColorScheme.get({}).value;
+	const webAppearanceSetting = await browser.browserSettings.overrideContentColorScheme.get({});
+	const scheme = webAppearanceSetting.value;
 	if (scheme === "light" || scheme === "dark") {
 		return scheme;
 	} else {
+		console.log("darkModeDetection: ", darkModeDetection.matches);
 		return darkModeDetection?.matches ? "dark" : "light";
 	}
 }
@@ -348,7 +350,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				icons: "rgb(30, 30, 30)",
 			},
 			properties: {
-				color_scheme: "light",
+				color_scheme: "auto",
 				content_color_scheme: "auto",
 			},
 		};
@@ -390,7 +392,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				icons: "rgb(225, 225, 225)",
 			},
 			properties: {
-				color_scheme: "dark",
+				color_scheme: "auto",
 				content_color_scheme: "auto",
 			},
 		};
@@ -404,7 +406,8 @@ function applyTheme(windowId, colour, colourScheme) {
 	browser.tabs.onActivated.addListener(update);
 	browser.tabs.onAttached.addListener(update);
 	browser.windows.onFocusChanged.addListener(update);
-	browser.browserSettings.overrideContentColorScheme.onChange.addListener(update);
 	browser.runtime.onMessage.addListener(handleMessage);
-	darkModeDetection?.addEventListener(prefUpdate);
+	// doesn't work
+	browser.browserSettings.overrideContentColorScheme.onChange.addListener(prefUpdate);
+	darkModeDetection?.addEventListener("change", prefUpdate);
 })();
