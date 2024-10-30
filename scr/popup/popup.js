@@ -51,29 +51,29 @@ function cachePref(storedPref) {
 	pref = Object.assign({}, storedPref);
 	currentReservedColour = pref.custom ? pref.customRule : {};
 	return (
-		pref.scheme != null &&
-		pref.allowDarkLight != null &&
-		pref.dynamic != null &&
-		pref.noThemeColour != null &&
-		pref.tabbar != null &&
-		pref.tabSelected != null &&
-		pref.toolbar != null &&
-		pref.toolbarBorder != null &&
-		pref.toolbarField != null &&
-		pref.toolbarFieldOnFocus != null &&
-		pref.sidebar != null &&
-		pref.sidebarBorder != null &&
-		pref.popup != null &&
-		pref.popupBorder != null &&
-		pref.minContrast_light != null &&
-		pref.minContrast_dark != null &&
-		pref.custom != null &&
-		pref.homeBackground_light != null &&
-		pref.homeBackground_dark != null &&
-		pref.fallbackColour_light != null &&
-		pref.fallbackColour_dark != null &&
-		pref.customRule != null &&
-		pref.version != null
+		pref.scheme !== null &&
+		pref.allowDarkLight !== null &&
+		pref.dynamic !== null &&
+		pref.noThemeColour !== null &&
+		pref.tabbar !== null &&
+		pref.tabSelected !== null &&
+		pref.toolbar !== null &&
+		pref.toolbarBorder !== null &&
+		pref.toolbarField !== null &&
+		pref.toolbarFieldOnFocus !== null &&
+		pref.sidebar !== null &&
+		pref.sidebarBorder !== null &&
+		pref.popup !== null &&
+		pref.popupBorder !== null &&
+		pref.minContrast_light !== null &&
+		pref.minContrast_dark !== null &&
+		pref.custom !== null &&
+		pref.homeBackground_light !== null &&
+		pref.homeBackground_dark !== null &&
+		pref.fallbackColour_light !== null &&
+		pref.fallbackColour_dark !== null &&
+		pref.customRule !== null &&
+		pref.version !== null
 	);
 }
 
@@ -107,9 +107,9 @@ browser.storage.onChanged.addListener(applySettings);
 function load() {
 	browser.storage.local.get((storedPref) => {
 		if (cachePref(storedPref)) {
-			colourSchemeDark.checked = pref.scheme == "dark";
-			colourSchemeLight.checked = pref.scheme == "light";
-			colourSchemeAuto.checked = pref.scheme == "auto";
+			colourSchemeDark.checked = pref.scheme === "dark";
+			colourSchemeLight.checked = pref.scheme === "light";
+			colourSchemeAuto.checked = pref.scheme === "auto";
 			allowDarkLightCheckbox.checked = pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
@@ -193,11 +193,11 @@ function updatePopup() {
 	browser.theme.getCurrent().then((currentTheme) => {
 		body.style.backgroundColor = currentTheme["colors"]["popup"];
 		body.style.color = currentTheme["colors"]["popup_text"];
-		if (currentTheme["colors"]["popup_text"] == "rgb(0, 0, 0)") body.classList.replace("dark", "light");
+		if (currentTheme["colors"]["popup_text"] === "rgb(0, 0, 0)") body.classList.replace("dark", "light");
 		else body.classList.replace("light", "dark");
 	});
 	// Changes the text of the allow dark/light tab bar button
-	if (pref.scheme == "light" || (pref.scheme == "auto" && lightModeDetected())) {
+	if (pref.scheme === "light" || (pref.scheme === "auto" && lightModeDetected())) {
 		allowDarkLightCheckboxText.textContent = msg("allowDarkTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
@@ -231,8 +231,8 @@ function loadInfoForWebpage(tab) {
 			if (RESPONSE_INFO) {
 				let reason = RESPONSE_INFO.reason;
 				let action = null;
-				if (reason == "theme_unignored" || reason == "theme_used") action = "IGNORE_THEME";
-				else if (reason == "theme_ignored") action = "UN_IGNORE_THEME";
+				if (reason === "theme_unignored" || reason === "theme_used") action = "IGNORE_THEME";
+				else if (reason === "theme_ignored") action = "UN_IGNORE_THEME";
 				if (action) {
 					setInfoDisplay(reason, null, () => {
 						pref.customRule[domain] = action;
@@ -261,9 +261,9 @@ function loadInfoForAddonPage(tab) {
 	browser.management.getAll().then((addonList) => {
 		let foundAssociatedAddon = false;
 		for (let addon of addonList) {
-			if (addon.type != "extension" || !addon.hostPermissions) continue;
+			if (addon.type !== "extension" || !addon.hostPermissions) continue;
 			for (let host of addon.hostPermissions) {
-				if (!host.startsWith("moz-extension:") || uuid != host.split(/\/|\?/)[2]) continue;
+				if (!host.startsWith("moz-extension:") || uuid !== host.split(/\/|\?/)[2]) continue;
 				else if (currentReservedColour[`Add-on ID: ${addon.id}`])
 					setInfoDisplay("addon_default", addon.name, () => specifyColourForAddon(addon.id, null));
 				else if (recommendedColour_addon[addon.id])

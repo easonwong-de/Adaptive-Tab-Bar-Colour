@@ -1,12 +1,16 @@
+"use strict";
+
 /*
  * Definitions of some concepts
  *
  * System colour scheme:
  * The colour scheme of the operating system, usually light or dark.
  *
- * Browser colour scheme / current.scheme:
+ * Browser colour scheme:
  * The "website appearance" settings of Firefox, which can be light, dark, or auto.
- * It decides whether the light theme or dark theme is preferred.
+ *
+ * current.scheme:
+ * Derived from System and Browser colour scheme and decides whether the light theme or dark theme is preferred.
  *
  * pref.allowDarkLight:
  * A setting that decides if a light theme is allowed to be used when current.scheme is dark, or vice versa.
@@ -24,59 +28,26 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_customRule_webPage,
 	default_customRule_aboutPage,
 } from "./default_values.js";
-
-import { legacyPrefKey, verifyPref } from "./pref.js";
-
+import preference from "./preference.js";
 import { rgba, dimColour, contrastRatio } from "./colour.js";
 
-// Settings cache: always synced with settings
-var pref = {
-	allowDarkLight: true,
-	dynamic: true,
-	noThemeColour: true,
-	tabbar: 0,
-	tabbarBorder: 0,
-	tabSelected: 0.1,
-	tabSelectedBorder: 0.0,
-	toolbar: 0,
-	toolbarBorder: 0,
-	toolbarField: 0.05,
-	toolbarFieldBorder: 0.1,
-	toolbarFieldOnFocus: 0.05,
-	sidebar: 0.05,
-	sidebarBorder: 0.05,
-	popup: 0.05,
-	popupBorder: 0.05,
-	minContrast_light: 4.5,
-	minContrast_dark: 4.5,
-	custom: false,
-	homeBackground_light: default_homeBackground_light,
-	homeBackground_dark: default_homeBackground_dark,
-	fallbackColour_light: default_fallbackColour_light,
-	fallbackColour_dark: default_fallbackColour_dark,
-	customRule_webPage: default_customRule_webPage,
-	version: [2, 2],
-};
+/** Preference */
+const pref = new preference();
 
-// Variables
-var current = {
-	scheme: "light", // "light", "dark", or "auto"
-	homeBackground_light: rgba(default_homeBackground_light),
-	homeBackground_dark: rgba(default_homeBackground_dark),
-	fallbackColour_light: rgba(default_fallbackColour_light),
-	fallbackColour_dark: rgba(default_fallbackColour_dark),
-	customRule: {},
-};
-
-// Colour codes
-var colourCode = {
+/** Lookup table for codified colours */
+const colourCode = {
 	light: {
-		HOME: current.homeBackground_light,
-		FALLBACK: current.fallbackColour_light,
-		IMAGEVIEWER: current.fallbackColour_light,
+		get HOME() {
+			return current.homeBackground_light;
+		},
+		get FALLBACK() {
+			return current.fallbackColour_light;
+		},
+		get IMAGEVIEWER() {
+			return current.fallbackColour_light;
+		},
 		PLAINTEXT: rgba([236, 236, 236, 1]),
 		SYSTEM: rgba([255, 255, 255, 1]),
 		ADDON: rgba([236, 236, 236, 1]),
@@ -84,9 +55,15 @@ var colourCode = {
 		DEFAULT: rgba([255, 255, 255, 1]),
 	},
 	dark: {
-		HOME: current.homeBackground_dark,
-		FALLBACK: current.fallbackColour_dark,
-		IMAGEVIEWER: current.fallbackColour_dark,
+		get HOME() {
+			return current.homeBackground_dark;
+		},
+		get FALLBACK() {
+			return current.fallbackColour_dark;
+		},
+		get IMAGEVIEWER() {
+			return current.fallbackColour_dark;
+		},
 		PLAINTEXT: rgba([50, 50, 50, 1]),
 		SYSTEM: rgba([30, 30, 30, 1]),
 		ADDON: rgba([50, 50, 50, 1]),
@@ -95,135 +72,50 @@ var colourCode = {
 	},
 };
 
-/**
- * Sets "current" values after pref being loaded.
- */
-function updateCurrent() {
-	if (pref.custom) {
-		current.homeBackground_light = rgba(pref.homeBackground_light);
-		current.homeBackground_dark = rgba(pref.homeBackground_dark);
-		current.fallbackColour_light = rgba(pref.fallbackColour_light);
-		current.fallbackColour_dark = rgba(pref.fallbackColour_dark);
-		current.customRule = pref.customRule_webPage;
+/** Variables */
+const current = {
+	scheme: "light", // "light" or "dark"
+	homeBackground_light: rgba(default_homeBackground_light),
+	homeBackground_dark: rgba(default_homeBackground_dark),
+	fallbackColour_light: rgba(default_fallbackColour_light),
+	fallbackColour_dark: rgba(default_fallbackColour_dark),
+	customRule_webPage: {},
+	async update() {
+		if (pref.custom) {
+			this.homeBackground_light = rgba(pref.homeBackground_light);
+			this.homeBackground_dark = rgba(pref.homeBackground_dark);
+			this.fallbackColour_light = rgba(pref.fallbackColour_light);
+			this.fallbackColour_dark = rgba(pref.fallbackColour_dark);
+			this.customRule_webPage = pref.customRule_webPage;
+		} else {
+			this.homeBackground_light = rgba(default_homeBackground_light);
+			this.homeBackground_dark = rgba(default_homeBackground_dark);
+			this.fallbackColour_light = rgba(default_fallbackColour_light);
+			this.fallbackColour_dark = rgba(default_fallbackColour_dark);
+			this.customRule_webPage = {};
+		}
+		this.scheme = await getCurrentScheme();
+	},
+};
+
+const darkModeDetection = window.matchMedia("(prefers-color-scheme: dark)");
+
+async function getCurrentScheme() {
+	const scheme = await browser.browserSettings.overrideContentColorScheme.get({}).value;
+	if (scheme === "light" || scheme === "dark") {
+		return scheme;
 	} else {
-		current.homeBackground_light = rgba(default_homeBackground_light);
-		current.homeBackground_dark = rgba(default_homeBackground_dark);
-		current.fallbackColour_light = rgba(default_fallbackColour_light);
-		current.fallbackColour_dark = rgba(default_fallbackColour_dark);
-		current.customRule = {};
+		return darkModeDetection?.matches ? "dark" : "light";
 	}
-	getBrowserColourScheme((scheme) => {
-		current.scheme = scheme;
-	});
 }
-
-/**
- * Overrides content colour scheme.
- * @return
- */
-async function getBrowserColourScheme() {
-	const result = await browser.browserSettings.overrideContentColorScheme.get({});
-	return result.value;
-}
-
-browser.browserSettings.overrideContentColorScheme.onChange.addListener(updateCurrent);
-
-initialise();
 
 /**
  * Initialises the pref and current.
  */
 async function initialise() {
-	const storedPref = await browser.storage.local.get();
-	// If the storage is empty / no version number is recorded, treats it as a fresh installation
-	const freshInstall =
-		Object.keys(storedPref).length == 0 || !("last_version" in storedPref) || !("version" in storedPref);
-	if (!freshInstall) {
-		for (let key in storedPref) {
-			if (key in pref) pref[key] = storedPref[key];
-			else if (key in legacyPrefKey) pref[legacyPrefKey[key]] = storedPref[key];
-		}
-		// Updating from before v2.2
-		if (pref.version < [2, 2]) {
-			pref.dynamic = true;
-			pref.allowDarkLight = true;
-			pref.noThemeColour = true;
-			if (pref.scheme == "system") pref.scheme = "auto";
-		}
-		// Updating from before v1.7.5
-		// Converts legacy rules to query selector format
-		if (pref.version < [1, 7, 5]) {
-			for (let domain in pref.customRule_webPage) {
-				let legacyRule = pref.customRule_webPage[domain];
-				if (legacyRule.startsWith("TAG_")) {
-					pref.customRule_webPage[domain] = legacyRule.replace("TAG_", "QS_");
-				} else if (legacyRule.startsWith("CLASS_")) {
-					pref.customRule_webPage[domain] = legacyRule.replace("CLASS_", "QS_.");
-				} else if (legacyRule.startsWith("ID_")) {
-					pref.customRule_webPage[domain] = legacyRule.replace("ID_", "QS_#");
-				} else if (legacyRule.startsWith("NAME_")) {
-					pref.customRule_webPage[domain] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
-				} else if (legacyRule == "") {
-					delete pref.customRule_webPage[domain];
-				}
-			}
-		}
-		// Updating from before v1.7.4
-		// Clears possible empty reserved colour rules caused by a bug
-		if (pref.version < [1, 7, 4]) delete pref.customRule_webPage[undefined];
-		// Updating from before v1.6.4
-		// Corrects the dark home page colour, unless the user has set something different
-		if (pref.version < [1, 6, 5] && pref.homeBackground_dark.toUpperCase() == "#1C1B22")
-			pref.homeBackground_dark = default_homeBackground_dark;
-	}
-	updateCurrent();
+	await pref.normalise();
+	await current.update();
 	update();
-	await browser.storage.local.set(pref);
-	return true;
-}
-
-browser.tabs.onUpdated.addListener(update);
-browser.tabs.onActivated.addListener(update);
-browser.tabs.onAttached.addListener(update);
-browser.windows.onFocusChanged.addListener(update);
-
-browser.runtime.onMessage.addListener((message, sender) => {
-	switch (message.reason) {
-		// When pref is detected corrupted
-		case "INIT_REQUEST":
-			initialise();
-			break;
-		// When pref changes
-		case "UPDATE_REQUEST":
-			loadPrefAndUpdate();
-			break;
-		// Content script sends a colour
-		case "COLOUR_UPDATE":
-			sender.tab.active ? setFrameColour(sender.tab.windowId, message.colour) : update();
-			break;
-	}
-});
-
-// Light mode match media, which is supposed to detect the system level colour scheme
-const lightModeDetection = window.matchMedia("(prefers-color-scheme: light)");
-if (lightModeDetection)
-	lightModeDetection.onchange = () => {
-		if (pref.scheme == "auto") loadPrefAndUpdate();
-	};
-
-// Dark mode match media, which is supposed to detect the system level colour scheme
-const darkModeDetection = window.matchMedia("(prefers-color-scheme: dark)");
-if (darkModeDetection)
-	darkModeDetection.onchange = () => {
-		if (pref.scheme == "auto") loadPrefAndUpdate();
-	};
-
-/**
- * @returns "light" or "dark" depending on the system's setting.
- * @returns "light" if it cannot be detected.
- */
-function systemColourScheme() {
-	return lightModeDetection?.matches ? "light" : "dark";
 }
 
 /**
@@ -231,20 +123,38 @@ function systemColourScheme() {
  */
 async function update() {
 	const tabs = await browser.tabs.query({ active: true, status: "complete" });
-	if (!verifyPref(pref)) await initialise();
-	tabs.forEach(updateEachWindow);
+	if (!pref.valid()) await initialise();
+	tabs.forEach(updateTab);
 }
 
 /**
  * Updates pref cache and triggers colour change in all windows.
  */
-function loadPrefAndUpdate() {
-	browser.storage.local.get((storedPref) => {
-		pref = storedPref;
-		getBrowserColourScheme(pref.scheme);
-		updateCurrent();
+async function prefUpdate() {
+	await pref.load();
+	await current.update();
+	update();
+}
+
+/**
+ * Handles incoming messages based on their `reason` codes.
+ *
+ * @param {object} message The message object containing the `reason` and any additional data.
+ * @param {runtime.MessageSender} sender Information about the message sender.
+ */
+function handleMessage(message, sender) {
+	const tab = sender.tab;
+	const actions = {
+		INIT_REQUEST: initialise,
+		UPDATE_REQUEST: prefUpdate,
+		SCRIPT_LOADED: () => requireWebpageColour(tab),
+		COLOUR_UPDATE: () => setFrameColour(tab.windowId, message.colour),
+	};
+	if (tab?.active && message?.reason in actions) {
+		actions[message.reason]();
+	} else {
 		update();
-	});
+	}
 }
 
 // WIP: Change to reverved colour manager
@@ -253,76 +163,81 @@ function loadPrefAndUpdate() {
  * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
  * @returns e.g. for about pages: "about:page", for websites: "addons.mozilla.org", for add-on pages "Add-on ID: ATBC@EasonWong".
  */
-function getSearchKey(url) {
-	if (url.startsWith("about:")) return Promise.resolve(url.split(/\/|\?/)[0]); // e.g. "about:page"
-	else if (url.startsWith("moz-extension:")) {
+async function getSearchKey(url) {
+	if (url.startsWith("about:")) {
+		// e.g. "about:page"
+		return url.split(/\/|\?/)[0];
+	} else if (url.startsWith("moz-extension:")) {
 		// Searches for add-on ID
 		// Colours for add-on pages are stored with the add-on ID as their keys
-		let uuid = url.split(/\/|\?/)[2];
-		return new Promise((resolve) => {
-			browser.management.getAll().then((addonList) => {
-				let foundAddonID = false;
-				for (let addon of addonList) {
-					if (addon.type != "extension" || !addon.hostPermissions) continue;
-					for (let host of addon.hostPermissions) {
-						if (!host.startsWith("moz-extension:") || uuid != host.split(/\/|\?/)[2]) continue;
-						resolve(`Add-on ID: ${addon.id}`);
-						foundAddonID = true;
-						break;
-					}
-					if (foundAddonID) break;
-				}
-			});
-		});
+		const uuid = url.split(/\/|\?/)[2];
+		const addonList = await browser.management.getAll();
+		for (const addon of addonList) {
+			if (addon.type !== "extension" || !addon.hostPermissions) continue;
+			for (const host of addon.hostPermissions) {
+				if (!host.startsWith("moz-extension:") || uuid !== host.split(/\/|\?/)[2]) continue;
+				return `Add-on ID: ${addon.id}`;
+			}
+		}
+	} else {
+		// In case of a regular website, returns its domain, e.g. "addons.mozilla.org"
+		return url.split(/\/|\?/)[2];
 	}
-	// In case of a regular website, returns its domain, e.g. "addons.mozilla.org"
-	else return Promise.resolve(url.split(/\/|\?/)[2]);
 }
 
 /**
  * Updates the colour for a window.
  * @param {tabs.Tab} tab The tab the window is showing.
  */
-function updateEachWindow(tab) {
-	let url = tab.url;
-	let windowId = tab.windowId;
+async function updateTab(tab) {
+	const url = tab.url;
+	const windowId = tab.windowId;
 	// Visiting browser's internal files (content script blocked)
-	if (url.startsWith("view-source:")) setFrameColour(windowId, "PLAINTEXT");
+	if (url.startsWith("view-source:")) {
+		setFrameColour(windowId, "PLAINTEXT");
+	}
 	// Visiting browser's internal files (content script blocked)
 	else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
-		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js"))
+		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
 			setFrameColour(windowId, "PLAINTEXT");
-		else if (url.endsWith(".png") || url.endsWith(".jpg")) setFrameColour(windowId, "IMAGEVIEWER");
-		else setFrameColour(windowId, "SYSTEM");
+		} else if (url.endsWith(".png") || url.endsWith(".jpg")) {
+			setFrameColour(windowId, "IMAGEVIEWER");
+		} else {
+			setFrameColour(windowId, "SYSTEM");
+		}
 	} else {
 		// Visiting normal websites, PDF viewer (content script blocked), websites that failed to load, or local files
 		// WIP: add support for setting colours for about:pages
 		// WIP: add support for regex / wildcard characters
-		getSearchKey(url).then((key) => {
-			let reversedCurrentScheme = current.scheme == "light" ? "dark" : "light";
+		const searchKey = await getSearchKey(url);
+		const reversedCurrentScheme = current.scheme === "light" ? "dark" : "light";
+		if (default_customRule_aboutPage[current.scheme][searchKey]) {
 			// For preferred scheme there's a reserved colour
-			if (default_customRule_aboutPage[current.scheme][key])
-				setFrameColour(windowId, rgba(default_customRule_aboutPage[current.scheme][key]));
+			setFrameColour(windowId, rgba(default_customRule_aboutPage[current.scheme][searchKey]));
+		} else if (default_customRule_aboutPage[reversedCurrentScheme][searchKey] && pref.allowDarkLight) {
 			// Site has reserved colour only in the other mode, and it's allowed to change mode
-			else if (default_customRule_aboutPage[reversedCurrentScheme][key] && pref.allowDarkLight)
-				setFrameColour(windowId, rgba(default_customRule_aboutPage[reversedCurrentScheme][key]));
-			// If changing mode is not allowed
-			else if (url.startsWith("about:")) setFrameColour(windowId, "DEFAULT");
-			else if (key.startsWith("Add-on ID: ") && current.customRule[key])
-				setFrameColour(windowId, rgba(current.customRule[key]));
-			else if (url.startsWith("moz-extension:")) setFrameColour(windowId, "ADDON");
-			else setFrameColourWithTabResponse(getTabResponse(tab));
-		});
+			setFrameColour(windowId, rgba(default_customRule_aboutPage[reversedCurrentScheme][searchKey]));
+		} else if (url.startsWith("about:")) {
+			// If changing mode is otherwise not allowed
+			setFrameColour(windowId, "DEFAULT");
+		} else if (searchKey.startsWith("Add-on ID: ") && current.customRule_webPage[searchKey]) {
+			setFrameColour(windowId, rgba(current.customRule_webPage[searchKey]));
+		} else if (url.startsWith("moz-extension:")) {
+			setFrameColour(windowId, "ADDON");
+		} else {
+			requireWebpageColour(tab, current.customRule_webPage[searchKey]);
+		}
 	}
 }
 
 /**
- * Configures the content script and sets up theme with the colour from content script.
+ * Configures the content script and uses its colour to apply theme.
+ *
  * @param {tabs.Tab} tab the tab to contact.
- * @returns response of the tab.
+ * @param {string} customRule the custom rule for the tab.
  */
-function getTabResponse(tab) {
-	let url = tab.url;
+function requireWebpageColour(tab, customRule = null) {
+	const url = tab.url;
 	browser.tabs.sendMessage(
 		tab.id,
 		{
@@ -330,40 +245,39 @@ function getTabResponse(tab) {
 			conf: {
 				dynamic: pref.dynamic,
 				noThemeColour: pref.noThemeColour,
-				customRule: getCustomRule(url),
+				customRule: customRule,
 			},
 		},
 		(response) => {
-			return response;
+			const windowId = tab.windowId;
+			if (response) {
+				// The colour is successfully returned
+				setFrameColour(windowId, response.colour);
+			} else if (url.startsWith("data:image")) {
+				// Viewing an image on data:image (content script is blocked on data:pages)
+				setFrameColour(windowId, "IMAGEVIEWER");
+			} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+				// When viewing a PDF file, Firefox blocks content script
+				setFrameColour(windowId, "PDFVIEWER");
+			} else if (tab.favIconUrl?.startsWith("chrome:")) {
+				// The page probably failed to load (content script is also blocked on website that failed to load)
+				setFrameColour(windowId, "DEFAULT");
+			} else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) {
+				// When viewing plain text online, Firefox blocks content script
+				// In this case, the tab title is the same as the URL
+				setFrameColour(windowId, "PLAINTEXT");
+			} else {
+				// Uses fallback colour
+				setFrameColour(windowId, "FALLBACK");
+			}
 		}
 	);
-}
-
-function setFrameColourWithTabResponse(tab, response) {
-	let windowId = tab.windowId;
-	// The colour is successfully returned
-	if (response) setFrameColour(windowId, response.colour);
-	// Viewing an image on data:image (content script is blocked on data:pages)
-	else if (url.startsWith("data:image")) setFrameColour(windowId, "IMAGEVIEWER");
-	// When viewing a PDF file, Firefox blocks content script
-	else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) setFrameColour(windowId, "PDFVIEWER");
-	// The page probably failed to load (content script is also blocked on website that failed to load)
-	else if (tab.favIconUrl?.startsWith("chrome:")) setFrameColour(windowId, "DEFAULT");
-	// When viewing plain text online, Firefox blocks content script
-	// In this case, the tab title is the same as the URL
-	else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) setFrameColour(windowId, "PLAINTEXT");
-	// Uses fallback colour
-	else setFrameColour(windowId, "FALLBACK");
-}
-
-function getCustomRule(url) {
-	return null;
 }
 
 function getSuitableColourScheme(colour) {
 	let eligibility_dark = contrastRatio(colour, rgba([255, 255, 255, 1])) > pref.minContrast_dark;
 	let eligibility_light = contrastRatio(colour, rgba([0, 0, 0, 1])) > pref.minContrast_light;
-	if (current.scheme == "light") {
+	if (current.scheme === "light") {
 		if (eligibility_light) return "light";
 		if (pref.allowDarkLight && eligibility_dark) return "dark";
 	} else {
@@ -379,11 +293,15 @@ function getSuitableColourScheme(colour) {
  * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
  */
 function setFrameColour(windowId, colour) {
-	if (typeof colour == "string") applyTheme(windowId, colourCode[current.scheme][colour], current.scheme);
-	else {
+	if (typeof colour === "string") {
+		applyTheme(windowId, colourCode[current.scheme][colour], current.scheme);
+	} else {
 		let suitableColourScheme = getSuitableColourScheme(colour);
-		if (suitableColourScheme) applyTheme(windowId, colour, suitableColourScheme);
-		else setFrameColour(windowId, "FALLBACK");
+		if (suitableColourScheme) {
+			applyTheme(windowId, colour, suitableColourScheme);
+		} else {
+			setFrameColour(windowId, "FALLBACK");
+		}
 	}
 }
 
@@ -394,7 +312,7 @@ function setFrameColour(windowId, colour) {
  * @param {string} colourScheme "light" or "dark".
  */
 function applyTheme(windowId, colour, colourScheme) {
-	if (colourScheme == "light") {
+	if (colourScheme === "light") {
 		let theme = {
 			colors: {
 				// Tabbar & tab
@@ -436,7 +354,7 @@ function applyTheme(windowId, colour, colourScheme) {
 		};
 		browser.theme.update(windowId, theme);
 	}
-	if (colourScheme == "dark") {
+	if (colourScheme === "dark") {
 		let theme = {
 			colors: {
 				// Tabbar & tab
@@ -479,3 +397,14 @@ function applyTheme(windowId, colour, colourScheme) {
 		browser.theme.update(windowId, theme);
 	}
 }
+
+(async () => {
+	await initialise();
+	browser.tabs.onUpdated.addListener(update);
+	browser.tabs.onActivated.addListener(update);
+	browser.tabs.onAttached.addListener(update);
+	browser.windows.onFocusChanged.addListener(update);
+	browser.browserSettings.overrideContentColorScheme.onChange.addListener(update);
+	browser.runtime.onMessage.addListener(handleMessage);
+	darkModeDetection?.addEventListener(prefUpdate);
+})();

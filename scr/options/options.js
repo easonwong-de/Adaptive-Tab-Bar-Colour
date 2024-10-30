@@ -49,27 +49,27 @@ function cachePref(storedPref) {
 	pref = storedPref;
 	customRule = pref.custom ? pref.customRule : default_customRule;
 	return (
-		pref.scheme != null &&
-		pref.allowDarkLight != null &&
-		pref.dynamic != null &&
-		pref.noThemeColour != null &&
-		pref.tabbar != null &&
-		pref.tabSelected != null &&
-		pref.toolbar != null &&
-		pref.toolbarBorder != null &&
-		pref.toolbarField != null &&
-		pref.toolbarFieldOnFocus != null &&
-		pref.sidebar != null &&
-		pref.sidebarBorder != null &&
-		pref.popup != null &&
-		pref.popupBorder != null &&
-		pref.custom != null &&
-		pref.homeBackground_light != null &&
-		pref.homeBackground_dark != null &&
-		pref.fallbackColour_light != null &&
-		pref.fallbackColour_dark != null &&
-		pref.customRule != null &&
-		pref.version != null
+		pref.scheme !== null &&
+		pref.allowDarkLight !== null &&
+		pref.dynamic !== null &&
+		pref.noThemeColour !== null &&
+		pref.tabbar !== null &&
+		pref.tabSelected !== null &&
+		pref.toolbar !== null &&
+		pref.toolbarBorder !== null &&
+		pref.toolbarField !== null &&
+		pref.toolbarFieldOnFocus !== null &&
+		pref.sidebar !== null &&
+		pref.sidebarBorder !== null &&
+		pref.popup !== null &&
+		pref.popupBorder !== null &&
+		pref.custom !== null &&
+		pref.homeBackground_light !== null &&
+		pref.homeBackground_dark !== null &&
+		pref.fallbackColour_light !== null &&
+		pref.fallbackColour_dark !== null &&
+		pref.customRule !== null &&
+		pref.version !== null
 	);
 }
 
@@ -130,9 +130,9 @@ browser.storage.onChanged.addListener(() => {
 function load() {
 	browser.storage.local.get((storedPref) => {
 		if (cachePref(storedPref)) {
-			colourSchemeDark.checked = pref.scheme == "dark";
-			colourSchemeLight.checked = pref.scheme == "light";
-			colourSchemeAuto.checked = pref.scheme == "auto";
+			colourSchemeDark.checked = pref.scheme === "dark";
+			colourSchemeLight.checked = pref.scheme === "light";
+			colourSchemeAuto.checked = pref.scheme === "auto";
 			allowDarkLightCheckbox.checked = !pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
@@ -179,9 +179,9 @@ function load() {
 function load_lite() {
 	browser.storage.local.get((storedPref) => {
 		if (cachePref(storedPref)) {
-			colourSchemeDark.checked = pref.scheme == "dark";
-			colourSchemeLight.checked = pref.scheme == "light";
-			colourSchemeAuto.checked = pref.scheme == "system";
+			colourSchemeDark.checked = pref.scheme === "dark";
+			colourSchemeLight.checked = pref.scheme === "light";
+			colourSchemeAuto.checked = pref.scheme === "system";
 			allowDarkLightCheckbox.checked = pref.allowDarkLight;
 			dynamicCheckbox.checked = pref.dynamic;
 			noThemeColourCheckbox.checked = pref.noThemeColour;
@@ -318,7 +318,7 @@ if (popupDetected()) {
 	};
 	op_add.onclick = () => {
 		let i = 0;
-		while (document.getElementById(`DOM_${i}`) != null) i++; // finds an unoccupied index
+		while (document.getElementById(`DOM_${i}`) !== null) i++; // finds an unoccupied index
 		let new_row = op_custom-options.insertRow(op_custom-options.rows.length);
 		generateNewRow("", i).then((new_row_HTML) => {
 			new_row.innerHTML = new_row_HTML;
@@ -338,7 +338,7 @@ function autoSaveSettings() {
 		let table_cells = all_table_rows[i].children;
 		let domain = table_cells[0].firstElementChild.title;
 		if (!domain) domain = table_cells[0].firstElementChild.value;
-		if (domain != "" && isNaN(domain) && pending_customRule[domain] == null) {
+		if (domain !== "" && isNaN(domain) && pending_customRule[domain] === null) {
 			let action;
 			switch (table_cells[1].firstElementChild.selectedIndex) {
 				case 0:
@@ -356,14 +356,14 @@ function autoSaveSettings() {
 				default:
 					break;
 			}
-			if (action != "QS_") {
+			if (action !== "QS_") {
 				pending_customRule[domain] = action;
-				if (table_cells[4] != null) table_cells[4].remove();
+				if (table_cells[4] !== null) table_cells[4].remove();
 			} else {
-				if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
+				if (table_cells[4] === null) all_table_rows[i].insertCell().innerHTML = svg_warning;
 			}
 		} else {
-			if (table_cells[4] == null) all_table_rows[i].insertCell().innerHTML = svg_warning;
+			if (table_cells[4] === null) all_table_rows[i].insertCell().innerHTML = svg_warning;
 		}
 	}
 	browser.storage.local.set({ customRule: pending_customRule });
@@ -394,7 +394,7 @@ function generateNewRow(domain, i) {
 		});
 	} else {
 		let action;
-		if (domain == "") {
+		if (domain === "") {
 			domain = "example.com";
 			action = "#ECECEC";
 		} else {
@@ -404,7 +404,7 @@ function generateNewRow(domain, i) {
 		let part_2 = ``;
 		let part_3 = ``;
 		let part_4 = `<button id="DEL_${i}" title="${msg("delete")}">${svg_bin}</button>`;
-		if (action == "IGNORE_THEME") {
+		if (action === "IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}">
 				<option>${msg("specifyAColour")}</option>
 				<option selected>${msg("ignoreThemeColour")}</option>
@@ -412,7 +412,7 @@ function generateNewRow(domain, i) {
 				<option>${msg("useQuerySelector")}</option>
 			</select>`;
 			part_3 = `<span class="FiveEm"></span>`;
-		} else if (action == "UN_IGNORE_THEME") {
+		} else if (action === "UN_IGNORE_THEME") {
 			part_2 = `<select id="SEL_${i}">
 				<option>${msg("specifyAColour")}</option>
 				<option>${msg("ignoreThemeColour")}</option>
@@ -469,7 +469,7 @@ function autoPopupColour() {
 		let url = tabs[0].url;
 		let domain = url.split(/\/|\?/)[2];
 		let id = tabs[0].id;
-		if (((url.startsWith("http:") || url.startsWith("https:")) && protectedDomain[domain] != "PROTECTED") || url.startsWith("file:")) {
+		if (((url.startsWith("http:") || url.startsWith("https:")) && protectedDomain[domain] !== "PROTECTED") || url.startsWith("file:")) {
 			browser.tabs.sendMessage(
 				id,
 				{
@@ -511,9 +511,9 @@ function autoPopupColour() {
 			browser.management.getAll().then((addon_list) => {
 				let breakLoop = false;
 				for (let addon of addon_list) {
-					if (addon.type == "extension" && addon.hostPermissions) {
+					if (addon.type === "extension" && addon.hostPermissions) {
 						for (let host of addon.hostPermissions) {
-							if (host.startsWith("moz-extension:") && uuid == host.split(/\/|\?/)[2]) {
+							if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
 								if (customRule[`Add-on ID: ${addon.id}`]) {
 									pp_info_display.innerHTML = msg("useDefaultColourForAddon", addon.name);
 									document.getElementById("info_action").onclick = () => {
@@ -562,7 +562,7 @@ function autoPopupColour() {
 	browser.theme.getCurrent().then((current_theme) => {
 		body.style.backgroundColor = current_theme["colors"]["popup"];
 		body.style.color = current_theme["colors"]["popup_text"];
-		if (current_theme["colors"]["popup_text"] == "rgb(0, 0, 0)") {
+		if (current_theme["colors"]["popup_text"] === "rgb(0, 0, 0)") {
 			body.classList.add("light");
 			body.classList.remove("dark");
 		} else {
@@ -570,7 +570,7 @@ function autoPopupColour() {
 			body.classList.remove("light");
 		}
 	});
-	if (pref.scheme == "light" || (pref.scheme == "system" && lightModeDetected())) {
+	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
 		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
 		allowDarkLightCheckboxText.parentElement.title = msg("forceModeTooltip_dark");
 	} else {
@@ -583,7 +583,7 @@ function autoPopupColour() {
  * Updates option page's colour depends on colour scheme.
  */
 function autoOptionsColour() {
-	if (pref.scheme == "light" || (pref.scheme == "system" && lightModeDetected())) {
+	if (pref.scheme === "light" || (pref.scheme === "system" && lightModeDetected())) {
 		body.classList.add("light");
 		body.classList.remove("dark");
 		allowDarkLightCheckboxText.innerHTML = msg("allowDarkTabBar");
@@ -600,7 +600,7 @@ function autoOptionsColour() {
  * @returns true if the script is run by the popup.
  */
 function popupDetected() {
-	return document.getElementById("more-custom") == null;
+	return document.getElementById("more-custom") === null;
 }
 
 // Light Mode Match Media on option page
@@ -625,7 +625,7 @@ function setBrowserColourScheme(pending_scheme) {
 	let version = checkVersion();
 	if (version >= 95)
 		browser.browserSettings.overrideContentColorScheme.set({
-			value: pending_scheme == "system" && version >= 106 ? "auto" : pending_scheme,
+			value: pending_scheme === "system" && version >= 106 ? "auto" : pending_scheme,
 		});
 }
 

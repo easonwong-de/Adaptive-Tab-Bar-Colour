@@ -5,13 +5,13 @@
  * @returns Colour in rgba object. Pure black if invalid.
  */
 export function rgba(colour) {
-	if (typeof colour == "string") {
+	if (typeof colour === "string") {
 		if (
-			colour == "DEFAULT" ||
-			colour == "IMAGEVIEWER" ||
-			colour == "PLAINTEXT" ||
-			colour == "HOME" ||
-			colour == "FALLBACK"
+			colour === "DEFAULT" ||
+			colour === "IMAGEVIEWER" ||
+			colour === "PLAINTEXT" ||
+			colour === "HOME" ||
+			colour === "FALLBACK"
 		)
 			return colour;
 		var canvas = document.createElement("canvas").getContext("2d");
@@ -36,7 +36,7 @@ export function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour == "object") return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
+	} else if (typeof colour === "object") return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	else return null;
 }
 
@@ -81,7 +81,7 @@ export function dimColour(colour, dim) {
 export function overlayColour(colourTop, colourBottom) {
 	let a = (1 - colourTop.a) * colourBottom.a + colourTop.a;
 	// Firefox renders transparent background in rgb(236, 236, 236)
-	if (a == 0) return rgba([236, 236, 236, 0]);
+	if (a === 0) return rgba([236, 236, 236, 0]);
 	else
 		return {
 			r: ((1 - colourTop.a) * colourBottom.a * colourBottom.r + colourTop.a * colourTop.r) / a,
