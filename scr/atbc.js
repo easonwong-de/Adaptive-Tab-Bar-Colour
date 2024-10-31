@@ -12,28 +12,24 @@
  */
 
 /** Configurations of the content script */
-const conf = { dynamic: true, noThemeColour: true, customRule: null };
+const conf = {
+	dynamic: true,
+	noThemeColour: true,
+	customRule: null,
+};
 
 /**
- * Information to be sent to the background / popup
+ * Information to be sent to the background / popup.
  *
  * `reason` determines the content shown in the popup infobox & text in the button.
  *
- * `reason` can be: `protected_page`, `home_page`, `text_viewer`, `image_viewer`, `pdf_viewer`, `error_occurred`, `fallback_colour`, `colour_picked`, `addon_default`, `addon_recom`, `addon_specify`, `theme_unignored`, `theme_missing`, `theme_ignored`, `theme_used`, `using_qs`, `colour_specified`
+ * `reason` can be: `protected_page`, `home_page`, `text_viewer`, `image_viewer`, `pdf_viewer`, `error_occurred`, `fallback_colour`, `colour_picked`, `addon_default`, `addon_recom`, `addon_specify`, `theme_unignored`, `theme_missing`, `theme_ignored`, `theme_used`, `using_qs`, `colour_specified`.
  */
 const response = {
 	reason: null,
 	additionalInfo: null,
 	colour: rgba([0, 0, 0, 0]),
-	reset() {
-		this.reason = null;
-		this.additionalInfo = null;
-		this.colour = rgba([0, 0, 0, 0]);
-	},
 };
-
-// Sends colour to background as soon as the page loads
-browser.runtime.sendMessage({ reason: "SCRIPT_LOADED" });
 
 /**
  * Runs the given function with a maximum rate of 100ms.
@@ -75,25 +71,25 @@ const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_anima
  */
 function setDynamicUpdate() {
 	if (conf.dynamic) {
-		document.addEventListener("animationend", findAndSendColour_animation_debounce);
-		document.addEventListener("animationcancel", findAndSendColour_animation_debounce);
 		document.addEventListener("pageshow", findAndSendColour);
 		document.addEventListener("click", findAndSendColour_debounce);
 		document.addEventListener("resize", findAndSendColour_debounce);
 		document.addEventListener("scroll", findAndSendColour_debounce);
+		document.addEventListener("visibilitychange", findAndSendColour_debounce);
 		document.addEventListener("transitionend", findAndSendColour_animation_debounce);
 		document.addEventListener("transitioncancel", findAndSendColour_animation_debounce);
-		document.addEventListener("visibilitychange", findAndSendColour_debounce);
+		document.addEventListener("animationend", findAndSendColour_animation_debounce);
+		document.addEventListener("animationcancel", findAndSendColour_animation_debounce);
 	} else {
-		document.removeEventListener("animationend", findAndSendColour_animation_debounce);
-		document.removeEventListener("animationcancel", findAndSendColour_animation_debounce);
 		document.removeEventListener("pageshow", findAndSendColour);
 		document.removeEventListener("click", findAndSendColour_debounce);
 		document.removeEventListener("resize", findAndSendColour_debounce);
 		document.removeEventListener("scroll", findAndSendColour_debounce);
+		document.removeEventListener("visibilitychange", findAndSendColour_debounce);
 		document.removeEventListener("transitionend", findAndSendColour_animation_debounce);
 		document.removeEventListener("transitioncancel", findAndSendColour_animation_debounce);
-		document.removeEventListener("visibilitychange", findAndSendColour_debounce);
+		document.removeEventListener("animationend", findAndSendColour_animation_debounce);
+		document.removeEventListener("animationcancel", findAndSendColour_animation_debounce);
 	}
 }
 
@@ -147,7 +143,9 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
  */
 function findColour() {
 	if (document.fullscreenElement) return false;
-	response.reset();
+	response.reason = null;
+	response.additionalInfo = null;
+	response.colour = rgba([0, 0, 0, 0]);
 	if (!findColourReserved()) findColourUnreserved();
 	return true;
 }
@@ -170,7 +168,7 @@ function findAndSendColour_animation() {
 /**
  * Sets `response.colour` with the help of custom rules.
  *
- * @returns True if a meta `theme-color` or a reserved colour for the webpage can be found.
+ * @returns True if a meta `theme-color` or a reserved colour for the web page can be found.
  */
 function findColourReserved() {
 	if (
@@ -286,7 +284,7 @@ function findComputedColour() {
 			response.colour = overlayColour(response.colour, colourBottom);
 		}
 	}
-	// If the colour is still not opaque, overlay it over the webpage body
+	// If the colour is still not opaque, overlay it over the web page body
 	// If the body is still not opaque, use fallback colour
 	if (response.colour.a === 1) {
 		response.reason = "colour_picked";
@@ -319,29 +317,33 @@ function getColourFromElement(element) {
 
 /**
  * Overlays one colour over another.
+ *
  * @param {Object} colourTop Colour on top.
  * @param {Object} colourBottom Colour underneath.
  * @returns Result of the addition in object.
  */
 function overlayColour(colourTop, colourBottom) {
-	let a = (1 - colourTop.a) * colourBottom.a + colourTop.a;
-	if (a === 0)
+	const a = (1 - colourTop.a) * colourBottom.a + colourTop.a;
+	if (a === 0) {
 		// Firefox renders transparent background in rgb(236, 236, 236)
 		return rgba([236, 236, 236, 0]);
-	else
+	} else {
 		return {
 			r: ((1 - colourTop.a) * colourBottom.a * colourBottom.r + colourTop.a * colourTop.r) / a,
 			g: ((1 - colourTop.a) * colourBottom.a * colourBottom.g + colourTop.a * colourTop.g) / a,
 			b: ((1 - colourTop.a) * colourBottom.a * colourBottom.b + colourTop.a * colourTop.b) / a,
 			a: a,
 		};
+	}
 }
 
 /**
- * Converts any colour to rgba object.
+ * Converts any colour to a rgba object.
+ *
  * @author JayB on Stack Overflow (modified by easonwong-de).
- * @param {string | Number[]} colour Colour to convert.
- * @returns Colour in rgba object. Pure black if invalid.
+ * @param {string | Number[]} colour Colour to convert or a colour code.
+ * @returns Returns the colour in rgba object. Pure black if invalid.
+ * @returns Returns the same colour code if the input is a colour code.
  */
 function rgba(colour) {
 	if (typeof colour === "string") {
@@ -353,13 +355,13 @@ function rgba(colour) {
 			colour === "FALLBACK"
 		)
 			return colour;
-		var canvas = document.createElement("canvas").getContext("2d");
+		const canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
-		let colour_temp = canvas.fillStyle;
-		if (colour_temp.startsWith("#")) {
-			let r = colour_temp[1] + colour_temp[2];
-			let g = colour_temp[3] + colour_temp[4];
-			let b = colour_temp[5] + colour_temp[6];
+		const canvasFillStyle = canvas.fillStyle;
+		if (canvasFillStyle.startsWith("#")) {
+			const r = canvasFillStyle[1] + canvasFillStyle[2];
+			const g = canvasFillStyle[3] + canvasFillStyle[4];
+			const b = canvasFillStyle[5] + canvasFillStyle[6];
 			return {
 				r: parseInt(r, 16),
 				g: parseInt(g, 16),
@@ -367,7 +369,7 @@ function rgba(colour) {
 				a: 1,
 			};
 		} else {
-			let result = colour_temp.match(/[.?\d]+/g).map(Number);
+			const result = canvasFillStyle.match(/[.?\d]+/g).map(Number);
 			return {
 				r: result[0],
 				g: result[1],
@@ -375,10 +377,16 @@ function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour === "object") return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
-	else return null;
+	} else if (typeof colour === "object") {
+		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
+	} else {
+		return null;
+	}
 }
 
+// Sends colour to background as soon as the page loads
+browser.runtime.sendMessage({ reason: "SCRIPT_LOADED" });
+
 // Passes colouring info to pop-up
-//WIP: scratch this
+// To-do: scratch this
 response;

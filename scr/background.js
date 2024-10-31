@@ -28,7 +28,7 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_customRule_aboutPage,
+	default_protectedPageColour,
 } from "./default_values.js";
 import preference from "./preference.js";
 import { rgba, dimColour, contrastRatio } from "./colour.js";
@@ -106,7 +106,6 @@ async function getCurrentScheme() {
 	if (scheme === "light" || scheme === "dark") {
 		return scheme;
 	} else {
-		console.log("darkModeDetection: ", darkModeDetection.matches);
 		return darkModeDetection?.matches ? "dark" : "light";
 	}
 }
@@ -124,6 +123,7 @@ async function initialise() {
  * Triggers colour change in all windows.
  */
 async function update() {
+	await current.update();
 	const tabs = await browser.tabs.query({ active: true, status: "complete" });
 	if (!pref.valid()) await initialise();
 	tabs.forEach(updateTab);
@@ -134,7 +134,6 @@ async function update() {
  */
 async function prefUpdate() {
 	await pref.load();
-	await current.update();
 	update();
 }
 
@@ -149,8 +148,8 @@ function handleMessage(message, sender) {
 	const actions = {
 		INIT_REQUEST: initialise,
 		UPDATE_REQUEST: prefUpdate,
-		SCRIPT_LOADED: () => requireWebpageColour(tab),
-		COLOUR_UPDATE: () => setFrameColour(tab.windowId, message.colour),
+		SCRIPT_LOADED: () => setFrameColour_tab(tab),
+		COLOUR_UPDATE: () => setFrameColour(tab.windowId, message.response.colour),
 	};
 	if (tab?.active && message?.reason in actions) {
 		actions[message.reason]();
@@ -159,7 +158,7 @@ function handleMessage(message, sender) {
 	}
 }
 
-// WIP: Change to reverved colour manager
+// To-do: Change to getCustomRule()
 /**
  * Converts an URL to a search key for customRule.
  * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
@@ -209,16 +208,16 @@ async function updateTab(tab) {
 		}
 	} else {
 		// Visiting normal websites, PDF viewer (content script blocked), websites that failed to load, or local files
-		// WIP: add support for setting colours for about:pages
-		// WIP: add support for regex / wildcard characters
+		// To-do: unify custom rules for protected pages and web pages
+		// To-do: add support for regex / wildcard characters
 		const searchKey = await getSearchKey(url);
 		const reversedCurrentScheme = current.scheme === "light" ? "dark" : "light";
-		if (default_customRule_aboutPage[current.scheme][searchKey]) {
+		if (default_protectedPageColour[current.scheme][searchKey]) {
 			// For preferred scheme there's a reserved colour
-			setFrameColour(windowId, rgba(default_customRule_aboutPage[current.scheme][searchKey]));
-		} else if (default_customRule_aboutPage[reversedCurrentScheme][searchKey] && pref.allowDarkLight) {
+			setFrameColour(windowId, rgba(default_protectedPageColour[current.scheme][searchKey]));
+		} else if (default_protectedPageColour[reversedCurrentScheme][searchKey] && pref.allowDarkLight) {
 			// Site has reserved colour only in the other mode, and it's allowed to change mode
-			setFrameColour(windowId, rgba(default_customRule_aboutPage[reversedCurrentScheme][searchKey]));
+			setFrameColour(windowId, rgba(default_protectedPageColour[reversedCurrentScheme][searchKey]));
 		} else if (url.startsWith("about:")) {
 			// If changing mode is otherwise not allowed
 			setFrameColour(windowId, "DEFAULT");
@@ -227,18 +226,18 @@ async function updateTab(tab) {
 		} else if (url.startsWith("moz-extension:")) {
 			setFrameColour(windowId, "ADDON");
 		} else {
-			requireWebpageColour(tab, current.customRule_webPage[searchKey]);
+			setFrameColour_tab(tab, current.customRule_webPage[searchKey]);
 		}
 	}
 }
 
 /**
- * Configures the content script and uses its colour to apply theme.
+ * Configures the content script and uses the tab's colour to apply theme.
  *
- * @param {tabs.Tab} tab the tab to contact.
- * @param {string} customRule the custom rule for the tab.
+ * @param {tabs.Tab} tab The tab to contact.
+ * @param {string} [customRule=null] The custom rule for the tab, if any.
  */
-function requireWebpageColour(tab, customRule = null) {
+function setFrameColour_tab(tab, customRule = null) {
 	const url = tab.url;
 	browser.tabs.sendMessage(
 		tab.id,
@@ -276,6 +275,7 @@ function requireWebpageColour(tab, customRule = null) {
 	);
 }
 
+// To-do: increase the contrast ratio automatically
 function getSuitableColourScheme(colour) {
 	let eligibility_dark = contrastRatio(colour, rgba([255, 255, 255, 1])) > pref.minContrast_dark;
 	let eligibility_light = contrastRatio(colour, rgba([0, 0, 0, 1])) > pref.minContrast_light;
@@ -291,8 +291,9 @@ function getSuitableColourScheme(colour) {
 
 /**
  * Changes tab bar to the appointed colour. If the colour is not eligible, uses fallback colour.
+ *
  * @param {number} windowId The ID of the window.
- * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: "HOME", "FALLBACK", "IMAGEVIEWER", "PLAINTEXT", "SYSTEM", "ADDON", "PDFVIEWER", and "DEFAULT".
+ * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: `HOME`, `FALLBACK`, `IMAGEVIEWER`, `PLAINTEXT`, `SYSTEM`, `ADDON`, `PDFVIEWER`, and `DEFAULT`.
  */
 function setFrameColour(windowId, colour) {
 	if (typeof colour === "string") {
@@ -308,14 +309,15 @@ function setFrameColour(windowId, colour) {
 }
 
 /**
- * Constructs and applies a theme to a given window.
+ * Constructs a theme and applies it to a given window.
+ *
  * @param {number} windowId The ID of the window.
  * @param {object} colour Colour of the frame, in rgba object.
  * @param {string} colourScheme "light" or "dark".
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {
-		let theme = {
+		const theme = {
 			colors: {
 				// Tabbar & tab
 				frame: dimColour(colour, -pref.tabbar * 1.5),
@@ -350,14 +352,15 @@ function applyTheme(windowId, colour, colourScheme) {
 				icons: "rgb(30, 30, 30)",
 			},
 			properties: {
-				color_scheme: "auto",
-				content_color_scheme: "auto",
+				// More on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#properties
+				color_scheme: "system",
+				content_color_scheme: "system",
 			},
 		};
 		browser.theme.update(windowId, theme);
 	}
 	if (colourScheme === "dark") {
-		let theme = {
+		const theme = {
 			colors: {
 				// Tabbar & tab
 				frame: dimColour(colour, pref.tabbar),
@@ -392,8 +395,8 @@ function applyTheme(windowId, colour, colourScheme) {
 				icons: "rgb(225, 225, 225)",
 			},
 			properties: {
-				color_scheme: "auto",
-				content_color_scheme: "auto",
+				color_scheme: "system",
+				content_color_scheme: "system",
 			},
 		};
 		browser.theme.update(windowId, theme);
@@ -407,7 +410,5 @@ function applyTheme(windowId, colour, colourScheme) {
 	browser.tabs.onAttached.addListener(update);
 	browser.windows.onFocusChanged.addListener(update);
 	browser.runtime.onMessage.addListener(handleMessage);
-	// doesn't work
-	browser.browserSettings.overrideContentColorScheme.onChange.addListener(prefUpdate);
-	darkModeDetection?.addEventListener("change", prefUpdate);
+	darkModeDetection?.addEventListener("change", update);
 })();
