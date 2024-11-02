@@ -83,7 +83,7 @@ export default class preference {
 		homeBackground_dark: "string",
 		fallbackColour_light: "string",
 		fallbackColour_dark: "string",
-		customRule_webPage: "object",
+		customRule: "object",
 		version: "object",
 	};
 

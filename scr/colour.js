@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Converts any colour to a rgba object.
  *
@@ -48,18 +50,28 @@ export function rgba(colour) {
 /**
  * Calculates the contrast ratio between two colours. Contrast ratio over 4.5 is considered adequate.
  * @author bensaine on GitHub (modified by Eason Wong).
- * @link https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
  * @link https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
  * @param {object} colour1 First colour.
  * @param {object} colour2 Second colour.
  * @returns Contrast ratio, ranges from 1.05 (low contrast) to 21 (high contrast).
  */
 export function contrastRatio(colour1, colour2) {
-	const luminance1Times255 = 0.2126 * colour1.r + 0.7152 * colour1.g + 0.0722 * colour1.b;
-	const luminance2Times255 = 0.2126 * colour2.r + 0.7152 * colour2.g + 0.0722 * colour2.b;
+	const luminance1Times255 = relativeLuminance(colour1);
+	const luminance2Times255 = relativeLuminance(colour2);
 	return luminance1Times255 > luminance2Times255
 		? (luminance1Times255 + 12.75) / (luminance2Times255 + 12.75)
 		: (luminance2Times255 + 12.75) / (luminance1Times255 + 12.75);
+}
+
+/**
+ * Calculates the relative luminace of a colour (times 255).
+ *
+ * @link https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
+ * @param {object} colour The colour to calculate.
+ * @returns Returns relative luminance of the colour (0 - 255).
+ */
+export function relativeLuminance(colour) {
+	return 0.2126 * colour.r + 0.7152 * colour.g + 0.0722 * colour.b;
 }
 
 /**
@@ -70,15 +82,19 @@ export function contrastRatio(colour1, colour2) {
  * @returns Dimmed or lightened colour string e.g. "rgb(xxx)".
  */
 export function dimColour(colour, dim) {
-	if (dim > 0) {
+	if (dim > 1) {
+		return "rgb(255, 255, 255)";
+	} else if (dim > 0) {
 		return `rgb(${dim * 255 + (1 - dim) * colour.r}, ${dim * 255 + (1 - dim) * colour.g}, ${
 			dim * 255 + (1 - dim) * colour.b
 		})`;
-	}
-	if (dim < 0) {
+	} else if (dim === 0) {
+		return `rgb(${colour.r}, ${colour.g}, ${colour.b})`;
+	} else if (dim < 0) {
 		return `rgb(${(dim + 1) * colour.r}, ${(dim + 1) * colour.g}, ${(dim + 1) * colour.b})`;
+	} else if (dim < -1) {
+		return "rgb(0, 0, 0)";
 	}
-	return `rgb(${colour.r}, ${colour.g}, ${colour.b})`;
 }
 
 /**

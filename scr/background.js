@@ -28,53 +28,47 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
+	default_aboutPageColour,
 	default_protectedPageColour,
 } from "./default_values.js";
 import preference from "./preference.js";
-import { rgba, dimColour, contrastRatio } from "./colour.js";
+import { rgba, dimColour, contrastRatio, relativeLuminance } from "./colour.js";
 
 /** Preference */
 const pref = new preference();
 
 /** Lookup table for codified colours */
 const colourCode = {
-	light: {
-		get HOME() {
+	HOME: {
+		get light() {
 			return current.homeBackground_light;
 		},
-		get FALLBACK() {
-			return current.fallbackColour_light;
-		},
-		get IMAGEVIEWER() {
-			return current.fallbackColour_light;
-		},
-		PLAINTEXT: rgba([236, 236, 236, 1]),
-		SYSTEM: rgba([255, 255, 255, 1]),
-		ADDON: rgba([236, 236, 236, 1]),
-		PDFVIEWER: rgba([249, 249, 250, 1]),
-		DEFAULT: rgba([255, 255, 255, 1]),
-	},
-	dark: {
-		get HOME() {
+		get dark() {
 			return current.homeBackground_dark;
 		},
-		get FALLBACK() {
-			return current.fallbackColour_dark;
-		},
-		get IMAGEVIEWER() {
-			return current.fallbackColour_dark;
-		},
-		PLAINTEXT: rgba([50, 50, 50, 1]),
-		SYSTEM: rgba([30, 30, 30, 1]),
-		ADDON: rgba([50, 50, 50, 1]),
-		PDFVIEWER: rgba([56, 56, 61, 1]),
-		DEFAULT: rgba([28, 27, 34, 1]),
 	},
+	FALLBACK: {
+		get light() {
+			return current.fallbackColour_light;
+		},
+		get dark() {
+			return current.fallbackColour_dark;
+		},
+	},
+	PLAINTEXT: { light: rgba([236, 236, 236, 1]), dark: rgba([50, 50, 50, 1]) },
+	SYSTEM: { light: rgba([255, 255, 255, 1]), dark: rgba([30, 30, 30, 1]) },
+	ADDON: { light: rgba([236, 236, 236, 1]), dark: rgba([50, 50, 50, 1]) },
+	PDFVIEWER: { light: rgba([249, 249, 250, 1]), dark: rgba([56, 56, 61, 1]) },
+	IMAGEVIEWER: { light: undefined, dark: rgba([33, 33, 33, 1]) },
+	DEFAULT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
 };
 
 /** Variables */
 const current = {
 	scheme: "light", // "light" or "dark"
+	get reversedScheme() {
+		return this.scheme === "light" ? "dark" : "light";
+	},
 	homeBackground_light: rgba(default_homeBackground_light),
 	homeBackground_dark: rgba(default_homeBackground_dark),
 	fallbackColour_light: rgba(default_fallbackColour_light),
@@ -115,18 +109,7 @@ async function getCurrentScheme() {
  */
 async function initialise() {
 	await pref.normalise();
-	await current.update();
-	update();
-}
-
-/**
- * Triggers colour change in all windows.
- */
-async function update() {
-	await current.update();
-	const tabs = await browser.tabs.query({ active: true, status: "complete" });
-	if (!pref.valid()) await initialise();
-	tabs.forEach(updateTab);
+	await update();
 }
 
 /**
@@ -134,7 +117,19 @@ async function update() {
  */
 async function prefUpdate() {
 	await pref.load();
-	update();
+	await update();
+}
+
+/**
+ * Triggers colour change in all windows.
+ */
+async function update() {
+	await current.update();
+	if (!pref.valid()) await initialise();
+	const activeTabs = await browser.tabs.query({ active: true, status: "complete" });
+	for (const tab of activeTabs) {
+		updateTab(tab);
+	}
 }
 
 /**
@@ -158,18 +153,23 @@ function handleMessage(message, sender) {
 	}
 }
 
-function getAboutPageColour(url) {
-	const aboutPage = url.split(/\/|\?/)[0];
-	const reversedCurrentScheme = current.scheme === "light" ? "dark" : "light";
-	if (default_protectedPageColour[current.scheme][aboutPage]) {
-		// For the preferred scheme there's a reserved colour
-		return rgba(default_protectedPageColour[current.scheme][aboutPage]);
-	} else if (default_protectedPageColour[reversedCurrentScheme][aboutPage] && pref.allowDarkLight) {
-		// Site has reserved colour only in the other mode, and it's allowed to change mode
-		return rgba(default_protectedPageColour[reversedCurrentScheme][aboutPage]);
+function getAboutPageColour(pathname) {
+	if (default_aboutPageColour[pathname]?.[current.scheme]) {
+		return rgba(default_aboutPageColour[pathname][current.scheme]);
+	} else if (default_aboutPageColour[pathname]?.[current.reversedScheme] && pref.allowDarkLight) {
+		return rgba(default_aboutPageColour[pathname][current.reversedScheme]);
 	} else {
-		// If changing mode is otherwise not allowed, uses default colour
 		return "DEFAULT";
+	}
+}
+
+function getProtectedPageColour(hostname) {
+	if (default_protectedPageColour[hostname]?.[current.scheme]) {
+		return rgba(default_protectedPageColour[hostname][current.scheme]);
+	} else if (default_protectedPageColour[hostname]?.[current.reversedScheme] && pref.allowDarkLight) {
+		return rgba(default_protectedPageColour[hostname][current.reversedScheme]);
+	} else {
+		return "FALLBACK";
 	}
 }
 
@@ -180,14 +180,12 @@ async function getAddonPageColour(url) {
 		if (!(addon.type === "extension" && addon.hostPermissions)) continue;
 		for (const host of addon.hostPermissions) {
 			if (
-				!(
-					host.startsWith("moz-extension:") &&
-					uuid === host.split(/\/|\?/)[2] &&
-					`Add-on ID: ${addon.id}` in pref.customRule
-				)
-			)
-				continue;
-			return pref.customRule[`Add-on ID: ${addon.id}`];
+				host.startsWith("moz-extension:") &&
+				uuid === host.split(/\/|\?/)[2] &&
+				`Add-on ID: ${addon.id}` in pref.customRule
+			) {
+				return pref.customRule[`Add-on ID: ${addon.id}`];
+			} else continue;
 		}
 	}
 	return "ADDON";
@@ -205,6 +203,7 @@ async function getWebPageColour(tab) {
 		try {
 			if (url === site) {
 				customRule = pref.customRule[site];
+				break;
 			}
 			// To-do: use match pattern
 			/* const regex = new RegExp(site);
@@ -213,6 +212,7 @@ async function getWebPageColour(tab) {
 			} */
 			if (new URL(url).hostname === site) {
 				customRule = pref.customRule[site];
+				break;
 			}
 		} catch (e) {
 			continue;
@@ -226,6 +226,7 @@ async function getWebPageColour(tab) {
 			customRule: customRule,
 		},
 	});
+	console.log("Response from tab", url, ":", response);
 	if (response) {
 		// The colour is successfully returned
 		return response.colour;
@@ -254,61 +255,74 @@ async function getWebPageColour(tab) {
  * @param {tabs.Tab} tab The active tab.
  */
 async function updateTab(tab) {
-	const url = tab.url;
+	const url = new URL(tab.url);
 	const windowId = tab.windowId;
-	if (url.startsWith("view-source:")) {
-		// Visiting browser's internal files (content script blocked)
+	if (url.protocol === "view-source:") {
 		setFrameColour(windowId, "PLAINTEXT");
-	} else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
-		// Visiting browser's internal files (content script blocked)
-		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
+	} else if (url.protocol === "chrome:" || url.protocol === "resource:" || url.protocol === "jar:file:") {
+		if (
+			url.href.endsWith(".txt") ||
+			url.href.endsWith(".css") ||
+			url.href.endsWith(".jsm") ||
+			url.href.endsWith(".js")
+		) {
 			setFrameColour(windowId, "PLAINTEXT");
-		} else if (url.endsWith(".png") || url.endsWith(".jpg")) {
+		} else if (url.href.endsWith(".png") || url.href.endsWith(".jpg")) {
 			setFrameColour(windowId, "IMAGEVIEWER");
 		} else {
 			setFrameColour(windowId, "SYSTEM");
 		}
-	} else if (url.startsWith("about:")) {
-		// To-do: unify custom rules for protected pages into those for web pages
-		setFrameColour(windowId, getAboutPageColour(url));
-	} else if (url.startsWith("moz-extension:")) {
-		setFrameColour(windowId, await getAddonPageColour(url));
+	} else if (url.protocol === "about:") {
+		setFrameColour(windowId, getAboutPageColour(url.pathname));
+	} else if (url.hostname in default_protectedPageColour) {
+		setFrameColour(windowId, getProtectedPageColour(url.hostname));
+	} else if (url.protocol === "moz-extension:") {
+		setFrameColour(windowId, await getAddonPageColour(url.href));
 	} else {
-		// To-do: fix protected web pages
+		// To-do: unify custom rules for about / protected pages with those for normal web pages
 		setFrameColour(windowId, await getWebPageColour(tab));
 	}
 }
 
-// To-do: increase the contrast ratio automatically
-function getSuitableColourScheme(colour) {
-	let eligibility_dark = contrastRatio(colour, rgba([255, 255, 255, 1])) > pref.minContrast_dark;
-	let eligibility_light = contrastRatio(colour, rgba([0, 0, 0, 1])) > pref.minContrast_light;
-	if (current.scheme === "light") {
-		if (eligibility_light) return "light";
-		if (pref.allowDarkLight && eligibility_dark) return "dark";
-	} else {
-		if (eligibility_dark) return "dark";
-		if (pref.allowDarkLight && eligibility_light) return "light";
+// To-do: increase the contrast ratio automatically instead of using fallback colour
+function contrastCorrection(colour) {
+	const contrastRatio_dark = contrastRatio(colour, rgba([255, 255, 255, 1]));
+	const contrastRatio_light = contrastRatio(colour, rgba([0, 0, 0, 1]));
+	const eligibility_dark = contrastRatio_dark > pref.minContrast_dark;
+	const eligibility_light = contrastRatio_light > pref.minContrast_light;
+	if (eligibility_light && (current.scheme === "light" || (current.scheme === "dark" && pref.allowDarkLight))) {
+		return { colour: colour, scheme: "light" };
+	} else if (eligibility_dark && (current.scheme === "dark" || (current.scheme === "light" && pref.allowDarkLight))) {
+		return { colour: colour, scheme: "dark" };
+	} else if (current.scheme === "light") {
+		const dim =
+			((pref.minContrast_light / contrastRatio_light - 1) * relativeLuminance(colour)) /
+			(255 - relativeLuminance(colour));
+		return { colour: rgba(dimColour(colour, dim)), scheme: "light" };
+	} else if (current.scheme === "dark") {
+		const dim = contrastRatio_dark / pref.minContrast_dark - 1;
+		return { colour: rgba(dimColour(colour, dim)), scheme: "dark" };
 	}
-	return false;
 }
 
 /**
  * Changes tab bar to the appointed colour. If the colour is not eligible, uses fallback colour.
  *
  * @param {number} windowId The ID of the window.
- * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: `HOME`, `FALLBACK`, `IMAGEVIEWER`, `PLAINTEXT`, `SYSTEM`, `ADDON`, `PDFVIEWER`, and `DEFAULT`.
+ * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: `HOME`, `FALLBACK`, `IMAGEVIEWER` (dark only), `PLAINTEXT`, `SYSTEM`, `ADDON`, `PDFVIEWER`, and `DEFAULT`.
  */
 function setFrameColour(windowId, colour) {
 	if (typeof colour === "string") {
-		applyTheme(windowId, colourCode[current.scheme][colour], current.scheme);
-	} else {
-		let suitableColourScheme = getSuitableColourScheme(colour);
-		if (suitableColourScheme) {
-			applyTheme(windowId, colour, suitableColourScheme);
+		if (colourCode[colour][current.scheme]) {
+			applyTheme(windowId, colourCode[colour][current.scheme], current.scheme);
+		} else if (colourCode[colour][current.reversedScheme] && pref.allowDarkLight) {
+			applyTheme(windowId, colourCode[colour][current.reversedScheme], current.reversedScheme);
 		} else {
-			setFrameColour(windowId, "FALLBACK");
+			applyTheme(windowId, colourCode["FALLBACK"][current.scheme], current.scheme);
 		}
+	} else {
+		const correctionResult = contrastCorrection(colour);
+		applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
 	}
 }
 
