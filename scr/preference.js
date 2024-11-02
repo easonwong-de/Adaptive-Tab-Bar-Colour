@@ -5,7 +5,6 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
-	default_customRule_webPage,
 } from "./default_values.js";
 
 export default class preference {
@@ -34,7 +33,7 @@ export default class preference {
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
-		customRule_webPage: default_customRule_webPage,
+		customRule: {},
 		version: [2, 2],
 	};
 
@@ -131,25 +130,25 @@ export default class preference {
 		// Updating from before v1.7.5
 		// Converts legacy rules to query selector format
 		if (this.#prefContent.version < [1, 7, 5]) {
-			for (const url in this.#prefContent.customRule_webPage) {
-				const legacyRule = this.#prefContent.customRule_webPage[url];
+			for (const url in this.#prefContent.customRule) {
+				const legacyRule = this.#prefContent.customRule[url];
 				if (legacyRule.startsWith("TAG_")) {
-					this.#prefContent.customRule_webPage[url] = legacyRule.replace("TAG_", "QS_");
+					this.#prefContent.customRule[url] = legacyRule.replace("TAG_", "QS_");
 				} else if (legacyRule.startsWith("CLASS_")) {
-					this.#prefContent.customRule_webPage[url] = legacyRule.replace("CLASS_", "QS_.");
+					this.#prefContent.customRule[url] = legacyRule.replace("CLASS_", "QS_.");
 				} else if (legacyRule.startsWith("ID_")) {
-					this.#prefContent.customRule_webPage[url] = legacyRule.replace("ID_", "QS_#");
+					this.#prefContent.customRule[url] = legacyRule.replace("ID_", "QS_#");
 				} else if (legacyRule.startsWith("NAME_")) {
-					this.#prefContent.customRule_webPage[url] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
+					this.#prefContent.customRule[url] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
 				} else if (legacyRule === "") {
-					delete this.#prefContent.customRule_webPage[url];
+					delete this.#prefContent.customRule[url];
 				}
 			}
 		}
 		// Updating from before v1.7.4
 		// Clears possible empty reserved colour rules caused by a bug
 		if (this.#prefContent.version < [1, 7, 4]) {
-			delete this.#prefContent.customRule_webPage[undefined];
+			delete this.#prefContent.customRule[undefined];
 		}
 		// Updating from before v1.6.4
 		// Corrects the dark home page colour, unless the user has set something different
@@ -331,11 +330,11 @@ export default class preference {
 		this.#prefContent.fallbackColour_dark = value;
 	}
 
-	get customRule_webPage() {
-		return this.#prefContent.customRule_webPage;
+	get customRule() {
+		return this.#prefContent.customRule;
 	}
-	set customRule_webPage(value) {
-		this.#prefContent.customRule_webPage = value;
+	set customRule(value) {
+		this.#prefContent.customRule = value;
 	}
 
 	get version() {

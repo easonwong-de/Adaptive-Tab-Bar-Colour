@@ -79,20 +79,20 @@ const current = {
 	homeBackground_dark: rgba(default_homeBackground_dark),
 	fallbackColour_light: rgba(default_fallbackColour_light),
 	fallbackColour_dark: rgba(default_fallbackColour_dark),
-	customRule_webPage: {},
+	customRule: {},
 	async update() {
 		if (pref.custom) {
 			this.homeBackground_light = rgba(pref.homeBackground_light);
 			this.homeBackground_dark = rgba(pref.homeBackground_dark);
 			this.fallbackColour_light = rgba(pref.fallbackColour_light);
 			this.fallbackColour_dark = rgba(pref.fallbackColour_dark);
-			this.customRule_webPage = pref.customRule_webPage;
+			this.customRule = pref.customRule;
 		} else {
 			this.homeBackground_light = rgba(default_homeBackground_light);
 			this.homeBackground_dark = rgba(default_homeBackground_dark);
 			this.fallbackColour_light = rgba(default_fallbackColour_light);
 			this.fallbackColour_dark = rgba(default_fallbackColour_dark);
-			this.customRule_webPage = {};
+			this.customRule = {};
 		}
 		this.scheme = await getCurrentScheme();
 	},
@@ -148,7 +148,7 @@ function handleMessage(message, sender) {
 	const actions = {
 		INIT_REQUEST: initialise,
 		UPDATE_REQUEST: prefUpdate,
-		SCRIPT_LOADED: () => setFrameColour_tab(tab),
+		SCRIPT_LOADED: async () => setFrameColour(tab.windowId, await getWebPageColour()),
 		COLOUR_UPDATE: () => setFrameColour(tab.windowId, message.response.colour),
 	};
 	if (tab?.active && message?.reason in actions) {
@@ -158,47 +158,109 @@ function handleMessage(message, sender) {
 	}
 }
 
-// To-do: Change to getCustomRule()
-/**
- * Converts an URL to a search key for customRule.
- * @param {string} url an URL e.g. "about:page/etwas", "etwas://addons.mozilla.org/etwas", "moz-extension://*UUID/etwas".
- * @returns e.g. for about pages: "about:page", for websites: "addons.mozilla.org", for add-on pages "Add-on ID: ATBC@EasonWong".
- */
-async function getSearchKey(url) {
-	if (url.startsWith("about:")) {
-		// e.g. "about:page"
-		return url.split(/\/|\?/)[0];
-	} else if (url.startsWith("moz-extension:")) {
-		// Searches for add-on ID
-		// Colours for add-on pages are stored with the add-on ID as their keys
-		const uuid = url.split(/\/|\?/)[2];
-		const addonList = await browser.management.getAll();
-		for (const addon of addonList) {
-			if (addon.type !== "extension" || !addon.hostPermissions) continue;
-			for (const host of addon.hostPermissions) {
-				if (!host.startsWith("moz-extension:") || uuid !== host.split(/\/|\?/)[2]) continue;
-				return `Add-on ID: ${addon.id}`;
-			}
-		}
+function getAboutPageColour(url) {
+	const aboutPage = url.split(/\/|\?/)[0];
+	const reversedCurrentScheme = current.scheme === "light" ? "dark" : "light";
+	if (default_protectedPageColour[current.scheme][aboutPage]) {
+		// For the preferred scheme there's a reserved colour
+		return rgba(default_protectedPageColour[current.scheme][aboutPage]);
+	} else if (default_protectedPageColour[reversedCurrentScheme][aboutPage] && pref.allowDarkLight) {
+		// Site has reserved colour only in the other mode, and it's allowed to change mode
+		return rgba(default_protectedPageColour[reversedCurrentScheme][aboutPage]);
 	} else {
-		// In case of a regular website, returns its domain, e.g. "addons.mozilla.org"
-		return url.split(/\/|\?/)[2];
+		// If changing mode is otherwise not allowed, uses default colour
+		return "DEFAULT";
+	}
+}
+
+async function getAddonPageColour(url) {
+	const uuid = url.split(/\/|\?/)[2];
+	const addonList = await browser.management.getAll();
+	for (const addon of addonList) {
+		if (!(addon.type === "extension" && addon.hostPermissions)) continue;
+		for (const host of addon.hostPermissions) {
+			if (
+				!(
+					host.startsWith("moz-extension:") &&
+					uuid === host.split(/\/|\?/)[2] &&
+					`Add-on ID: ${addon.id}` in pref.customRule
+				)
+			)
+				continue;
+			return pref.customRule[`Add-on ID: ${addon.id}`];
+		}
+	}
+	return "ADDON";
+}
+
+/**
+ * Configures the content script and uses the tab's colour to apply theme.
+ *
+ * @param {tabs.Tab} tab The tab to contact.
+ */
+async function getWebPageColour(tab) {
+	const url = tab.url;
+	const customRule = null;
+	for (const site in pref.customRule) {
+		try {
+			if (url === site) {
+				customRule = pref.customRule[site];
+			}
+			// To-do: use match pattern
+			/* const regex = new RegExp(site);
+			if (regex.test(url)) {
+				customRule = pref.customRule[site];
+			} */
+			if (new URL(url).hostname === site) {
+				customRule = pref.customRule[site];
+			}
+		} catch (e) {
+			continue;
+		}
+	}
+	const response = await browser.tabs.sendMessage(tab.id, {
+		reason: "COLOUR_REQUEST",
+		conf: {
+			dynamic: pref.dynamic,
+			noThemeColour: pref.noThemeColour,
+			customRule: customRule,
+		},
+	});
+	if (response) {
+		// The colour is successfully returned
+		return response.colour;
+	} else if (url.startsWith("data:image")) {
+		// Viewing an image on data:image (content script is blocked on data:pages)
+		return "IMAGEVIEWER";
+	} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+		// When viewing a PDF file, Firefox blocks content script
+		return "PDFVIEWER";
+	} else if (tab.favIconUrl?.startsWith("chrome:")) {
+		// The page probably failed to load (content script is also blocked on website that failed to load)
+		return "DEFAULT";
+	} else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) {
+		// When viewing plain text online, Firefox blocks content script
+		// In this case, the tab title is the same as the URL
+		return "PLAINTEXT";
+	} else {
+		// Uses fallback colour
+		return "FALLBACK";
 	}
 }
 
 /**
- * Updates the colour for a window.
- * @param {tabs.Tab} tab The tab the window is showing.
+ * Updates the colour for an active tab of a window.
+ *
+ * @param {tabs.Tab} tab The active tab.
  */
 async function updateTab(tab) {
 	const url = tab.url;
 	const windowId = tab.windowId;
-	// Visiting browser's internal files (content script blocked)
 	if (url.startsWith("view-source:")) {
+		// Visiting browser's internal files (content script blocked)
 		setFrameColour(windowId, "PLAINTEXT");
-	}
-	// Visiting browser's internal files (content script blocked)
-	else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
+	} else if (url.startsWith("chrome:") || url.startsWith("resource:") || url.startsWith("jar:file:")) {
+		// Visiting browser's internal files (content script blocked)
 		if (url.endsWith(".txt") || url.endsWith(".css") || url.endsWith(".jsm") || url.endsWith(".js")) {
 			setFrameColour(windowId, "PLAINTEXT");
 		} else if (url.endsWith(".png") || url.endsWith(".jpg")) {
@@ -206,73 +268,15 @@ async function updateTab(tab) {
 		} else {
 			setFrameColour(windowId, "SYSTEM");
 		}
+	} else if (url.startsWith("about:")) {
+		// To-do: unify custom rules for protected pages into those for web pages
+		setFrameColour(windowId, getAboutPageColour(url));
+	} else if (url.startsWith("moz-extension:")) {
+		setFrameColour(windowId, await getAddonPageColour(url));
 	} else {
-		// Visiting normal websites, PDF viewer (content script blocked), websites that failed to load, or local files
-		// To-do: unify custom rules for protected pages and web pages
-		// To-do: add support for regex / wildcard characters
-		const searchKey = await getSearchKey(url);
-		const reversedCurrentScheme = current.scheme === "light" ? "dark" : "light";
-		if (default_protectedPageColour[current.scheme][searchKey]) {
-			// For preferred scheme there's a reserved colour
-			setFrameColour(windowId, rgba(default_protectedPageColour[current.scheme][searchKey]));
-		} else if (default_protectedPageColour[reversedCurrentScheme][searchKey] && pref.allowDarkLight) {
-			// Site has reserved colour only in the other mode, and it's allowed to change mode
-			setFrameColour(windowId, rgba(default_protectedPageColour[reversedCurrentScheme][searchKey]));
-		} else if (url.startsWith("about:")) {
-			// If changing mode is otherwise not allowed
-			setFrameColour(windowId, "DEFAULT");
-		} else if (searchKey.startsWith("Add-on ID: ") && current.customRule_webPage[searchKey]) {
-			setFrameColour(windowId, rgba(current.customRule_webPage[searchKey]));
-		} else if (url.startsWith("moz-extension:")) {
-			setFrameColour(windowId, "ADDON");
-		} else {
-			setFrameColour_tab(tab, current.customRule_webPage[searchKey]);
-		}
+		// To-do: fix protected web pages
+		setFrameColour(windowId, await getWebPageColour(tab));
 	}
-}
-
-/**
- * Configures the content script and uses the tab's colour to apply theme.
- *
- * @param {tabs.Tab} tab The tab to contact.
- * @param {string} [customRule=null] The custom rule for the tab, if any.
- */
-function setFrameColour_tab(tab, customRule = null) {
-	const url = tab.url;
-	browser.tabs.sendMessage(
-		tab.id,
-		{
-			reason: "COLOUR_REQUEST",
-			conf: {
-				dynamic: pref.dynamic,
-				noThemeColour: pref.noThemeColour,
-				customRule: customRule,
-			},
-		},
-		(response) => {
-			const windowId = tab.windowId;
-			if (response) {
-				// The colour is successfully returned
-				setFrameColour(windowId, response.colour);
-			} else if (url.startsWith("data:image")) {
-				// Viewing an image on data:image (content script is blocked on data:pages)
-				setFrameColour(windowId, "IMAGEVIEWER");
-			} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-				// When viewing a PDF file, Firefox blocks content script
-				setFrameColour(windowId, "PDFVIEWER");
-			} else if (tab.favIconUrl?.startsWith("chrome:")) {
-				// The page probably failed to load (content script is also blocked on website that failed to load)
-				setFrameColour(windowId, "DEFAULT");
-			} else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) {
-				// When viewing plain text online, Firefox blocks content script
-				// In this case, the tab title is the same as the URL
-				setFrameColour(windowId, "PLAINTEXT");
-			} else {
-				// Uses fallback colour
-				setFrameColour(windowId, "FALLBACK");
-			}
-		}
-	);
 }
 
 // To-do: increase the contrast ratio automatically

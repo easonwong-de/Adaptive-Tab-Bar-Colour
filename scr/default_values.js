@@ -8,28 +8,6 @@ export const default_fallbackColour_light = "#FFFFFF";
 export const default_fallbackColour_dark = "#2B2A33";
 
 /**
- * The default values of custom rules for web pages.
- *
- * reserved colour is a colour => uses the given colour as tab colour;
- *
- * reserved colour is IGNORE_THEME => sets calculated colour as tab colour;
- *
- * reserved colour is UN_IGNORE_THEME => sets theme colour as tab colour;
- *
- * reserved colour starts with QS_ => gets colour from the element found with the querySelector;
- */
-export const default_customRule_webPage = Object.freeze({
-	"apnews.com": "IGNORE_THEME",
-	"developer.mozilla.org": "IGNORE_THEME",
-	"www.facebook.com": "UN_IGNORE_THEME",
-	"github.com": "IGNORE_THEME",
-	"mail.google.com": "QS_div.wl",
-	"open.spotify.com": "#000000",
-	"www.linkedin.com": "IGNORE_THEME",
-	"www.spiegel.de": "IGNORE_THEME",
-});
-
-/**
  * Colour for protected pages.
  */
 export const default_protectedPageColour = Object.freeze({
@@ -72,6 +50,21 @@ export const default_protectedPageColour = Object.freeze({
 		"install.mozilla.org": "DEFAULT",
 	},
 });
+
+/**
+ * List of protected non-about:xxx domains.
+ */
+export const protectedDomain = Object.freeze({
+	"accounts-static.cdn.mozilla.net": "PROTECTED",
+	"accounts.firefox.com": "PROTECTED",
+	"addons.cdn.mozilla.net": "PROTECTED",
+	"addons.mozilla.org": "PROTECTED",
+	"content.cdn.mozilla.net": "PROTECTED",
+	"discovery.addons.mozilla.org": "PROTECTED",
+	"install.mozilla.org": "PROTECTED",
+	"support.mozilla.org": "PROTECTED",
+});
+
 /* 
 To-do: use this in the future.
 export const default_protectedPageColour = Object.freeze({
@@ -115,18 +108,4 @@ export const recommendedColour_addon = Object.freeze({
 	"tongwen@softcup": "#fffffe",
 	"{46551EC9-40F0-4e47-8E18-8E5CF550CFB8}": "#fffffe",
 	"{e7476172-097c-4b77-b56e-f56a894adca9}": "#151f2a",
-});
-
-/**
- * List of protected non-about:xxx domains.
- */
-export const protectedDomain = Object.freeze({
-	"accounts-static.cdn.mozilla.net": "PROTECTED",
-	"accounts.firefox.com": "PROTECTED",
-	"addons.cdn.mozilla.net": "PROTECTED",
-	"addons.mozilla.org": "PROTECTED",
-	"content.cdn.mozilla.net": "PROTECTED",
-	"discovery.addons.mozilla.org": "PROTECTED",
-	"install.mozilla.org": "PROTECTED",
-	"support.mozilla.org": "PROTECTED",
 });
