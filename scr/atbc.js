@@ -144,7 +144,7 @@ function findColour() {
 	response.reason = null;
 	response.additionalInfo = null;
 	response.colour = rgba([0, 0, 0, 0]);
-	if (!findColourReserved()) findColourUnreserved();
+	if (!findColour_customRule()) findColour_no_customRule();
 	return true;
 }
 
@@ -166,9 +166,9 @@ function findAndSendColour_animation() {
 /**
  * Sets `response.colour` with the help of custom rules.
  *
- * @returns True if a meta `theme-color` or a reserved colour for the web page can be found.
+ * @returns True if a meta `theme-color` or a custom for the web page can be found.
  */
-function findColourReserved() {
+function findColour_customRule() {
 	if (
 		conf.customRule === null ||
 		(!conf.noThemeColour && conf.customRule === "UN_IGNORE_THEME") ||
@@ -179,7 +179,7 @@ function findColourReserved() {
 	} else if (conf.noThemeColour && conf.customRule === "UN_IGNORE_THEME") {
 		// User prefers igoring theme colour, but sets to use meta theme-color for this host
 		if (findThemeColour()) {
-			response.reason = "THEME_IGNORED";
+			response.reason = "THEME_UNIGNORED";
 		} else {
 			findComputedColour();
 			response.reason = "THEME_MISSING";
@@ -211,7 +211,7 @@ function findColourReserved() {
 /**
  * Detects image viewer and text viewer, otherwise looks for meta `theme-color` / computed colour.
  */
-function findColourUnreserved() {
+function findColour_no_customRule() {
 	if (
 		getComputedStyle(document.documentElement).backgroundImage ==
 		`url("chrome://global/skin/media/imagedoc-darknoise.png")`
@@ -230,7 +230,12 @@ function findColourUnreserved() {
 		// Thus this may only works for viewing local text file
 		response.reason = "TEXT_VIEWER";
 		response.colour = "PLAINTEXT";
-	} else if (conf.noThemeColour || !findThemeColour()) {
+	} else if (findThemeColour()) {
+		if (conf.noThemeColour) {
+			findComputedColour();
+			response.reason = "THEME_IGNORED";
+		}
+	} else {
 		findComputedColour();
 	}
 }

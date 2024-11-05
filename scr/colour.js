@@ -56,11 +56,11 @@ export function rgba(colour) {
  * @returns Contrast ratio, ranges from 1.05 (low contrast) to 21 (high contrast).
  */
 export function contrastRatio(colour1, colour2) {
-	const luminance1Times255 = relativeLuminance(colour1);
-	const luminance2Times255 = relativeLuminance(colour2);
-	return luminance1Times255 > luminance2Times255
-		? (luminance1Times255 + 12.75) / (luminance2Times255 + 12.75)
-		: (luminance2Times255 + 12.75) / (luminance1Times255 + 12.75);
+	const luminance1_x255 = relativeLuminance_x255(colour1);
+	const luminance2_x255 = relativeLuminance_x255(colour2);
+	return luminance1_x255 > luminance2_x255
+		? (luminance1_x255 + 12.75) / (luminance2_x255 + 12.75)
+		: (luminance2_x255 + 12.75) / (luminance1_x255 + 12.75);
 }
 
 /**
@@ -70,8 +70,24 @@ export function contrastRatio(colour1, colour2) {
  * @param {object} colour The colour to calculate.
  * @returns Returns relative luminance of the colour (0 - 255).
  */
-export function relativeLuminance(colour) {
-	return 0.2126 * colour.r + 0.7152 * colour.g + 0.0722 * colour.b;
+export function relativeLuminance_x255(colour) {
+	return (
+		0.2126 * luminanceApproximation(colour.r) +
+		0.7152 * luminanceApproximation(colour.g) +
+		0.0722 * luminanceApproximation(colour.b)
+	);
+}
+
+function luminanceApproximation(channel) {
+	if (channel < 64) {
+		return 0.2036 * channel;
+	} else if (channel < 128) {
+		return 0.6524 * channel + 64;
+	} else if (channel < 192) {
+		return 1.234 * channel + 128;
+	} else {
+		return 1.91 * channel + 192;
+	}
 }
 
 /**
@@ -150,8 +166,8 @@ export function contrastCorrection(
 		return { colour: frameColour, scheme: "dark" };
 	} else if (preferredScheme === "light") {
 		const dim =
-			((minContrast_light / contrastRatio_light - 1) * relativeLuminance(frameColour)) /
-			(255 - relativeLuminance(frameColour));
+			((minContrast_light / contrastRatio_light - 1) * (relativeLuminance_x255(frameColour) + 12.75)) /
+			(255 - relativeLuminance_x255(frameColour));
 		return { colour: rgba(dimColour(frameColour, dim)), scheme: "light" };
 	} else if (preferredScheme === "dark") {
 		const dim = contrastRatio_dark / minContrast_dark - 1;

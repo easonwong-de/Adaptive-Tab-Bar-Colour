@@ -149,7 +149,7 @@ function handleMessage(message, sender) {
 function getAboutPageColour(pathname) {
 	if (default_aboutPageColour[pathname]?.[current.scheme]) {
 		return rgba(default_aboutPageColour[pathname][current.scheme]);
-	} else if (default_aboutPageColour[pathname]?.[current.reversedScheme] && pref.allowDarkLight) {
+	} else if (default_aboutPageColour[pathname]?.[current.reversedScheme]) {
 		return rgba(default_aboutPageColour[pathname][current.reversedScheme]);
 	} else {
 		return "DEFAULT";
@@ -159,7 +159,7 @@ function getAboutPageColour(pathname) {
 function getProtectedPageColour(hostname) {
 	if (default_protectedPageColour[hostname]?.[current.scheme]) {
 		return rgba(default_protectedPageColour[hostname][current.scheme]);
-	} else if (default_protectedPageColour[hostname]?.[current.reversedScheme] && pref.allowDarkLight) {
+	} else if (default_protectedPageColour[hostname]?.[current.reversedScheme]) {
 		return rgba(default_protectedPageColour[hostname][current.reversedScheme]);
 	} else {
 		return "FALLBACK";
@@ -289,7 +289,14 @@ function setFrameColour(windowId, colour) {
 		} else if (colourCode[colour][current.reversedScheme] && pref.allowDarkLight) {
 			applyTheme(windowId, colourCode[colour][current.reversedScheme], current.reversedScheme);
 		} else {
-			applyTheme(windowId, colourCode["FALLBACK"][current.scheme], current.scheme);
+			const correctionResult = contrastCorrection(
+				colourCode[colour][current.reversedScheme],
+				current.scheme,
+				pref.allowDarkLight,
+				pref.minContrast_light,
+				pref.minContrast_dark
+			);
+			applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
 		}
 	} else {
 		const correctionResult = contrastCorrection(
