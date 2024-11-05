@@ -23,7 +23,7 @@ const conf = {
  *
  * `reason` determines the content shown in the popup infobox & text in the button.
  *
- * `reason` can be: `protected_page`, `home_page`, `text_viewer`, `image_viewer`, `pdf_viewer`, `error_occurred`, `fallback_colour`, `colour_picked`, `addon_default`, `addon_recom`, `addon_specify`, `theme_unignored`, `theme_missing`, `theme_ignored`, `theme_used`, `using_qs`, `colour_specified`.
+ * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`, `IMAGE_VIEWER`, `PDF_VIEWER`, `ERROR_OCCURRED`, `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON_SPECIFIED`, `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`, `THEME_IGNORED`, `THEME_USED`, `USING_QS`, `COLOUR_SPECIFIED`.
  */
 const response = {
 	reason: null,
@@ -126,15 +126,13 @@ onStyleInjection.observe(document.documentElement, { childList: true });
 onStyleInjection.observe(document.head, { childList: true });
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-	conf.dynamic = message.conf.dynamic;
-	conf.noThemeColour = message.conf.noThemeColour;
-	conf.customRule = message.conf.customRule;
-	setDynamicUpdate();
-	if (message.reason === "INFO_REQUEST") {
-		findColour();
-	} else if (message.reason === "COLOUR_REQUEST") {
-		findAndSendColour();
+	if (message.header === "COLOUR_REQUEST") {
+		conf.dynamic = message.conf.dynamic;
+		conf.noThemeColour = message.conf.noThemeColour;
+		conf.customRule = message.conf.customRule;
+		setDynamicUpdate();
 	}
+	findColour();
 	sendResponse(response);
 });
 
@@ -155,7 +153,7 @@ function findColour() {
  */
 function findAndSendColour() {
 	if (document.visibilityState === "visible" && findColour())
-		browser.runtime.sendMessage({ reason: "COLOUR_UPDATE", response: response });
+		browser.runtime.sendMessage({ header: "COLOUR_UPDATE", response: response });
 }
 
 /**
@@ -181,28 +179,28 @@ function findColourReserved() {
 	} else if (conf.noThemeColour && conf.customRule === "UN_IGNORE_THEME") {
 		// User prefers igoring theme colour, but sets to use meta theme-color for this host
 		if (findThemeColour()) {
-			response.reason = "theme_ignored";
+			response.reason = "THEME_IGNORED";
 		} else {
 			findComputedColour();
-			response.reason = "theme_missing";
+			response.reason = "THEME_MISSING";
 		}
 		return true;
 	} else if (!conf.noThemeColour && conf.customRule === "IGNORE_THEME") {
 		// User sets to ignore the meta theme-color of this host
 		if (findThemeColour()) {
 			findComputedColour();
-			response.reason = "theme_ignored";
+			response.reason = "THEME_IGNORED";
 		} else {
 			findComputedColour();
 		}
 		return true;
 	} else if (conf.customRule.startsWith("QS_")) {
 		const querySelector = conf.customRule.replace("QS_", "");
-		response.reason = "using_qs";
+		response.reason = "USING_QS";
 		response.additionalInfo = querySelector;
 		response.colour = getColourFromElement(document.querySelector(querySelector));
 	} else {
-		response.reason = "colour_specified";
+		response.reason = "COLOUR_SPECIFIED";
 		response.additionalInfo = null;
 		response.colour = rgba(conf.customRule);
 	}
@@ -221,7 +219,7 @@ function findColourUnreserved() {
 		// Image viewer
 		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
 		// Doesn't work with images on data:image url, which will be dealt with in background.js
-		response.reason = "image_viewer";
+		response.reason = "IMAGE_VIEWER";
 		response.colour = "IMAGEVIEWER";
 	} else if (
 		document.getElementsByTagName("link")[0]?.href === "resource://content-accessible/plaintext.css" &&
@@ -230,7 +228,7 @@ function findColourUnreserved() {
 		// Plain text viewer
 		// Firefox seems to have blocked content script when viewing plain text online
 		// Thus this may only works for viewing local text file
-		response.reason = "text_viewer";
+		response.reason = "TEXT_VIEWER";
 		response.colour = "PLAINTEXT";
 	} else if (conf.noThemeColour || !findThemeColour()) {
 		findComputedColour();
@@ -257,7 +255,7 @@ function findThemeColour() {
 	// Returns true if it is legal (opaque) and can be sent to background.js
 	// Otherwise, return false and trigger getComputedColour()
 	if (response.colour.a === 1) {
-		response.reason = "theme_used";
+		response.reason = "THEME_USED";
 		return true;
 	} else {
 		return false;
@@ -287,7 +285,7 @@ function findComputedColour() {
 	// If the colour is still not opaque, overlay it over the web page body
 	// If the body is still not opaque, use fallback colour
 	if (response.colour.a === 1) {
-		response.reason = "colour_picked";
+		response.reason = "COLOUR_PICKED";
 		return true;
 	} else {
 		const body = document.getElementsByTagName("body")[0];
@@ -295,12 +293,12 @@ function findComputedColour() {
 			const BodyColour = getColourFromElement(body);
 			if (BodyColour.a === 1) {
 				response.colour = overlayColour(response.colour, BodyColour);
-				response.reason = "colour_picked";
+				response.reason = "COLOUR_PICKED";
 				return true;
 			}
 		}
 		response.colour = "FALLBACK";
-		response.reason = "fallback_colour";
+		response.reason = "FALLBACK_COLOUR";
 		return true;
 	}
 }
@@ -385,8 +383,4 @@ function rgba(colour) {
 }
 
 // Sends colour to background as soon as the page loads
-browser.runtime.sendMessage({ reason: "SCRIPT_LOADED" });
-
-// Passes colouring info to pop-up
-// To-do: scratch this
-response;
+browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });

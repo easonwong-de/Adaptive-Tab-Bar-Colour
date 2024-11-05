@@ -1,20 +1,21 @@
+@import "../shared.css";
+
 body {
 	margin: 0;
 	padding: 8px;
 	width: 20em !important;
+	color: var(--text-colour-normal);
 }
 
 .light {
 	background-color: rgb(255, 255, 255);
-	color: rgb(0, 0, 0);
 }
 
 .dark {
 	background-color: rgb(28, 27, 34);
-	color: rgb(255, 255, 255);
 }
 
-#info_display_wrapper,
+#info-display-wrapper,
 #loading,
 label {
 	border-radius: 4px;
@@ -54,78 +55,78 @@ label {
 	background-color: rgba(255, 255, 255, 0.25);
 }
 
-#info_display_wrapper {
+#info-display-wrapper {
 	line-height: 1.2em;
 	margin-block-end: 5px;
 }
 
-.light #info_display_wrapper {
+.light #info-display-wrapper {
 	border: 1px solid rgba(0, 0, 0, 0.13);
 }
 
-.dark #info_display_wrapper {
+.dark #info-display-wrapper {
 	border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.info_display {
+.info-display {
 	display: none;
 }
 
-.protected_page > .info_display[name="protected_page"],
-.home_page > .info_display[name="home_page"],
-.text_viewer > .info_display[name="text_viewer"],
-.image_viewer > .info_display[name="image_viewer"],
-.pdf_viewer > .info_display[name="pdf_viewer"],
-.error_occurred > .info_display[name="error_occurred"],
-.fallback_colour > .info_display[name="fallback_colour"],
-.colour_picked > .info_display[name="colour_picked"],
-.addon_default > .info_display[name="addon_default"],
-.addon_recom > .info_display[name="addon_recom"],
-.addon_specify > .info_display[name="addon_specify"],
-.theme_unignored > .info_display[name="theme_unignored"],
-.theme_missing > .info_display[name="theme_missing"],
-.theme_ignored > .info_display[name="theme_ignored"],
-.theme_used > .info_display[name="theme_used"],
-.using_qs > .info_display[name="using_qs"],
-.colour_specified > .info_display[name="colour_specified"] {
+.PROTECTED_PAGE > .info-display[name="PROTECTED_PAGE"],
+.HOME_PAGE > .info-display[name="HOME_PAGE"],
+.TEXT_VIEWER > .info-display[name="TEXT_VIEWER"],
+.IMAGE_VIEWER > .info-display[name="IMAGE_VIEWER"],
+.PDF_VIEWER > .info-display[name="PDF_VIEWER"],
+.ERROR_OCCURRED > .info-display[name="ERROR_OCCURRED"],
+.FALLBACK_COLOUR > .info-display[name="FALLBACK_COLOUR"],
+.COLOUR_PICKED > .info-display[name="COLOUR_PICKED"],
+.ADDON_SPECIFIED > .info-display[name="ADDON_SPECIFIED"],
+.ADDON_RECOM > .info-display[name="ADDON_RECOM"],
+.ADDON_DEFAULT > .info-display[name="ADDON_DEFAULT"],
+.THEME_UNIGNORED > .info-display[name="THEME_UNIGNORED"],
+.THEME_MISSING > .info-display[name="THEME_MISSING"],
+.THEME_IGNORED > .info-display[name="THEME_IGNORED"],
+.THEME_USED > .info-display[name="THEME_USED"],
+.USING_QS > .info-display[name="USING_QS"],
+.COLOUR_SPECIFIED > .info-display[name="COLOUR_SPECIFIED"] {
 	display: block;
 }
 
-.info_display > div {
+.info-display > div {
 	display: inline;
 }
 
-.additional_info {
+.additional-info {
 	font-weight: 600;
 }
 
-label.info_action {
+label.info-action {
 	display: block;
 	margin-top: 0.5em;
 	text-align: center;
 }
 
-.light .info_action {
+.light .info-action {
 	background-color: rgba(0, 0, 0, 0.15);
 }
 
-.light .info_action:hover {
+.light .info-action:hover {
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
-.light .info_action:active {
+.light .info-action:active {
 	background-color: rgba(0, 0, 0, 0.35);
 }
 
-.dark .info_action {
+.dark .info-action {
 	background-color: rgba(255, 255, 255, 0.15);
 }
 
-.dark .info_action:hover {
+.dark .info-action:hover {
 	background-color: rgba(255, 255, 255, 0.2);
 }
 
-.dark .info_action:active {
+.dark .info-action:active {
 	background-color: rgba(255, 255, 255, 0.35);
 }
 

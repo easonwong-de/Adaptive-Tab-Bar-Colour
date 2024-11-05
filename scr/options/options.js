@@ -168,7 +168,7 @@ function load() {
 			loading.hidden = true;
 			settings.hidden = false;
 		} else {
-			browser.runtime.sendMessage({ reason: "INIT_REQUEST" });
+			browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 		}
 	});
 }
@@ -450,7 +450,7 @@ function generateNewRow(domain, i) {
  * Triggers colour update.
  */
 function applySettings() {
-	browser.runtime.sendMessage({ reason: "UPDATE_REQUEST" });
+	browser.runtime.sendMessage({ header: "PREF_CHANGED" });
 }
 
 /**
@@ -473,7 +473,7 @@ function autoPopupColour() {
 			browser.tabs.sendMessage(
 				id,
 				{
-					reason: "INFO_REQUEST",
+					header: "INFO_REQUEST",
 					dynamic: pref.dynamic,
 					noThemeColour: pref.noThemeColour,
 					customRule: customRule,

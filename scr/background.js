@@ -32,7 +32,8 @@ import {
 	default_protectedPageColour,
 } from "./default_values.js";
 import preference from "./preference.js";
-import { rgba, dimColour, contrastRatio, relativeLuminance } from "./colour.js";
+import { rgba, dimColour, contrastCorrection } from "./colour.js";
+import { onSchemeChanged, getCurrentScheme } from "./utility.js";
 
 /** Preference */
 const pref = new preference();
@@ -92,18 +93,6 @@ const current = {
 	},
 };
 
-const darkModeDetection = window.matchMedia("(prefers-color-scheme: dark)");
-
-async function getCurrentScheme() {
-	const webAppearanceSetting = await browser.browserSettings.overrideContentColorScheme.get({});
-	const scheme = webAppearanceSetting.value;
-	if (scheme === "light" || scheme === "dark") {
-		return scheme;
-	} else {
-		return darkModeDetection?.matches ? "dark" : "light";
-	}
-}
-
 /**
  * Initialises the pref and current.
  */
@@ -142,12 +131,16 @@ function handleMessage(message, sender) {
 	const tab = sender.tab;
 	const actions = {
 		INIT_REQUEST: initialise,
-		UPDATE_REQUEST: prefUpdate,
-		SCRIPT_LOADED: async () => setFrameColour(tab.windowId, await getWebPageColour()),
-		COLOUR_UPDATE: () => setFrameColour(tab.windowId, message.response.colour),
+		PREF_CHANGED: prefUpdate,
+		SCRIPT_LOADED: async () => {
+			if (tab?.active) setFrameColour(tab.windowId, await getWebPageColour(tab));
+		},
+		COLOUR_UPDATE: () => {
+			if (tab?.active) setFrameColour(tab.windowId, message.response.colour);
+		},
 	};
-	if (tab?.active && message?.reason in actions) {
-		actions[message.reason]();
+	if (message?.header in actions) {
+		actions[message.header]();
 	} else {
 		update();
 	}
@@ -198,7 +191,7 @@ async function getAddonPageColour(url) {
  */
 async function getWebPageColour(tab) {
 	const url = tab.url;
-	const customRule = null;
+	let customRule = null;
 	for (const site in pref.customRule) {
 		try {
 			if (url === site) {
@@ -219,14 +212,13 @@ async function getWebPageColour(tab) {
 		}
 	}
 	const response = await browser.tabs.sendMessage(tab.id, {
-		reason: "COLOUR_REQUEST",
+		header: "COLOUR_REQUEST",
 		conf: {
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
 			customRule: customRule,
 		},
 	});
-	console.log("Response from tab", url, ":", response);
 	if (response) {
 		// The colour is successfully returned
 		return response.colour;
@@ -284,27 +276,6 @@ async function updateTab(tab) {
 	}
 }
 
-// To-do: increase the contrast ratio automatically instead of using fallback colour
-function contrastCorrection(colour) {
-	const contrastRatio_dark = contrastRatio(colour, rgba([255, 255, 255, 1]));
-	const contrastRatio_light = contrastRatio(colour, rgba([0, 0, 0, 1]));
-	const eligibility_dark = contrastRatio_dark > pref.minContrast_dark;
-	const eligibility_light = contrastRatio_light > pref.minContrast_light;
-	if (eligibility_light && (current.scheme === "light" || (current.scheme === "dark" && pref.allowDarkLight))) {
-		return { colour: colour, scheme: "light" };
-	} else if (eligibility_dark && (current.scheme === "dark" || (current.scheme === "light" && pref.allowDarkLight))) {
-		return { colour: colour, scheme: "dark" };
-	} else if (current.scheme === "light") {
-		const dim =
-			((pref.minContrast_light / contrastRatio_light - 1) * relativeLuminance(colour)) /
-			(255 - relativeLuminance(colour));
-		return { colour: rgba(dimColour(colour, dim)), scheme: "light" };
-	} else if (current.scheme === "dark") {
-		const dim = contrastRatio_dark / pref.minContrast_dark - 1;
-		return { colour: rgba(dimColour(colour, dim)), scheme: "dark" };
-	}
-}
-
 /**
  * Changes tab bar to the appointed colour. If the colour is not eligible, uses fallback colour.
  *
@@ -321,7 +292,13 @@ function setFrameColour(windowId, colour) {
 			applyTheme(windowId, colourCode["FALLBACK"][current.scheme], current.scheme);
 		}
 	} else {
-		const correctionResult = contrastCorrection(colour);
+		const correctionResult = contrastCorrection(
+			colour,
+			current.scheme,
+			pref.allowDarkLight,
+			pref.minContrast_light,
+			pref.minContrast_dark
+		);
 		applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
 	}
 }
@@ -423,10 +400,10 @@ function applyTheme(windowId, colour, colourScheme) {
 
 (async () => {
 	await initialise();
+	onSchemeChanged(update);
 	browser.tabs.onUpdated.addListener(update);
 	browser.tabs.onActivated.addListener(update);
 	browser.tabs.onAttached.addListener(update);
 	browser.windows.onFocusChanged.addListener(update);
 	browser.runtime.onMessage.addListener(handleMessage);
-	darkModeDetection?.addEventListener("change", update);
 })();

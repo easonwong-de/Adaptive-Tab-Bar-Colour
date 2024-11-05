@@ -120,13 +120,41 @@ export function overlayColour(colourTop, colourBottom) {
 }
 
 /**
- * Copies rgba objects.
- * @param {Object} target Target colour object.
- * @param {Object} source Source colour object.
+ * Adjusts frame colour and returns the optimal contrast scheme (light or dark) based on preferred scheme, colour contrast ratios, and minimum contrast thresholds.
+ *
+ * @param {object} frameColour RGBA object representing the frame's base colour.
+ * @param {"light" | "dark"} preferredScheme The preferred colour scheme.
+ * @param {boolean} allowDarkLight Determines if it's allowed to use dark theme in light scheme, and vice versa.
+ * @param {number} minContrast_light Minimum contrast ratio required for light scheme eligibility.
+ * @param {number} minContrast_dark Minimum contrast ratio required for dark scheme eligibility.
+ * @param {object} textColour_light Text colour for light scheme in an rgba object, defaulting to black.
+ * @param {object} textColour_dark Text colour for dark scheme in an rgba object, defaulting to white.
+ * @returns {{ colour: object, scheme: "light" | "dark" }} Object with the corrected frame colour and scheme.
  */
-export function cc(target, source) {
-	target.r = source.r;
-	target.g = source.g;
-	target.b = source.b;
-	target.a = source.a;
+export function contrastCorrection(
+	frameColour,
+	preferredScheme,
+	allowDarkLight,
+	minContrast_light,
+	minContrast_dark,
+	textColour_light = rgba([0, 0, 0, 1]),
+	textColour_dark = rgba([255, 255, 255, 1])
+) {
+	const contrastRatio_dark = contrastRatio(frameColour, textColour_dark);
+	const contrastRatio_light = contrastRatio(frameColour, textColour_light);
+	const eligibility_dark = contrastRatio_dark > minContrast_dark;
+	const eligibility_light = contrastRatio_light > minContrast_light;
+	if (eligibility_light && (preferredScheme === "light" || (preferredScheme === "dark" && allowDarkLight))) {
+		return { colour: frameColour, scheme: "light" };
+	} else if (eligibility_dark && (preferredScheme === "dark" || (preferredScheme === "light" && allowDarkLight))) {
+		return { colour: frameColour, scheme: "dark" };
+	} else if (preferredScheme === "light") {
+		const dim =
+			((minContrast_light / contrastRatio_light - 1) * relativeLuminance(frameColour)) /
+			(255 - relativeLuminance(frameColour));
+		return { colour: rgba(dimColour(frameColour, dim)), scheme: "light" };
+	} else if (preferredScheme === "dark") {
+		const dim = contrastRatio_dark / minContrast_dark - 1;
+		return { colour: rgba(dimColour(frameColour, dim)), scheme: "dark" };
+	}
 }

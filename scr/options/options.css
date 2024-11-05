@@ -1,35 +1,4 @@
-html {
-	font-family: sans-serif;
-	--accent-colour: hsl(218, 73%, 49%);
-	--colour-0: hsl(0, 0%, 100%);
-	--colour-1: hsl(240, 10%, 95%);
-	--colour-2: hsl(240, 10%, 90%);
-	--colour-3: hsl(240, 10%, 85%);
-	--colour-4: hsl(240, 10%, 80%);
-	--colour-5: hsl(240, 10%, 75%);
-	--link-colour-active: hsl(231, 72%, 27%);
-	--link-colour-hover: hsl(223, 73%, 53%);
-	--link-colour-normal: hsl(214, 100%, 61%);
-	--text-colour-normal: hsl(0, 0%, 0%);
-	--text-colour-secondary: hsl(0, 0%, 20%);
-}
-
-@media (prefers-color-scheme: dark) {
-	html {
-		--accent-colour: hsl(193, 95%, 68%);
-		--colour-0: hsl(248, 11%, 15%);
-		--colour-1: hsl(248, 11%, 20%);
-		--colour-2: hsl(248, 11%, 25%);
-		--colour-3: hsl(248, 11%, 30%);
-		--colour-4: hsl(248, 11%, 35%);
-		--colour-5: hsl(248, 11%, 40%);
-		--link-colour-active: hsl(190, 80%, 83%);
-		--link-colour-hover: hsl(190, 80%, 75%);
-		--link-colour-normal: hsl(190, 80%, 62%);
-		--text-colour-normal: hsl(0, 0%, 100%);
-		--text-colour-secondary: hsl(0, 0%, 80%);
-	}
-}
+@import "../shared.css";
 
 body {
 	background-color: var(--colour-0);
@@ -38,7 +7,7 @@ body {
 	padding: 0;
 }
 
-#reinstall_tip {
+#reinstall-tip {
 	animation-delay: 5s;
 	animation-duration: 0s;
 	animation-fill-mode: forwards;
