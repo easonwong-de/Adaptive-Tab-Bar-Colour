@@ -2,7 +2,7 @@
 
 import { recommendedColour_addon, default_protectedPageColour } from "../default_values.js";
 import preference from "../preference.js";
-import { getCurrentScheme, msg } from "../utility.js";
+import { msg } from "../utility.js";
 
 const pref = new preference();
 
@@ -25,23 +25,31 @@ document.querySelectorAll("[type='checkbox']").forEach((checkbox) => {
 
 moreCustomButton.onclick = () => browser.runtime.openOptionsPage();
 
+/**
+ * Changes the content shown in info display panel.
+ *
+ * @param {Object} options Options to configure the info display panel.
+ * @param {string} options.reason Determines which page to show on the panel by setting the class name of the info display.
+ * @param {string} [options.additionalInfo=null] Additional information to display on the panel.
+ * @param {Function} [options.infoAction=null] The function called by the `.info-action` button being clicked.
+ */
 function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
+	infoDisplay.className = reason;
 	const additionalInfoDisplay = infoDisplay.querySelector(`[name='${reason}'] .additional-info`);
 	const infoActionButton = infoDisplay.querySelector(`[name='${reason}'] .info-action`);
-	infoDisplay.className = reason;
 	if (additionalInfo) additionalInfoDisplay.textContent = additionalInfo;
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
 
 async function getWebPageInfo(tab) {
 	const url = new URL(tab.url);
-	const response = await browser.tabs.sendMessage(tab.id, { header: "INFO_REQUEST" });
-	const actions = {
-		THEME_UNIGNORED: "IGNORE_THEME",
-		THEME_USED: "IGNORE_THEME",
-		THEME_IGNORED: "UN_IGNORE_THEME",
-	};
-	if (response) {
+	try {
+		const response = await browser.tabs.sendMessage(tab.id, { header: "INFO_REQUEST" });
+		const actions = {
+			THEME_UNIGNORED: "IGNORE_THEME",
+			THEME_USED: "IGNORE_THEME",
+			THEME_IGNORED: "UN_IGNORE_THEME",
+		};
 		const reason = response.reason;
 		if (reason in actions) {
 			return {
@@ -57,14 +65,16 @@ async function getWebPageInfo(tab) {
 		} else {
 			return { reason: reason };
 		}
-	} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-		return { reason: "PDF_VIEWER" };
-	} else if (tab.favIconUrl && tab.favIconUrl.startsWith("chrome:")) {
-		return { reason: "PROTECTED_PAGE" };
-	} else if (url.endsWith("http://" + tab.title) || url.endsWith("https://" + tab.title)) {
-		return { reason: "TEXT_VIEWER" };
-	} else {
-		return { reason: "ERROR_OCCURRED" };
+	} catch (error) {
+		if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+			return { reason: "PDF_VIEWER" };
+		} else if (tab.favIconUrl?.startsWith("chrome:")) {
+			return { reason: "PROTECTED_PAGE" };
+		} else if (new RegExp(`^https?:\/\/${tab.title}$`).test(url.href)) {
+			return { reason: "TEXT_VIEWER" };
+		} else {
+			return { reason: "ERROR_OCCURRED" };
+		}
 	}
 }
 
@@ -144,7 +154,8 @@ async function updatePopupColour() {
 }
 
 async function updateAllowDarkLightText() {
-	if ((await getCurrentScheme()) === "light") {
+	const scheme = await browser.runtime.sendMessage({ header: "SCHEME_REQUEST" });
+	if (scheme === "light") {
 		allowDarkLightCheckboxCaption.textContent = msg("allowDarkTabBar");
 		allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkLightTooltip_dark");
 	} else {

@@ -56,7 +56,7 @@ const colourCode = {
 			return current.fallbackColour_dark;
 		},
 	},
-	PLAINTEXT: { light: rgba([236, 236, 236, 1]), dark: rgba([50, 50, 50, 1]) },
+	PLAINTEXT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
 	SYSTEM: { light: rgba([255, 255, 255, 1]), dark: rgba([30, 30, 30, 1]) },
 	ADDON: { light: rgba([236, 236, 236, 1]), dark: rgba([50, 50, 50, 1]) },
 	PDFVIEWER: { light: rgba([249, 249, 250, 1]), dark: rgba([56, 56, 61, 1]) },
@@ -127,22 +127,22 @@ async function update() {
  * @param {object} message The message object containing the `reason` and any additional data.
  * @param {runtime.MessageSender} sender Information about the message sender.
  */
-function handleMessage(message, sender) {
+async function handleMessage(message, sender) {
 	const tab = sender.tab;
-	const actions = {
-		INIT_REQUEST: initialise,
-		PREF_CHANGED: prefUpdate,
-		SCRIPT_LOADED: async () => {
-			if (tab?.active) setFrameColour(tab.windowId, await getWebPageColour(tab));
-		},
-		COLOUR_UPDATE: () => {
-			if (tab?.active) setFrameColour(tab.windowId, message.response.colour);
-		},
-	};
-	if (message?.header in actions) {
-		actions[message.header]();
-	} else {
-		update();
+	const header = message?.header;
+	switch (header) {
+		case "INIT_REQUEST":
+			return await initialise();
+		case "PREF_CHANGED":
+			return await prefUpdate();
+		case "SCRIPT_LOADED":
+			return setFrameColour(tab, await getWebPageColour(tab));
+		case "COLOUR_UPDATE":
+			return setFrameColour(tab, message.response.colour);
+		case "SCHEME_REQUEST":
+			return await getCurrentScheme();
+		default:
+			return update();
 	}
 }
 
@@ -198,46 +198,45 @@ async function getWebPageColour(tab) {
 				customRule = pref.customRule[site];
 				break;
 			}
-			// To-do: use match pattern
-			/* const regex = new RegExp(site);
-			if (regex.test(url)) {
-				customRule = pref.customRule[site];
-			} */
 			if (new URL(url).hostname === site) {
 				customRule = pref.customRule[site];
 				break;
 			}
-		} catch (e) {
+			if (new RegExp(site).test(url)) {
+				customRule = pref.customRule[site];
+				break;
+			}
+		} catch (error) {
 			continue;
 		}
 	}
-	const response = await browser.tabs.sendMessage(tab.id, {
-		header: "COLOUR_REQUEST",
-		conf: {
-			dynamic: pref.dynamic,
-			noThemeColour: pref.noThemeColour,
-			customRule: customRule,
-		},
-	});
-	if (response) {
-		// The colour is successfully returned
+	try {
+		const response = await browser.tabs.sendMessage(tab.id, {
+			header: "COLOUR_REQUEST",
+			conf: {
+				dynamic: pref.dynamic,
+				noThemeColour: pref.noThemeColour,
+				customRule: customRule,
+			},
+		});
 		return response.colour;
-	} else if (url.startsWith("data:image")) {
-		// Viewing an image on data:image (content script is blocked on data:pages)
-		return "IMAGEVIEWER";
-	} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-		// When viewing a PDF file, Firefox blocks content script
-		return "PDFVIEWER";
-	} else if (tab.favIconUrl?.startsWith("chrome:")) {
-		// The page probably failed to load (content script is also blocked on website that failed to load)
-		return "DEFAULT";
-	} else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) {
-		// When viewing plain text online, Firefox blocks content script
-		// In this case, the tab title is the same as the URL
-		return "PLAINTEXT";
-	} else {
-		// Uses fallback colour
-		return "FALLBACK";
+	} catch (error) {
+		if (url.startsWith("data:image")) {
+			// Viewing an image on data:image (content script is blocked on data:pages)
+			return "IMAGEVIEWER";
+		} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+			// When viewing a PDF file, Firefox blocks content script
+			return "PDFVIEWER";
+		} else if (tab.favIconUrl?.startsWith("chrome:")) {
+			// The page probably failed to load (content script is also blocked on website that failed to load)
+			return "DEFAULT";
+		} else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) {
+			// When viewing plain text online, Firefox blocks content script
+			// In this case, the tab title is the same as the URL
+			return "PLAINTEXT";
+		} else {
+			return "FALLBACK";
+		}
 	}
 }
 
@@ -248,9 +247,8 @@ async function getWebPageColour(tab) {
  */
 async function updateTab(tab) {
 	const url = new URL(tab.url);
-	const windowId = tab.windowId;
 	if (url.protocol === "view-source:") {
-		setFrameColour(windowId, "PLAINTEXT");
+		setFrameColour(tab, "PLAINTEXT");
 	} else if (url.protocol === "chrome:" || url.protocol === "resource:" || url.protocol === "jar:file:") {
 		if (
 			url.href.endsWith(".txt") ||
@@ -258,31 +256,35 @@ async function updateTab(tab) {
 			url.href.endsWith(".jsm") ||
 			url.href.endsWith(".js")
 		) {
-			setFrameColour(windowId, "PLAINTEXT");
+			setFrameColour(tab, "PLAINTEXT");
 		} else if (url.href.endsWith(".png") || url.href.endsWith(".jpg")) {
-			setFrameColour(windowId, "IMAGEVIEWER");
+			setFrameColour(tab, "IMAGEVIEWER");
 		} else {
-			setFrameColour(windowId, "SYSTEM");
+			setFrameColour(tab, "SYSTEM");
 		}
 	} else if (url.protocol === "about:") {
-		setFrameColour(windowId, getAboutPageColour(url.pathname));
+		setFrameColour(tab, getAboutPageColour(url.pathname));
 	} else if (url.hostname in default_protectedPageColour) {
-		setFrameColour(windowId, getProtectedPageColour(url.hostname));
+		setFrameColour(tab, getProtectedPageColour(url.hostname));
 	} else if (url.protocol === "moz-extension:") {
-		setFrameColour(windowId, await getAddonPageColour(url.href));
+		setFrameColour(tab, await getAddonPageColour(url.href));
 	} else {
 		// To-do: unify custom rules for about / protected pages with those for normal web pages
-		setFrameColour(windowId, await getWebPageColour(tab));
+		setFrameColour(tab, await getWebPageColour(tab));
 	}
 }
 
 /**
- * Changes tab bar to the appointed colour. If the colour is not eligible, uses fallback colour.
+ * Applies given colour to the browser chrome.
  *
- * @param {number} windowId The ID of the window.
+ * If the tab is inactive, nothing will be done. Colour will be adjusted if the contrast ratio is not adequate.
+ *
+ * @param {tabs.Tab} tab The tab in a window, whose frame is being changed.
  * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: `HOME`, `FALLBACK`, `IMAGEVIEWER` (dark only), `PLAINTEXT`, `SYSTEM`, `ADDON`, `PDFVIEWER`, and `DEFAULT`.
  */
-function setFrameColour(windowId, colour) {
+function setFrameColour(tab, colour) {
+	if (!tab?.active) return;
+	const windowId = tab.windowId;
 	if (typeof colour === "string") {
 		if (colourCode[colour][current.scheme]) {
 			applyTheme(windowId, colourCode[colour][current.scheme], current.scheme);
@@ -412,5 +414,6 @@ function applyTheme(windowId, colour, colourScheme) {
 	browser.tabs.onActivated.addListener(update);
 	browser.tabs.onAttached.addListener(update);
 	browser.windows.onFocusChanged.addListener(update);
+	browser.browserSettings.overrideContentColorScheme.onChange.addListener(update);
 	browser.runtime.onMessage.addListener(handleMessage);
 })();
