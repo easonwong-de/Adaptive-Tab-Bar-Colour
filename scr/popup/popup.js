@@ -10,13 +10,11 @@ const body = document.querySelector("body");
 const loading = document.querySelector("#loading-wrapper");
 const settings = document.querySelector("#settings");
 const infoDisplay = document.querySelector("#info-display-wrapper");
-const allowDarkLightCheckbox = document.querySelector("#allow-dark-light");
 const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
-const dynamicCheckbox = document.querySelector("#dynamic");
-const noThemeColourCheckbox = document.querySelector("#no-theme-color");
+const checkboxes = document.querySelectorAll("[type='checkbox']");
 const moreCustomButton = document.querySelector("#custom-popup");
 
-document.querySelectorAll("[type='checkbox']").forEach((checkbox) => {
+checkboxes.forEach((checkbox) => {
 	checkbox.onclick = async () => {
 		pref[checkbox.name] = checkbox.checked;
 		await applySettings();
@@ -145,12 +143,6 @@ async function updatePopupColour() {
 	const theme = await browser.theme.getCurrent();
 	body.style.backgroundColor = theme["colors"]["popup"];
 	body.style.color = theme["colors"]["popup_text"];
-	// To-do: use a better method to determine schemes
-	if (theme["colors"]["popup_text"] === "rgb(0, 0, 0)") {
-		body.classList.replace("dark", "light");
-	} else {
-		body.classList.replace("light", "dark");
-	}
 }
 
 async function updateAllowDarkLightText() {
@@ -170,9 +162,7 @@ async function updateAllowDarkLightText() {
 async function updatePopupSelection() {
 	await pref.load();
 	if (pref.valid()) {
-		allowDarkLightCheckbox.checked = pref.allowDarkLight;
-		dynamicCheckbox.checked = pref.dynamic;
-		noThemeColourCheckbox.checked = pref.noThemeColour;
+		checkboxes.forEach((checkbox) => (checkbox.checked = pref[checkbox.name]));
 		loading.hidden = true;
 		settings.hidden = false;
 	} else {

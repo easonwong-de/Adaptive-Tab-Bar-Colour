@@ -8,13 +8,6 @@ body {
 }
 
 #reinstall-tip {
-	animation-delay: 5s;
-	animation-duration: 0s;
-	animation-fill-mode: forwards;
-	animation-name: appear;
-	opacity: 0;
-	overflow-wrap: break-word;
-	white-space: normal;
 	width: 50%;
 }
 
@@ -228,85 +221,14 @@ div.sponsor {
 	width: 10rem;
 }
 
+.slider-body {
+	background-size: 200% 100%;
+	background-image: linear-gradient(to right, var(--transparent-0), var(--transparent-0) 50%, var(--colour-2) 50%);
+	background-position-x: var(--slider-position, 100%);
+	transition: background-position-x 0.1s ease-in;
+}
+
 /* General tab */
-
-/* - This Source Code Form is subject to the terms of the Mozilla Public
-   - License, v. 2.0. If a copy of the MPL was not distributed with this file,
-   - You can obtain one at http://mozilla.org/MPL/2.0/
-*/
-
-/* preferences.css modified */
-#web-appearance-chooser {
-	display: flex;
-	gap: 0.5em;
-}
-
-.web-appearance-choice {
-	position: relative;
-	border-radius: 4px;
-	overflow: clip;
-}
-
-.web-appearance-choice-image-container {
-	padding: 1em;
-	background-color: var(--colour-1);
-}
-
-.web-appearance-choice:hover .web-appearance-choice-image-container {
-	background-color: var(--colour-2);
-}
-
-.web-appearance-choice:active .web-appearance-choice-image-container {
-	background-color: var(--colour-4);
-}
-
-.web-appearance-choice img {
-	border-radius: 4px;
-	box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.2);
-	content: url("chrome://browser/content/preferences/web-appearance-light.svg");
-	display: block;
-	margin: 0 2em;
-	transform: scaleX(1);
-}
-
-.web-appearance-choice img.dark-icon {
-	content: url("chrome://browser/content/preferences/web-appearance-dark.svg");
-}
-
-.web-appearance-choice img.auto-icon {
-	animation-direction: alternate;
-	animation-duration: 2.5s;
-	animation-iteration-count: infinite;
-	animation-name: appear;
-	animation-timing-function: ease-in-out;
-	content: url("chrome://browser/content/preferences/web-appearance-dark.svg");
-	position: absolute;
-	top: 1em;
-}
-
-@keyframes appear {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 1;
-	}
-}
-
-.web-appearance-choice,
-.web-appearance-choice img {
-	border: 1px solid var(--colour-3);
-}
-
-.web-appearance-choice-footer {
-	border-top: 1px solid var(--colour-3);
-	display: flex;
-	align-items: center;
-	overflow-wrap: anywhere;
-	padding: 0.5em;
-	gap: 0.5em;
-}
 
 /* Customisation tab */
 
@@ -318,6 +240,11 @@ div.sponsor {
 
 #tab-2 .section {
 	flex: 0 0 auto;
+}
+
+#tab-2 .slider-body::after {
+	content: "%";
+	margin-inline-start: 0.5rem;
 }
 
 /* Advanced tab */

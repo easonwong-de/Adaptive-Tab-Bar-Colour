@@ -116,9 +116,7 @@ async function update() {
 	await current.update();
 	if (!pref.valid()) await initialise();
 	const activeTabs = await browser.tabs.query({ active: true, status: "complete" });
-	for (const tab of activeTabs) {
-		updateTab(tab);
-	}
+	activeTabs.forEach(updateTab);
 }
 
 /**
@@ -317,7 +315,7 @@ function setFrameColour(tab, colour) {
  *
  * @param {number} windowId The ID of the window.
  * @param {object} colour Colour of the frame, in rgba object.
- * @param {string} colourScheme "light" or "dark".
+ * @param {string} colourScheme `light` or `dark`.
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {

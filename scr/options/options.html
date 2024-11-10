@@ -35,9 +35,9 @@
 			</defs>
 		</svg>
 		<template> </template>
-		<div id="loading_wrapper" hidden="true">
+		<div id="loading-wrapper" hidden="true">
 			<div id="loading" data-text="loading">Loading…</div>
-			<p id="reinstall_tip" data-text="reinstallTip">
+			<p id="reinstall-tip" data-text="reinstallTip">
 				Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for
 				your inconvenience!
 			</p>
@@ -53,17 +53,17 @@
 				<hr />
 				<div id="tab-1" class="tab">
 					<div class="section-title" data-title="forceModeTooltip_bright">
-						<input id="allow-dark-light" type="checkbox" />
-						<label data-text="allowLightTabBar" for="allow-dark-light" id="force_mode_caption"
+						<input id="allow-dark-light" type="checkbox" data-pref="allowDarkLight" />
+						<label data-text="allowLightTabBar" for="allow-dark-light" id="allow-dark-light-caption"
 							>Allow light tab bar</label
 						>
 					</div>
 					<div class="section-title" data-title="dynamicModeTooltip">
-						<input id="dynamic" type="checkbox" />
+						<input id="dynamic" type="checkbox" data-pref="dynamic" />
 						<label for="dynamic" data-text="dynamicColourUpdate">Dynamic colour update</label>
 					</div>
 					<div class="section-title" data-title="noThemeColourModeTooltip">
-						<input id="no-theme-color" type="checkbox" />
+						<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
 						<label for="no-theme-color" data-text="ignoreDesignatedThemeColour">Ignore theme colour</label>
 					</div>
 				</div>
@@ -76,16 +76,16 @@
 									class="slider"
 									data-pref="tabSelected"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.1"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 10 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -97,16 +97,16 @@
 									class="slider"
 									data-pref="tabSelectedBorder"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.0"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 0 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -121,8 +121,8 @@
 									class="slider"
 									data-pref="tabbar"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
+									data-max="50"
+									data-step="5"
 									data-value="0"
 								>
 									<button>
@@ -130,7 +130,7 @@
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 0 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -142,8 +142,8 @@
 									class="slider"
 									data-pref="tabbarBorder"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
+									data-max="50"
+									data-step="5"
 									data-value="0"
 								>
 									<button>
@@ -151,7 +151,7 @@
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 0 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -166,16 +166,16 @@
 									class="slider"
 									data-pref="popup"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.05"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 5 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -187,16 +187,16 @@
 									class="slider"
 									data-pref="popup"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.05"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 5 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -213,16 +213,16 @@
 									class="slider"
 									data-pref="toolbarField"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.05"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 5 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -234,16 +234,16 @@
 									class="slider"
 									data-pref="toolbarFieldOnFocus"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.05"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 5 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -255,16 +255,16 @@
 									class="slider"
 									data-pref="toolbarFieldBorder"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.1"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 10 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -279,8 +279,8 @@
 									class="slider"
 									data-pref="toolbar"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
+									data-max="50"
+									data-step="5"
 									data-value="0"
 								>
 									<button>
@@ -288,7 +288,7 @@
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 0 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -300,8 +300,8 @@
 									class="slider"
 									data-pref="toolbarBorder"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
+									data-max="50"
+									data-step="5"
 									data-value="0"
 								>
 									<button>
@@ -309,7 +309,7 @@
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 0 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -324,16 +324,16 @@
 									class="slider"
 									data-pref="sidebar"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.05"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 5 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -345,16 +345,16 @@
 									class="slider"
 									data-pref="sidebarBorder"
 									data-min="0"
-									data-max="0.5"
-									data-step="0.05"
-									data-value="0.05"
+									data-max="50"
+									data-step="5"
+									data-value="0"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-minus" />
 										</svg>
 									</button>
-									<div class="slider-body">+ 5 %</div>
+									<div class="slider-body"></div>
 									<button>
 										<svg viewBox="0 0 24 24">
 											<use xlink:href="#svg-add" />
@@ -376,17 +376,17 @@
 							<div
 								class="slider"
 								data-pref="minContrast_light"
-								data-min="1"
-								data-max="10"
-								data-step="0.5"
-								data-value="4.5"
+								data-min="45"
+								data-max="150"
+								data-step="5"
+								data-value="0"
 							>
 								<button>
 									<svg viewBox="0 0 24 24">
 										<use xlink:href="#svg-minus" />
 									</svg>
 								</button>
-								<div class="slider-body">4.5</div>
+								<div class="slider-body"></div>
 								<button>
 									<svg viewBox="0 0 24 24">
 										<use xlink:href="#svg-add" />
@@ -397,17 +397,17 @@
 							<div
 								class="slider"
 								data-pref="minContrast_dark"
-								data-min="1"
-								data-max="10"
-								data-step="0.5"
-								data-value="4.5"
+								data-min="45"
+								data-max="150"
+								data-step="5"
+								data-value="0"
 							>
 								<button>
 									<svg viewBox="0 0 24 24">
 										<use xlink:href="#svg-minus" />
 									</svg>
 								</button>
-								<div class="slider-body">4.5</div>
+								<div class="slider-body"></div>
 								<button>
 									<svg viewBox="0 0 24 24">
 										<use xlink:href="#svg-add" />
@@ -510,11 +510,6 @@
 							</tr>
 						</table> -->
 						<div class="button-group">
-							<button id="reset-all" data-title="resetDomainSpecificRules">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" stroke="#FF2600" />
-								</svg>
-							</button>
 							<button id="add" data-title="addANewRule">
 								<svg viewBox="0 0 24 24">
 									<use xlink:href="#svg-add" />
@@ -541,17 +536,9 @@
 						<input
 							type="image"
 							src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
-							border="0"
 							name="submit"
 							title="PayPal - The safer, easier way to pay online!"
 							alt="Donate with PayPal button"
-						/>
-						<img
-							alt=""
-							border="0"
-							src="https://www.paypal.com/en_US/i/scr/pixel.gif"
-							width="1"
-							height="1"
 						/>
 					</form>
 					<a href="https://www.buymeacoffee.com/easonwong" target="_blank">
@@ -565,6 +552,6 @@
 			</div>
 		</div>
 		<p>&nbsp;</p>
-		<!-- <script defer type="module" src="./options.js"></script> -->
+		<script defer type="module" src="./options.js"></script>
 	</body>
 </html>

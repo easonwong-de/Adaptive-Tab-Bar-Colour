@@ -94,10 +94,11 @@ function luminanceApproximation(channel) {
  * Dims or lightens colour.
  *
  * @param {object} colour Colour to process, in rgb(a) object.
- * @param {number} dim between -1.0 (black) to 1.0 (white).
+ * @param {number} dimX100 Between -100 (black) to 100 (white).
  * @returns Dimmed or lightened colour string e.g. "rgb(xxx)".
  */
-export function dimColour(colour, dim) {
+export function dimColour(colour, dimX100) {
+	const dim = dimX100 / 100
 	if (dim > 1) {
 		return "rgb(255, 255, 255)";
 	} else if (dim > 0) {
@@ -158,19 +159,19 @@ export function contrastCorrection(
 ) {
 	const contrastRatio_dark = contrastRatio(frameColour, textColour_dark);
 	const contrastRatio_light = contrastRatio(frameColour, textColour_light);
-	const eligibility_dark = contrastRatio_dark > minContrast_dark;
-	const eligibility_light = contrastRatio_light > minContrast_light;
+	const eligibility_dark = contrastRatio_dark > minContrast_dark / 10;
+	const eligibility_light = contrastRatio_light > minContrast_light / 10;
 	if (eligibility_light && (preferredScheme === "light" || (preferredScheme === "dark" && allowDarkLight))) {
 		return { colour: frameColour, scheme: "light" };
 	} else if (eligibility_dark && (preferredScheme === "dark" || (preferredScheme === "light" && allowDarkLight))) {
 		return { colour: frameColour, scheme: "dark" };
 	} else if (preferredScheme === "light") {
 		const dim =
-			((minContrast_light / contrastRatio_light - 1) * (relativeLuminance_x255(frameColour) + 12.75)) /
+			((minContrast_light / (10 * contrastRatio_light) - 1) * (relativeLuminance_x255(frameColour) + 12.75)) /
 			(255 - relativeLuminance_x255(frameColour));
 		return { colour: rgba(dimColour(frameColour, dim)), scheme: "light" };
 	} else if (preferredScheme === "dark") {
-		const dim = contrastRatio_dark / minContrast_dark - 1;
+		const dim = (10 * contrastRatio_dark) / minContrast_dark - 1;
 		return { colour: rgba(dimColour(frameColour, dim)), scheme: "dark" };
 	}
 }

@@ -7,14 +7,6 @@ body {
 	color: var(--text-colour-normal);
 }
 
-.light {
-	background-color: rgb(255, 255, 255);
-}
-
-.dark {
-	background-color: rgb(28, 27, 34);
-}
-
 #info-display-wrapper,
 #loading,
 label {
@@ -29,43 +21,18 @@ label {
 	text-align: center;
 }
 
-#reinstall_tip {
-	animation-delay: 5s;
-	animation-duration: 0s;
-	animation-fill-mode: forwards;
-	animation-name: appear;
-	opacity: 0;
-	overflow-wrap: break-word;
-	white-space: normal;
+label:hover {
+	background-color: var(--transparent-0);
 }
 
-.light label:hover {
-	background-color: rgba(0, 0, 0, 0.15);
-}
-
-.light label:active {
-	background-color: rgba(0, 0, 0, 0.25);
-}
-
-.dark label:hover {
-	background-color: rgba(255, 255, 255, 0.15);
-}
-
-.dark label:active {
-	background-color: rgba(255, 255, 255, 0.25);
+label:active {
+	background-color: var(--transparent-1);
 }
 
 #info-display-wrapper {
 	line-height: 1.2em;
 	margin-block-end: 5px;
-}
-
-.light #info-display-wrapper {
-	border: 1px solid rgba(0, 0, 0, 0.13);
-}
-
-.dark #info-display-wrapper {
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid var(--transparent-0);
 }
 
 .info-display {
@@ -104,76 +71,25 @@ label.info-action {
 	display: block;
 	margin-top: 0.5em;
 	text-align: center;
+	background-color: var(--transparent-0);
 }
 
-.light .info-action {
-	background-color: rgba(0, 0, 0, 0.15);
+label.info-action:hover {
+	background-color: var(--transparent-1);
 }
 
-.light .info-action:hover {
-	background-color: rgba(0, 0, 0, 0.2);
-}
-
-.light .info-action:active {
-	background-color: rgba(0, 0, 0, 0.35);
-}
-
-.dark .info-action {
-	background-color: rgba(255, 255, 255, 0.15);
-}
-
-.dark .info-action:hover {
-	background-color: rgba(255, 255, 255, 0.2);
-}
-
-.dark .info-action:active {
-	background-color: rgba(255, 255, 255, 0.35);
-}
-
-#scheme_pref_title {
-	font-weight: 600;
-	margin-block: 1em;
-	text-align: center;
-}
-
-.tip {
-	border-radius: 5px;
-	display: inline-block;
-	font-size: 50%;
-	margin: 0;
-	padding-inline: 1em;
-	vertical-align: middle;
-}
-
-.light .tip {
-	background-color: rgba(0, 0, 0, 0.13);
-}
-
-.dark .tip {
-	background-color: rgba(255, 255, 255, 0.1);
+label.info-action:active {
+	background-color: var(--transparent-2);
 }
 
 hr {
 	border-width: 0;
 	height: 1px;
+	background-color: var(--transparent-0);
+	color: var(--transparent-0);
 }
 
-.light hr {
-	background-color: rgba(0, 0, 0, 0.13);
-	color: rgba(0, 0, 0, 0.13);
-}
-
-.dark hr {
-	background-color: rgba(255, 255, 255, 0.1);
-	color: rgba(255, 255, 255, 0.1);
-}
-
-.light input {
-	accent-color: rgb(0, 0, 0);
-	opacity: 0.75;
-}
-
-.dark input {
-	accent-color: rgb(255, 255, 255);
+input {
+	accent-color: var(--text-colour-normal);
 	opacity: 0.75;
 }

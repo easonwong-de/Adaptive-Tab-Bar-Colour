@@ -15,19 +15,47 @@ export default class preference {
 		noThemeColour: true,
 		tabbar: 0,
 		tabbarBorder: 0,
-		tabSelected: 0.1,
-		tabSelectedBorder: 0.0,
+		tabSelected: 10,
+		tabSelectedBorder: 0,
 		toolbar: 0,
 		toolbarBorder: 0,
-		toolbarField: 0.05,
-		toolbarFieldBorder: 0.1,
-		toolbarFieldOnFocus: 0.05,
-		sidebar: 0.05,
-		sidebarBorder: 0.05,
-		popup: 0.05,
-		popupBorder: 0.05,
-		minContrast_light: 9,
-		minContrast_dark: 4.5,
+		toolbarField: 5,
+		toolbarFieldBorder: 10,
+		toolbarFieldOnFocus: 5,
+		sidebar: 5,
+		sidebarBorder: 5,
+		popup: 5,
+		popupBorder: 5,
+		minContrast_light: 90,
+		minContrast_dark: 45,
+		custom: false,
+		homeBackground_light: default_homeBackground_light,
+		homeBackground_dark: default_homeBackground_dark,
+		fallbackColour_light: default_fallbackColour_light,
+		fallbackColour_dark: default_fallbackColour_dark,
+		customRule: {},
+		version: [2, 2],
+	};
+
+	#default_prefContent = {
+		allowDarkLight: true,
+		dynamic: true,
+		noThemeColour: true,
+		tabbar: 0,
+		tabbarBorder: 0,
+		tabSelected: 10,
+		tabSelectedBorder: 0,
+		toolbar: 0,
+		toolbarBorder: 0,
+		toolbarField: 5,
+		toolbarFieldBorder: 10,
+		toolbarFieldOnFocus: 5,
+		sidebar: 5,
+		sidebarBorder: 5,
+		popup: 5,
+		popupBorder: 5,
+		minContrast_light: 90,
+		minContrast_dark: 45,
 		custom: false,
 		homeBackground_light: default_homeBackground_light,
 		homeBackground_dark: default_homeBackground_dark,
@@ -123,9 +151,19 @@ export default class preference {
 			this.#prefContent.dynamic = true;
 			this.#prefContent.allowDarkLight = true;
 			this.#prefContent.noThemeColour = true;
-			if (this.#prefContent.scheme === "system") {
-				this.#prefContent.scheme = "auto";
-			}
+			this.#prefContent.tabbar = x100IfSmallerThan1(this.#prefContent.tabbar);
+			this.#prefContent.tabbarBorder = x100IfSmallerThan1(this.#prefContent.tabbarBorder);
+			this.#prefContent.tabSelected = x100IfSmallerThan1(this.#prefContent.tabSelected);
+			this.#prefContent.tabSelectedBorder = x100IfSmallerThan1(this.#prefContent.tabSelectedBorder);
+			this.#prefContent.toolbar = x100IfSmallerThan1(this.#prefContent.toolbar);
+			this.#prefContent.toolbarBorder = x100IfSmallerThan1(this.#prefContent.toolbarBorder);
+			this.#prefContent.toolbarField = x100IfSmallerThan1(this.#prefContent.toolbarField);
+			this.#prefContent.toolbarFieldBorder = x100IfSmallerThan1(this.#prefContent.toolbarFieldBorder);
+			this.#prefContent.toolbarFieldOnFocus = x100IfSmallerThan1(this.#prefContent.toolbarFieldOnFocus);
+			this.#prefContent.sidebar = x100IfSmallerThan1(this.#prefContent.sidebar);
+			this.#prefContent.sidebarBorder = x100IfSmallerThan1(this.#prefContent.sidebarBorder);
+			this.#prefContent.popup = x100IfSmallerThan1(this.#prefContent.popup);
+			this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
 		}
 		// Updating from before v1.7.5
 		// Converts legacy rules to query selector format
@@ -343,4 +381,12 @@ export default class preference {
 	set version(value) {
 		this.#prefContent.version = value;
 	}
+}
+
+/**
+ * @param {number} num
+ */
+function x100IfSmallerThan1(num) {
+	if (0 < num && num < 1) return +(num * 100).toFixed(0);
+	else return +num;
 }

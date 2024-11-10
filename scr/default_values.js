@@ -1,3 +1,5 @@
+"use strict";
+
 /** Default light homepage colour */
 export const default_homeBackground_light = "#FFFFFF";
 /** Default dark homepage colour */
