@@ -23,14 +23,7 @@
  * An object that defines the appearance of the Firefox chrome.
  */
 
-import {
-	default_homeBackground_light,
-	default_homeBackground_dark,
-	default_fallbackColour_light,
-	default_fallbackColour_dark,
-	default_aboutPageColour,
-	default_protectedPageColour,
-} from "./default_values.js";
+import { default_aboutPageColour, default_protectedPageColour } from "./default_values.js";
 import preference from "./preference.js";
 import { rgba, dimColour, contrastCorrection } from "./colour.js";
 import { onSchemeChanged, getCurrentScheme } from "./utility.js";
@@ -42,18 +35,18 @@ const pref = new preference();
 const colourCode = {
 	HOME: {
 		get light() {
-			return pref.homeBackground_light;
+			return rgba(pref.homeBackground_light);
 		},
 		get dark() {
-			return pref.homeBackground_dark;
+			return rgba(pref.homeBackground_dark);
 		},
 	},
 	FALLBACK: {
 		get light() {
-			return pref.fallbackColour_light;
+			return rgba(pref.fallbackColour_light);
 		},
 		get dark() {
-			return pref.fallbackColour_dark;
+			return rgba(pref.fallbackColour_dark);
 		},
 	},
 	PLAINTEXT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
@@ -307,14 +300,15 @@ function applyTheme(windowId, colour, colourScheme) {
 				frame: dimColour(colour, -pref.tabbar * 1.5),
 				frame_inactive: dimColour(colour, -pref.tabbar * 1.5),
 				tab_selected: dimColour(colour, -pref.tabSelected * 1.5),
+				tab_line: dimColour(colour, (-pref.tabSelectedBorder - pref.tabSelected) * 1.5),
 				ntp_background: dimColour(colour, 0),
 				// Toolbar
 				toolbar: dimColour(colour, -pref.toolbar * 1.5),
-				toolbar_top_separator: "rgba(0, 0, 0, 0)",
+				toolbar_top_separator: dimColour(colour, (-pref.tabbarBorder - pref.tabbar) * 1.5),
 				toolbar_bottom_separator: dimColour(colour, (-pref.toolbarBorder - pref.toolbar) * 1.5),
 				// URL bar
 				toolbar_field: dimColour(colour, -pref.toolbarField * 1.5),
-				toolbar_field_border: "rgba(0, 0, 0, 0)",
+				toolbar_field_border: dimColour(colour, (-pref.toolbarFieldBorder - pref.toolbarField) * 1.5),
 				toolbar_field_focus: dimColour(colour, -pref.toolbarFieldOnFocus * 1.5),
 				toolbar_field_border_focus: "rgb(130, 180, 245)",
 				// Sidebar & popup
@@ -325,7 +319,6 @@ function applyTheme(windowId, colour, colourScheme) {
 				// Static
 				tab_background_text: "rgb(30, 30, 30)",
 				tab_loading: "rgba(0, 0, 0, 0)",
-				tab_line: "rgba(0, 0, 0, 0)",
 				ntp_text: "rgb(0, 0, 0)",
 				toolbar_text: "rgb(0, 0, 0)",
 				toolbar_field_text: "rgba(0, 0, 0)",
@@ -350,14 +343,15 @@ function applyTheme(windowId, colour, colourScheme) {
 				frame: dimColour(colour, pref.tabbar),
 				frame_inactive: dimColour(colour, pref.tabbar),
 				tab_selected: dimColour(colour, pref.tabSelected),
+				tab_line: dimColour(colour, pref.tabSelectedBorder + pref.tabSelected),
 				ntp_background: dimColour(colour, 0),
 				// Toolbar
 				toolbar: dimColour(colour, pref.toolbar),
-				toolbar_top_separator: "rgba(0, 0, 0, 0)",
+				toolbar_top_separator: dimColour(colour, pref.tabbarBorder + pref.tabbar),
 				toolbar_bottom_separator: dimColour(colour, pref.toolbarBorder + pref.toolbar),
 				// URL bar
 				toolbar_field: dimColour(colour, pref.toolbarField),
-				toolbar_field_border: dimColour(colour, pref.toolbarFieldBorder),
+				toolbar_field_border: dimColour(colour, pref.toolbarFieldBorder + pref.toolbarField),
 				toolbar_field_focus: dimColour(colour, pref.toolbarFieldOnFocus),
 				toolbar_field_border_focus: "rgb(70, 118, 160)",
 				// Sidebar
@@ -368,7 +362,6 @@ function applyTheme(windowId, colour, colourScheme) {
 				// Static
 				tab_background_text: "rgb(225, 225, 225)",
 				tab_loading: "rgba(0, 0, 0, 0)",
-				tab_line: "rgba(0, 0, 0, 0)",
 				ntp_text: "rgb(255, 255, 255)",
 				toolbar_text: "rgb(255, 255, 255)",
 				toolbar_field_text: "rgb(255, 255, 255)",

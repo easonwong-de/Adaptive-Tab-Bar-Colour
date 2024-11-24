@@ -47,7 +47,7 @@
 				<input type="radio" name="tab-switch" id="tab-switch-1" class="tab-switch" checked />
 				<label for="tab-switch-1" class="tab-label" data-text="general">General</label>
 				<input type="radio" name="tab-switch" id="tab-switch-2" class="tab-switch" />
-				<label for="tab-switch-2" class="tab-label" data-text="customRules"></label>
+				<label for="tab-switch-2" class="tab-label" data-text="siteList"></label>
 				<input type="radio" name="tab-switch" id="tab-switch-3" class="tab-switch" />
 				<label for="tab-switch-3" class="tab-label" data-text="advanced">Advanced</label>
 				<hr />
@@ -169,7 +169,7 @@
 								<div class="slider-title" data-text="background">Background</div>
 								<div
 									class="slider"
-									data-pref="popup"
+									data-pref="popupBorder"
 									data-min="0"
 									data-max="50"
 									data-step="5"
@@ -351,8 +351,8 @@
 					</div>
 				</div>
 				<div id="tab-2" class="tab">
-					<div id="custom-options-wrapper">
-						<div id="custom-options">
+					<div class="list-wrapper">
+						<div id="fixed-options">
 							<div class="section">
 								<div class="option-header" data-text="homepageColourLight">Homepage colour: light</div>
 								<div>
@@ -378,71 +378,67 @@
 								</button>
 							</div>
 						</div>
-						<!-- <table id="custom-options">
-							<tr>
-								<td colspan="2"><span data-text="homepageColourLight">Homepage colour: light</span></td>
-								<td>
-									
-								</td>
-								<td>
-									<button id="reset_light_color" data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-										</svg>
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2"><span data-text="homepageColourDark">Homepage colour: dark</span></td>
-								<td>
-									<input type="color" value="#2B2A33" id="dark_color" />
-								</td>
-								<td>
-									<button id="reset_dark_color" data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-										</svg>
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2"><span data-text="fallbackColourLight">Fallback colour: light</span></td>
-								<td>
-									<input type="color" value="#FFFFFF" id="light_fallback_color" />
-								</td>
-								<td>
-									<button id="reset_light_fallback_color" data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-										</svg>
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2"><span data-text="fallbackColourDark">Fallback colour: dark</span></td>
-								<td>
-									<input type="color" value="#2B2A33" id="dark_fallback_color" />
-								</td>
-								<td>
-									<button id="reset_dark_fallback_color" data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-											<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-										</svg>
-									</button>
-								</td>
-							</tr>
-						</table> -->
-						<div class="button-group">
-							<button id="add" data-title="addANewRule">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-add" />
-								</svg>
-							</button>
+						<div id="custom-options">
+							<!-- <table id="custom-options">
+								<tr>
+									<td colspan="2"><span data-text="homepageColourLight">Homepage colour: light</span></td>
+									<td>
+										
+									</td>
+									<td>
+										<button id="reset_light_color" data-title="reset">
+											<svg viewBox="0 0 24 24">
+												<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+												<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+											</svg>
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><span data-text="homepageColourDark">Homepage colour: dark</span></td>
+									<td>
+										<input type="color" value="#2B2A33" id="dark_color" />
+									</td>
+									<td>
+										<button id="reset_dark_color" data-title="reset">
+											<svg viewBox="0 0 24 24">
+												<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+												<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+											</svg>
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><span data-text="fallbackColourLight">Fallback colour: light</span></td>
+									<td>
+										<input type="color" value="#FFFFFF" id="light_fallback_color" />
+									</td>
+									<td>
+										<button id="reset_light_fallback_color" data-title="reset">
+											<svg viewBox="0 0 24 24">
+												<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+												<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+											</svg>
+										</button>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2"><span data-text="fallbackColourDark">Fallback colour: dark</span></td>
+									<td>
+										<input type="color" value="#2B2A33" id="dark_fallback_color" />
+									</td>
+									<td>
+										<button id="reset_dark_fallback_color" data-title="reset">
+											<svg viewBox="0 0 24 24">
+												<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+												<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+											</svg>
+										</button>
+									</td>
+								</tr>
+							</table> -->
 						</div>
+						<button id="add-custom-rule" data-text="addANewRule" data-title="addANewRule"></button>
 					</div>
 				</div>
 				<div id="tab-3" class="tab">
@@ -498,21 +494,20 @@
 							</div>
 						</div>
 						<div class="column">
-							<div class="section-title" data-title="forceModeTooltip_bright">
+							<div class="section">
+								<div class="section-title" data-text="allowLightTabBar"></div>
+								<div class="section-text" data-text="allowLightTabBarTooltip"></div>
 								<input id="allow-dark-light" type="checkbox" data-pref="allowDarkLight" />
-								<label data-text="allowLightTabBar" for="allow-dark-light" id="allow-dark-light-caption"
-									>Allow light tab bar</label
-								>
 							</div>
-							<div class="section-title" data-title="dynamicModeTooltip">
+							<div class="section">
+								<div class="section-title" data-text="dynamicColourUpdate"></div>
+								<div class="section-text" data-text="dynamicModeTooltip"></div>
 								<input id="dynamic" type="checkbox" data-pref="dynamic" />
-								<label for="dynamic" data-text="dynamicColourUpdate">Dynamic colour update</label>
 							</div>
-							<div class="section-title" data-title="noThemeColourModeTooltip">
+							<div class="section">
+								<div class="section-title" data-text="ignoreDesignatedThemeColour"></div>
+								<div class="section-text" data-text="noThemeColourModeTooltip"></div>
 								<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
-								<label for="no-theme-color" data-text="ignoreDesignatedThemeColour"
-									>Ignore theme colour</label
-								>
 							</div>
 						</div>
 					</div>
@@ -523,10 +518,9 @@
 				<div>
 					<p>
 						<a
-							href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Color/issues"
+							href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues"
 							data-text="reportAnIssue"
-							>Report an issue / submit a suggestion</a
-						>
+						></a>
 					</p>
 				</div>
 				<div class="sponsor">
