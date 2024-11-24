@@ -55,7 +55,6 @@ async function getWebPageInfo(tab) {
 				additionalInfo: null,
 				infoAction: async () => {
 					pref.customRule[url.hostname] = actions[reason];
-					pref.custom = true;
 					await applySettings();
 					await updatePopupSelection();
 				},
@@ -84,7 +83,7 @@ async function getAddonPageInfo(tab) {
 		for (const host of addon.hostPermissions) {
 			if (!(host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2])) {
 				continue;
-			} else if (pref.customRule[`Add-on ID: ${addon.id}`] && pref.custom) {
+			} else if (pref.customRule[`Add-on ID: ${addon.id}`]) {
 				return {
 					reason: "ADDON_SPECIFIED",
 					additionalInfo: addon.name,
@@ -113,7 +112,6 @@ async function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
 	} else {
 		delete pref.customRule[`Add-on ID: ${addonID}`];
 	}
-	pref.custom = true;
 	await applySettings();
 	if (openOptionsPage) browser.runtime.openOptionsPage();
 }

@@ -47,27 +47,11 @@
 				<input type="radio" name="tab-switch" id="tab-switch-1" class="tab-switch" checked />
 				<label for="tab-switch-1" class="tab-label" data-text="general">General</label>
 				<input type="radio" name="tab-switch" id="tab-switch-2" class="tab-switch" />
-				<label for="tab-switch-2" class="tab-label" data-text="customisation">Customisation</label>
+				<label for="tab-switch-2" class="tab-label" data-text="customRules"></label>
 				<input type="radio" name="tab-switch" id="tab-switch-3" class="tab-switch" />
 				<label for="tab-switch-3" class="tab-label" data-text="advanced">Advanced</label>
 				<hr />
 				<div id="tab-1" class="tab">
-					<div class="section-title" data-title="forceModeTooltip_bright">
-						<input id="allow-dark-light" type="checkbox" data-pref="allowDarkLight" />
-						<label data-text="allowLightTabBar" for="allow-dark-light" id="allow-dark-light-caption"
-							>Allow light tab bar</label
-						>
-					</div>
-					<div class="section-title" data-title="dynamicModeTooltip">
-						<input id="dynamic" type="checkbox" data-pref="dynamic" />
-						<label for="dynamic" data-text="dynamicColourUpdate">Dynamic colour update</label>
-					</div>
-					<div class="section-title" data-title="noThemeColourModeTooltip">
-						<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
-						<label for="no-theme-color" data-text="ignoreDesignatedThemeColour">Ignore theme colour</label>
-					</div>
-				</div>
-				<div id="tab-2" class="tab">
 					<div class="grid two-columns">
 						<div class="column">
 							<div class="section">
@@ -366,64 +350,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="tab-3" class="tab">
-					<div class="grid two-columns">
-						<div class="section">
-							<div class="section-title" data-text="contrast">Contrast</div>
-							<div class="section-text">
-								Set the minimun contrast ratio between tab bar colour and text colour
-							</div>
-							<div
-								class="slider"
-								data-pref="minContrast_light"
-								data-min="45"
-								data-max="150"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-minus" />
-									</svg>
-								</button>
-								<div class="slider-body"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-add" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="inLightMode">in light mode</div>
-							<div
-								class="slider"
-								data-pref="minContrast_dark"
-								data-min="45"
-								data-max="150"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-minus" />
-									</svg>
-								</button>
-								<div class="slider-body"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-add" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="inDarkMode">in dark mode</div>
-						</div>
-					</div>
-					<hr />
-					<div class="section-title">
-						<input id="more-custom" type="checkbox" />
-						<label for="more-custom" data-text="enableRulesForSpecificDomains"
-							>Enable rules for specific domains</label
-						>
-					</div>
+				<div id="tab-2" class="tab">
 					<div id="custom-options-wrapper">
 						<div id="custom-options">
 							<div class="section">
@@ -515,6 +442,78 @@
 									<use xlink:href="#svg-add" />
 								</svg>
 							</button>
+						</div>
+					</div>
+				</div>
+				<div id="tab-3" class="tab">
+					<div class="grid two-columns">
+						<div class="column">
+							<div class="section">
+								<div class="section-title" data-text="contrast">Contrast</div>
+								<div class="section-text">
+									Set the minimun contrast ratio between tab bar colour and text colour
+								</div>
+								<div
+									class="slider"
+									data-pref="minContrast_light"
+									data-min="45"
+									data-max="150"
+									data-step="5"
+									data-value="0"
+								>
+									<button>
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-minus" />
+										</svg>
+									</button>
+									<div class="slider-body"></div>
+									<button>
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-add" />
+										</svg>
+									</button>
+								</div>
+								<div class="slider-title" data-text="inLightMode">in light mode</div>
+								<div
+									class="slider"
+									data-pref="minContrast_dark"
+									data-min="45"
+									data-max="150"
+									data-step="5"
+									data-value="0"
+								>
+									<button>
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-minus" />
+										</svg>
+									</button>
+									<div class="slider-body"></div>
+									<button>
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-add" />
+										</svg>
+									</button>
+								</div>
+								<div class="slider-title" data-text="inDarkMode">in dark mode</div>
+							</div>
+						</div>
+						<div class="column">
+							<div class="section-title" data-title="forceModeTooltip_bright">
+								<input id="allow-dark-light" type="checkbox" data-pref="allowDarkLight" />
+								<label data-text="allowLightTabBar" for="allow-dark-light" id="allow-dark-light-caption"
+									>Allow light tab bar</label
+								>
+							</div>
+							<div class="section-title" data-title="dynamicModeTooltip">
+								<input id="dynamic" type="checkbox" data-pref="dynamic" />
+								<label for="dynamic" data-text="dynamicColourUpdate">Dynamic colour update</label>
+							</div>
+							<div class="section-title" data-title="noThemeColourModeTooltip">
+								<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
+								<label for="no-theme-color" data-text="ignoreDesignatedThemeColour"
+									>Ignore theme colour</label
+								>
+							</div>
 						</div>
 					</div>
 				</div>

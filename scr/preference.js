@@ -10,9 +10,6 @@ import {
 export default class preference {
 	/** The content of the preference */
 	#prefContent = {
-		allowDarkLight: true,
-		dynamic: true,
-		noThemeColour: true,
 		tabbar: 0,
 		tabbarBorder: 0,
 		tabSelected: 10,
@@ -28,7 +25,9 @@ export default class preference {
 		popupBorder: 5,
 		minContrast_light: 90,
 		minContrast_dark: 45,
-		custom: false,
+		allowDarkLight: true,
+		dynamic: true,
+		noThemeColour: true,
 		homeBackground_light: default_homeBackground_light,
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
@@ -38,9 +37,6 @@ export default class preference {
 	};
 
 	#default_prefContent = {
-		allowDarkLight: true,
-		dynamic: true,
-		noThemeColour: true,
 		tabbar: 0,
 		tabbarBorder: 0,
 		tabSelected: 10,
@@ -56,7 +52,9 @@ export default class preference {
 		popupBorder: 5,
 		minContrast_light: 90,
 		minContrast_dark: 45,
-		custom: false,
+		allowDarkLight: true,
+		dynamic: true,
+		noThemeColour: true,
 		homeBackground_light: default_homeBackground_light,
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
@@ -82,15 +80,12 @@ export default class preference {
 		dark_color: "homeBackground_dark",
 		light_fallback_color: "fallbackColour_light",
 		dark_fallback_color: "fallbackColour_dark",
-		customRule_cs: "customRule_webPage",
+		customRule_cs: "customRule",
 		last_version: "version",
 	};
 
 	/** Expected data type of pref values */
 	#expectedTypes = {
-		allowDarkLight: "boolean",
-		dynamic: "boolean",
-		noThemeColour: "boolean",
 		tabbar: "number",
 		tabbarBorder: "number",
 		tabSelected: "number",
@@ -106,7 +101,9 @@ export default class preference {
 		popupBorder: "number",
 		minContrast_light: "number",
 		minContrast_dark: "number",
-		custom: "boolean",
+		allowDarkLight: "boolean",
+		dynamic: "boolean",
+		noThemeColour: "boolean",
 		homeBackground_light: "string",
 		homeBackground_dark: "string",
 		fallbackColour_light: "string",
@@ -146,10 +143,17 @@ export default class preference {
 				this.#prefContent[this.#legacyPrefKey[key]] = storedPref[key];
 			}
 		}
+		for (const key in this.#expectedTypes) {
+			if (typeof this.#prefContent[key] !== this.#expectedTypes[key]) {
+				this.#prefContent[key] = this.#default_prefContent[key];
+			}
+		}
 		// Updating from before v2.2
+		// Turns on allow dark / light tab bar, dynamic, and no theme colour settings
+		// Now colour offset values are stored in integer
 		if (this.#prefContent.version < [2, 2]) {
-			this.#prefContent.dynamic = true;
 			this.#prefContent.allowDarkLight = true;
+			this.#prefContent.dynamic = true;
 			this.#prefContent.noThemeColour = true;
 			this.#prefContent.tabbar = x100IfSmallerThan1(this.#prefContent.tabbar);
 			this.#prefContent.tabbarBorder = x100IfSmallerThan1(this.#prefContent.tabbarBorder);
@@ -333,13 +337,6 @@ export default class preference {
 		this.#prefContent.minContrast_dark = value;
 	}
 
-	get custom() {
-		return this.#prefContent.custom;
-	}
-	set custom(value) {
-		this.#prefContent.custom = value;
-	}
-
 	get homeBackground_light() {
 		return this.#prefContent.homeBackground_light;
 	}
@@ -387,6 +384,6 @@ export default class preference {
  * @param {number} num
  */
 function x100IfSmallerThan1(num) {
-	if (0 < num && num < 1) return +(num * 100).toFixed(0);
+	if (0 < num && num < 1) return Math.round(num * 100);
 	else return +num;
 }

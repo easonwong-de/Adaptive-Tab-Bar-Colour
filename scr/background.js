@@ -42,18 +42,18 @@ const pref = new preference();
 const colourCode = {
 	HOME: {
 		get light() {
-			return current.homeBackground_light;
+			return pref.homeBackground_light;
 		},
 		get dark() {
-			return current.homeBackground_dark;
+			return pref.homeBackground_dark;
 		},
 	},
 	FALLBACK: {
 		get light() {
-			return current.fallbackColour_light;
+			return pref.fallbackColour_light;
 		},
 		get dark() {
-			return current.fallbackColour_dark;
+			return pref.fallbackColour_dark;
 		},
 	},
 	PLAINTEXT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
@@ -70,25 +70,7 @@ const current = {
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
 	},
-	homeBackground_light: rgba(default_homeBackground_light),
-	homeBackground_dark: rgba(default_homeBackground_dark),
-	fallbackColour_light: rgba(default_fallbackColour_light),
-	fallbackColour_dark: rgba(default_fallbackColour_dark),
-	customRule: {},
 	async update() {
-		if (pref.custom) {
-			this.homeBackground_light = rgba(pref.homeBackground_light);
-			this.homeBackground_dark = rgba(pref.homeBackground_dark);
-			this.fallbackColour_light = rgba(pref.fallbackColour_light);
-			this.fallbackColour_dark = rgba(pref.fallbackColour_dark);
-			this.customRule = pref.customRule;
-		} else {
-			this.homeBackground_light = rgba(default_homeBackground_light);
-			this.homeBackground_dark = rgba(default_homeBackground_dark);
-			this.fallbackColour_light = rgba(default_fallbackColour_light);
-			this.fallbackColour_dark = rgba(default_fallbackColour_dark);
-			this.customRule = {};
-		}
 		this.scheme = await getCurrentScheme();
 	},
 };
@@ -191,22 +173,22 @@ async function getWebPageColour(tab) {
 	const url = tab.url;
 	let customRule = null;
 	for (const site in pref.customRule) {
+		if (url === site) {
+			customRule = pref.customRule[site];
+			break;
+		}
 		try {
-			if (url === site) {
-				customRule = pref.customRule[site];
-				break;
-			}
 			if (new URL(url).hostname === site) {
 				customRule = pref.customRule[site];
 				break;
 			}
+		} catch (error) {}
+		try {
 			if (new RegExp(site).test(url)) {
 				customRule = pref.customRule[site];
 				break;
 			}
-		} catch (error) {
-			continue;
-		}
+		} catch (error) {}
 	}
 	try {
 		const response = await browser.tabs.sendMessage(tab.id, {

@@ -117,6 +117,12 @@ input[type="range"] {
 	grid-template-columns: 1fr 1fr;
 }
 
+.column {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
 .tab-switch {
 	display: none;
 }
@@ -168,6 +174,7 @@ div.sponsor {
 }
 
 .section {
+	flex: 0 0 auto;
 	align-items: center;
 	background-color: var(--colour-1);
 	border-radius: 8px;
@@ -230,22 +237,13 @@ div.sponsor {
 
 /* General tab */
 
-/* Customisation tab */
-
-#tab-2 .column {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-}
-
-#tab-2 .section {
-	flex: 0 0 auto;
-}
-
-#tab-2 .slider-body::after {
+#tab-1 .slider-body::after {
 	content: "%";
 	margin-inline-start: 0.5rem;
 }
+
+/* Custom rules tab */
+
 
 /* Advanced tab */
 
