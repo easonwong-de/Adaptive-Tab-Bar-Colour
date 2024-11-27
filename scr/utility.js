@@ -49,6 +49,12 @@ export async function getCurrentScheme() {
  * @param {string} handle A handle in _locales.
  */
 export function msg(handle) {
-	const localisedString = browser.i18n.getMessage(handle);
-	return localisedString ? localisedString : `Localisation missing: <${handle}>`;
+	const localisedMessage = browser.i18n.getMessage(handle);
+	if (!localisedMessage) {
+		return `Localisation missing: <${handle}>`;
+	} else if (localisedMessage === "__EMPTY__") {
+		return "";
+	} else {
+		return localisedMessage;
+	}
 }

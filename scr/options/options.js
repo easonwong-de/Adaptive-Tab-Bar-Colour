@@ -10,6 +10,7 @@ const settings = document.querySelector("#settings");
 const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
 const checkboxes = document.querySelectorAll("[type='checkbox']");
 const sliders = document.querySelectorAll(".slider");
+const customOptionsSections = document.querySelectorAll("#custom-options .section");
 
 checkboxes.forEach((checkbox) => {
 	checkbox.onclick = async () => {
@@ -35,6 +36,10 @@ sliders.forEach((slider) => {
 		pref[slider.dataset.pref] = newValue;
 		applySettings();
 	});
+});
+
+customOptionsSections.forEach((customOptionsSection) => {
+	
 });
 
 async function updateAllowDarkLightText() {
@@ -95,10 +100,10 @@ async function applySettings() {
 	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
 }
 
+browser.theme.onUpdated.addListener(updateOptionsPage);
+browser.storage.onChanged.addListener(updateOptionsPage);
+document.addEventListener("pageshow", updateOptionsPage);
 document.addEventListener("DOMContentLoaded", async () => {
 	localise();
 	await updateOptionsPage();
-	document.addEventListener("pageshow", updateOptionsPage);
-	browser.storage.onChanged.addListener(updateOptionsPage);
-	browser.theme.onUpdated.addListener(updateOptionsPage);
 });

@@ -83,23 +83,23 @@ async function getAddonPageInfo(tab) {
 		for (const host of addon.hostPermissions) {
 			if (!(host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2])) {
 				continue;
-			} else if (pref.customRule[`Add-on ID: ${addon.id}`]) {
+			} else if (`Add-on ID: ${addon.id}` in pref.customRule) {
 				return {
 					reason: "ADDON_SPECIFIED",
 					additionalInfo: addon.name,
-					action: () => specifyColourForAddon(addon.id, null),
+					infoAction: async () => await specifyColourForAddon(addon.id, null),
 				};
-			} else if (recommendedColour_addon[addon.id]) {
+			} else if (addon.id in recommendedColour_addon) {
 				return {
 					reason: "ADDON_RECOM",
 					additionalInfo: addon.name,
-					action: () => specifyColourForAddon(addon.id, recommendedColour_addon[addon.id]),
+					infoAction: async () => await specifyColourForAddon(addon.id, recommendedColour_addon[addon.id]),
 				};
 			} else {
 				return {
 					reason: "ADDON_DEFAULT",
 					additionalInfo: addon.name,
-					action: () => specifyColourForAddon(addon.id, "#333333", true),
+					infoAction: async () => await specifyColourForAddon(addon.id, "#333333", true),
 				};
 			}
 		}
@@ -158,24 +158,24 @@ async function updateAllowDarkLightText() {
  * Loads all prefs.
  */
 async function updatePopupSelection() {
-	await pref.load();
-	if (pref.valid()) {
-		checkboxes.forEach((checkbox) => (checkbox.checked = pref[checkbox.name]));
-		loading.hidden = true;
-		settings.hidden = false;
-	} else {
-		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
-	}
+	checkboxes.forEach((checkbox) => (checkbox.checked = pref[checkbox.name]));
 }
 
 /**
  * Updates infobox's content and popup's text and background colour.
  */
 async function updatePopup() {
-	await updateInfoDisplay();
-	await updatePopupColour();
-	await updateAllowDarkLightText();
-	await updatePopupSelection();
+	await pref.load();
+	if (pref.valid()) {
+		await updateInfoDisplay();
+		await updatePopupColour();
+		await updateAllowDarkLightText();
+		await updatePopupSelection();
+		loading.hidden = true;
+		settings.hidden = false;
+	} else {
+		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
+	}
 }
 
 /**
@@ -196,10 +196,10 @@ async function applySettings() {
 	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
 }
 
+browser.storage.onChanged.addListener(updatePopup);
+browser.theme.onUpdated.addListener(updatePopup);
+document.addEventListener("pageshow", updatePopup);
 document.addEventListener("DOMContentLoaded", async () => {
 	localise();
 	await updatePopup();
-	document.addEventListener("pageshow", updatePopup);
-	browser.storage.onChanged.addListener(updatePopup);
-	browser.theme.onUpdated.addListener(updatePopup);
 });

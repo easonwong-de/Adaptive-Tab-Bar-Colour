@@ -150,7 +150,7 @@ async function getAddonPageColour(url) {
 				uuid === host.split(/\/|\?/)[2] &&
 				`Add-on ID: ${addon.id}` in pref.customRule
 			) {
-				return pref.customRule[`Add-on ID: ${addon.id}`];
+				return rgba(pref.customRule[`Add-on ID: ${addon.id}`]);
 			} else continue;
 		}
 	}

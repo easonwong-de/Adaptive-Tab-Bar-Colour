@@ -155,16 +155,12 @@
 		"message": "specify a color"
 	},
 
-	"ignoreThemeColour": {
-		"message": "ignore theme color"
+	"useIgnoreThemeColour": {
+		"message": "use / ignore theme color"
 	},
 
-	"useThemeColour": {
-		"message": "use theme color"
-	},
-
-	"useQuerySelector": {
-		"message": "use query selector"
+	"pickColourFromElement": {
+		"message": "pick color from element"
 	},
 
 	"useSystemColourScheme": {
@@ -236,7 +232,7 @@
 	},
 
 	"useDefaultColourForAddonEnd": {
-		"message": ""
+		"message": "__EMPTY__"
 	},
 
 	"useDefaultColourForAddonButton": {
@@ -268,7 +264,7 @@
 	},
 
 	"specifyColourForAddonEnd": {
-		"message": ""
+		"message": "__EMPTY__"
 	},
 
 	"specifyColourForAddonButton": {
@@ -308,7 +304,7 @@
 	},
 
 	"colourIsPickedFromEnd": {
-		"message": ""
+		"message": "__EMPTY__"
 	},
 
 	"colourIsSpecified": {
