@@ -354,102 +354,175 @@
 				</div>
 				<div id="tab-2" class="tab">
 					<div class="list-wrapper">
-						<div id="fixed-options">
-							<div class="section">
-								<div class="option-header" data-text="homepageColourLight"></div>
-								<div></div>
-								<div class="colour-input-wrapper" data-pref="homeBackground_light">
-									<input type="text" class="colour-input" value="#ffffff" />
-									<label class="colour-picker" for="home-bg-light"></label>
-									<input type="color" value="#ffffff" id="home-bg-light" />
-								</div>
-								<button data-title="reset">
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-reset" />
-									</svg>
-								</button>
+						<div class="section fixed-option">
+							<div class="option-header" data-text="homepageColourLight"></div>
+							<div></div>
+							<div class="colour-input-wrapper" data-pref="homeBackground_light">
+								<input type="text" class="colour-input" value="#ffffff" />
+								<label class="colour-picker" for="home-bg-light"></label>
+								<input type="color" value="#ffffff" id="home-bg-light" />
 							</div>
-							<div class="section">
-								<div class="option-header" data-text="homepageColourDark"></div>
-								<div></div>
-								<div class="colour-input-wrapper" data-pref="homeBackground_dark">
-									<input type="text" class="colour-input" value="#2b2a33" />
-									<label class="colour-picker" for="home-bg-dark"></label>
-									<input type="color" value="#2b2a33" id="home-bg-dark" />
-								</div>
-								<button data-title="reset">
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-reset" />
-									</svg>
-								</button>
-							</div>
-							<div class="section">
-								<div class="option-header" data-text="fallbackColourLight"></div>
-								<div></div>
-								<div class="colour-input-wrapper" data-pref="fallbackColour_light">
-									<input type="text" class="colour-input" value="#ffffff" />
-									<label class="colour-picker" for="fallback-cl-light"></label>
-									<input type="color" value="#ffffff" id="fallback-cl-light" />
-								</div>
-								<button data-title="reset">
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-reset" />
-									</svg>
-								</button>
-							</div>
-							<div class="section">
-								<div class="option-header" data-text="fallbackColourDark"></div>
-								<div></div>
-								<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
-									<input type="text" class="colour-input" value="#2b2a33" />
-									<label class="colour-picker" for="fallback-cl-dark"></label>
-									<input type="color" value="#2b2a33" id="fallback-cl-dark" />
-								</div>
-								<button data-title="reset">
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-reset" />
-									</svg>
-								</button>
-							</div>
+							<button data-title="reset">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-reset" />
+								</svg>
+							</button>
 						</div>
-						<div id="custom-options">
-							<div class="section">
-								<input type="text" class="option-header-input" />
-								<select class="select-1">
-									<option value="select-1" data-text="specifyAColour" selected></option>
-									<option value="select-2" data-text="useIgnoreThemeColour"></option>
-									<option value="select-3" data-text="pickColourFromElement"></option>
-								</select>
-								<div class="colour-input-wrapper">
-									<input type="text" class="colour-input" value="#2b2a33" />
-									<label class="colour-picker" for="colour-picker-1"></label>
-									<input type="color" value="#2b2a33" id="colour-picker-1" />
-								</div>
-								<div class="toggle-switch-wrapper">
-									<input
-										type="radio"
-										class="toggle-switch"
-										name="theme-colour-1"
-										id="use-theme-colour-1"
-									/>
-									<label class="toggle-switch" for="use-theme-colour-1">Use</label>
-									<input
-										type="radio"
-										class="toggle-switch"
-										name="theme-colour-1"
-										id="ignore-theme-colour-1"
-									/>
-									<label class="toggle-switch" for="ignore-theme-colour-1">Ignore</label>
-								</div>
-								<div class="qs-input-wrapper">
-									<input type="text" class="qs-input" />
-								</div>
-								<button data-title="delete">
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-bin" />
-									</svg>
-								</button>
+						<div class="section fixed-option">
+							<div class="option-header" data-text="homepageColourDark"></div>
+							<div></div>
+							<div class="colour-input-wrapper" data-pref="homeBackground_dark">
+								<input type="text" class="colour-input" value="#2b2a33" />
+								<label class="colour-picker" for="home-bg-dark"></label>
+								<input type="color" value="#2b2a33" id="home-bg-dark" />
 							</div>
+							<button data-title="reset">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-reset" />
+								</svg>
+							</button>
+						</div>
+						<div class="section fixed-option">
+							<div class="option-header" data-text="fallbackColourLight"></div>
+							<div></div>
+							<div class="colour-input-wrapper" data-pref="fallbackColour_light">
+								<input type="text" class="colour-input" value="#ffffff" />
+								<label class="colour-picker" for="fallback-cl-light"></label>
+								<input type="color" value="#ffffff" id="fallback-cl-light" />
+							</div>
+							<button data-title="reset">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-reset" />
+								</svg>
+							</button>
+						</div>
+						<div class="section fixed-option">
+							<div class="option-header" data-text="fallbackColourDark"></div>
+							<div></div>
+							<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
+								<input type="text" class="colour-input" value="#2b2a33" />
+								<label class="colour-picker" for="fallback-cl-dark"></label>
+								<input type="color" value="#2b2a33" id="fallback-cl-dark" />
+							</div>
+							<button data-title="reset">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-reset" />
+								</svg>
+							</button>
+						</div>
+						<div class="section custom-option" data-id="1">
+							<input type="text" class="option-header-input" />
+							<select class="select-1">
+								<option value="select-1" data-text="specifyAColour" selected></option>
+								<option value="select-2" data-text="useIgnoreThemeColour"></option>
+								<option value="select-3" data-text="pickColourFromElement"></option>
+							</select>
+							<div class="colour-input-wrapper">
+								<input type="text" class="colour-input" value="#2b2a33" />
+								<label class="colour-picker" for="colour-picker-1"></label>
+								<input type="color" value="#2b2a33" id="colour-picker-1" />
+							</div>
+							<div class="toggle-switch-wrapper">
+								<input
+									type="radio"
+									class="toggle-switch"
+									name="theme-colour-1"
+									id="use-theme-colour-1"
+									checked
+								/>
+								<label class="toggle-switch" for="use-theme-colour-1">Use</label>
+								<input
+									type="radio"
+									class="toggle-switch"
+									name="theme-colour-1"
+									id="ignore-theme-colour-1"
+								/>
+								<label class="toggle-switch" for="ignore-theme-colour-1">Ignore</label>
+							</div>
+							<div class="qs-input-wrapper">
+								<input type="text" class="qs-input" />
+							</div>
+							<button data-title="delete">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-bin" />
+								</svg>
+							</button>
+						</div>
+						<div class="section custom-option" data-id="2">
+							<input type="text" class="option-header-input" />
+							<select class="select-1">
+								<option value="select-1" data-text="specifyAColour" selected></option>
+								<option value="select-2" data-text="useIgnoreThemeColour"></option>
+								<option value="select-3" data-text="pickColourFromElement"></option>
+							</select>
+							<div class="colour-input-wrapper">
+								<input type="text" class="colour-input" value="#2b2a33" />
+								<label class="colour-picker" for="colour-picker-2"></label>
+								<input type="color" value="#2b2a33" id="colour-picker-2" />
+							</div>
+							<div class="toggle-switch-wrapper">
+								<input
+									type="radio"
+									class="toggle-switch"
+									name="theme-colour-2"
+									id="use-theme-colour-2"
+									checked
+								/>
+								<label class="toggle-switch" for="use-theme-colour-2">Use</label>
+								<input
+									type="radio"
+									class="toggle-switch"
+									name="theme-colour-2"
+									id="ignore-theme-colour-2"
+								/>
+								<label class="toggle-switch" for="ignore-theme-colour-2">Ignore</label>
+							</div>
+							<div class="qs-input-wrapper">
+								<input type="text" class="qs-input" />
+							</div>
+							<button data-title="delete">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-bin" />
+								</svg>
+							</button>
+						</div>
+						<div class="section custom-option" data-id="3">
+							<input type="text" class="option-header-input" />
+							<select class="select-1">
+								<option value="select-1" data-text="specifyAColour" selected></option>
+								<option value="select-2" data-text="useIgnoreThemeColour"></option>
+								<option value="select-3" data-text="pickColourFromElement"></option>
+							</select>
+							<div class="colour-input-wrapper">
+								<input type="text" class="colour-input" value="#2b2a33" />
+								<label class="colour-picker" for="colour-picker-3"></label>
+								<input type="color" value="#2b2a33" id="colour-picker-3" />
+							</div>
+							<div class="toggle-switch-wrapper">
+								<input
+									type="radio"
+									class="toggle-switch"
+									name="theme-colour-3"
+									id="use-theme-colour-3"
+									checked
+								/>
+								<label class="toggle-switch" for="use-theme-colour-3">Use</label>
+								<input
+									type="radio"
+									class="toggle-switch"
+									name="theme-colour-3"
+									id="ignore-theme-colour-3"
+								/>
+								<label class="toggle-switch" for="ignore-theme-colour-3">Ignore</label>
+							</div>
+							<div class="qs-input-wrapper">
+								<input type="text" class="qs-input" />
+							</div>
+							<button data-title="delete">
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-bin" />
+								</svg>
+							</button>
 						</div>
 					</div>
 					<button id="add-custom-rule" data-text="addANewRule" data-title="addANewRule"></button>

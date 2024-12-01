@@ -58,9 +58,9 @@ export function hex(colour) {
 	if (canvasFillStyle.startsWith("#")) {
 		return canvasFillStyle + "";
 	} else {
-		const rgba = rgba(colour);
-		if (typeof rgba !== "object") return "#000000";
-		return "#" + ((1 << 24) | (rgba.r << 16) | (rgba.g << 8) | rgba.b).toString(16).slice(1);
+		const colourRGBA = rgba(colour);
+		if (typeof colourRGBA !== "object") return "#000000";
+		return "#" + ((1 << 24) | (colourRGBA.r << 16) | (colourRGBA.g << 8) | colourRGBA.b).toString(16).slice(1);
 	}
 }
 

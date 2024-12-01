@@ -342,13 +342,6 @@ div.sponsor {
 .list-wrapper {
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-}
-
-#fixed-options,
-#custom-options {
-	display: flex;
-	flex-direction: column;
 }
 
 .list-wrapper .section {
@@ -386,7 +379,7 @@ select ~ .qs-input-wrapper {
 select.select-1 ~ .colour-input-wrapper,
 select.select-2 ~ .toggle-switch-wrapper,
 select.select-3 ~ .qs-input-wrapper {
-	display: block;
+	display: grid;
 }
 
 #add-custom-rule {

@@ -100,7 +100,7 @@ function setColourInputValue(colourInputWrapper, colour) {
 	colourPickerInput.value = colour;
 }
 
-const fixedOptionsSections = document.querySelectorAll("#fixed-options .section");
+const fixedOptionsSections = document.querySelectorAll(".section.fixed-option");
 fixedOptionsSections.forEach((fixedOptionsSection) => {
 	const colourInputWrapper = fixedOptionsSection.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
@@ -116,8 +116,16 @@ fixedOptionsSections.forEach((fixedOptionsSection) => {
 	};
 });
 
-const customOptionsSections = document.querySelectorAll("#custom-options .section");
-customOptionsSections.forEach((customOptionsSection) => {});
+const customOptionsSections = document.querySelectorAll(".section.custom-option");
+customOptionsSections.forEach((customOptionsSection) => {
+	const select = customOptionsSection.querySelector("select");
+	select.addEventListener("change", () => {
+		select.className = select.value;
+	});
+	const colourInputWrapper = customOptionsSection.querySelector(".colour-input-wrapper");
+	setColourInputValue(colourInputWrapper, "#2b2a33");
+	setupColourInput(colourInputWrapper, () => {});
+});
 
 const allowDarkLightTitle = document.querySelector("#allow-dark-light-title");
 const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
