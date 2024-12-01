@@ -7,7 +7,7 @@
 		"message": "Changes the color of Firefox tab bar to match the website theme."
 	},
 
-	"option.html & popup.html": {
+	"__OPTIONS PAGE__": {
 		"message": "===================="
 	},
 
@@ -19,60 +19,16 @@
 		"message": "Loading…"
 	},
 
-	"general": {
-		"message": "General"
+	"themeBuilder": {
+		"message": "Theme builder"
 	},
 
-	"customisation": {
-		"message": "Customisation"
+	"siteList": {
+		"message": "Site list"
 	},
 
 	"advanced": {
 		"message": "Advanced"
-	},
-
-	"colourSchemePreference": {
-		"message": "Color scheme preference"
-	},
-
-	"automatic": {
-		"message": "Automatic"
-	},
-
-	"light": {
-		"message": "Light"
-	},
-
-	"dark": {
-		"message": "Dark"
-	},
-
-	"allowLightTabBar": {
-		"message": "Allow light tab bar"
-	},
-
-	"allowDarkTabBar": {
-		"message": "Allow dark tab bar"
-	},
-
-	"dynamicColourUpdate": {
-		"message": "Dynamic color update"
-	},
-
-	"ignoreDesignatedThemeColour": {
-		"message": "Ignore designated theme color"
-	},
-
-	"overlay": {
-		"message": "Overlay"
-	},
-
-	"opacityFactor": {
-		"message": "Opacity factor"
-	},
-
-	"opacityThreshold": {
-		"message": "Opacity threshold"
 	},
 
 	"tabBar": {
@@ -111,10 +67,6 @@
 		"message": "Pop-up"
 	},
 
-	"enableRulesForSpecificDomains": {
-		"message": "Enable rules for specific domains"
-	},
-
 	"homepageColourLight": {
 		"message": "Home page color: light"
 	},
@@ -125,30 +77,6 @@
 
 	"fallbackColourLight": {
 		"message": "Fallback color: light"
-	},
-
-	"fallbackColourDark": {
-		"message": "Fallback color: dark"
-	},
-
-	"reportAnIssue": {
-		"message": "Report an issue / submit a suggestion / translate this add-on"
-	},
-
-	"moreSettings": {
-		"message": "More settings…"
-	},
-
-	"moreSettingsTooltip": {
-		"message": "Open option page"
-	},
-
-	"options.js && popup.js": {
-		"message": "===================="
-	},
-
-	"resetRuleConfirm": {
-		"message": "Do you want to reset all the rules?"
 	},
 
 	"specifyAColour": {
@@ -163,32 +91,8 @@
 		"message": "pick color from element"
 	},
 
-	"useSystemColourScheme": {
-		"message": "Use system color scheme"
-	},
-
-	"useLightColourScheme": {
-		"message": "Use light color scheme"
-	},
-
-	"useDarkColourScheme": {
-		"message": "Use dark color scheme"
-	},
-
-	"forceModeTooltip_bright": {
-		"message": "Allow tab bar to turn bright (might cause flashing)"
-	},
-
-	"forceModeTooltip_dark": {
-		"message": "Allow tab bar to turn dark (might cause flashing)"
-	},
-
-	"dynamicModeTooltip": {
-		"message": "Keeps updating tab bar color while browsing within a web page"
-	},
-
-	"noThemeColourModeTooltip": {
-		"message": "Always ignore theme color defined by the website"
+	"fallbackColourDark": {
+		"message": "Fallback color: dark"
 	},
 
 	"delete": {
@@ -199,12 +103,72 @@
 		"message": "Reset"
 	},
 
-	"resetDomainSpecificRules": {
-		"message": "Reset domain-specific rules"
-	},
-
 	"addANewRule": {
 		"message": "Add a new rule"
+	},
+
+	"allowLightTabBar": {
+		"message": "Allow light tab bar"
+	},
+
+	"allowLightTabBarTooltip": {
+		"message": "Allow tab bar to turn bright (dark text on light tab bar)"
+	},
+
+	"allowDarkTabBar": {
+		"message": "Allow dark tab bar"
+	},
+
+	"allowDarkTabBarTooltip": {
+		"message": "Allow tab bar to turn dark (light text on dark tab bar)"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Dynamic color update"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Keeps updating tab bar color while browsing within a web page"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignore website’s theme color"
+	},
+
+	"noThemeColourModeTooltip": {
+		"message": "Always ignore theme color defined by the website and pick colour from the web page instead"
+	},
+
+	"minimumContrast": {
+		"message": "Minimum contrast"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Set the minimun contrast ratio between tab bar colour and text colour"
+	},
+
+	"inLightMode": {
+		"message": "In light mode"
+	},
+
+	"inDarkMode": {
+		"message": "In dark mode"
+	},
+
+	"reportAnIssue": {
+		"message": "Report an issue / submit a suggestion / translate this add-on"
+	},
+
+	"__POPUP__": {
+		"message": "===================="
+	},
+
+	"moreSettings": {
+		"message": "More settings…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Open option page"
 	},
 
 	"colourForPDFViewer": {
@@ -275,10 +239,6 @@
 		"message": "Open settings and specify a color to pages related to the add-on"
 	},
 
-	"atbc.js": {
-		"message": "===================="
-	},
-
 	"themeColourIsUnignored": {
 		"message": "Theme color defined by the website is un-ignored"
 	},
@@ -333,9 +293,5 @@
 
 	"colourPickedFromWebpage": {
 		"message": "Color is successfully picked from the web page"
-	},
-
-	"end": {
-		"message": "===================="
 	}
 }

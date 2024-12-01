@@ -1,25 +1,31 @@
 "use strict";
 
 import preference from "../preference.js";
+import { hex } from "../colour.js";
 import { msg } from "../utility.js";
 
 const pref = new preference();
 
-const loading = document.querySelector("#loading-wrapper");
-const settings = document.querySelector("#settings");
-const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
-const checkboxes = document.querySelectorAll("[type='checkbox']");
-const sliders = document.querySelectorAll(".slider");
-const customOptionsSections = document.querySelectorAll("#custom-options .section");
+const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
 
-checkboxes.forEach((checkbox) => {
-	checkbox.onclick = async () => {
-		pref[checkbox.dataset.pref] = checkbox.checked;
-		await applySettings();
-	};
+tabSwitches.forEach((tabSwitch) => {
+	tabSwitch.addEventListener("change", () => (settings.className = tabSwitch.id));
 });
 
-sliders.forEach((slider) => {
+const checkboxes = document.querySelectorAll("[type='checkbox']");
+checkboxes.forEach(setupCheckBox);
+
+function setupCheckBox(checkbox) {
+	checkbox.onclick = () => {
+		pref[checkbox.dataset.pref] = checkbox.checked;
+		applySettings();
+	};
+}
+
+const sliders = document.querySelectorAll(".slider");
+sliders.forEach(setupSider);
+
+function setupSider(slider) {
 	const minusButton = slider.querySelector("button:nth-of-type(1)");
 	const plusButton = slider.querySelector("button:nth-of-type(2)");
 	minusButton.addEventListener("mousedown", () => {
@@ -36,26 +42,105 @@ sliders.forEach((slider) => {
 		pref[slider.dataset.pref] = newValue;
 		applySettings();
 	});
+}
+
+/**
+ * @param {HTMLElement} slider
+ * @param {number} value
+ */
+function setSliderValue(slider, value) {
+	const sliderBody = slider.querySelector(".slider-body");
+	const percentage = (value - +slider.dataset.min) / (+slider.dataset.max - +slider.dataset.min);
+	const scale = slider.dataset.scale;
+	slider.dataset.value = value;
+	sliderBody.textContent = scale ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
+	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
+}
+
+/**
+ * @param {HTMLElement} colourInputWrapper
+ * @param {Function} onInput
+ */
+function setupColourInput(colourInputWrapper, onInput) {
+	const colourInput = colourInputWrapper.querySelector(".colour-input");
+	const colourPicker = colourInputWrapper.querySelector(".colour-picker");
+	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
+	colourInput.addEventListener("focus", () => colourInput.select());
+	colourInput.addEventListener("blur", () => {
+		const colour = hex(colourInput.value);
+		colourInput.value = colour;
+		colourPicker.style.backgroundColor = colour;
+		colourPickerInput.value = colour;
+		onInput(colour);
+	});
+	colourInput.addEventListener("input", () => {
+		const colour = hex(colourInput.value);
+		colourPicker.style.backgroundColor = colour;
+		colourPickerInput.value = colour;
+		onInput(colour);
+	});
+	colourPickerInput.addEventListener("input", () => {
+		const colour = colourPickerInput.value;
+		colourPicker.style.backgroundColor = colour;
+		colourInput.value = colour;
+		onInput(colour);
+	});
+}
+
+/**
+ * @param {HTMLElement} colourInputWrapper
+ * @param {string} colour
+ */
+function setColourInputValue(colourInputWrapper, colour) {
+	const colourInput = colourInputWrapper.querySelector(".colour-input");
+	const colourPicker = colourInputWrapper.querySelector(".colour-picker");
+	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
+	colourInput.value = colour;
+	colourPicker.style.backgroundColor = colour;
+	colourPickerInput.value = colour;
+}
+
+const fixedOptionsSections = document.querySelectorAll("#fixed-options .section");
+fixedOptionsSections.forEach((fixedOptionsSection) => {
+	const colourInputWrapper = fixedOptionsSection.querySelector(".colour-input-wrapper");
+	const key = colourInputWrapper.dataset.pref;
+	setColourInputValue(colourInputWrapper, pref[key]);
+	setupColourInput(colourInputWrapper, (colour) => {
+		pref[key] = colour;
+		applySettings();
+	});
+	const resetButton = fixedOptionsSection.querySelector("button");
+	resetButton.onclick = async () => {
+		await pref.reset(key);
+		setColourInputValue(colourInputWrapper, pref[key]);
+	};
 });
 
-customOptionsSections.forEach((customOptionsSection) => {
-	
-});
+const customOptionsSections = document.querySelectorAll("#custom-options .section");
+customOptionsSections.forEach((customOptionsSection) => {});
 
-async function updateAllowDarkLightText() {
+const allowDarkLightTitle = document.querySelector("#allow-dark-light-title");
+const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
+
+async function updateAllowDarkLightText(nthTry = 0) {
+	if (nthTry > 10) return;
 	try {
 		const scheme = await browser.runtime.sendMessage({ header: "SCHEME_REQUEST" });
 		if (scheme === "light") {
-			allowDarkLightCheckboxCaption.textContent = msg("allowDarkTabBar");
-			allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkLightTooltip_dark");
+			allowDarkLightTitle.textContent = msg("allowDarkTabBar");
+			allowDarkLightCheckboxCaption.textContent = msg("allowDarkTabBarTooltip");
 		} else {
-			allowDarkLightCheckboxCaption.textContent = msg("allowLightTabBar");
-			allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkLightTooltip_light");
+			allowDarkLightTitle.textContent = msg("allowLightTabBar");
+			allowDarkLightCheckboxCaption.textContent = msg("allowLightTabBarTooltip");
 		}
 	} catch (error) {
-		await updateAllowDarkLightText();
+		console.error(error);
+		await updateAllowDarkLightText(++nthTry);
 	}
 }
+
+const loading = document.querySelector("#loading-wrapper");
+const settings = document.querySelector("#settings");
 
 async function updateOptionsPage() {
 	await pref.load();
@@ -68,18 +153,6 @@ async function updateOptionsPage() {
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
-}
-
-/**
- * @param {HTMLElement} slider
- * @param {number} value
- */
-function setSliderValue(slider, value) {
-	const sliderBody = slider.querySelector(".slider-body");
-	const percentage = (value - +slider.dataset.min) / (+slider.dataset.max - +slider.dataset.min);
-	slider.dataset.value = value;
-	sliderBody.textContent = value;
-	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
 }
 
 /**
@@ -103,7 +176,5 @@ async function applySettings() {
 browser.theme.onUpdated.addListener(updateOptionsPage);
 browser.storage.onChanged.addListener(updateOptionsPage);
 document.addEventListener("pageshow", updateOptionsPage);
-document.addEventListener("DOMContentLoaded", async () => {
-	localise();
-	await updateOptionsPage();
-});
+document.addEventListener("DOMContentLoaded", localise);
+updateOptionsPage();

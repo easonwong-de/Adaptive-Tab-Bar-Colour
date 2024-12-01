@@ -147,10 +147,10 @@ async function updateAllowDarkLightText() {
 	const scheme = await browser.runtime.sendMessage({ header: "SCHEME_REQUEST" });
 	if (scheme === "light") {
 		allowDarkLightCheckboxCaption.textContent = msg("allowDarkTabBar");
-		allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkLightTooltip_dark");
+		allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkTabBarTooltip");
 	} else {
 		allowDarkLightCheckboxCaption.textContent = msg("allowLightTabBar");
-		allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkLightTooltip_light");
+		allowDarkLightCheckboxCaption.parentElement.title = msg("allowLightTabBarTooltip");
 	}
 }
 
@@ -199,7 +199,5 @@ async function applySettings() {
 browser.storage.onChanged.addListener(updatePopup);
 browser.theme.onUpdated.addListener(updatePopup);
 document.addEventListener("pageshow", updatePopup);
-document.addEventListener("DOMContentLoaded", async () => {
-	localise();
-	await updatePopup();
-});
+document.addEventListener("DOMContentLoaded", localise);
+updatePopup();

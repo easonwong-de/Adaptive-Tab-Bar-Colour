@@ -1,13 +1,13 @@
 "use strict";
 
 /** Default light homepage colour */
-export const default_homeBackground_light = "#FFFFFF";
+export const default_homeBackground_light = "#ffffff";
 /** Default dark homepage colour */
-export const default_homeBackground_dark = "#2B2A33";
+export const default_homeBackground_dark = "#2b2a33";
 /** Default light fallback colours */
-export const default_fallbackColour_light = "#FFFFFF";
+export const default_fallbackColour_light = "#ffffff";
 /** Default dark fallback colour */
-export const default_fallbackColour_dark = "#2B2A33";
+export const default_fallbackColour_dark = "#2b2a33";
 
 /**
  * Colours for about:pages.

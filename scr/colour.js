@@ -5,7 +5,8 @@
  *
  * @author JayB on Stack Overflow (modified by easonwong-de).
  * @param {string | Number[]} colour Colour to convert or a colour code.
- * @returns Returns the colour in rgba object. Pure black if invalid.
+ * @returns Returns the colour in rgba object.
+ * @returns Returns pure black if the input is invalid.
  * @returns Returns the same colour code if the input is a colour code.
  */
 export function rgba(colour) {
@@ -44,6 +45,22 @@ export function rgba(colour) {
 		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	} else {
 		return null;
+	}
+}
+
+/**
+ * Converts any colour to a hex string. Returns `#000000` if failed.
+ */
+export function hex(colour) {
+	const canvas = document.createElement("canvas").getContext("2d");
+	canvas.fillStyle = colour;
+	const canvasFillStyle = canvas.fillStyle;
+	if (canvasFillStyle.startsWith("#")) {
+		return canvasFillStyle + "";
+	} else {
+		const rgba = rgba(colour);
+		if (typeof rgba !== "object") return "#000000";
+		return "#" + ((1 << 24) | (rgba.r << 16) | (rgba.g << 8) | rgba.b).toString(16).slice(1);
 	}
 }
 
@@ -98,7 +115,7 @@ function luminanceApproximation(channel) {
  * @returns Dimmed or lightened colour string e.g. "rgb(xxx)".
  */
 export function dimColour(colour, dimX100) {
-	const dim = dimX100 / 100
+	const dim = dimX100 / 100;
 	if (dim > 1) {
 		return "rgb(255, 255, 255)";
 	} else if (dim > 0) {

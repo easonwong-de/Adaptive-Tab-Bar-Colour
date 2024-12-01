@@ -42,15 +42,17 @@
 				your inconvenience!
 			</p>
 		</div>
-		<div id="settings">
+		<div id="settings" class="tab-switch-1">
+			<div class="tab-switch-wrapper toggle-switch-wrapper">
+				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-1" checked />
+				<label for="tab-switch-1" class="toggle-switch" data-text="themeBuilder"></label>
+				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-2" />
+				<label for="tab-switch-2" class="toggle-switch" data-text="siteList"></label>
+				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-3" />
+				<label for="tab-switch-3" class="toggle-switch" data-text="advanced"></label>
+			</div>
+			<hr />
 			<div>
-				<input type="radio" name="tab-switch" id="tab-switch-1" class="tab-switch" checked />
-				<label for="tab-switch-1" class="tab-label" data-text="general">General</label>
-				<input type="radio" name="tab-switch" id="tab-switch-2" class="tab-switch" />
-				<label for="tab-switch-2" class="tab-label" data-text="siteList"></label>
-				<input type="radio" name="tab-switch" id="tab-switch-3" class="tab-switch" />
-				<label for="tab-switch-3" class="tab-label" data-text="advanced">Advanced</label>
-				<hr class="hr-margin-block" />
 				<div id="tab-1" class="tab">
 					<div class="grid two-columns">
 						<div class="column">
@@ -357,9 +359,9 @@
 								<div class="option-header" data-text="homepageColourLight"></div>
 								<div></div>
 								<div class="colour-input-wrapper" data-pref="homeBackground_light">
-									<input type="text" class="colour-input" value="#FFFFFF" />
+									<input type="text" class="colour-input" value="#ffffff" />
 									<label class="colour-picker" for="home-bg-light"></label>
-									<input type="color" value="#FFFFFF" id="home-bg-light" />
+									<input type="color" value="#ffffff" id="home-bg-light" />
 								</div>
 								<button data-title="reset">
 									<svg viewBox="0 0 24 24">
@@ -371,9 +373,9 @@
 								<div class="option-header" data-text="homepageColourDark"></div>
 								<div></div>
 								<div class="colour-input-wrapper" data-pref="homeBackground_dark">
-									<input type="text" class="colour-input" value="#2B2A33" />
+									<input type="text" class="colour-input" value="#2b2a33" />
 									<label class="colour-picker" for="home-bg-dark"></label>
-									<input type="color" value="#2B2A33" id="home-bg-dark" />
+									<input type="color" value="#2b2a33" id="home-bg-dark" />
 								</div>
 								<button data-title="reset">
 									<svg viewBox="0 0 24 24">
@@ -385,9 +387,9 @@
 								<div class="option-header" data-text="fallbackColourLight"></div>
 								<div></div>
 								<div class="colour-input-wrapper" data-pref="fallbackColour_light">
-									<input type="text" class="colour-input" value="#FFFFFF" />
+									<input type="text" class="colour-input" value="#ffffff" />
 									<label class="colour-picker" for="fallback-cl-light"></label>
-									<input type="color" value="#FFFFFF" id="fallback-cl-light" />
+									<input type="color" value="#ffffff" id="fallback-cl-light" />
 								</div>
 								<button data-title="reset">
 									<svg viewBox="0 0 24 24">
@@ -399,9 +401,9 @@
 								<div class="option-header" data-text="fallbackColourDark"></div>
 								<div></div>
 								<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
-									<input type="text" class="colour-input" value="#2B2A33" />
+									<input type="text" class="colour-input" value="#2b2a33" />
 									<label class="colour-picker" for="fallback-cl-dark"></label>
-									<input type="color" value="#2B2A33" id="fallback-cl-dark" />
+									<input type="color" value="#2b2a33" id="fallback-cl-dark" />
 								</div>
 								<button data-title="reset">
 									<svg viewBox="0 0 24 24">
@@ -413,22 +415,35 @@
 						<div id="custom-options">
 							<div class="section">
 								<input type="text" class="option-header-input" />
-								<select>
-									<option value="1" data-text="specifyAColour" selected></option>
-									<option value="2" data-text="useIgnoreThemeColour"></option>
-									<option value="3" data-text="pickColourFromElement"></option>
+								<select class="select-1">
+									<option value="select-1" data-text="specifyAColour" selected></option>
+									<option value="select-2" data-text="useIgnoreThemeColour"></option>
+									<option value="select-3" data-text="pickColourFromElement"></option>
 								</select>
 								<div class="colour-input-wrapper">
-									<input type="text" class="colour-input" value="#2B2A33" />
-									<label class="colour-picker" for=""></label>
-									<input type="color" value="#2B2A33" id="" />
+									<input type="text" class="colour-input" value="#2b2a33" />
+									<label class="colour-picker" for="colour-picker-1"></label>
+									<input type="color" value="#2b2a33" id="colour-picker-1" />
 								</div>
-								<div class="theme-colour-toggle-wrapper" hidden>
-									<input type="checkbox" class="theme-colour-toggle">
-									<div>Use</div>
-									<div>Ignore</div>
+								<div class="toggle-switch-wrapper">
+									<input
+										type="radio"
+										class="toggle-switch"
+										name="theme-colour-1"
+										id="use-theme-colour-1"
+									/>
+									<label class="toggle-switch" for="use-theme-colour-1">Use</label>
+									<input
+										type="radio"
+										class="toggle-switch"
+										name="theme-colour-1"
+										id="ignore-theme-colour-1"
+									/>
+									<label class="toggle-switch" for="ignore-theme-colour-1">Ignore</label>
 								</div>
-								<input type="hidden" class="qs-input">
+								<div class="qs-input-wrapper">
+									<input type="text" class="qs-input" />
+								</div>
 								<button data-title="delete">
 									<svg viewBox="0 0 24 24">
 										<use xlink:href="#svg-bin" />
@@ -436,20 +451,25 @@
 								</button>
 							</div>
 						</div>
-						<button id="add-custom-rule" data-text="addANewRule" data-title="addANewRule"></button>
 					</div>
+					<button id="add-custom-rule" data-text="addANewRule" data-title="addANewRule"></button>
 				</div>
 				<div id="tab-3" class="tab">
 					<div class="grid two-columns">
 						<div class="column">
 							<div class="section">
-								<div class="section-title" data-text="allowLightTabBar"></div>
+								<div
+									id="allow-dark-light-title"
+									class="section-title"
+									data-text="allowLightTabBar"
+								></div>
 								<div class="checkbox-wrapper">
-									<input id="allow-dark-light" type="checkbox" data-pref="allowDarkLight" />
+									<input type="checkbox" data-pref="allowDarkLight" id="allow-dark-light" />
 									<label
+										id="allow-dark-light-caption"
 										for="allow-dark-light"
 										class="section-text"
-										data-text="allowLightTabBarTooltip"
+										data-text="allowDarkTabBarTooltip"
 									></label>
 								</div>
 							</div>
@@ -474,10 +494,8 @@
 						</div>
 						<div class="column">
 							<div class="section">
-								<div class="section-title" data-text="contrast">Contrast</div>
-								<div class="section-text">
-									Set the minimun contrast ratio between tab bar colour and text colour
-								</div>
+								<div class="section-title" data-text="minimumContrast"></div>
+								<div class="section-text" data-text="minimumContrastTooltip"></div>
 								<div
 									class="slider"
 									data-pref="minContrast_light"
@@ -485,6 +503,7 @@
 									data-max="150"
 									data-step="15"
 									data-value="15"
+									data-scale="1"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
@@ -498,7 +517,7 @@
 										</svg>
 									</button>
 								</div>
-								<div class="slider-title" data-text="inLightMode">in light mode</div>
+								<div class="slider-title" data-text="inLightMode"></div>
 								<div
 									class="slider"
 									data-pref="minContrast_dark"
@@ -506,6 +525,7 @@
 									data-max="150"
 									data-step="15"
 									data-value="15"
+									data-scale="1"
 								>
 									<button>
 										<svg viewBox="0 0 24 24">
@@ -519,21 +539,19 @@
 										</svg>
 									</button>
 								</div>
-								<div class="slider-title" data-text="inDarkMode">in dark mode</div>
+								<div class="slider-title" data-text="inDarkMode"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<hr class="hr-margin-block" />
+			<hr />
 			<div class="footer">
 				<div>
-					<p>
-						<a
-							href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues"
-							data-text="reportAnIssue"
-						></a>
-					</p>
+					<a
+						href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues"
+						data-text="reportAnIssue"
+					></a>
 				</div>
 				<div class="sponsor">
 					<form action="https://www.paypal.com/donate" method="post" target="_blank">

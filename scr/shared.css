@@ -1,41 +1,47 @@
 html {
 	font-family: sans-serif;
-	--accent-colour: #0060df;
 	--colour-0: hsl(0, 0%, 100%);
+	--colour-1-5: hsl(240, 13%, 97.5%);
 	--colour-1: hsl(240, 10%, 95%);
 	--colour-2: hsl(240, 10%, 90%);
 	--colour-3: hsl(240, 10%, 85%);
 	--colour-4: hsl(240, 10%, 80%);
 	--colour-5: hsl(240, 10%, 75%);
+	--transparent-0: hsla(0, 0%, 0%, 10%);
+	--transparent-1: hsla(0, 0%, 0%, 15%);
+	--transparent-2: hsla(0, 0%, 0%, 20%);
+	--transparent-3: hsla(0, 0%, 0%, 25%);
+	--transparent-4: hsla(0, 0%, 0%, 30%);
+	--transparent-5: hsla(0, 0%, 0%, 35%);
+	--accent-colour: #0060df;
 	--link-colour-normal: #0060df;
 	--link-colour-hover: #0250bb;
 	--link-colour-active: #054096;
 	--text-colour-normal: hsl(0, 0%, 0%);
 	--text-colour-secondary: hsl(0, 0%, 20%);
-	--transparent-0: hsl(0, 0%, 0%, 15%);
-	--transparent-1: hsl(0, 0%, 0%, 20%);
-	--transparent-2: hsl(0, 0%, 0%, 35%);
-	--transparent-3: hsl(0, 0%, 0%, 50%);
 }
 
 @media (prefers-color-scheme: dark) {
 	html {
-		--accent-colour: #00ddff;
 		--colour-0: hsl(248, 11%, 15%);
+		--colour-1-5: hsl(248, 11%, 17.5%);
 		--colour-1: hsl(248, 11%, 20%);
 		--colour-2: hsl(248, 11%, 25%);
 		--colour-3: hsl(248, 11%, 30%);
 		--colour-4: hsl(248, 11%, 35%);
 		--colour-5: hsl(248, 11%, 40%);
+		--transparent-0: hsla(0, 0%, 100%, 10%);
+		--transparent-1: hsla(0, 0%, 100%, 15%);
+		--transparent-2: hsla(0, 0%, 100%, 20%);
+		--transparent-3: hsla(0, 0%, 100%, 25%);
+		--transparent-4: hsla(0, 0%, 100%, 30%);
+		--transparent-5: hsla(0, 0%, 100%, 0.35);
+		--accent-colour: #00ddff;
 		--link-colour-normal: #00ddff;
 		--link-colour-hover: #80ebff;
 		--link-colour-active: #aaf2ff;
 		--text-colour-normal: hsl(0, 0%, 100%);
 		--text-colour-secondary: hsl(0, 0%, 80%);
-		--transparent-0: hsl(0, 0%, 100%, 15%);
-		--transparent-1: hsl(0, 0%, 100%, 20%);
-		--transparent-2: hsl(0, 0%, 100%, 35%);
-		--transparent-3: hsl(0, 0%, 100%, 50%);
 	}
 }
 

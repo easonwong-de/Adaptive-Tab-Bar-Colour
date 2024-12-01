@@ -203,6 +203,23 @@ export default class preference {
 		await this.save();
 	}
 
+	/**
+	 * Resets a single preference if a valid key is specified.
+	 * Resets all preferences if not.
+	 * Saves the preference afterwards.
+	 * @param {string | null} key
+	 */
+	async reset(key = null) {
+		if (key in this.#default_prefContent) {
+			this.#prefContent[key] = this.#default_prefContent[key];
+		} else {
+			for (const eachKey in this.#default_prefContent) {
+				this.#prefContent[eachKey] = this.#default_prefContent[eachKey];
+			}
+		}
+		await this.save();
+	}
+
 	async load() {
 		this.#prefContent = await browser.storage.local.get();
 	}
