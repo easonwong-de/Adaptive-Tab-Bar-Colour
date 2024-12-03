@@ -136,7 +136,7 @@
 	},
 
 	"noThemeColourModeTooltip": {
-		"message": "Always ignore theme color defined by the website and pick colour from the web page instead"
+		"message": "Always ignore theme color defined by the website and pick color from the web page instead"
 	},
 
 	"minimumContrast": {
@@ -144,7 +144,7 @@
 	},
 
 	"minimumContrastTooltip": {
-		"message": "Set the minimun contrast ratio between tab bar colour and text colour"
+		"message": "Set the minimun contrast ratio between tab bar color and text color"
 	},
 
 	"inLightMode": {
