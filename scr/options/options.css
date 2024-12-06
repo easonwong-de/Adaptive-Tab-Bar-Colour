@@ -339,12 +339,12 @@ div.sponsor {
 
 /* Site list tab */
 
-.list-wrapper {
+#option-list {
 	display: flex;
 	flex-direction: column;
 }
 
-.list-wrapper .section {
+#option-list .section {
 	display: grid;
 	grid-template-columns: auto max-content 10rem max-content;
 	border-radius: 0;
@@ -352,17 +352,17 @@ div.sponsor {
 	padding: 0.5rem;
 }
 
-.list-wrapper :is(.section:first-of-type) {
+#option-list :is(.section:first-of-type) {
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
 }
 
-.list-wrapper :is(.section:last-of-type) {
+#option-list :is(.section:last-of-type) {
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
 
-.list-wrapper .section:nth-of-type(even) {
+#option-list .section:nth-of-type(even) {
 	background-color: var(--colour-1-5);
 }
 
@@ -382,18 +382,18 @@ select.select-3 ~ .qs-input-wrapper {
 	display: grid;
 }
 
-#add-custom-rule {
+#add-new-rule {
 	background-color: var(--colour-1);
 	width: 100%;
 	height: 3rem;
 	border-radius: 6px;
 }
 
-#add-custom-rule:hover {
+#add-new-rule:hover {
 	background-color: var(--colour-2);
 }
 
-#add-custom-rule:active {
+#add-new-rule:active {
 	background-color: var(--colour-4);
 }
 

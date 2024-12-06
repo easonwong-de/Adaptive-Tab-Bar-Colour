@@ -63,3 +63,7 @@ html {
 		opacity: 1;
 	}
 }
+
+#template {
+	display: none;
+}

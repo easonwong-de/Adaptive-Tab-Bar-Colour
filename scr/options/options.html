@@ -6,35 +6,75 @@
 	</head>
 
 	<body>
-		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: none">
-			<defs>
-				<g id="svg-bin">
-					<polyline points="3 6 5 6 21 6"></polyline>
-					<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-					<line x1="10" y1="11" x2="10" y2="17"></line>
-					<line x1="14" y1="11" x2="14" y2="17"></line>
-				</g>
-				<g id="svg-warning">
-					<path
-						d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
-					></path>
-					<line x1="12" y1="9" x2="12" y2="13"></line>
-					<line x1="12" y1="17" x2="12.01" y2="17"></line>
-				</g>
-				<g id="svg-reset">
-					<path d="M2.5 2v6h6M21.5 22v-6h-6" />
-					<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-				</g>
-				<g id="svg-add">
-					<line x1="12" y1="5" x2="12" y2="19"></line>
-					<line x1="5" y1="12" x2="19" y2="12"></line>
-				</g>
-				<g id="svg-minus">
-					<line x1="5" y1="12" x2="19" y2="12"></line>
-				</g>
-			</defs>
-		</svg>
-		<template> </template>
+		<div id="template">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<defs>
+					<g id="svg-bin">
+						<polyline points="3 6 5 6 21 6"></polyline>
+						<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+						<line x1="10" y1="11" x2="10" y2="17"></line>
+						<line x1="14" y1="11" x2="14" y2="17"></line>
+					</g>
+					<g id="svg-warning">
+						<path
+							d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+						></path>
+						<line x1="12" y1="9" x2="12" y2="13"></line>
+						<line x1="12" y1="17" x2="12.01" y2="17"></line>
+					</g>
+					<g id="svg-reset">
+						<path d="M2.5 2v6h6M21.5 22v-6h-6" />
+						<path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+					</g>
+					<g id="svg-add">
+						<g clip-path="url(#clip0_489_191193)">
+							<path
+								d="M12 4v16m8-8H4"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							></path>
+						</g>
+						<defs>
+							<clipPath id="clip0_489_191193">
+								<path fill="currentColor" d="M0 0H24V24H0z"></path>
+							</clipPath>
+						</defs>
+					</g>
+					<g id="svg-minus">
+						<line x1="5" y1="12" x2="19" y2="12"></line>
+					</g>
+				</defs>
+			</svg>
+			<div class="section custom-option">
+				<input type="text" class="option-header-input" data-placeholder="URLDomainOrRegex" />
+				<select class="select-1">
+					<option value="select-1" data-text="specifyAColour" selected></option>
+					<option value="select-2" data-text="useIgnoreThemeColour"></option>
+					<option value="select-3" data-text="pickColourFromElement"></option>
+				</select>
+				<div class="colour-input-wrapper">
+					<input type="text" class="colour-input" data-placeholder="anyCSSColour" />
+					<label class="colour-picker"></label>
+					<input type="color" />
+				</div>
+				<div class="toggle-switch-wrapper theme-colour-switch">
+					<input class="toggle-switch" type="radio" checked />
+					<label class="toggle-switch" data-text="use"></label>
+					<input class="toggle-switch" type="radio" />
+					<label class="toggle-switch" data-text="ignore"></label>
+				</div>
+				<div class="qs-input-wrapper">
+					<input type="text" class="qs-input" data-placeholder="querySelector" />
+				</div>
+				<button data-title="delete">
+					<svg viewBox="0 0 24 24">
+						<use xlink:href="#svg-bin" />
+					</svg>
+				</button>
+			</div>
+		</div>
 		<div id="loading-wrapper" hidden="true">
 			<div id="loading" data-text="loading">Loading…</div>
 			<p id="reinstall-tip" data-text="reinstallTip">
@@ -353,7 +393,7 @@
 					</div>
 				</div>
 				<div id="tab-2" class="tab">
-					<div class="list-wrapper">
+					<div id="option-list">
 						<div class="section fixed-option">
 							<div class="option-header" data-text="homepageColourLight"></div>
 							<div></div>
@@ -410,122 +450,8 @@
 								</svg>
 							</button>
 						</div>
-						<div class="section custom-option" data-id="1">
-							<input type="text" class="option-header-input" />
-							<select class="select-1">
-								<option value="select-1" data-text="specifyAColour" selected></option>
-								<option value="select-2" data-text="useIgnoreThemeColour"></option>
-								<option value="select-3" data-text="pickColourFromElement"></option>
-							</select>
-							<div class="colour-input-wrapper">
-								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker" for="colour-picker-1"></label>
-								<input type="color" value="#2b2a33" id="colour-picker-1" />
-							</div>
-							<div class="toggle-switch-wrapper">
-								<input
-									type="radio"
-									class="toggle-switch"
-									name="theme-colour-1"
-									id="use-theme-colour-1"
-									checked
-								/>
-								<label class="toggle-switch" for="use-theme-colour-1">Use</label>
-								<input
-									type="radio"
-									class="toggle-switch"
-									name="theme-colour-1"
-									id="ignore-theme-colour-1"
-								/>
-								<label class="toggle-switch" for="ignore-theme-colour-1">Ignore</label>
-							</div>
-							<div class="qs-input-wrapper">
-								<input type="text" class="qs-input" />
-							</div>
-							<button data-title="delete">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-bin" />
-								</svg>
-							</button>
-						</div>
-						<div class="section custom-option" data-id="2">
-							<input type="text" class="option-header-input" />
-							<select class="select-1">
-								<option value="select-1" data-text="specifyAColour" selected></option>
-								<option value="select-2" data-text="useIgnoreThemeColour"></option>
-								<option value="select-3" data-text="pickColourFromElement"></option>
-							</select>
-							<div class="colour-input-wrapper">
-								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker" for="colour-picker-2"></label>
-								<input type="color" value="#2b2a33" id="colour-picker-2" />
-							</div>
-							<div class="toggle-switch-wrapper">
-								<input
-									type="radio"
-									class="toggle-switch"
-									name="theme-colour-2"
-									id="use-theme-colour-2"
-									checked
-								/>
-								<label class="toggle-switch" for="use-theme-colour-2">Use</label>
-								<input
-									type="radio"
-									class="toggle-switch"
-									name="theme-colour-2"
-									id="ignore-theme-colour-2"
-								/>
-								<label class="toggle-switch" for="ignore-theme-colour-2">Ignore</label>
-							</div>
-							<div class="qs-input-wrapper">
-								<input type="text" class="qs-input" />
-							</div>
-							<button data-title="delete">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-bin" />
-								</svg>
-							</button>
-						</div>
-						<div class="section custom-option" data-id="3">
-							<input type="text" class="option-header-input" />
-							<select class="select-1">
-								<option value="select-1" data-text="specifyAColour" selected></option>
-								<option value="select-2" data-text="useIgnoreThemeColour"></option>
-								<option value="select-3" data-text="pickColourFromElement"></option>
-							</select>
-							<div class="colour-input-wrapper">
-								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker" for="colour-picker-3"></label>
-								<input type="color" value="#2b2a33" id="colour-picker-3" />
-							</div>
-							<div class="toggle-switch-wrapper">
-								<input
-									type="radio"
-									class="toggle-switch"
-									name="theme-colour-3"
-									id="use-theme-colour-3"
-									checked
-								/>
-								<label class="toggle-switch" for="use-theme-colour-3">Use</label>
-								<input
-									type="radio"
-									class="toggle-switch"
-									name="theme-colour-3"
-									id="ignore-theme-colour-3"
-								/>
-								<label class="toggle-switch" for="ignore-theme-colour-3">Ignore</label>
-							</div>
-							<div class="qs-input-wrapper">
-								<input type="text" class="qs-input" />
-							</div>
-							<button data-title="delete">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-bin" />
-								</svg>
-							</button>
-						</div>
 					</div>
-					<button id="add-custom-rule" data-text="addANewRule" data-title="addANewRule"></button>
+					<button id="add-new-rule" data-text="addANewRule" data-title="addANewRule"></button>
 				</div>
 				<div id="tab-3" class="tab">
 					<div class="grid two-columns">

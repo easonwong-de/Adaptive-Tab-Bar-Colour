@@ -79,12 +79,32 @@
 		"message": "Fallback color: light"
 	},
 
+	"URLDomainOrRegex": {
+		"message": "Full URL / domain / Regex"
+	},
+
+	"anyCSSColour": {
+		"message": "any format"
+	},
+
+	"querySelector": {
+		"message": "Query selector"
+	},
+
 	"specifyAColour": {
 		"message": "specify a color"
 	},
 
 	"useIgnoreThemeColour": {
 		"message": "use / ignore theme color"
+	},
+
+	"use": {
+		"message": "Use"
+	},
+
+	"ignore": {
+		"message": "Ignore"
 	},
 
 	"pickColourFromElement": {

@@ -181,11 +181,18 @@ async function updatePopup() {
 /**
  * Updates the text content and title of elements based on localisation data attributes.
  *
- * Finds elements with `data-text` or `data-title` attributes, retrieves the localised text using the `msg` function, and assigns it to the element's `textContent` or `title`.
+ * Finds elements with `data-text`, `data-title`, or `data-placeholder` attributes, retrieves the localised text using the `msg` function, and assigns it to the element's `textContent`, `title`, or `placeholder`.
  */
 function localise() {
-	document.querySelectorAll("[data-text]").forEach((element) => (element.textContent = msg(element.dataset.text)));
-	document.querySelectorAll("[data-title]").forEach((element) => (element.title = msg(element.dataset.title)));
+	document.querySelectorAll("[data-text]").forEach((element) => {
+		element.textContent = msg(element.dataset.text);
+	});
+	document.querySelectorAll("[data-title]").forEach((element) => {
+		element.title = msg(element.dataset.title);
+	});
+	document.querySelectorAll("[data-placeholder]").forEach((element) => {
+		element.placeholder = msg(element.dataset.placeholder);
+	});
 }
 
 /**
