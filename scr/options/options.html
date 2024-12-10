@@ -48,7 +48,14 @@
 				</defs>
 			</svg>
 			<div class="section custom-option">
-				<input type="text" class="option-header-input" data-placeholder="URLDomainOrRegex" />
+				<div class="option-header-input-wrapper warning">
+					<input type="text" class="option-header-input" data-placeholder="URLDomainOrRegex" />
+					<div class="option-header-warning" data-title="warning">
+						<svg viewBox="0 0 24 24">
+							<use xlink:href="#svg-warning" />
+						</svg>
+					</div>
+				</div>
 				<select class="select-1">
 					<option value="select-1" data-text="specifyAColour" selected></option>
 					<option value="select-2" data-text="useIgnoreThemeColour"></option>

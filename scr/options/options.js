@@ -60,6 +60,16 @@ function setSliderValue(slider, value) {
 	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
 }
 
+function setupOptionHeaderInput(optionHeaderInputWrapper, initialValue, onChange) {
+	const optionHeaderInput = optionHeaderInputWrapper.querySelector(".option-header-input");
+	optionHeaderInput.value = initialValue;
+	optionHeaderInput.addEventListener("focus", () => optionHeaderInput.select());
+	optionHeaderInput.addEventListener("input", () => {
+		// to-do: warning display, trimming
+		onChange(optionHeaderInput.value);
+	});
+}
+
 /**
  * @param {HTMLElement} colourInputWrapper
  * @param {Function} onChange
@@ -118,9 +128,10 @@ function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelection, onCh
 	});
 }
 
-function setupQSInput(QSInputWrapper, initialValue, onChange) {
+function setupQSInput(QSInputWrapper, initialQS, onChange) {
 	const QSInput = QSInputWrapper.querySelector("input[type='text']");
-	QSInput.value = initialValue;
+	QSInput.value = initialQS;
+	QSInput.addEventListener("focus", () => QSInput.select());
 	QSInput.addEventListener("input", () => {
 		onChange(QSInput.value);
 	});
@@ -129,24 +140,18 @@ function setupQSInput(QSInputWrapper, initialValue, onChange) {
 function setupFixedOption(fixedOption) {
 	const colourInputWrapper = fixedOption.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
+	const resetButton = fixedOption.querySelector("button");
 	setupColourInput(colourInputWrapper, pref[key], (colour) => {
 		pref[key] = colour;
 		applySettings();
 	});
-	const resetButton = fixedOption.querySelector("button");
 	resetButton.onclick = async () => {
 		await pref.reset(key);
 		setColourInputValue(colourInputWrapper, pref[key]);
 	};
 }
 
-function setupCustomOption(customOption, id, site, customRule) {
-	const optionHeaderInput = customOption.querySelector(".option-header-input");
-	const select = customOption.querySelector("select");
-	const colourInput = customOption.querySelector(".colour-input-wrapper");
-	const themeColourSwitch = customOption.querySelector(".theme-colour-switch");
-	const QSInput = customOption.querySelector(".qs-input-wrapper");
-
+function setCustomOptionID(customOption, id) {
 	customOption.dataset.id = id;
 	customOption.querySelector(".colour-picker").htmlFor = `colour-picker-${id}`;
 	customOption.querySelector("input[type='color']").id = `colour-picker-${id}`;
@@ -156,14 +161,24 @@ function setupCustomOption(customOption, id, site, customRule) {
 	customOption.querySelector("input.toggle-switch:nth-of-type(2)").name = `theme-colour-${id}`;
 	customOption.querySelector("input.toggle-switch:nth-of-type(2)").id = `ignore-theme-colour-${id}`;
 	customOption.querySelector("label.toggle-switch:nth-of-type(2)").htmlFor = `ignore-theme-colour-${id}`;
+}
 
-	optionHeaderInput.value = site;
-	select.addEventListener("change", () => {
-		select.className = select.value;
-	});
-	setupColourInput(colourInput, "#2b2a33", (colour) => {});
-	setupThemeColourSwitch(themeColourSwitch, "UN_IGNORE_THEME", (themePolicy) => {});
-	setupQSInput(QSInput, "div#nav", (qs) => {});
+function setupCustomOption(customOption, id, initialOptionHeader, initialCustomRule) {
+	const optionHeaderInputWrapper = customOption.querySelector(".option-header-input-wrapper");
+	const select = customOption.querySelector("select");
+	const colourInputWrapper = customOption.querySelector(".colour-input-wrapper");
+	const themeColourSwitch = customOption.querySelector(".theme-colour-switch");
+	const QSInputWrapper = customOption.querySelector(".qs-input-wrapper");
+	let optionHeader = initialOptionHeader;
+	let initialColour = "#000000";
+	let initialSelection = "UN_IGNORE_THEME";
+	let initialQS = "div#nav";
+	setCustomOptionID(customOption, id);
+	setupOptionHeaderInput(optionHeaderInputWrapper, initialOptionHeader, (newOptionHeader) => {});
+	select.addEventListener("change", () => (select.className = select.value));
+	setupColourInput(colourInputWrapper, initialColour, (newColour) => {});
+	setupThemeColourSwitch(themeColourSwitch, initialSelection, (newSelection) => {});
+	setupQSInput(QSInputWrapper, initialQS, (newQS) => {});
 }
 
 function addNewRule() {
@@ -172,10 +187,8 @@ function addNewRule() {
 	const customOption = templateCustomOption.cloneNode(true);
 	listWrapper.appendChild(customOption);
 	let id = 1;
-	while (document.querySelector(`#option-list .custom-option[data-id='${id}']`)) {
-		id++;
-	}
-	setupCustomOption(customOption, id, "www.example.com", "IGNORE_THEME");
+	while (document.querySelector(`#option-list .custom-option[data-id='${id}']`)) id++;
+	setupCustomOption(customOption, id, "", "#000000");
 }
 
 async function updateAllowDarkLightText(nthTry = 0) {

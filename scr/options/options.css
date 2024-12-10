@@ -370,6 +370,29 @@ div.sponsor {
 	margin-inline: 0.5rem auto;
 }
 
+.option-header-input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.option-header-warning {
+	display: none;
+	position: absolute;
+	width: 1rem;
+	height: 1rem;
+	right: 0.5rem;
+}
+
+.option-header-input-wrapper.warning .option-header-input {
+	padding-inline-end: 2rem;
+	/* to be fixed */
+}
+
+.option-header-input-wrapper.warning .option-header-warning {
+	display: block;
+}
+
 select ~ .colour-input-wrapper,
 select ~ .toggle-switch-wrapper,
 select ~ .qs-input-wrapper {
