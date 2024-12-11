@@ -8,6 +8,34 @@ import {
 	default_fallbackColour_dark,
 } from "./default_values.js";
 
+const legacyPref_v2_1 = {
+	custom: true,
+	dark_color: "#1d1d1d",
+	dark_fallback_color: "#1d1d1d",
+	dynamic: true,
+	force: false,
+	last_version: [2, 1],
+	light_color: "#ffffff",
+	light_fallback_color: "#FFFFFF",
+	no_theme_color: true,
+	popup_border_color: 0.05,
+	popup_color: 0.05,
+	reservedColor_cs: {
+		"developer.mozilla.org": "IGNORE_THEME",
+		"mail.google.com": "QS_div.wl",
+		"open.spotify.com": "#000000",
+	},
+	scheme: "system",
+	separator_opacity: 0,
+	sidebar_border_color: 0.05,
+	sidebar_color: 0.05,
+	tab_selected_color: 0.1,
+	tabbar_color: 0,
+	toolbar_color: 0,
+	toolbar_field_color: 0.05,
+	toolbar_field_focus_color: 0.05,
+};
+
 export default class preference {
 	/** The content of the preference */
 	#prefContent = {
@@ -33,14 +61,7 @@ export default class preference {
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
-		siteList: {
-			/* 1: {
-				headerType: "URL" // ADDON_ID, ABOUT_PAGE (?)
-				header: "www.example.com", // URL, regex, [add-on ID]
-				type: "COLOUR", // THEME_COLOUR, QUERY_SELECTOR
-				value: "#000000", // true, false, "div#nav"
-			}, */
-		},
+		siteList: {},
 		version: [2, 2],
 	};
 
@@ -144,9 +165,12 @@ export default class preference {
 	 * Once executed, the normalised preferences are loaded in the instance and saved to browser storage.
 	 */
 	async normalise() {
-		const storedPref = await browser.storage.local.get();
+		// Testing
+		// const storedPref = await browser.storage.local.get();
+		const storedPref = legacyPref_v2_1;
 		if (!(storedPref["version"] >= [1, 7] || storedPref["last_version"] >= [1, 7])) {
-			await this.reset();
+			this.reset();
+			await this.save();
 			return;
 		}
 		for (const key in storedPref) {
@@ -256,13 +280,11 @@ export default class preference {
 	}
 
 	/**
-	 * Resets a single preference if a valid key is specified.
-	 * Resets all preferences if not.
-	 * Saves the preference afterwards.
+	 * Resets a single preference if a valid key is specified. Resets all preferences if the key is not specified.
 	 *
 	 * @param {string | null} key
 	 */
-	async reset(key = null) {
+	reset(key = null) {
 		if (key in this.#default_prefContent) {
 			this.#prefContent[key] = this.#default_prefContent[key];
 		} else {
@@ -271,22 +293,6 @@ export default class preference {
 				this.#prefContent[key] = this.#default_prefContent[key];
 			}
 		}
-		await this.save();
-	}
-	/**
-	 * Loads the preferences from the browser storage to the instance.
-	 */
-	async load() {
-		this.#prefContent = await browser.storage.local.get();
-		console.log("Loaded:", this.#prefContent);
-	}
-
-	/**
-	 * Stores the preferences from the instance to the browser storage.
-	 */
-	async save() {
-		console.log("Saving...", this.#prefContent);
-		await browser.storage.local.set(this.#prefContent);
 	}
 
 	/**
@@ -361,7 +367,7 @@ export default class preference {
 	addPolicy(policy) {
 		let id = 1;
 		while (this.#prefContent.siteList[id]) id++;
-		this.#prefContent[id] = policy;
+		this.#prefContent.siteList[id] = policy;
 		return id;
 	}
 
@@ -371,7 +377,23 @@ export default class preference {
 	 */
 	removePolicy(id) {
 		if (typeof id !== "number") return;
-		delete this.#prefContent[id];
+		delete this.#prefContent.siteList[id];
+	}
+
+	/**
+	 * Loads the preferences from the browser storage to the instance.
+	 */
+	async load() {
+		this.#prefContent = await browser.storage.local.get();
+		console.log("Loaded:", this.#prefContent);
+	}
+
+	/**
+	 * Stores the preferences from the instance to the browser storage.
+	 */
+	async save() {
+		console.log("Saving...", this.#prefContent);
+		await browser.storage.local.set(this.#prefContent);
 	}
 
 	get allowDarkLight() {

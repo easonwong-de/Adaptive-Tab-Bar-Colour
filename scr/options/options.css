@@ -210,7 +210,7 @@ input[type="radio"] {
 }
 
 /* Toggle */
-/* To-do: use a switch */
+/* To-do: use a light switch instead of a simple checkbox */
 
 .checkbox-wrapper {
 	display: flex;
@@ -224,7 +224,7 @@ input[type="radio"] {
 	position: relative;
 }
 
-.colour-picker {
+.colour-picker-display {
 	position: absolute;
 	border-radius: 50%;
 	width: 1rem;

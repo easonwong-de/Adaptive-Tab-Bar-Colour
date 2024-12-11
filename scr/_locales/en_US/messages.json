@@ -79,16 +79,12 @@
 		"message": "Fallback color: light"
 	},
 
+	"fallbackColourDark": {
+		"message": "Fallback color: dark"
+	},
+
 	"URLDomainOrRegex": {
-		"message": "Full URL / domain / Regex"
-	},
-
-	"anyCSSColour": {
-		"message": "any format"
-	},
-
-	"querySelector": {
-		"message": "Query selector"
+		"message": "Full URL / domain / regex"
 	},
 
 	"specifyAColour": {
@@ -99,6 +95,14 @@
 		"message": "use / ignore theme color"
 	},
 
+	"pickColourFromElement": {
+		"message": "pick color from element"
+	},
+
+	"anyCSSColour": {
+		"message": "any format"
+	},
+
 	"use": {
 		"message": "Use"
 	},
@@ -107,12 +111,8 @@
 		"message": "Ignore"
 	},
 
-	"pickColourFromElement": {
-		"message": "pick color from element"
-	},
-
-	"fallbackColourDark": {
-		"message": "Fallback color: dark"
+	"querySelector": {
+		"message": "Query selector"
 	},
 
 	"delete": {
@@ -155,7 +155,7 @@
 		"message": "Ignore website’s theme color"
 	},
 
-	"noThemeColourModeTooltip": {
+	"ignoreDesignatedThemeColourTooltip": {
 		"message": "Always ignore theme color defined by the website and pick color from the web page instead"
 	},
 
@@ -260,7 +260,7 @@
 	},
 
 	"themeColourIsUnignored": {
-		"message": "Theme color defined by the website is un-ignored"
+		"message": "Theme color defined by the website is used, instead of being ignored by default"
 	},
 
 	"themeColourNotFound": {
@@ -285,6 +285,22 @@
 
 	"colourIsPickedFromEnd": {
 		"message": "__EMPTY__"
+	},
+
+	"cannotFindElement": {
+		"message": "Cannot find the HTML element matching "
+	},
+
+	"cannotFindElementEnd": {
+		"message": ", color is picked from the web page instead"
+	},
+
+	"errorOccuredLocatingElement": {
+		"message": "An error occurred while looking for the HTML element matching "
+	},
+
+	"errorOccuredLocatingElementEnd": {
+		"message": ", color is picked from the web page instead"
 	},
 
 	"colourIsSpecified": {

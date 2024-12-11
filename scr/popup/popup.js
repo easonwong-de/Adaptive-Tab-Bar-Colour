@@ -39,6 +39,9 @@ function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
 
+/**
+ * @param {tabs.Tab} tab
+ */
 async function getWebPageInfo(tab) {
 	const url = new URL(tab.url);
 	try {
@@ -60,7 +63,7 @@ async function getWebPageInfo(tab) {
 				},
 			};
 		} else {
-			return { reason: reason };
+			return response;
 		}
 	} catch (error) {
 		if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
@@ -75,6 +78,9 @@ async function getWebPageInfo(tab) {
 	}
 }
 
+/**
+ * @param {tabs.Tab} tab
+ */
 async function getAddonPageInfo(tab) {
 	const uuid = tab.url.split(/\/|\?/)[2];
 	const addonList = await browser.management.getAll();
@@ -106,13 +112,18 @@ async function getAddonPageInfo(tab) {
 	}
 }
 
-async function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
-	if (colour) {
+/**
+ * @param {string} addonID
+ * @param {string} colourHex
+ * @param {boolean} openOptionsPage
+ */
+async function specifyColourForAddon(addonID, colourHex, openOptionsPage = false) {
+	if (colourHex) {
 		pref.addPolicy({
 			headerType: "ADDON_ID",
 			header: addonID,
 			type: "COLOUR",
-			value: colour,
+			value: colourHex,
 		});
 	} else {
 		pref.removePolicy(pref.getPolicyID(addonID, "ADDON_ID"));

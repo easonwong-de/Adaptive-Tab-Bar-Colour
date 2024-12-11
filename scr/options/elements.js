@@ -1,11 +1,21 @@
+import { hex } from "../colour.js";
+
 /**
  * @param {HTMLElement} checkbox
  * @param {function} onChange
  */
-export function setupCheckBox(checkbox, onChange) {
+export function setupCheckbox(checkbox, onChange) {
 	checkbox.onclick = () => {
 		onChange(checkbox.dataset.pref, checkbox.checked);
 	};
+}
+
+/**
+ * @param {HTMLElement} checkbox
+ * @param {boolean} value
+ */
+export function setCheckboxValue(checkbox, value) {
+	checkbox.checked = value;
 }
 
 /**
@@ -42,6 +52,11 @@ export function setSliderValue(slider, value) {
 	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
 }
 
+/**
+ * @param {HTMLElement} policyHeaderInputWrapper
+ * @param {string} initialValue
+ * @param {function} onChange
+ */
 export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, onChange) {
 	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
 	policyHeaderInput.value = initialValue;
@@ -53,12 +68,28 @@ export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, o
 }
 
 /**
+ * @param {HTMLElement} policyHeaderInputWrapper
+ */
+export function setPolicyHeaderInputValue(policyHeaderInputWrapper, value) {
+	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
+	policyHeaderInput.value = value;
+}
+
+/**
+ * @param {HTMLElement} policyHeaderInputWrapper
+ */
+export function getPolicyHeaderInputValue(policyHeaderInputWrapper) {
+	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
+	return policyHeaderInput.value;
+}
+
+/**
  * @param {HTMLElement} colourInputWrapper
- * @param {export function} onChange
+ * @param {function} onChange
  */
 export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 	const colourInput = colourInputWrapper.querySelector(".colour-input");
-	const colourPicker = colourInputWrapper.querySelector(".colour-picker");
+	const colourPicker = colourInputWrapper.querySelector(".colour-picker-display");
 	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
 	colourInput.value = initialColour;
 	colourPicker.style.backgroundColor = initialColour;
@@ -87,17 +118,30 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 
 /**
  * @param {HTMLElement} colourInputWrapper
- * @param {string} colour
+ * @param {string} value
  */
-export function setColourInputValue(colourInputWrapper, colour) {
+export function setColourInputValue(colourInputWrapper, value) {
 	const colourInput = colourInputWrapper.querySelector(".colour-input");
-	const colourPicker = colourInputWrapper.querySelector(".colour-picker");
-	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
-	colourInput.value = colour;
-	colourPicker.style.backgroundColor = colour;
-	colourPickerInput.value = colour;
+	const colourPicker = colourInputWrapper.querySelector("input[type='color']");
+	const colourPickerDisplay = colourInputWrapper.querySelector(".colour-picker-display");
+	colourInput.value = value;
+	colourPicker.value = value;
+	colourPickerDisplay.style.backgroundColor = value;
 }
 
+/**
+ * @param {HTMLElement} colourInputWrapper
+ */
+export function getColourInputValue(colourInputWrapper) {
+	const colourPicker = colourInputWrapper.querySelector("input[type='color']");
+	return colourPicker.value;
+}
+
+/**
+ * @param {HTMLElement} themeColourSwitchWrapper
+ * @param {boolean} initialSelection
+ * @param {function} onChange
+ */
 export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelection, onChange) {
 	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
 	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(2)");
@@ -110,6 +154,30 @@ export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelectio
 	});
 }
 
+/**
+ * @param {HTMLElement} themeColourSwitchWrapper
+ * @param {boolean} value 
+ */
+export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
+	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
+	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(2)");
+	useThemeColourRadioButton.checked = value;
+	ignoreThemeColourRadioButton.checked = !value;
+}
+
+/**
+ * @param {HTMLElement} themeColourSwitchWrapper
+ */
+export function getThemeColourSwitchValue(themeColourSwitchWrapper) {
+	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
+	return useThemeColourRadioButton.checked;
+}
+
+/**
+ * @param {HTMLElement} QuerySelectorInputWrapper
+ * @param {string} initialQuerySelector
+ * @param {function} onChange
+ */
 export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQuerySelector, onChange) {
 	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
 	QuerySelectorInput.value = initialQuerySelector;
@@ -120,16 +188,41 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
 	});
 }
 
-export function setColourPolicySectionID(policySection, id) {
-	policySection.dataset.id = id;
-	policySection.querySelector(".colour-picker").htmlFor = `colour-picker-${id}`;
-	policySection.querySelector("input[type='color']").id = `colour-picker-${id}`;
+/**
+ * @param {HTMLElement} QuerySelectorInputWrapper
+ * @param {string} value 
+ */
+export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
+	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
+	QuerySelectorInput.value = value;
 }
 
+/**
+ * @param {HTMLElement} QuerySelectorInputWrapper
+ */
+export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
+	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
+	return QuerySelectorInput.value;
+}
+
+/**
+ * @param {HTMLElement} policySection
+ * @param {number} id
+ */
+export function setColourPolicySectionID(policySection, id) {
+	policySection.dataset.id = id;
+	policySection.querySelector(".colour-picker-display").htmlFor = `colour-picker-display-${id}`;
+	policySection.querySelector("input[type='color']").id = `colour-picker-display-${id}`;
+}
+
+/**
+ * @param {HTMLElement} policySection
+ * @param {number} id
+ */
 export function setFlexiblePolicySectionID(policySection, id) {
 	policySection.dataset.id = id;
-	policySection.querySelector(".colour-picker").htmlFor = `colour-picker-${id}`;
-	policySection.querySelector("input[type='color']").id = `colour-picker-${id}`;
+	policySection.querySelector(".colour-picker-display").htmlFor = `colour-picker-display-${id}`;
+	policySection.querySelector("input[type='color']").id = `colour-picker-display-${id}`;
 	policySection.querySelector("input.toggle-switch:nth-of-type(1)").name = `theme-colour-${id}`;
 	policySection.querySelector("input.toggle-switch:nth-of-type(1)").id = `use-theme-colour-${id}`;
 	policySection.querySelector("label.toggle-switch:nth-of-type(1)").htmlFor = `use-theme-colour-${id}`;

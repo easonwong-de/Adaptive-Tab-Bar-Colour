@@ -52,7 +52,7 @@
 				<div></div>
 				<div class="colour-input-wrapper">
 					<input type="text" class="colour-input" value="#333333" />
-					<label class="colour-picker"></label>
+					<label class="colour-picker-display"></label>
 					<input type="color" value="#333333" />
 				</div>
 				<button data-title="delete">
@@ -62,7 +62,7 @@
 				</button>
 			</div>
 			<div class="section custom-policy flexible-policy">
-				<div class="policy-header-input-wrapper warning">
+				<div class="policy-header-input-wrapper">
 					<input type="text" class="policy-header-input" data-placeholder="URLDomainOrRegex" />
 					<div class="policy-header-warning" data-title="warning">
 						<svg viewBox="0 0 24 24">
@@ -77,7 +77,7 @@
 				</select>
 				<div class="colour-input-wrapper">
 					<input type="text" class="colour-input" data-placeholder="anyCSSColour" />
-					<label class="colour-picker"></label>
+					<label class="colour-picker-display"></label>
 					<input type="color" />
 				</div>
 				<div class="toggle-switch-wrapper theme-colour-switch">
@@ -420,7 +420,7 @@
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="homeBackground_light">
 								<input type="text" class="colour-input" value="#ffffff" />
-								<label class="colour-picker" for="home-bg-light"></label>
+								<label class="colour-picker-display" for="home-bg-light"></label>
 								<input type="color" value="#ffffff" id="home-bg-light" />
 							</div>
 							<button data-title="reset">
@@ -434,7 +434,7 @@
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="homeBackground_dark">
 								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker" for="home-bg-dark"></label>
+								<label class="colour-picker-display" for="home-bg-dark"></label>
 								<input type="color" value="#2b2a33" id="home-bg-dark" />
 							</div>
 							<button data-title="reset">
@@ -448,7 +448,7 @@
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="fallbackColour_light">
 								<input type="text" class="colour-input" value="#ffffff" />
-								<label class="colour-picker" for="fallback-cl-light"></label>
+								<label class="colour-picker-display" for="fallback-cl-light"></label>
 								<input type="color" value="#ffffff" id="fallback-cl-light" />
 							</div>
 							<button data-title="reset">
@@ -462,7 +462,7 @@
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
 								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker" for="fallback-cl-dark"></label>
+								<label class="colour-picker-display" for="fallback-cl-dark"></label>
 								<input type="color" value="#2b2a33" id="fallback-cl-dark" />
 							</div>
 							<button data-title="reset">
@@ -507,7 +507,7 @@
 									<label
 										for="no-theme-color"
 										class="section-text"
-										data-text="noThemeColourModeTooltip"
+										data-text="ignoreDesignatedThemeColourTooltip"
 									></label>
 								</div>
 							</div>

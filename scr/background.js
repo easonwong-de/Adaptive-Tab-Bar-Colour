@@ -157,7 +157,7 @@ async function getAddonPageColour(url) {
 			if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
 				const colour = pref.getPolicy(addon.id, "ADDON_ID");
 				if (colour) {
-					return colour.value;
+					return rgba(colour.value);
 				} else continue;
 			} else continue;
 		}
