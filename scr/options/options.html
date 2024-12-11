@@ -47,19 +47,33 @@
 					</g>
 				</defs>
 			</svg>
-			<div class="section custom-option">
-				<div class="option-header-input-wrapper warning">
-					<input type="text" class="option-header-input" data-placeholder="URLDomainOrRegex" />
-					<div class="option-header-warning" data-title="warning">
+			<div class="section custom-policy colour-policy">
+				<div class="policy-header"></div>
+				<div></div>
+				<div class="colour-input-wrapper">
+					<input type="text" class="colour-input" value="#333333" />
+					<label class="colour-picker"></label>
+					<input type="color" value="#333333" />
+				</div>
+				<button data-title="delete">
+					<svg viewBox="0 0 24 24">
+						<use xlink:href="#svg-bin" />
+					</svg>
+				</button>
+			</div>
+			<div class="section custom-policy flexible-policy">
+				<div class="policy-header-input-wrapper warning">
+					<input type="text" class="policy-header-input" data-placeholder="URLDomainOrRegex" />
+					<div class="policy-header-warning" data-title="warning">
 						<svg viewBox="0 0 24 24">
 							<use xlink:href="#svg-warning" />
 						</svg>
 					</div>
 				</div>
-				<select class="select-1">
-					<option value="select-1" data-text="specifyAColour" selected></option>
-					<option value="select-2" data-text="useIgnoreThemeColour"></option>
-					<option value="select-3" data-text="pickColourFromElement"></option>
+				<select class="COLOUR">
+					<option value="COLOUR" data-text="specifyAColour" selected></option>
+					<option value="THEME_COLOUR" data-text="useIgnoreThemeColour"></option>
+					<option value="QUERY_SELECTOR" data-text="pickColourFromElement"></option>
 				</select>
 				<div class="colour-input-wrapper">
 					<input type="text" class="colour-input" data-placeholder="anyCSSColour" />
@@ -89,7 +103,7 @@
 				your inconvenience!
 			</p>
 		</div>
-		<div id="settings" class="tab-switch-1">
+		<div id="settings-wrapper" class="tab-switch-1">
 			<div class="tab-switch-wrapper toggle-switch-wrapper">
 				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-1" checked />
 				<label for="tab-switch-1" class="toggle-switch" data-text="themeBuilder"></label>
@@ -400,9 +414,9 @@
 					</div>
 				</div>
 				<div id="tab-2" class="tab">
-					<div id="option-list">
-						<div class="section fixed-option">
-							<div class="option-header" data-text="homepageColourLight"></div>
+					<div id="site-list">
+						<div class="section fixed-policy">
+							<div class="policy-header" data-text="homepageColourLight"></div>
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="homeBackground_light">
 								<input type="text" class="colour-input" value="#ffffff" />
@@ -415,8 +429,8 @@
 								</svg>
 							</button>
 						</div>
-						<div class="section fixed-option">
-							<div class="option-header" data-text="homepageColourDark"></div>
+						<div class="section fixed-policy">
+							<div class="policy-header" data-text="homepageColourDark"></div>
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="homeBackground_dark">
 								<input type="text" class="colour-input" value="#2b2a33" />
@@ -429,8 +443,8 @@
 								</svg>
 							</button>
 						</div>
-						<div class="section fixed-option">
-							<div class="option-header" data-text="fallbackColourLight"></div>
+						<div class="section fixed-policy">
+							<div class="policy-header" data-text="fallbackColourLight"></div>
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="fallbackColour_light">
 								<input type="text" class="colour-input" value="#ffffff" />
@@ -443,8 +457,8 @@
 								</svg>
 							</button>
 						</div>
-						<div class="section fixed-option">
-							<div class="option-header" data-text="fallbackColourDark"></div>
+						<div class="section fixed-policy">
+							<div class="policy-header" data-text="fallbackColourDark"></div>
 							<div></div>
 							<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
 								<input type="text" class="colour-input" value="#2b2a33" />

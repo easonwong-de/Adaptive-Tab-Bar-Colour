@@ -53,7 +53,7 @@ body {
 	padding: 0;
 }
 
-#settings {
+#settings-wrapper {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
@@ -308,9 +308,9 @@ input.toggle-switch:checked + label.toggle-switch:hover {
 	background-color: var(--colour-4);
 }
 
-#settings.tab-switch-1 #tab-1,
-#settings.tab-switch-2 #tab-2,
-#settings.tab-switch-3 #tab-3 {
+#settings-wrapper.tab-switch-1 #tab-1,
+#settings-wrapper.tab-switch-2 #tab-2,
+#settings-wrapper.tab-switch-3 #tab-3 {
 	display: flex;
 }
 
@@ -339,12 +339,12 @@ div.sponsor {
 
 /* Site list tab */
 
-#option-list {
+#site-list {
 	display: flex;
 	flex-direction: column;
 }
 
-#option-list .section {
+#site-list .section {
 	display: grid;
 	grid-template-columns: auto max-content 10rem max-content;
 	border-radius: 0;
@@ -352,31 +352,31 @@ div.sponsor {
 	padding: 0.5rem;
 }
 
-#option-list :is(.section:first-of-type) {
+#site-list :is(.section:first-of-type) {
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
 }
 
-#option-list :is(.section:last-of-type) {
+#site-list :is(.section:last-of-type) {
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
 
-#option-list .section:nth-of-type(even) {
+#site-list .section:nth-of-type(even) {
 	background-color: var(--colour-1-5);
 }
 
-.option-header {
+.policy-header {
 	margin-inline: 0.5rem auto;
 }
 
-.option-header-input-wrapper {
+.policy-header-input-wrapper {
 	position: relative;
 	display: flex;
 	align-items: center;
 }
 
-.option-header-warning {
+.policy-header-warning {
 	display: none;
 	position: absolute;
 	width: 1rem;
@@ -384,12 +384,12 @@ div.sponsor {
 	right: 0.5rem;
 }
 
-.option-header-input-wrapper.warning .option-header-input {
+.policy-header-input-wrapper.warning .policy-header-input {
 	padding-inline-end: 2rem;
 	/* to be fixed */
 }
 
-.option-header-input-wrapper.warning .option-header-warning {
+.policy-header-input-wrapper.warning .policy-header-warning {
 	display: block;
 }
 
@@ -399,9 +399,9 @@ select ~ .qs-input-wrapper {
 	display: none;
 }
 
-select.select-1 ~ .colour-input-wrapper,
-select.select-2 ~ .toggle-switch-wrapper,
-select.select-3 ~ .qs-input-wrapper {
+select.COLOUR ~ .colour-input-wrapper,
+select.THEME_COLOUR ~ .toggle-switch-wrapper,
+select.QUERY_SELECTOR ~ .qs-input-wrapper {
 	display: grid;
 }
 

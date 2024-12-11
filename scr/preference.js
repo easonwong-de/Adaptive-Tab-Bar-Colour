@@ -34,7 +34,7 @@ export default class preference {
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
 		siteList: {
-			/* 0: {
+			/* 1: {
 				headerType: "URL" // ADDON_ID, ABOUT_PAGE (?)
 				header: "www.example.com", // URL, regex, [add-on ID]
 				type: "COLOUR", // THEME_COLOUR, QUERY_SELECTOR
@@ -208,7 +208,7 @@ export default class preference {
 			this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
 			// Re-formatting site list
 			const newSiteList = {};
-			let id = 0;
+			let id = 1;
 			for (const site in this.#prefContent.siteList) {
 				const legacyPolicy = this.#prefContent.siteList[site];
 				if (legacyPolicy === "IGNORE_THEME") {
@@ -356,11 +356,13 @@ export default class preference {
 	/**
 	 * Adds a policy to the site list.
 	 * @param {object} policy The policy to add.
+	 * @returns The ID of the policy.
 	 */
 	addPolicy(policy) {
-		let id = 0;
+		let id = 1;
 		while (this.#prefContent.siteList[id]) id++;
 		this.#prefContent[id] = policy;
+		return id;
 	}
 
 	/**

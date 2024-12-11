@@ -1,147 +1,44 @@
 "use strict";
 
 import preference from "../preference.js";
-import { hex } from "../colour.js";
 import { msg } from "../utility.js";
+import { setColourPolicySectionID, setFlexiblePolicySectionID, setupCheckBox, setupSlider } from "./elements.js";
 
 const pref = new preference();
 
+const settingsWrapper = document.querySelector("#settings-wrapper");
+const loadingWrapper = document.querySelector("#loading-wrapper");
 const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
-tabSwitches.forEach(setupTabSwitch);
+tabSwitches.forEach((tabSwitch) => {
+	tabSwitch.addEventListener("change", () => (settingsWrapper.className = tabSwitch.id));
+});
+
 const checkboxes = document.querySelectorAll("[type='checkbox']");
-checkboxes.forEach(setupCheckBox);
+checkboxes.forEach((checkbox) =>
+	setupCheckBox(checkbox, (key, value) => {
+		pref[key] = value;
+		applySettings();
+	})
+);
+
 const sliders = document.querySelectorAll(".slider");
-sliders.forEach(setupSider);
-const fixedOptions = document.querySelectorAll(".section.fixed-option");
-fixedOptions.forEach(setupFixedOption);
+sliders.forEach((slider) =>
+	setupSlider(slider, (key, value) => {
+		pref[key] = value;
+		applySettings();
+	})
+);
+
+const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
+fixedPolicies.forEach(setupFixedPolicySection);
+
 const addNewRuleButton = document.querySelector("#add-new-rule");
-addNewRuleButton.onclick = addNewRule;
+addNewRuleButton.onclick = addPolicySection;
 
-function setupTabSwitch(tabSwitch) {
-	tabSwitch.addEventListener("change", () => (settings.className = tabSwitch.id));
-}
-
-function setupCheckBox(checkbox) {
-	checkbox.onclick = () => {
-		pref[checkbox.dataset.pref] = checkbox.checked;
-		applySettings();
-	};
-}
-
-function setupSider(slider) {
-	const minusButton = slider.querySelector("button:nth-of-type(1)");
-	const plusButton = slider.querySelector("button:nth-of-type(2)");
-	minusButton.addEventListener("mousedown", () => {
-		if (+slider.dataset.value <= +slider.dataset.min) return;
-		const newValue = +slider.dataset.value - +slider.dataset.step;
-		setSliderValue(slider, newValue);
-		pref[slider.dataset.pref] = newValue;
-		applySettings();
-	});
-	plusButton.addEventListener("mousedown", () => {
-		if (+slider.dataset.value >= +slider.dataset.max) return;
-		const newValue = +slider.dataset.value + +slider.dataset.step;
-		setSliderValue(slider, newValue);
-		pref[slider.dataset.pref] = newValue;
-		applySettings();
-	});
-}
-
-/**
- * @param {HTMLElement} slider
- * @param {number} value
- */
-function setSliderValue(slider, value) {
-	const sliderBody = slider.querySelector(".slider-body");
-	const percentage = (value - +slider.dataset.min) / (+slider.dataset.max - +slider.dataset.min);
-	const scale = slider.dataset.scale;
-	slider.dataset.value = value;
-	sliderBody.textContent = scale ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
-	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
-}
-
-function setupOptionHeaderInput(optionHeaderInputWrapper, initialValue, onChange) {
-	const optionHeaderInput = optionHeaderInputWrapper.querySelector(".option-header-input");
-	optionHeaderInput.value = initialValue;
-	optionHeaderInput.addEventListener("focus", () => optionHeaderInput.select());
-	optionHeaderInput.addEventListener("input", () => {
-		// to-do: warning display, trimming
-		onChange(optionHeaderInput.value);
-	});
-}
-
-/**
- * @param {HTMLElement} colourInputWrapper
- * @param {Function} onChange
- */
-function setupColourInput(colourInputWrapper, initialColour, onChange) {
-	const colourInput = colourInputWrapper.querySelector(".colour-input");
-	const colourPicker = colourInputWrapper.querySelector(".colour-picker");
-	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
-	colourInput.value = initialColour;
-	colourPicker.style.backgroundColor = initialColour;
-	colourPickerInput.value = initialColour;
-	colourInput.addEventListener("focus", () => colourInput.select());
-	colourInput.addEventListener("blur", () => {
-		const colour = hex(colourInput.value);
-		colourInput.value = colour;
-		colourPicker.style.backgroundColor = colour;
-		colourPickerInput.value = colour;
-		onChange(colour);
-	});
-	colourInput.addEventListener("input", () => {
-		const colour = hex(colourInput.value);
-		colourPicker.style.backgroundColor = colour;
-		colourPickerInput.value = colour;
-		onChange(colour);
-	});
-	colourPickerInput.addEventListener("input", () => {
-		const colour = colourPickerInput.value;
-		colourPicker.style.backgroundColor = colour;
-		colourInput.value = colour;
-		onChange(colour);
-	});
-}
-
-/**
- * @param {HTMLElement} colourInputWrapper
- * @param {string} colour
- */
-function setColourInputValue(colourInputWrapper, colour) {
-	const colourInput = colourInputWrapper.querySelector(".colour-input");
-	const colourPicker = colourInputWrapper.querySelector(".colour-picker");
-	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
-	colourInput.value = colour;
-	colourPicker.style.backgroundColor = colour;
-	colourPickerInput.value = colour;
-}
-
-function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelection, onChange) {
-	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
-	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(2)");
-	if (initialSelection === "IGNORE_THEME") ignoreThemeColourRadioButton.checked = true;
-	useThemeColourRadioButton.addEventListener("change", () => {
-		if (useThemeColourRadioButton.checked) onChange("USE_THEME");
-	});
-	ignoreThemeColourRadioButton.addEventListener("change", () => {
-		if (ignoreThemeColourRadioButton.checked) onChange("IGNORE_THEME");
-	});
-}
-
-function setupQSInput(QSInputWrapper, initialQS, onChange) {
-	const QSInput = QSInputWrapper.querySelector("input[type='text']");
-	QSInput.value = initialQS;
-	QSInput.addEventListener("focus", () => QSInput.select());
-	QSInput.addEventListener("input", () => {
-		// Trim
-		onChange(QSInput.value);
-	});
-}
-
-function setupFixedOption(fixedOption) {
-	const colourInputWrapper = fixedOption.querySelector(".colour-input-wrapper");
+function setupFixedPolicySection(fixedPolicySection) {
+	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
-	const resetButton = fixedOption.querySelector("button");
+	const resetButton = fixedPolicySection.querySelector("button");
 	setupColourInput(colourInputWrapper, pref[key], (colour) => {
 		pref[key] = colour;
 		applySettings();
@@ -152,43 +49,81 @@ function setupFixedOption(fixedOption) {
 	};
 }
 
-function setCustomOptionID(customOption, id) {
-	customOption.dataset.id = id;
-	customOption.querySelector(".colour-picker").htmlFor = `colour-picker-${id}`;
-	customOption.querySelector("input[type='color']").id = `colour-picker-${id}`;
-	customOption.querySelector("input.toggle-switch:nth-of-type(1)").name = `theme-colour-${id}`;
-	customOption.querySelector("input.toggle-switch:nth-of-type(1)").id = `use-theme-colour-${id}`;
-	customOption.querySelector("label.toggle-switch:nth-of-type(1)").htmlFor = `use-theme-colour-${id}`;
-	customOption.querySelector("input.toggle-switch:nth-of-type(2)").name = `theme-colour-${id}`;
-	customOption.querySelector("input.toggle-switch:nth-of-type(2)").id = `ignore-theme-colour-${id}`;
-	customOption.querySelector("label.toggle-switch:nth-of-type(2)").htmlFor = `ignore-theme-colour-${id}`;
+function setupColourPolicySection(policySection, id, policy) {
+	const policyHeader = policySection.querySelector(".policy-header");
+	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+	let initialColour = "#000000";
+	setColourPolicySectionID(policySection, id);
+	setupColourInput(colourInputWrapper, initialColour, (newColour) => {});
 }
 
-function setupCustomOption(customOption, id, policy) {
-	const optionHeaderInputWrapper = customOption.querySelector(".option-header-input-wrapper");
-	const select = customOption.querySelector("select");
-	const colourInputWrapper = customOption.querySelector(".colour-input-wrapper");
-	const themeColourSwitch = customOption.querySelector(".theme-colour-switch");
-	const QSInputWrapper = customOption.querySelector(".qs-input-wrapper");
+function setupFlexiblePolicySection(policySection, id, policy) {
+	const policyHeaderInputWrapper = policySection.querySelector(".policy-header-input-wrapper");
+	const select = policySection.querySelector("select");
+	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+	const themeColourSwitch = policySection.querySelector(".theme-colour-switch");
+	const QuerySelectorInputWrapper = policySection.querySelector(".qs-input-wrapper");
 	let initialColour = "#000000";
 	let initialUseThemeColour = true;
-	let initialQS = "div#nav";
-	setCustomOptionID(customOption, id);
-	setupOptionHeaderInput(optionHeaderInputWrapper, policy.header, (newOptionHeader) => {});
-	select.addEventListener("change", () => (select.className = select.value));
-	setupColourInput(colourInputWrapper, initialColour, (newColour) => {});
-	setupThemeColourSwitch(themeColourSwitch, initialUseThemeColour, (newUseThemeColour) => {});
-	setupQSInput(QSInputWrapper, initialQS, (newQS) => {});
+	let initialQuerySelector = "div#nav";
+	if (policy.type === "COLOUR") {
+		initialColour = policy.value;
+		select.className = select.value = "COLOUR";
+	} else if (policy.type === "THEME_COLOUR") {
+		initialUseThemeColour = policy.value;
+		select.className = select.value = "THEME_COLOUR";
+	} else if ((policy.type = "QUERY_SELECTOR")) {
+		initialQuerySelector = policy.value;
+		select.className = select.value = "QUERY_SELECTOR";
+	}
+	select.addEventListener("change", () => {
+		pref.siteList[id].type = select.className = select.value;
+		applySettings();
+	});
+	setFlexiblePolicySectionID(policySection, id);
+	setupPolicyHeaderInput(policyHeaderInputWrapper, policy.header, (newHeader) => {
+		pref.siteList[id].header = newHeader;
+		applySettings();
+	});
+	setupColourInput(colourInputWrapper, initialColour, (newColour) => {
+		pref.siteList[id].value = newColour;
+		applySettings();
+	});
+	setupThemeColourSwitch(themeColourSwitch, initialUseThemeColour, (newUseThemeColour) => {
+		pref.siteList[id].value = newUseThemeColour;
+		applySettings();
+	});
+	setupQuerySelectorInput(QuerySelectorInputWrapper, initialQuerySelector, (newQuerySelector) => {
+		pref.siteList[id].value = newQuerySelector;
+		applySettings();
+	});
 }
 
-function addNewRule() {
-	const templateCustomOption = document.querySelector("#template .custom-option");
-	const listWrapper = document.querySelector("#option-list");
-	const customOption = templateCustomOption.cloneNode(true);
-	listWrapper.appendChild(customOption);
-	let id = 1;
-	while (document.querySelector(`#option-list .custom-option[data-id='${id}']`)) id++;
-	setupCustomOption(customOption, id, "", "#000000");
+async function addPolicySection(
+	id = 0,
+	policy = {
+		headerType: "URL",
+		header: "www.example.com",
+		type: "COLOUR",
+		value: "#000000",
+	}
+) {
+	if (id === 0) {
+		id = pref.addPolicy(policy);
+		await applySettings();
+	}
+	const siteList = document.querySelector("#site-list");
+	if (policy.headerType === "URL") {
+		const templateFlexiblePolicySection = document.querySelector("#template .custom-policy.flexible-policy");
+		const policySection = templateFlexiblePolicySection.cloneNode(true);
+		setupFlexiblePolicySection(policySection, id, policy);
+		siteList.appendChild(policySection);
+	} else if (policy.headerType === "ADDON_ID") {
+		const templateColourPolicySection = document.querySelector("#template .custom-policy.colour-policy");
+		const policySection = templateColourPolicySection.cloneNode(true);
+		setupColourPolicySection(policySection, id, policy);
+		siteList.appendChild(policySection);
+	}
 }
 
 async function updateAllowDarkLightText(nthTry = 0) {
@@ -216,8 +151,8 @@ async function updateOptionsPage() {
 		checkboxes.forEach((checkbox) => (checkbox.checked = pref[checkbox.dataset.pref]));
 		sliders.forEach((slider) => setSliderValue(slider, pref[slider.dataset.pref]));
 		await updateAllowDarkLightText();
-		document.querySelector("#loading-wrapper").hidden = true;
-		document.querySelector("#settings").hidden = false;
+		loadingWrapper.hidden = true;
+		settingsWrapper.hidden = false;
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}

@@ -7,8 +7,8 @@ import { msg } from "../utility.js";
 const pref = new preference();
 
 const body = document.querySelector("body");
-const loading = document.querySelector("#loading-wrapper");
-const settings = document.querySelector("#settings");
+const loadingWrapper = document.querySelector("#loading-wrapper");
+const settingsWrapper = document.querySelector("#settings-wrapper");
 const infoDisplay = document.querySelector("#info-display-wrapper");
 const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
 const checkboxes = document.querySelectorAll("[type='checkbox']");
@@ -176,8 +176,8 @@ async function updatePopup() {
 		await updatePopupColour();
 		await updateAllowDarkLightText();
 		await updatePopupSelection();
-		loading.hidden = true;
-		settings.hidden = false;
+		loadingWrapper.hidden = true;
+		settingsWrapper.hidden = false;
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
