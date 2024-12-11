@@ -54,7 +54,9 @@ label:active {
 .THEME_MISSING > .info-display[name="THEME_MISSING"],
 .THEME_IGNORED > .info-display[name="THEME_IGNORED"],
 .THEME_USED > .info-display[name="THEME_USED"],
-.USING_QS > .info-display[name="USING_QS"],
+.QS_USED > .info-display[name="QS_USED"],
+.QS_FAILED > .info-display[name="QS_FAILED"],
+.QS_ERROR > .info-display[name="QS_ERROR"],
 .COLOUR_SPECIFIED > .info-display[name="COLOUR_SPECIFIED"] {
 	display: block;
 }

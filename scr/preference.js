@@ -1,5 +1,6 @@
 "use strict";
 
+import { hex } from "./colour.js";
 import {
 	default_homeBackground_light,
 	default_homeBackground_dark,
@@ -32,7 +33,14 @@ export default class preference {
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
-		customRule: {},
+		siteList: {
+			/* 0: {
+				headerType: "URL" // ADDON_ID, ABOUT_PAGE (?)
+				header: "www.example.com", // URL, regex, [add-on ID]
+				type: "COLOUR", // THEME_COLOUR, QUERY_SELECTOR
+				value: "#000000", // true, false, "div#nav"
+			}, */
+		},
 		version: [2, 2],
 	};
 
@@ -59,7 +67,7 @@ export default class preference {
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
-		customRule: {},
+		siteList: {},
 		version: [2, 2],
 	};
 
@@ -80,7 +88,7 @@ export default class preference {
 		dark_color: "homeBackground_dark",
 		light_fallback_color: "fallbackColour_light",
 		dark_fallback_color: "fallbackColour_dark",
-		customRule_cs: "customRule",
+		reservedColor_cs: "siteList",
 		last_version: "version",
 	};
 
@@ -108,7 +116,7 @@ export default class preference {
 		homeBackground_dark: "string",
 		fallbackColour_light: "string",
 		fallbackColour_dark: "string",
-		customRule: "object",
+		siteList: "object",
 		version: "object",
 	};
 
@@ -131,11 +139,16 @@ export default class preference {
 	 *
 	 * Ensures compatibility across various versions of saved preferences by converting them to the latest standard format.
 	 * The function adjusts fields as necessary, filling in any missing values to maintain a complete preference structure.
+	 * If the existing preferences date back before v1.7, replaces the old pref with the default pref.
 	 *
 	 * Once executed, the normalised preferences are loaded in the instance and saved to browser storage.
 	 */
 	async normalise() {
 		const storedPref = await browser.storage.local.get();
+		if (!(storedPref["version"] >= [1, 7] || storedPref["last_version"] >= [1, 7])) {
+			await this.reset();
+			return;
+		}
 		for (const key in storedPref) {
 			if (key in this.#prefContent) {
 				this.#prefContent[key] = storedPref[key];
@@ -148,13 +161,38 @@ export default class preference {
 				this.#prefContent[key] = this.#default_prefContent[key];
 			}
 		}
+		// Updating from before v1.7.4
+		// Clears possible empty policies caused by a bug
+		if (this.#prefContent.version < [1, 7, 4]) {
+			delete this.#prefContent.siteList[undefined];
+		}
+		// Updating from before v1.7.5
+		// Converts legacy policies to query selector format
+		if (this.#prefContent.version < [1, 7, 5]) {
+			for (const site in this.#prefContent.siteList) {
+				const legacyPolicy = this.#prefContent.siteList[site];
+				if (typeof legacyPolicy !== "string") {
+					continue;
+				} else if (legacyPolicy.startsWith("TAG_")) {
+					this.#prefContent.siteList[site] = legacyPolicy.replace("TAG_", "QS_");
+				} else if (legacyPolicy.startsWith("CLASS_")) {
+					this.#prefContent.siteList[site] = legacyPolicy.replace("CLASS_", "QS_.");
+				} else if (legacyPolicy.startsWith("ID_")) {
+					this.#prefContent.siteList[site] = legacyPolicy.replace("ID_", "QS_#");
+				} else if (legacyPolicy.startsWith("NAME_")) {
+					this.#prefContent.siteList[site] = `${legacyPolicy.replace("NAME_", "QS_[name='")}']`;
+				} else if (legacyPolicy === "") {
+					delete this.#prefContent.siteList[site];
+				}
+			}
+		}
 		// Updating from before v2.2
-		// Turns on allow dark / light tab bar, dynamic, and no theme colour settings
-		// Now colour offset values are stored in integer
 		if (this.#prefContent.version < [2, 2]) {
+			// Turns on allow dark / light tab bar, dynamic, and no theme colour settings
 			this.#prefContent.allowDarkLight = true;
 			this.#prefContent.dynamic = true;
 			this.#prefContent.noThemeColour = true;
+			// Now colour offset values are stored in integer
 			this.#prefContent.tabbar = x100IfSmallerThan1(this.#prefContent.tabbar);
 			this.#prefContent.tabbarBorder = x100IfSmallerThan1(this.#prefContent.tabbarBorder);
 			this.#prefContent.tabSelected = x100IfSmallerThan1(this.#prefContent.tabSelected);
@@ -168,38 +206,52 @@ export default class preference {
 			this.#prefContent.sidebarBorder = x100IfSmallerThan1(this.#prefContent.sidebarBorder);
 			this.#prefContent.popup = x100IfSmallerThan1(this.#prefContent.popup);
 			this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
-		}
-		// Updating from before v1.7.5
-		// Converts legacy rules to query selector format
-		if (this.#prefContent.version < [1, 7, 5]) {
-			for (const url in this.#prefContent.customRule) {
-				const legacyRule = this.#prefContent.customRule[url];
-				if (legacyRule.startsWith("TAG_")) {
-					this.#prefContent.customRule[url] = legacyRule.replace("TAG_", "QS_");
-				} else if (legacyRule.startsWith("CLASS_")) {
-					this.#prefContent.customRule[url] = legacyRule.replace("CLASS_", "QS_.");
-				} else if (legacyRule.startsWith("ID_")) {
-					this.#prefContent.customRule[url] = legacyRule.replace("ID_", "QS_#");
-				} else if (legacyRule.startsWith("NAME_")) {
-					this.#prefContent.customRule[url] = `${legacyRule.replace("NAME_", "QS_[name='")}']`;
-				} else if (legacyRule === "") {
-					delete this.#prefContent.customRule[url];
+			// Re-formatting site list
+			const newSiteList = {};
+			let id = 0;
+			for (const site in this.#prefContent.siteList) {
+				const legacyPolicy = this.#prefContent.siteList[site];
+				if (legacyPolicy === "IGNORE_THEME") {
+					newSiteList[id] = {
+						headerType: "URL",
+						header: site,
+						type: "THEME_COLOUR",
+						value: false,
+					};
+				} else if (legacyPolicy === "UN_IGNORE_THEME") {
+					newSiteList[id] = {
+						headerType: "URL",
+						header: site,
+						type: "THEME_COLOUR",
+						value: true,
+					};
+				} else if (legacyPolicy.startsWith("QS_")) {
+					newSiteList[id] = {
+						headerType: "URL",
+						header: site,
+						type: "QUERY_SELECTOR",
+						value: legacyPolicy.replace("QS_", ""),
+					};
+				} else if (site.startsWith("Add-on ID: ")) {
+					newSiteList[id] = {
+						headerType: "ADDON_ID",
+						header: site.replace("Add-on ID: ", ""),
+						type: "COLOUR",
+						value: hex(legacyPolicy),
+					};
+				} else {
+					newSiteList[id] = {
+						headerType: "URL",
+						header: site,
+						type: "COLOUR",
+						value: hex(legacyPolicy),
+					};
 				}
+				id++;
 			}
+			this.#prefContent.siteList = newSiteList;
 		}
-		// Updating from before v1.7.4
-		// Clears possible empty reserved colour rules caused by a bug
-		if (this.#prefContent.version < [1, 7, 4]) {
-			delete this.#prefContent.customRule[undefined];
-		}
-		// Updating from before v1.6.4
-		// Corrects the dark home page colour, unless the user has set something different
-		if (
-			this.#prefContent.version < [1, 6, 5] &&
-			this.#prefContent.homeBackground_dark.toUpperCase() === "#1C1B22"
-		) {
-			this.#prefContent.homeBackground_dark = default_homeBackground_dark;
-		}
+		this.#prefContent.version = [2, 2];
 		await this.save();
 	}
 
@@ -207,25 +259,117 @@ export default class preference {
 	 * Resets a single preference if a valid key is specified.
 	 * Resets all preferences if not.
 	 * Saves the preference afterwards.
+	 *
 	 * @param {string | null} key
 	 */
 	async reset(key = null) {
 		if (key in this.#default_prefContent) {
 			this.#prefContent[key] = this.#default_prefContent[key];
 		} else {
-			for (const eachKey in this.#default_prefContent) {
-				this.#prefContent[eachKey] = this.#default_prefContent[eachKey];
+			this.#prefContent = {};
+			for (const key in this.#default_prefContent) {
+				this.#prefContent[key] = this.#default_prefContent[key];
 			}
 		}
 		await this.save();
 	}
-
+	/**
+	 * Loads the preferences from the browser storage to the instance.
+	 */
 	async load() {
 		this.#prefContent = await browser.storage.local.get();
+		console.log("Loaded:", this.#prefContent);
 	}
 
+	/**
+	 * Stores the preferences from the instance to the browser storage.
+	 */
 	async save() {
+		console.log("Saving...", this.#prefContent);
 		await browser.storage.local.set(this.#prefContent);
+	}
+
+	/**
+	 * Gets the policy for a URL / add-on ID from the site list.
+	 * @param {string} site URL or add-on ID.
+	 * @param {string} headerType `URL` (default), or `ADDON_ID`.
+	 */
+	getPolicy(site, headerType = "URL") {
+		let result = null;
+		for (const id in this.#prefContent.siteList) {
+			const policy = this.#prefContent.siteList[id];
+			if (policy.headerType !== headerType) {
+				continue;
+			} else if (policy.header === site) {
+				result = policy;
+				break;
+			} else if (headerType === "URL") {
+				try {
+					if (policy.header === new URL(site).hostname) {
+						result = policy;
+						break;
+					}
+				} catch (error) {}
+				try {
+					if (new RegExp(policy.header).test(site)) {
+						result = policy;
+						break;
+					}
+				} catch (error) {}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Gets the policy ID for a URL / add-on ID from the site list.
+	 * @param {string} site URL or add-on ID.
+	 * @param {string} headerType `URL` (default), or `ADDON_ID`.
+	 */
+	getPolicyID(site, headerType = "URL") {
+		let result = null;
+		for (const id in this.#prefContent.siteList) {
+			const policy = this.#prefContent.siteList[id];
+			if (policy.headerType !== headerType) {
+				continue;
+			} else if (policy.header === site) {
+				result = +id;
+				break;
+			} else if (headerType === "URL") {
+				try {
+					if (policy.header === new URL(site).hostname) {
+						result = +id;
+						break;
+					}
+				} catch (error) {}
+				try {
+					if (new RegExp(policy.header).test(site)) {
+						result = +id;
+						break;
+					}
+				} catch (error) {}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Adds a policy to the site list.
+	 * @param {object} policy The policy to add.
+	 */
+	addPolicy(policy) {
+		let id = 0;
+		while (this.#prefContent.siteList[id]) id++;
+		this.#prefContent[id] = policy;
+	}
+
+	/**
+	 * Removes a policy from the site list.
+	 * @param {number} id The ID of a policy.
+	 */
+	removePolicy(id) {
+		if (typeof id !== "number") return;
+		delete this.#prefContent[id];
 	}
 
 	get allowDarkLight() {
@@ -382,11 +526,11 @@ export default class preference {
 		this.#prefContent.fallbackColour_dark = value;
 	}
 
-	get customRule() {
-		return this.#prefContent.customRule;
+	get siteList() {
+		return this.#prefContent.siteList;
 	}
-	set customRule(value) {
-		this.#prefContent.customRule = value;
+	set siteList(value) {
+		this.#prefContent.siteList = value;
 	}
 
 	get version() {

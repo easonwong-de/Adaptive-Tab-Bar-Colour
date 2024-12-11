@@ -44,9 +44,9 @@ async function getWebPageInfo(tab) {
 	try {
 		const response = await browser.tabs.sendMessage(tab.id, { header: "INFO_REQUEST" });
 		const actions = {
-			THEME_UNIGNORED: "IGNORE_THEME",
-			THEME_USED: "IGNORE_THEME",
-			THEME_IGNORED: "UN_IGNORE_THEME",
+			THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
+			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
+			THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
 		};
 		const reason = response.reason;
 		if (reason in actions) {
@@ -54,7 +54,7 @@ async function getWebPageInfo(tab) {
 				reason: reason,
 				additionalInfo: null,
 				infoAction: async () => {
-					pref.customRule[url.hostname] = actions[reason];
+					pref.addPolicy({ header: url.hostname, ...actions[reason] });
 					await applySettings();
 					await updatePopupSelection();
 				},
@@ -83,7 +83,7 @@ async function getAddonPageInfo(tab) {
 		for (const host of addon.hostPermissions) {
 			if (!(host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2])) {
 				continue;
-			} else if (`Add-on ID: ${addon.id}` in pref.customRule) {
+			} else if (pref.getPolicy(addon.id, "ADDON_ID")) {
 				return {
 					reason: "ADDON_SPECIFIED",
 					additionalInfo: addon.name,
@@ -108,9 +108,14 @@ async function getAddonPageInfo(tab) {
 
 async function specifyColourForAddon(addonID, colour, openOptionsPage = false) {
 	if (colour) {
-		pref.customRule[`Add-on ID: ${addonID}`] = colour;
+		pref.addPolicy({
+			headerType: "ADDON_ID",
+			header: addonID,
+			type: "COLOUR",
+			value: colour,
+		});
 	} else {
-		delete pref.customRule[`Add-on ID: ${addonID}`];
+		pref.removePolicy(pref.getPolicyID(addonID, "ADDON_ID"));
 	}
 	await applySettings();
 	if (openOptionsPage) browser.runtime.openOptionsPage();

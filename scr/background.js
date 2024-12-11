@@ -119,6 +119,9 @@ async function handleMessage(message, sender) {
 	}
 }
 
+/**
+ * @param {string} pathname
+ */
 function getAboutPageColour(pathname) {
 	if (default_aboutPageColour[pathname]?.[current.scheme]) {
 		return rgba(default_aboutPageColour[pathname][current.scheme]);
@@ -129,6 +132,9 @@ function getAboutPageColour(pathname) {
 	}
 }
 
+/**
+ * @param {string} hostname
+ */
 function getProtectedPageColour(hostname) {
 	if (default_protectedPageColour[hostname]?.[current.scheme]) {
 		return rgba(default_protectedPageColour[hostname][current.scheme]);
@@ -139,18 +145,20 @@ function getProtectedPageColour(hostname) {
 	}
 }
 
+/**
+ * @param {string} url
+ */
 async function getAddonPageColour(url) {
 	const uuid = url.split(/\/|\?/)[2];
 	const addonList = await browser.management.getAll();
 	for (const addon of addonList) {
 		if (!(addon.type === "extension" && addon.hostPermissions)) continue;
 		for (const host of addon.hostPermissions) {
-			if (
-				host.startsWith("moz-extension:") &&
-				uuid === host.split(/\/|\?/)[2] &&
-				`Add-on ID: ${addon.id}` in pref.customRule
-			) {
-				return rgba(pref.customRule[`Add-on ID: ${addon.id}`]);
+			if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
+				const colour = pref.getPolicy(addon.id, "ADDON_ID");
+				if (colour) {
+					return colour.value;
+				} else continue;
 			} else continue;
 		}
 	}
@@ -164,32 +172,13 @@ async function getAddonPageColour(url) {
  */
 async function getWebPageColour(tab) {
 	const url = tab.url;
-	let customRule = null;
-	for (const site in pref.customRule) {
-		if (url === site) {
-			customRule = pref.customRule[site];
-			break;
-		}
-		try {
-			if (new URL(url).hostname === site) {
-				customRule = pref.customRule[site];
-				break;
-			}
-		} catch (error) {}
-		try {
-			if (new RegExp(site).test(url)) {
-				customRule = pref.customRule[site];
-				break;
-			}
-		} catch (error) {}
-	}
 	try {
 		const response = await browser.tabs.sendMessage(tab.id, {
 			header: "COLOUR_REQUEST",
 			conf: {
 				dynamic: pref.dynamic,
 				noThemeColour: pref.noThemeColour,
-				customRule: customRule,
+				policy: pref.getPolicy(url),
 			},
 		});
 		return response.colour;
@@ -242,7 +231,7 @@ async function updateTab(tab) {
 	} else if (url.protocol === "moz-extension:") {
 		setFrameColour(tab, await getAddonPageColour(url.href));
 	} else {
-		// To-do: unify custom rules for about / protected pages with those for normal web pages
+		// To-do: unify site lists for about / protected pages with those for normal web pages
 		setFrameColour(tab, await getWebPageColour(tab));
 	}
 }

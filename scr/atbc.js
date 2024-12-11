@@ -15,7 +15,7 @@
 const conf = {
 	dynamic: true,
 	noThemeColour: true,
-	customRule: null,
+	policy: null,
 };
 
 /**
@@ -23,7 +23,7 @@ const conf = {
  *
  * `reason` determines the content shown in the popup infobox & text in the button.
  *
- * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`, `IMAGE_VIEWER`, `PDF_VIEWER`, `ERROR_OCCURRED`, `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON_SPECIFIED`, `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`, `THEME_IGNORED`, `THEME_USED`, `USING_QS`, `COLOUR_SPECIFIED`.
+ * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`, `IMAGE_VIEWER`, `PDF_VIEWER`, `ERROR_OCCURRED`, `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON_SPECIFIED`, `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`, `THEME_IGNORED`, `THEME_USED`, `QS_USED`, `QS_FAILED`, `QS_ERROR`, `COLOUR_SPECIFIED`.
  */
 const response = {
 	reason: null,
@@ -129,7 +129,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	if (message.header === "COLOUR_REQUEST") {
 		conf.dynamic = message.conf.dynamic;
 		conf.noThemeColour = message.conf.noThemeColour;
-		conf.customRule = message.conf.customRule;
+		conf.policy = message.conf.policy;
 		setDynamicUpdate();
 	}
 	findColour();
@@ -144,7 +144,7 @@ function findColour() {
 	response.reason = null;
 	response.additionalInfo = null;
 	response.colour = rgba([0, 0, 0, 0]);
-	if (!findColour_customRule()) findColour_no_customRule();
+	if (!findColour_policy()) findColour_noPolicy();
 	return true;
 }
 
@@ -164,19 +164,19 @@ function findAndSendColour_animation() {
 }
 
 /**
- * Sets `response.colour` with the help of custom rules.
+ * Sets `response.colour` with the help of the custom rule.
  *
  * @returns True if a meta `theme-color` or a custom for the web page can be found.
  */
-function findColour_customRule() {
+function findColour_policy() {
 	if (
-		conf.customRule === null ||
-		(!conf.noThemeColour && conf.customRule === "UN_IGNORE_THEME") ||
-		(conf.noThemeColour && conf.customRule === "IGNORE_THEME")
+		conf.policy === null ||
+		(!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) ||
+		(conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false)
 	) {
 		// Picks colour from the website
 		return false;
-	} else if (conf.noThemeColour && conf.customRule === "UN_IGNORE_THEME") {
+	} else if (conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) {
 		// User prefers igoring theme colour, but sets to use meta theme-color for this host
 		if (findThemeColour()) {
 			response.reason = "THEME_UNIGNORED";
@@ -185,7 +185,7 @@ function findColour_customRule() {
 			response.reason = "THEME_MISSING";
 		}
 		return true;
-	} else if (!conf.noThemeColour && conf.customRule === "IGNORE_THEME") {
+	} else if (!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false) {
 		// User sets to ignore the meta theme-color of this host
 		if (findThemeColour()) {
 			findComputedColour();
@@ -194,15 +194,26 @@ function findColour_customRule() {
 			findComputedColour();
 		}
 		return true;
-	} else if (conf.customRule.startsWith("QS_")) {
-		const querySelector = conf.customRule.replace("QS_", "");
-		response.reason = "USING_QS";
-		response.additionalInfo = querySelector;
-		response.colour = getColourFromElement(document.querySelector(querySelector));
+	} else if (conf.policy.type === "QUERY_SELECTOR") {
+		const querySelector = conf.policy.value;
+		try {
+			const element = document.querySelector(querySelector);
+			response.additionalInfo = querySelector;
+			if (element) {
+				response.colour = getColourFromElement(element);
+				response.reason = "QS_USED";
+			} else {
+				findComputedColour();
+				response.reason = "QS_FAILED";
+			}
+		} catch (error) {
+			findComputedColour();
+			response.reason = "QS_ERROR";
+		}
 	} else {
 		response.reason = "COLOUR_SPECIFIED";
 		response.additionalInfo = null;
-		response.colour = rgba(conf.customRule);
+		response.colour = rgba(conf.policy.value);
 	}
 	// Returns ture if reponse colour is legal and can be sent to background.js
 	return response.colour?.a === 1;
@@ -211,7 +222,7 @@ function findColour_customRule() {
 /**
  * Detects image viewer and text viewer, otherwise looks for meta `theme-color` / computed colour.
  */
-function findColour_no_customRule() {
+function findColour_noPolicy() {
 	if (
 		getComputedStyle(document.documentElement).backgroundImage ==
 		`url("chrome://global/skin/media/imagedoc-darknoise.png")`

@@ -121,7 +121,7 @@ function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelection, onCh
 	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(2)");
 	if (initialSelection === "IGNORE_THEME") ignoreThemeColourRadioButton.checked = true;
 	useThemeColourRadioButton.addEventListener("change", () => {
-		if (useThemeColourRadioButton.checked) onChange("UN_IGNORE_THEME");
+		if (useThemeColourRadioButton.checked) onChange("USE_THEME");
 	});
 	ignoreThemeColourRadioButton.addEventListener("change", () => {
 		if (ignoreThemeColourRadioButton.checked) onChange("IGNORE_THEME");
@@ -133,6 +133,7 @@ function setupQSInput(QSInputWrapper, initialQS, onChange) {
 	QSInput.value = initialQS;
 	QSInput.addEventListener("focus", () => QSInput.select());
 	QSInput.addEventListener("input", () => {
+		// Trim
 		onChange(QSInput.value);
 	});
 }
@@ -163,21 +164,20 @@ function setCustomOptionID(customOption, id) {
 	customOption.querySelector("label.toggle-switch:nth-of-type(2)").htmlFor = `ignore-theme-colour-${id}`;
 }
 
-function setupCustomOption(customOption, id, initialOptionHeader, initialCustomRule) {
+function setupCustomOption(customOption, id, policy) {
 	const optionHeaderInputWrapper = customOption.querySelector(".option-header-input-wrapper");
 	const select = customOption.querySelector("select");
 	const colourInputWrapper = customOption.querySelector(".colour-input-wrapper");
 	const themeColourSwitch = customOption.querySelector(".theme-colour-switch");
 	const QSInputWrapper = customOption.querySelector(".qs-input-wrapper");
-	let optionHeader = initialOptionHeader;
 	let initialColour = "#000000";
-	let initialSelection = "UN_IGNORE_THEME";
+	let initialUseThemeColour = true;
 	let initialQS = "div#nav";
 	setCustomOptionID(customOption, id);
-	setupOptionHeaderInput(optionHeaderInputWrapper, initialOptionHeader, (newOptionHeader) => {});
+	setupOptionHeaderInput(optionHeaderInputWrapper, policy.header, (newOptionHeader) => {});
 	select.addEventListener("change", () => (select.className = select.value));
 	setupColourInput(colourInputWrapper, initialColour, (newColour) => {});
-	setupThemeColourSwitch(themeColourSwitch, initialSelection, (newSelection) => {});
+	setupThemeColourSwitch(themeColourSwitch, initialUseThemeColour, (newUseThemeColour) => {});
 	setupQSInput(QSInputWrapper, initialQS, (newQS) => {});
 }
 
