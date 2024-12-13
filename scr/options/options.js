@@ -3,24 +3,24 @@
 import preference from "../preference.js";
 import { msg } from "../utility.js";
 import {
-	getColourInputValue,
-	getQuerySelectorInputValue,
-	getThemeColourSwitchValue,
+	setupCheckbox,
 	setCheckboxValue,
+	setupSlider,
+	setSliderValue,
+	setupColourInput,
 	setColourInputValue,
+	getColourInputValue,
+	setupPolicyHeaderInput,
+	setPolicyHeaderInputValue,
+	setupThemeColourSwitch,
+	setThemeColourSwitchValue,
+	getThemeColourSwitchValue,
+	setupQuerySelectorInput,
+	setQuerySelectorInputValue,
+	getQuerySelectorInputValue,
 	setColourPolicySectionID,
 	setFlexiblePolicySectionID,
-	setPolicyHeaderInputValue,
-	setQuerySelectorInputValue,
-	setSliderValue,
-	setThemeColourSwitchValue,
-	setupCheckbox,
-	setupColourInput,
-	setupPolicyHeaderInput,
-	setupQuerySelectorInput,
-	setupSlider,
-	setupThemeColourSwitch,
-} from "./elements.js";
+} from "../elements.js";
 
 const pref = new preference();
 
@@ -82,7 +82,11 @@ async function setupColourPolicySection(policySection, id, policy) {
 		pref.siteList[id].value = newColour;
 		applySettings();
 	});
-	deleteButton.onclick = () => removePolicySection(policySection);
+	deleteButton.onclick = () => {
+		pref.removePolicy(policySection.dataset.id);
+		removePolicySection(policySection);
+		applySettings();
+	};
 }
 
 function setupFlexiblePolicySection(policySection, id, policy) {
@@ -224,6 +228,21 @@ async function updateSiteList() {
 	}
 }
 
+function updateCheckboxes() {
+	checkboxes.forEach((checkbox) => {
+		setCheckboxValue(checkbox, pref[checkbox.dataset.pref]);
+	});
+}
+
+function updateSliders() {
+	sliders.forEach((slider) => {
+		setSliderValue(slider, pref[slider.dataset.pref]);
+	});
+}
+
+/**
+ * @param {number} nthTry
+ */
 async function updateAllowDarkLightText(nthTry = 0) {
 	if (nthTry > 10) return;
 	try {
@@ -246,10 +265,12 @@ async function updateAllowDarkLightText(nthTry = 0) {
 async function updateOptionsPage() {
 	await pref.load();
 	if (pref.valid()) {
-		checkboxes.forEach((checkbox) => setCheckboxValue(checkbox, pref[checkbox.dataset.pref]));
-		sliders.forEach((slider) => setSliderValue(slider, pref[slider.dataset.pref]));
+		if (!document.hasFocus()) {
+			updateCheckboxes();
+			updateSliders();
+			await updateSiteList();
+		}
 		await updateAllowDarkLightText();
-		await updateSiteList();
 		loadingWrapper.hidden = true;
 		settingsWrapper.hidden = false;
 	} else {

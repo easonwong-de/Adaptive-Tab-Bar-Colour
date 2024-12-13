@@ -8,34 +8,6 @@ import {
 	default_fallbackColour_dark,
 } from "./default_values.js";
 
-const legacyPref_v2_1 = {
-	custom: true,
-	dark_color: "#1d1d1d",
-	dark_fallback_color: "#1d1d1d",
-	dynamic: true,
-	force: false,
-	last_version: [2, 1],
-	light_color: "#ffffff",
-	light_fallback_color: "#FFFFFF",
-	no_theme_color: true,
-	popup_border_color: 0.05,
-	popup_color: 0.05,
-	reservedColor_cs: {
-		"developer.mozilla.org": "IGNORE_THEME",
-		"mail.google.com": "QS_div.wl",
-		"open.spotify.com": "#000000",
-	},
-	scheme: "system",
-	separator_opacity: 0,
-	sidebar_border_color: 0.05,
-	sidebar_color: 0.05,
-	tab_selected_color: 0.1,
-	tabbar_color: 0,
-	toolbar_color: 0,
-	toolbar_field_color: 0.05,
-	toolbar_field_focus_color: 0.05,
-};
-
 export default class preference {
 	/** The content of the preference */
 	#prefContent = {
@@ -165,9 +137,7 @@ export default class preference {
 	 * Once executed, the normalised preferences are loaded in the instance and saved to browser storage.
 	 */
 	async normalise() {
-		// Testing
-		// const storedPref = await browser.storage.local.get();
-		const storedPref = legacyPref_v2_1;
+		const storedPref = await browser.storage.local.get();
 		if (!(storedPref["version"] >= [1, 7] || storedPref["last_version"] >= [1, 7])) {
 			this.reset();
 			await this.save();
@@ -280,22 +250,6 @@ export default class preference {
 	}
 
 	/**
-	 * Resets a single preference if a valid key is specified. Resets all preferences if the key is not specified.
-	 *
-	 * @param {string | null} key
-	 */
-	reset(key = null) {
-		if (key in this.#default_prefContent) {
-			this.#prefContent[key] = this.#default_prefContent[key];
-		} else {
-			this.#prefContent = {};
-			for (const key in this.#default_prefContent) {
-				this.#prefContent[key] = this.#default_prefContent[key];
-			}
-		}
-	}
-
-	/**
 	 * Gets the policy for a URL / add-on ID from the site list.
 	 * @param {string} site URL or add-on ID.
 	 * @param {string} headerType `URL` (default), or `ADDON_ID`.
@@ -373,11 +327,26 @@ export default class preference {
 
 	/**
 	 * Removes a policy from the site list.
-	 * @param {number} id The ID of a policy.
+	 * @param {number | string} id The ID of a policy.
 	 */
 	removePolicy(id) {
-		if (typeof id !== "number") return;
 		delete this.#prefContent.siteList[id];
+	}
+
+	/**
+	 * Resets a single preference if a valid key is specified. Resets all preferences if the key is not specified.
+	 *
+	 * @param {string | null} key
+	 */
+	reset(key = null) {
+		if (key in this.#default_prefContent) {
+			this.#prefContent[key] = this.#default_prefContent[key];
+		} else {
+			this.#prefContent = {};
+			for (const key in this.#default_prefContent) {
+				this.#prefContent[key] = this.#default_prefContent[key];
+			}
+		}
 	}
 
 	/**

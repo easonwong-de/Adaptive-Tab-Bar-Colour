@@ -6,6 +6,27 @@
 	</head>
 
 	<body class="dark">
+		<div id="template">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<defs>
+					<g id="svg-add">
+						<path
+							d="M12 2V4M12 20V22M4 12H2M6.31412 6.31412L4.8999 4.8999M17.6859 6.31412L19.1001 4.8999M6.31412 17.69L4.8999 19.1042M17.6859 17.69L19.1001 19.1042M22 12H20M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"
+						/>
+					</g>
+					<g id="svg-minus">
+						<path
+							d="M12 3V5M5.31412 7.31412L3.8999 5.8999M18.6858 7.31412L20.1 5.8999M6 15C6 11.6863 8.68629 9 12 9C15.3137 9 18 11.6863 18 15M22 15H2M19 19H5"
+						/>
+					</g>
+					<g id="svg-info">
+						<path
+							d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+						/>
+					</g>
+				</defs>
+			</svg>
+		</div>
 		<div id="loading-wrapper">
 			<div id="loading" data-text="loading">Loading…</div>
 			<p id="reinstall-tip" data-text="reinstallTip">
@@ -14,125 +35,364 @@
 			</p>
 		</div>
 		<div id="settings-wrapper" hidden="true">
-			<div>
-				<div id="info-display-wrapper">
-					<div class="info-display" name="PROTECTED_PAGE">
-						<div data-text="pageIsProtected"></div>
+			<div id="info-display-wrapper">
+				<svg viewBox="0 0 24 24">
+					<use xlink:href="#svg-info" />
+				</svg>
+				<div class="info-display" name="PROTECTED_PAGE">
+					<div data-text="pageIsProtected"></div>
+				</div>
+				<div class="info-display" name="HOME_PAGE">
+					<div data-text="colourForHomePage"></div>
+				</div>
+				<div class="info-display" name="TEXT_VIEWER">
+					<div data-text="colourForPlainTextViewer"></div>
+				</div>
+				<div class="info-display" name="IMAGE_VIEWER">
+					<div data-text="usingImageViewer"></div>
+				</div>
+				<div class="info-display" name="PDF_VIEWER">
+					<div data-text="colourForPDFViewer"></div>
+				</div>
+				<div class="info-display" name="ERROR_OCCURRED">
+					<div data-text="errorOccured"></div>
+				</div>
+				<div class="info-display" name="FALLBACK_COLOUR">
+					<div data-text="usingFallbackColour"></div>
+				</div>
+				<div class="info-display" name="COLOUR_PICKED">
+					<div data-text="colourPickedFromWebpage"></div>
+				</div>
+				<div class="info-display" name="ADDON_SPECIFIED">
+					<div data-text="useDefaultColourForAddon"></div>
+					<div class="additional-info"></div>
+					<div data-text="useDefaultColourForAddonEnd"></div>
+					<button
+						class="info-action"
+						data-title="useDefaultColourForAddonTitle"
+						data-text="useDefaultColourForAddonButton"
+					></button>
+				</div>
+				<div class="info-display" name="ADDON_RECOM">
+					<div data-text="useRecommendedColourForAddon"></div>
+					<div class="additional-info"></div>
+					<div data-text="useRecommendedColourForAddonEnd"></div>
+					<button
+						class="info-action"
+						data-title="useRecommendedColourForAddonTitle"
+						data-text="useRecommendedColourForAddonButton"
+					></button>
+				</div>
+				<div class="info-display" name="ADDON_DEFAULT">
+					<div data-text="specifyColourForAddon"></div>
+					<div class="additional-info"></div>
+					<div data-text="specifyColourForAddonEnd"></div>
+					<button
+						class="info-action"
+						data-title="specifyColourForAddonTitle"
+						data-text="specifyColourForAddonButton"
+					></button>
+				</div>
+				<div class="info-display" name="THEME_UNIGNORED">
+					<div data-text="themeColourIsUnignored"></div>
+					<button
+						class="info-action"
+						data-title="ignoreThemeColourTitle"
+						data-text="ignoreThemeColourButton"
+					></button>
+				</div>
+				<div class="info-display" name="THEME_MISSING">
+					<div data-text="themeColourNotFound"></div>
+				</div>
+				<div class="info-display" name="THEME_IGNORED">
+					<div data-text="themeColourIsIgnored"></div>
+					<button
+						class="info-action"
+						data-title="useThemeColourTitle"
+						data-text="useThemeColourButton"
+					></button>
+				</div>
+				<div class="info-display" name="THEME_USED">
+					<div data-text="usingThemeColour"></div>
+					<button
+						class="info-action"
+						data-title="ignoreThemeColourTitle"
+						data-text="ignoreThemeColourButton"
+					></button>
+				</div>
+				<div class="info-display" name="QS_USED">
+					<div data-text="colourIsPickedFrom"></div>
+					<div class="additional-info"></div>
+					<div data-text="colourIsPickedFromEnd"></div>
+				</div>
+				<div class="info-display" name="QS_FAILED">
+					<div data-text="cannotFindElement"></div>
+					<div class="additional-info"></div>
+					<div data-text="cannotFindElementEnd"></div>
+				</div>
+				<div class="info-display" name="QS_ERROR">
+					<div data-text="errorOccuredLocatingElement"></div>
+					<div class="additional-info"></div>
+					<div data-text="errorOccuredLocatingElementEnd"></div>
+				</div>
+				<div class="info-display" name="COLOUR_SPECIFIED">
+					<div data-text="colourIsSpecified"></div>
+				</div>
+			</div>
+			<div class="section-group-title" data-text="themeBuilder"></div>
+			<div class="section-group">
+				<div class="section">
+					<div class="section-title" data-text="selectedTab"></div>
+					<div class="slider" data-pref="tabSelected" data-min="0" data-max="50" data-step="5" data-value="0">
+						<div class="slider-title" data-text="background"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
 					</div>
-					<div class="info-display" name="HOME_PAGE">
-						<div data-text="colourForHomePage"></div>
-					</div>
-					<div class="info-display" name="TEXT_VIEWER">
-						<div data-text="colourForPlainTextViewer"></div>
-					</div>
-					<div class="info-display" name="IMAGE_VIEWER">
-						<div data-text="usingImageViewer"></div>
-					</div>
-					<div class="info-display" name="PDF_VIEWER">
-						<div data-text="colourForPDFViewer"></div>
-					</div>
-					<div class="info-display" name="ERROR_OCCURRED">
-						<div data-text="errorOccured"></div>
-					</div>
-					<div class="info-display" name="FALLBACK_COLOUR">
-						<div data-text="usingFallbackColour"></div>
-					</div>
-					<div class="info-display" name="COLOUR_PICKED">
-						<div data-text="colourPickedFromWebpage"></div>
-					</div>
-					<div class="info-display" name="ADDON_SPECIFIED">
-						<div data-text="useDefaultColourForAddon"></div>
-						<div class="additional-info"></div>
-						<div data-text="useDefaultColourForAddonEnd"></div>
-						<label
-							class="info-action"
-							data-title="useDefaultColourForAddonTitle"
-							data-text="useDefaultColourForAddonButton"
-						></label>
-					</div>
-					<div class="info-display" name="ADDON_RECOM">
-						<div data-text="useRecommendedColourForAddon"></div>
-						<div class="additional-info"></div>
-						<div data-text="useRecommendedColourForAddonEnd"></div>
-						<label
-							class="info-action"
-							data-title="useRecommendedColourForAddonTitle"
-							data-text="useRecommendedColourForAddonButton"
-						></label>
-					</div>
-					<div class="info-display" name="ADDON_DEFAULT">
-						<div data-text="specifyColourForAddon"></div>
-						<div class="additional-info"></div>
-						<div data-text="specifyColourForAddonEnd"></div>
-						<label
-							class="info-action"
-							data-title="specifyColourForAddonTitle"
-							data-text="specifyColourForAddonButton"
-						></label>
-					</div>
-					<div class="info-display" name="THEME_UNIGNORED">
-						<div data-text="themeColourIsUnignored"></div>
-						<label
-							class="info-action"
-							data-title="ignoreThemeColourTitle"
-							data-text="ignoreThemeColourButton"
-						></label>
-					</div>
-					<div class="info-display" name="THEME_MISSING">
-						<div data-text="themeColourNotFound"></div>
-					</div>
-					<div class="info-display" name="THEME_IGNORED">
-						<div data-text="themeColourIsIgnored"></div>
-						<label
-							class="info-action"
-							data-title="useThemeColourTitle"
-							data-text="useThemeColourButton"
-						></label>
-					</div>
-					<div class="info-display" name="THEME_USED">
-						<div data-text="usingThemeColour"></div>
-						<label
-							class="info-action"
-							data-title="ignoreThemeColourTitle"
-							data-text="ignoreThemeColourButton"
-						></label>
-					</div>
-					<div class="info-display" name="QS_USED">
-						<div data-text="colourIsPickedFrom"></div>
-						<div class="additional-info"></div>
-						<div data-text="colourIsPickedFromEnd"></div>
-					</div>
-					<div class="info-display" name="QS_FAILED">
-						<div data-text="cannotFindElement"></div>
-						<div class="additional-info"></div>
-						<div data-text="cannotFindElementEnd"></div>
-					</div>
-					<div class="info-display" name="QS_ERROR">
-						<div data-text="errorOccuredLocatingElement"></div>
-						<div class="additional-info"></div>
-						<div data-text="errorOccuredLocatingElementEnd"></div>
-					</div>
-					<div class="info-display" name="COLOUR_SPECIFIED">
-						<div data-text="colourIsSpecified"></div>
+					<div
+						class="slider"
+						data-pref="tabSelectedBorder"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="border"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
 					</div>
 				</div>
-				<hr />
-				<label for="allow-dark-light" data-title="forceModeTooltip_light">
-					<input id="allow-dark-light" type="checkbox" name="allowDarkLight" />
-					<span id="allow-dark-light-caption" data-text="allowLightTabBar"></span>
-				</label>
-				<label for="dynamic" data-title="dynamicModeTooltip">
-					<input id="dynamic" type="checkbox" name="dynamic" />
-					<span data-text="dynamicColourUpdate"></span>
-				</label>
-				<label for="no-theme-color" data-title="ignoreDesignatedThemeColourTooltip">
-					<input id="no-theme-color" type="checkbox" name="noThemeColour" />
-					<span data-text="ignoreDesignatedThemeColour"></span>
-				</label>
-				<hr />
-				<label id="custom-popup" data-text="moreSettings" data-title="moreSettingsTooltip"></label>
+				<div class="section">
+					<div class="section-title" data-text="tabBar"></div>
+					<div class="slider" data-pref="tabbar" data-min="0" data-max="50" data-step="5" data-value="0">
+						<div class="slider-title" data-text="background"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+					<div
+						class="slider"
+						data-pref="tabbarBorder"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="border"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+				</div>
+				<div class="section">
+					<div class="section-title" data-text="popUp"></div>
+					<div class="slider" data-pref="popup" data-min="0" data-max="50" data-step="5" data-value="0">
+						<div class="slider-title" data-text="background"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+					<div class="slider" data-pref="popupBorder" data-min="0" data-max="50" data-step="5" data-value="0">
+						<div class="slider-title" data-text="border"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+				</div>
+				<div class="section">
+					<div class="section-title" data-text="URLBar"></div>
+					<div
+						class="slider"
+						data-pref="toolbarField"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="background"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+					<div
+						class="slider"
+						data-pref="toolbarFieldOnFocus"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="backgroundOnFocus"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+					<div
+						class="slider"
+						data-pref="toolbarFieldBorder"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="border"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+				</div>
+				<div class="section">
+					<div class="section-title" data-text="toolbar"></div>
+					<div class="slider" data-pref="toolbar" data-min="0" data-max="50" data-step="5" data-value="0">
+						<div class="slider-title" data-text="background"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+					<div
+						class="slider"
+						data-pref="toolbarBorder"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="border"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+				</div>
+				<div class="section">
+					<div class="section-title" data-text="sidebar"></div>
+					<div class="slider" data-pref="sidebar" data-min="0" data-max="50" data-step="5" data-value="0">
+						<div class="slider-title" data-text="background"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+					<div
+						class="slider"
+						data-pref="sidebarBorder"
+						data-min="0"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
+						<div class="slider-title" data-text="border"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-minus" />
+							</svg>
+						</button>
+						<div class="slider-body"></div>
+						<button>
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-add" />
+							</svg>
+						</button>
+					</div>
+				</div>
 			</div>
+			<button id="custom-popup" data-text="moreSettings" data-title="moreSettingsTooltip"></button>
 		</div>
-		<script type="module" src="./popup.js"></script>
+		<script defer type="module" src="./popup.js"></script>
 	</body>
 </html>

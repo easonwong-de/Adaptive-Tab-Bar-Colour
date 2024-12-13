@@ -71,7 +71,6 @@ const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_anima
  */
 function setDynamicUpdate() {
 	if (conf.dynamic) {
-		document.addEventListener("pageshow", findAndSendColour);
 		document.addEventListener("click", findAndSendColour_debounce);
 		document.addEventListener("resize", findAndSendColour_debounce);
 		document.addEventListener("scroll", findAndSendColour_debounce);
@@ -81,7 +80,6 @@ function setDynamicUpdate() {
 		document.addEventListener("animationend", findAndSendColour_animation_debounce);
 		document.addEventListener("animationcancel", findAndSendColour_animation_debounce);
 	} else {
-		document.removeEventListener("pageshow", findAndSendColour);
 		document.removeEventListener("click", findAndSendColour_debounce);
 		document.removeEventListener("resize", findAndSendColour_debounce);
 		document.removeEventListener("scroll", findAndSendColour_debounce);
@@ -108,17 +106,16 @@ onDarkReaderChange.observe(document.documentElement, {
 // Detects style injections & `meta[name=theme-color]` being added or altered
 const onStyleInjection = new MutationObserver((mutations) => {
 	mutations.forEach((mutation) => {
-		if (
-			(mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "STYLE") ||
-			(mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName === "STYLE")
-		) {
+		if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "STYLE") {
+			findAndSendColour();
+		} else if (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName === "STYLE") {
 			findAndSendColour();
 		} else if (
 			mutation.addedNodes.length > 0 &&
 			mutation.addedNodes[0].nodeName === "META" &&
 			mutation.addedNodes[0].name === "theme-color"
 		) {
-			onThemeColourChange.observe(document.querySelector("meta[name=theme-color]"), { attributes: true });
+			onThemeColourChange.observe(mutation.addedNodes[0], { attributes: true });
 		}
 	});
 });

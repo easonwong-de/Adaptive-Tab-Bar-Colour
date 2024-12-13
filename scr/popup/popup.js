@@ -1,43 +1,26 @@
 "use strict";
 
 import { recommendedColour_addon, default_protectedPageColour } from "../default_values.js";
+import { setSliderValue, setupSlider } from "../elements.js";
 import preference from "../preference.js";
 import { msg } from "../utility.js";
 
 const pref = new preference();
 
-const body = document.querySelector("body");
 const loadingWrapper = document.querySelector("#loading-wrapper");
 const settingsWrapper = document.querySelector("#settings-wrapper");
 const infoDisplay = document.querySelector("#info-display-wrapper");
-const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
-const checkboxes = document.querySelectorAll("[type='checkbox']");
+
 const moreCustomButton = document.querySelector("#custom-popup");
-
-checkboxes.forEach((checkbox) => {
-	checkbox.onclick = async () => {
-		pref[checkbox.name] = checkbox.checked;
-		await applySettings();
-	};
-});
-
 moreCustomButton.onclick = () => browser.runtime.openOptionsPage();
 
-/**
- * Changes the content shown in info display panel.
- *
- * @param {Object} options Options to configure the info display panel.
- * @param {string} options.reason Determines which page to show on the panel by setting the class name of the info display.
- * @param {string} [options.additionalInfo=null] Additional information to display on the panel.
- * @param {Function} [options.infoAction=null] The function called by the `.info-action` button being clicked.
- */
-function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
-	infoDisplay.className = reason;
-	const additionalInfoDisplay = infoDisplay.querySelector(`[name='${reason}'] .additional-info`);
-	const infoActionButton = infoDisplay.querySelector(`[name='${reason}'] .info-action`);
-	if (additionalInfo) additionalInfoDisplay.textContent = additionalInfo;
-	if (infoAction) infoActionButton.onclick = infoAction;
-}
+const sliders = document.querySelectorAll(".slider");
+sliders.forEach((slider) =>
+	setupSlider(slider, (key, value) => {
+		pref[key] = value;
+		applySettings();
+	})
+);
 
 /**
  * @param {tabs.Tab} tab
@@ -132,6 +115,28 @@ async function specifyColourForAddon(addonID, colourHex, openOptionsPage = false
 	if (openOptionsPage) browser.runtime.openOptionsPage();
 }
 
+function updateSliders() {
+	sliders.forEach((slider) => {
+		setSliderValue(slider, pref[slider.dataset.pref]);
+	});
+}
+
+/**
+ * Changes the content shown in info display panel.
+ *
+ * @param {Object} options Options to configure the info display panel.
+ * @param {string} options.reason Determines which page to show on the panel by setting the class name of the info display.
+ * @param {string | null} options.additionalInfo Additional information to display on the panel.
+ * @param {function | null} options.infoAction The function called by the `.info-action` button being clicked.
+ */
+function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
+	infoDisplay.className = reason;
+	const additionalInfoDisplay = infoDisplay.querySelector(`[name='${reason}'] .additional-info`);
+	const infoActionButton = infoDisplay.querySelector(`[name='${reason}'] .info-action`);
+	if (additionalInfo) additionalInfoDisplay.textContent = additionalInfo;
+	if (infoAction) infoActionButton.onclick = infoAction;
+}
+
 async function updateInfoDisplay() {
 	const tabsOnCurrentWindow = await browser.tabs.query({ active: true, status: "complete", currentWindow: true });
 	const tab = tabsOnCurrentWindow[0];
@@ -154,27 +159,9 @@ async function updateInfoDisplay() {
 }
 
 async function updatePopupColour() {
+	const body = document.querySelector("body");
 	const theme = await browser.theme.getCurrent();
 	body.style.backgroundColor = theme["colors"]["popup"];
-	body.style.color = theme["colors"]["popup_text"];
-}
-
-async function updateAllowDarkLightText() {
-	const scheme = await browser.runtime.sendMessage({ header: "SCHEME_REQUEST" });
-	if (scheme === "light") {
-		allowDarkLightCheckboxCaption.textContent = msg("allowDarkTabBar");
-		allowDarkLightCheckboxCaption.parentElement.title = msg("allowDarkTabBarTooltip");
-	} else {
-		allowDarkLightCheckboxCaption.textContent = msg("allowLightTabBar");
-		allowDarkLightCheckboxCaption.parentElement.title = msg("allowLightTabBarTooltip");
-	}
-}
-
-/**
- * Loads all prefs.
- */
-async function updatePopupSelection() {
-	checkboxes.forEach((checkbox) => (checkbox.checked = pref[checkbox.name]));
 }
 
 /**
@@ -183,10 +170,9 @@ async function updatePopupSelection() {
 async function updatePopup() {
 	await pref.load();
 	if (pref.valid()) {
+		updateSliders();
 		await updateInfoDisplay();
 		await updatePopupColour();
-		await updateAllowDarkLightText();
-		await updatePopupSelection();
 		loadingWrapper.hidden = true;
 		settingsWrapper.hidden = false;
 	} else {

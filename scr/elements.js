@@ -1,3 +1,5 @@
+"use strict";
+
 import { hex } from "../colour.js";
 
 /**
@@ -156,7 +158,7 @@ export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelectio
 
 /**
  * @param {HTMLElement} themeColourSwitchWrapper
- * @param {boolean} value 
+ * @param {boolean} value
  */
 export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
 	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
@@ -190,7 +192,7 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
 
 /**
  * @param {HTMLElement} QuerySelectorInputWrapper
- * @param {string} value 
+ * @param {string} value
  */
 export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
 	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
