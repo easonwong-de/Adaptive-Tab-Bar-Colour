@@ -1,45 +1,33 @@
-<b>Was macht das Add-on?</b>
+<b>Was macht dieses Add-on?</b>
 
-Wenn Sie Tabs öffnen, schließen oder wechseln, ändert dieses Add-on das Theme Ihres Firefox-Browsers, um die Farbe der aktuellen Website anzupassen - ähnlich wie bei macOS Safari, das seine Tab-Leiste einfärbt.
+Während Sie im Web surfen, passt dieses Add-on das Theme von Firefox an das Erscheinungsbild der Website an, die Sie gerade ansehen – ähnlich wie macOS Safari die Tableiste einfärbt.
 
+<br><b>Funktioniert gut mit:</b>
 
-<b>Kompatibilität</b>
-
-Dieses Add-on wurde speziell programmiert, um gut mit einigen bekannten Webseiten-Styling-Add-ons zusammenzuarbeiten.
 <ol>
 	<li><a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/stylish/">Stylish</a></li>
-</ol>
-
-
-<b>Inkompatibilität</b>
-
-Dieses Add-on übernimmt die Kontrolle über die Farben und das Farbschema der Browserschnittstelle. Es ist nicht kompatibel mit Add-ons, die Änderungen daran vornehmen.
-<ol>
-	<li>Firefox unter <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">Version-112.0</a> (veröffentlicht im April 2023)</li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/midnight-lizard-quantum/">Midnight Lizard</a></li>
 </ol>
 
+<br><b>Unvereinbar mit:</b>
 
-<b>Sicherheitswarnung</b>
-
-Vorsicht vor schädlicher Web-UI: Bitte unterscheiden Sie zwischen der Browser-Benutzeroberfläche und der Web-UI. Weitere Informationen finden Sie in <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Kredit an <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)
-
-
-<b>Für CSS-Theme-Liebhaber</b>
-
-Ein CSS-Theme kann mit <abbr title="Anpassende Tableistenfarbe">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Hier</a> ist ein Beispiel für ein mit <abbr title="Anpassende Tableistenfarbe">ATBC</abbr> kompatibles CSS-Theme.
-
-
-<b>Bekannte Probleme</b>
 <ol>
-	<li>„about:devtools-toolbox“ hat möglicherweise nicht das korrekte Farbschema.</li>
+	<li>Firefox-Versionen älter als <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (veröffentlicht im April 2023)</li> 
+	<li><a href="https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/">Adaptive Theme Creator</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
+	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
+	<li>und alle anderen Add-ons, die das Firefox-Theme ändern</li>
 </ol>
 
+<br><b>Wenn Sie ein CSS-Theme verwenden:</b>
 
-Sie sind herzlich eingeladen, diesem Projekt auf GitHub einen Stern zu geben: https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour
+Ein CSS-Theme kann mit <abbr title="Adaptive Tab Bar Colour">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Dieses</a> ist ein Beispiel für ein <abbr title="Adaptive Tab Bar Colour">ATBC</abbr>-kompatibles CSS-Theme.
+
+<br><b>Sicherheitserinnerung:</b>
+
+Achten Sie auf bösartige Web-UIs: Bitte unterscheiden Sie zwischen der Browser-Oberfläche und der Web-Oberfläche. Siehe <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Dank an <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)
+
+<br>Geben Sie diesem Projekt gerne einen Stern auf GitHub: <a href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour">https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour</a>

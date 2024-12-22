@@ -6,11 +6,13 @@
 
 # Adaptive Tab Bar Colour
 
-Changes the colour of Firefox UI to match the website’s appearance.
+Changes the colour of Firefox theme to match the website’s appearance.
 
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
 	<img src="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true" width="178" height="48">
 </a>
+
+<br>
 
 ## What Does the Add-on Do?
 
@@ -21,6 +23,8 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 <img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="80%">  
 <img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="80%">
 
+<br>
+
 ## Works Well With:
 
 <ol>
@@ -29,6 +33,8 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
 </ol>
+
+<br>
 
 ## Incompatible With:
 
@@ -41,11 +47,15 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 	<li>and any other add-on that changes the Firefox theme</li>
 </ol>
 
+<br>
+
 ## If You’re Using a CSS Theme:
 
 A CSS theme can work with [ATBC](## "Adaptive Tab Bar Colour"), when system colour variables are used. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">This</a> is an example of an [ATBC](## "Adaptive Tab Bar Colour")-compatible CSS theme.
 
 <img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png" width="45%"><img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png" width="45%">
+
+<br>
 
 ## Safety Reminder:
 
