@@ -15,7 +15,7 @@
 const conf = {
 	dynamic: true,
 	noThemeColour: true,
-	policy: null,
+	policy: undefined,
 };
 
 /**
@@ -41,10 +41,10 @@ function addDebounce(action) {
 	const timeoutMs = 250;
 	return () => {
 		const currentTime = Date.now();
-		if (debounceTimeoutID) {
+		if (debounceTimeoutId) {
 			// Clear pending function
-			clearTimeout(debounceTimeoutID);
-			debounceTimeoutID = null;
+			clearTimeout(debounceTimeoutId);
+			debounceTimeoutId = null;
 		}
 		if (currentTime - timeoutMs > debouncePrevRun) {
 			// No timeout => call the function right away
@@ -52,9 +52,9 @@ function addDebounce(action) {
 			action();
 		} else {
 			// Blocked by timeout => delay the function call
-			debounceTimeoutID = setTimeout(() => {
+			debounceTimeoutId = setTimeout(() => {
 				debouncePrevRun = Date.now();
-				debounceTimeoutID = null;
+				debounceTimeoutId = null;
 				action();
 			}, timeoutMs - (currentTime - debouncePrevRun));
 		}
@@ -62,7 +62,7 @@ function addDebounce(action) {
 }
 
 var debouncePrevRun = 0;
-var debounceTimeoutID = null;
+var debounceTimeoutId = null;
 const findAndSendColour_debounce = addDebounce(findAndSendColour);
 const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_animation);
 
@@ -167,7 +167,7 @@ function findAndSendColour_animation() {
  */
 function findColour_policy() {
 	if (
-		conf.policy === null ||
+		!conf.policy ||
 		(!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) ||
 		(conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false)
 	) {

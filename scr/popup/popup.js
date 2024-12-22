@@ -96,20 +96,20 @@ async function getAddonPageInfo(tab) {
 }
 
 /**
- * @param {string} addonID
+ * @param {string} addonId
  * @param {string} colourHex
  * @param {boolean} openOptionsPage
  */
-async function specifyColourForAddon(addonID, colourHex, openOptionsPage = false) {
+async function specifyColourForAddon(addonId, colourHex, openOptionsPage = false) {
 	if (colourHex) {
 		pref.addPolicy({
 			headerType: "ADDON_ID",
-			header: addonID,
+			header: addonId,
 			type: "COLOUR",
 			value: colourHex,
 		});
 	} else {
-		pref.removePolicy(pref.getPolicyID(addonID, "ADDON_ID"));
+		pref.removePolicy(pref.getPolicyId(addonId, "ADDON_ID"));
 	}
 	await applySettings();
 	if (openOptionsPage) browser.runtime.openOptionsPage();

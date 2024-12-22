@@ -43,7 +43,10 @@ export const default_protectedPageColour = Object.freeze({
 
 /**
  * Recommended colours for Add-ons' built-in pages.
+ * 
  * Contributions are welcomed.
+ * 
+ * @todo Adds light / dark attributes.
  */
 export const recommendedColour_addon = Object.freeze({
 	"adguardadblocker@adguard.com": "#131313",

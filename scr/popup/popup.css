@@ -130,11 +130,12 @@ hr {
 	background-color: var(--transparent-3);
 }
 
-.additional-info {
+.info-display .additional-info {
 	font-weight: 600;
+	font-family: monospace;
 }
 
-/* Element */
+/* Elements */
 
 button {
 	align-items: center;

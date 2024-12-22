@@ -24,7 +24,7 @@ export default class preference {
 		sidebarBorder: 5,
 		popup: 5,
 		popupBorder: 5,
-		minContrast_light: 90,
+		minContrast_light: 165,
 		minContrast_dark: 45,
 		allowDarkLight: true,
 		dynamic: true,
@@ -51,7 +51,7 @@ export default class preference {
 		sidebarBorder: 5,
 		popup: 5,
 		popupBorder: 5,
-		minContrast_light: 90,
+		minContrast_light: 165,
 		minContrast_dark: 45,
 		allowDarkLight: true,
 		dynamic: true,
@@ -131,7 +131,9 @@ export default class preference {
 	 * Normalises saved preferences to a consistent format (v2.2).
 	 *
 	 * Ensures compatibility across various versions of saved preferences by converting them to the latest standard format.
+	 *
 	 * The function adjusts fields as necessary, filling in any missing values to maintain a complete preference structure.
+	 *
 	 * If the existing preferences date back before v1.7, replaces the old pref with the default pref.
 	 *
 	 * Once executed, the normalised preferences are loaded in the instance and saved to browser storage.
@@ -250,62 +252,49 @@ export default class preference {
 	}
 
 	/**
-	 * Gets the policy for a URL / add-on ID from the site list.
+	 * Returns the policy for a URL / add-on ID from the site list.
+	 *
+	 * Newly added policies have higher priority.
+	 *
+	 * Returns `undefined` if nothing matches.
+	 *
 	 * @param {string} site URL or add-on ID.
-	 * @param {string} headerType `URL` (default), or `ADDON_ID`.
+	 * @param {string} headerType `URL` (by default), or `ADDON_ID`.
 	 */
 	getPolicy(site, headerType = "URL") {
-		let result = null;
-		for (const id in this.#prefContent.siteList) {
-			const policy = this.#prefContent.siteList[id];
-			if (policy.headerType !== headerType) {
-				continue;
-			} else if (policy.header === site) {
-				result = policy;
-				break;
-			} else if (headerType === "URL") {
-				try {
-					if (policy.header === new URL(site).hostname) {
-						result = policy;
-						break;
-					}
-				} catch (error) {}
-				try {
-					if (new RegExp(policy.header).test(site)) {
-						result = policy;
-						break;
-					}
-				} catch (error) {}
-			}
-		}
-		return result;
+		return this.#prefContent.siteList[this.getPolicyId(site, headerType)];
 	}
 
 	/**
 	 * Gets the policy ID for a URL / add-on ID from the site list.
+	 *
+	 * Policies with bigger `id` number / newly added policies have higher priority.
+	 *
+	 * Returns `0` if there's no match.
+	 *
 	 * @param {string} site URL or add-on ID.
-	 * @param {string} headerType `URL` (default), or `ADDON_ID`.
+	 * @param {string} headerType `URL` (by default), or `ADDON_ID`.
 	 */
-	getPolicyID(site, headerType = "URL") {
-		let result = null;
+	getPolicyId(site, headerType = "URL") {
+		let result = 0;
 		for (const id in this.#prefContent.siteList) {
 			const policy = this.#prefContent.siteList[id];
-			if (policy.headerType !== headerType) {
+			if (!policy || policy.header === "" || policy.headerType !== headerType) {
 				continue;
 			} else if (policy.header === site) {
 				result = +id;
-				break;
+				continue;
 			} else if (headerType === "URL") {
 				try {
 					if (policy.header === new URL(site).hostname) {
 						result = +id;
-						break;
+						continue;
 					}
 				} catch (error) {}
 				try {
-					if (new RegExp(policy.header).test(site)) {
+					if (new RegExp(`^${policy.header}\$`).test(site)) {
 						result = +id;
-						break;
+						continue;
 					}
 				} catch (error) {}
 			}
@@ -315,22 +304,24 @@ export default class preference {
 
 	/**
 	 * Adds a policy to the site list.
+	 *
 	 * @param {object} policy The policy to add.
 	 * @returns The ID of the policy.
 	 */
 	addPolicy(policy) {
 		let id = 1;
-		while (this.#prefContent.siteList[id]) id++;
+		while (id in this.#prefContent.siteList) id++;
 		this.#prefContent.siteList[id] = policy;
 		return id;
 	}
 
 	/**
-	 * Removes a policy from the site list.
+	 * Removes a policy from the site list by setting the policy to `null`.
+	 *
 	 * @param {number | string} id The ID of a policy.
 	 */
 	removePolicy(id) {
-		delete this.#prefContent.siteList[id];
+		this.#prefContent.siteList[id] = null;
 	}
 
 	/**
@@ -354,14 +345,12 @@ export default class preference {
 	 */
 	async load() {
 		this.#prefContent = await browser.storage.local.get();
-		console.log("Loaded:", this.#prefContent);
 	}
 
 	/**
 	 * Stores the preferences from the instance to the browser storage.
 	 */
 	async save() {
-		console.log("Saving...", this.#prefContent);
 		await browser.storage.local.set(this.#prefContent);
 	}
 

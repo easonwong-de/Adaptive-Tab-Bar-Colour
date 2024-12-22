@@ -64,7 +64,7 @@ body {
 	display: contents;
 }
 
-/* Element */
+/* Elements */
 
 button {
 	align-items: center;
@@ -196,6 +196,11 @@ input[type="radio"] {
 	width: 10rem;
 }
 
+#tab-1 .slider-body::after {
+	content: "%";
+	margin-inline-start: 0.5rem;
+}
+
 /* Toggle */
 /* To-do: use a light switch instead of a simple checkbox */
 
@@ -308,6 +313,8 @@ input.toggle-switch:checked + label.toggle-switch:hover {
 	width: 100%;
 }
 
+/* Fixed elements */
+
 p#reinstall-tip {
 	width: 50%;
 }
@@ -317,21 +324,14 @@ div.sponsor {
 	gap: 0.5rem;
 }
 
-/* Theme builder tab */
+/* Site list */
 
-#tab-1 .slider-body::after {
-	content: "%";
-	margin-inline-start: 0.5rem;
-}
-
-/* Site list tab */
-
-#site-list {
+.site-list {
 	display: flex;
 	flex-direction: column;
 }
 
-#site-list .section {
+.site-list .section {
 	border-radius: 0;
 	display: grid;
 	gap: 0.5rem;
@@ -339,22 +339,33 @@ div.sponsor {
 	padding: 0.5rem;
 }
 
-#site-list :is(.section:first-of-type) {
+#tab-3 .site-list .section {
+	grid-template-columns: auto max-content 7.5rem max-content;
+}
+
+.site-list :is(.section:first-of-type) {
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
 }
 
-#site-list :is(.section:last-of-type) {
+.site-list :is(.section:last-of-type) {
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
 
-#site-list .section:nth-of-type(even) {
+.site-list .section:nth-of-type(even) {
 	background-color: var(--colour-1-5);
 }
 
 .policy-header {
 	margin-inline: 0.5rem auto;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.custom-policy .policy-header {
+	max-width: 60%;
 }
 
 .policy-header-input-wrapper {
@@ -371,11 +382,11 @@ div.sponsor {
 	width: 1rem;
 }
 
-.policy-header-input-wrapper.warning .policy-header-input {
+.custom-policy.warning .policy-header-input {
 	padding-inline-end: 2rem;
 }
 
-.policy-header-input-wrapper.warning .policy-header-warning {
+.custom-policy.warning .policy-header-warning {
 	display: block;
 }
 

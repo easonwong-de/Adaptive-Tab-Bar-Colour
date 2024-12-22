@@ -63,10 +63,7 @@ export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, o
 	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
 	policyHeaderInput.value = initialValue;
 	policyHeaderInput.addEventListener("focus", () => policyHeaderInput.select());
-	policyHeaderInput.addEventListener("input", () => {
-		// to-do: warning display, trimming
-		onChange(policyHeaderInput.value);
-	});
+	policyHeaderInput.addEventListener("input", () => onChange(policyHeaderInput.value.trim()));
 }
 
 /**
@@ -184,10 +181,7 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
 	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
 	QuerySelectorInput.value = initialQuerySelector;
 	QuerySelectorInput.addEventListener("focus", () => QuerySelectorInput.select());
-	QuerySelectorInput.addEventListener("input", () => {
-		// to-do: trimming
-		onChange(QuerySelectorInput.value);
-	});
+	QuerySelectorInput.addEventListener("input", () => onChange(QuerySelectorInput.value.trim()));
 }
 
 /**
@@ -211,7 +205,7 @@ export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
  * @param {HTMLElement} policySection
  * @param {number} id
  */
-export function setColourPolicySectionID(policySection, id) {
+export function setColourPolicySectionId(policySection, id) {
 	policySection.dataset.id = id;
 	policySection.querySelector(".colour-picker-display").htmlFor = `colour-picker-display-${id}`;
 	policySection.querySelector("input[type='color']").id = `colour-picker-display-${id}`;
@@ -221,7 +215,7 @@ export function setColourPolicySectionID(policySection, id) {
  * @param {HTMLElement} policySection
  * @param {number} id
  */
-export function setFlexiblePolicySectionID(policySection, id) {
+export function setFlexiblePolicySectionId(policySection, id) {
 	policySection.dataset.id = id;
 	policySection.querySelector(".colour-picker-display").htmlFor = `colour-picker-display-${id}`;
 	policySection.querySelector("input[type='color']").id = `colour-picker-display-${id}`;

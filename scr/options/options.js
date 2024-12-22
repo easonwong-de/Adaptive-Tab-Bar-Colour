@@ -18,15 +18,15 @@ import {
 	setupQuerySelectorInput,
 	setQuerySelectorInputValue,
 	getQuerySelectorInputValue,
-	setColourPolicySectionID,
-	setFlexiblePolicySectionID,
+	setColourPolicySectionId,
+	setFlexiblePolicySectionId,
 } from "../elements.js";
 
 const pref = new preference();
 
 const settingsWrapper = document.querySelector("#settings-wrapper");
 const loadingWrapper = document.querySelector("#loading-wrapper");
-const siteList = document.querySelector("#site-list");
+const customPolicyList = document.querySelector("#custom-policy-list");
 
 const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
 tabSwitches.forEach((tabSwitch) => {
@@ -52,6 +52,9 @@ sliders.forEach((slider) =>
 const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
 fixedPolicies.forEach(setupFixedPolicySection);
 
+/**
+ * @param {HTMLElement} fixedPolicySection 
+ */
 function setupFixedPolicySection(fixedPolicySection) {
 	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
@@ -67,8 +70,13 @@ function setupFixedPolicySection(fixedPolicySection) {
 	};
 }
 
+/**
+ * @param {HTMLElement} policySection 
+ * @param {number} id 
+ * @param {object} policy 
+ */
 async function setupColourPolicySection(policySection, id, policy) {
-	setColourPolicySectionID(policySection, id);
+	setColourPolicySectionId(policySection, id);
 	const policyHeader = policySection.querySelector(".policy-header");
 	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
 	const deleteButton = policySection.querySelector("button");
@@ -89,8 +97,14 @@ async function setupColourPolicySection(policySection, id, policy) {
 	};
 }
 
+/**
+ * @param {HTMLElement} policySection 
+ * @param {number} id 
+ * @param {object} policy 
+ */
 function setupFlexiblePolicySection(policySection, id, policy) {
-	setFlexiblePolicySectionID(policySection, id);
+	setFlexiblePolicySectionId(policySection, id);
+	policySection.classList.toggle("warning", policy.header === "");
 	const select = policySection.querySelector("select");
 	select.className = select.value = policy.type;
 	select.addEventListener("change", () => {
@@ -132,6 +146,7 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 			break;
 	}
 	setupPolicyHeaderInput(policyHeaderInputWrapper, policy.header, (newHeader) => {
+		policySection.classList.toggle("warning", newHeader === "");
 		pref.siteList[id].header = newHeader;
 		applySettings();
 	});
@@ -154,19 +169,23 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 	};
 }
 
-const addNewRuleButton = document.querySelector("#add-new-rule");
-addNewRuleButton.onclick = async () => {
+document.querySelector("#add-new-rule").onclick = async () => {
 	const policy = {
 		headerType: "URL",
-		header: "www.example.com",
+		header: "",
 		type: "COLOUR",
 		value: "#000000",
 	};
 	const id = pref.addPolicy(policy);
-	siteList.appendChild(await createPolicySection(id, policy));
+	customPolicyList.appendChild(await createPolicySection(id, policy));
 	applySettings();
 };
 
+/**
+ * @param {number} id 
+ * @param {object} policy 
+ * @returns 
+ */
 async function createPolicySection(id, policy) {
 	if (policy.headerType === "URL") {
 		const templateFlexiblePolicySection = document.querySelector("#template .custom-policy.flexible-policy");
@@ -181,49 +200,50 @@ async function createPolicySection(id, policy) {
 	}
 }
 
+/**
+ * @param {HTMLElement} policySection 
+ */
 function removePolicySection(policySection) {
 	policySection.remove();
 }
 
 async function updateSiteList() {
-	for (const policySection of document.querySelectorAll("#site-list .custom-policy")) {
-		if (!(policySection.dataset.id in pref.siteList)) {
-			removePolicySection(policySection);
-		}
-	}
 	for (const id in pref.siteList) {
-		const policySection = document.querySelector(`.custom-policy[data-id='${id}']`);
 		const policy = pref.siteList[id];
-		if (!policySection) {
-			siteList.appendChild(await createPolicySection(id, policy));
-		} else {
-			if (policy.headerType === "URL" && policySection.classList.contains("flexible-policy")) {
-				const select = policySection.querySelector("select");
-				select.className = select.value = policy.type;
-				const policyHeaderInputWrapper = policySection.querySelector(".policy-header-input-wrapper");
-				const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
-				const themeColourSwitch = policySection.querySelector(".theme-colour-switch");
-				const querySelectorInputWrapper = policySection.querySelector(".qs-input-wrapper");
-				setPolicyHeaderInputValue(policyHeaderInputWrapper, policy.header);
-				switch (policy.type) {
-					case "COLOUR":
-						setColourInputValue(colourInputWrapper, policy.value);
-						break;
-					case "THEME_COLOUR":
-						setThemeColourSwitchValue(themeColourSwitch, policy.value);
-						break;
-					case "QUERY_SELECTOR":
-						setQuerySelectorInputValue(querySelectorInputWrapper, policy.value);
-						break;
-					default:
-						break;
-				}
-			} else if (policy.headerType === "ADDON_ID" && policySection.classList.contains("colour-policy")) {
-				const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
-				setColourInputValue(colourInputWrapper, policy.value);
-			} else {
-				policySection.replaceWith(await createPolicySection(id, policy));
+		const policySection = document.querySelector(`.custom-policy[data-id='${id}']`);
+		if (policy && !policySection) {
+			customPolicyList.appendChild(await createPolicySection(id, policy));
+		} else if (!policy && policySection) {
+			removePolicySection(policySection);
+		} else if (!policy && !policySection) {
+			continue;
+		} else if (policy.headerType === "URL" && policySection.classList.contains("flexible-policy")) {
+			const select = policySection.querySelector("select");
+			const policyHeaderInputWrapper = policySection.querySelector(".policy-header-input-wrapper");
+			const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+			const themeColourSwitch = policySection.querySelector(".theme-colour-switch");
+			const querySelectorInputWrapper = policySection.querySelector(".qs-input-wrapper");
+			select.className = select.value = policy.type;
+			policySection.classList.toggle("warning", policy.header === "");
+			setPolicyHeaderInputValue(policyHeaderInputWrapper, policy.header);
+			switch (policy.type) {
+				case "COLOUR":
+					setColourInputValue(colourInputWrapper, policy.value);
+					break;
+				case "THEME_COLOUR":
+					setThemeColourSwitchValue(themeColourSwitch, policy.value);
+					break;
+				case "QUERY_SELECTOR":
+					setQuerySelectorInputValue(querySelectorInputWrapper, policy.value);
+					break;
+				default:
+					break;
 			}
+		} else if (policy.headerType === "ADDON_ID" && policySection.classList.contains("colour-policy")) {
+			const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+			setColourInputValue(colourInputWrapper, policy.value);
+		} else {
+			policySection.replaceWith(await createPolicySection(id, policy));
 		}
 	}
 }

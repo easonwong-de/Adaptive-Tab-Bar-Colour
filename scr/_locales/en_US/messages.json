@@ -4,7 +4,7 @@
 	},
 
 	"extensionDescription": {
-		"message": "Changes the color of Firefox tab bar to match the website theme."
+		"message": "Changes the color of Firefox UI to match the website’s appearance."
 	},
 
 	"__OPTIONS PAGE__": {
@@ -67,24 +67,16 @@
 		"message": "Pop-up"
 	},
 
-	"homepageColourLight": {
-		"message": "Home page color: light"
-	},
-
-	"homepageColourDark": {
-		"message": "Home page color: dark"
-	},
-
-	"fallbackColourLight": {
-		"message": "Fallback color: light"
-	},
-
-	"fallbackColourDark": {
-		"message": "Fallback color: dark"
+	"thisPolicyWillBeIgnored": {
+		"message": "This policy will be ignored"
 	},
 
 	"URLDomainOrRegex": {
 		"message": "Full URL / domain / regex"
+	},
+	
+	"addonNotFound": {
+		"message": "Add-on not found"
 	},
 
 	"specifyAColour": {
@@ -112,7 +104,7 @@
 	},
 
 	"querySelector": {
-		"message": "Query selector"
+		"message": "query selector"
 	},
 
 	"delete": {
@@ -132,7 +124,7 @@
 	},
 
 	"allowLightTabBarTooltip": {
-		"message": "Allow tab bar to turn bright (dark text on light tab bar)"
+		"message": "Allow tab bar to use bright color (dark text on light tab bar)."
 	},
 
 	"allowDarkTabBar": {
@@ -140,7 +132,7 @@
 	},
 
 	"allowDarkTabBarTooltip": {
-		"message": "Allow tab bar to turn dark (light text on dark tab bar)"
+		"message": "Allow tab bar to use dark color (light text on dark tab bar)."
 	},
 
 	"dynamicColourUpdate": {
@@ -148,7 +140,7 @@
 	},
 
 	"dynamicModeTooltip": {
-		"message": "Keeps updating tab bar color while browsing within a web page"
+		"message": "Keeps updating tab bar color while browsing within a web page."
 	},
 
 	"ignoreDesignatedThemeColour": {
@@ -156,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Always ignore theme color defined by the website and pick color from the web page instead"
+		"message": "Always ignore theme color defined by the website and pick color from the web page instead."
 	},
 
 	"minimumContrast": {
@@ -164,7 +156,7 @@
 	},
 
 	"minimumContrastTooltip": {
-		"message": "Set the minimun contrast ratio between tab bar color and text color"
+		"message": "Set the minimum contrast ratio between the tab bar and text. The tab bar color adjusts automatically if the ratio is unmet."
 	},
 
 	"inLightMode": {
@@ -173,6 +165,22 @@
 
 	"inDarkMode": {
 		"message": "In dark mode"
+	},
+
+	"homepageColourLight": {
+		"message": "Home page color: light"
+	},
+
+	"homepageColourDark": {
+		"message": "Home page color: dark"
+	},
+
+	"fallbackColourLight": {
+		"message": "Fallback color: light"
+	},
+
+	"fallbackColourDark": {
+		"message": "Fallback color: dark"
 	},
 
 	"reportAnIssue": {
@@ -304,7 +312,7 @@
 	},
 
 	"colourIsSpecified": {
-		"message": "Color for this domain is specified in the settings"
+		"message": "Color for this site is specified in the settings"
 	},
 
 	"usingImageViewer": {

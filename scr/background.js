@@ -25,7 +25,7 @@
 
 import { default_aboutPageColour, default_protectedPageColour } from "./default_values.js";
 import preference from "./preference.js";
-import { rgba, dimColour, contrastCorrection } from "./colour.js";
+import { rgba, dimColourToString, contrastCorrection } from "./colour.js";
 import { onSchemeChanged, getCurrentScheme } from "./utility.js";
 
 /** Preference */
@@ -286,25 +286,25 @@ function applyTheme(windowId, colour, colourScheme) {
 		const theme = {
 			colors: {
 				// Tabbar & tab
-				frame: dimColour(colour, -pref.tabbar * 1.5),
-				frame_inactive: dimColour(colour, -pref.tabbar * 1.5),
-				tab_selected: dimColour(colour, -pref.tabSelected * 1.5),
-				tab_line: dimColour(colour, (-pref.tabSelectedBorder - pref.tabSelected) * 1.5),
-				ntp_background: dimColour(colour, 0),
+				frame: dimColourToString(colour, -pref.tabbar * 1.5),
+				frame_inactive: dimColourToString(colour, -pref.tabbar * 1.5),
+				tab_selected: dimColourToString(colour, -pref.tabSelected * 1.5),
+				tab_line: dimColourToString(colour, (-pref.tabSelectedBorder - pref.tabSelected) * 1.5),
+				ntp_background: dimColourToString(colour, 0),
 				// Toolbar
-				toolbar: dimColour(colour, -pref.toolbar * 1.5),
-				toolbar_top_separator: dimColour(colour, (-pref.tabbarBorder - pref.tabbar) * 1.5),
-				toolbar_bottom_separator: dimColour(colour, (-pref.toolbarBorder - pref.toolbar) * 1.5),
+				toolbar: dimColourToString(colour, -pref.toolbar * 1.5),
+				toolbar_top_separator: dimColourToString(colour, (-pref.tabbarBorder - pref.tabbar) * 1.5),
+				toolbar_bottom_separator: dimColourToString(colour, (-pref.toolbarBorder - pref.toolbar) * 1.5),
 				// URL bar
-				toolbar_field: dimColour(colour, -pref.toolbarField * 1.5),
-				toolbar_field_border: dimColour(colour, (-pref.toolbarFieldBorder - pref.toolbarField) * 1.5),
-				toolbar_field_focus: dimColour(colour, -pref.toolbarFieldOnFocus * 1.5),
+				toolbar_field: dimColourToString(colour, -pref.toolbarField * 1.5),
+				toolbar_field_border: dimColourToString(colour, (-pref.toolbarFieldBorder - pref.toolbarField) * 1.5),
+				toolbar_field_focus: dimColourToString(colour, -pref.toolbarFieldOnFocus * 1.5),
 				toolbar_field_border_focus: "rgb(130, 180, 245)",
 				// Sidebar & popup
-				sidebar: dimColour(colour, -pref.sidebar * 1.5),
-				sidebar_border: dimColour(colour, (-pref.sidebar - pref.sidebarBorder) * 1.5),
-				popup: dimColour(colour, -pref.popup * 1.5),
-				popup_border: dimColour(colour, (-pref.popup - pref.popupBorder) * 1.5),
+				sidebar: dimColourToString(colour, -pref.sidebar * 1.5),
+				sidebar_border: dimColourToString(colour, (-pref.sidebar - pref.sidebarBorder) * 1.5),
+				popup: dimColourToString(colour, -pref.popup * 1.5),
+				popup_border: dimColourToString(colour, (-pref.popup - pref.popupBorder) * 1.5),
 				// Static
 				tab_background_text: "rgb(30, 30, 30)",
 				tab_loading: "rgba(0, 0, 0, 0)",
@@ -329,25 +329,25 @@ function applyTheme(windowId, colour, colourScheme) {
 		const theme = {
 			colors: {
 				// Tabbar & tab
-				frame: dimColour(colour, pref.tabbar),
-				frame_inactive: dimColour(colour, pref.tabbar),
-				tab_selected: dimColour(colour, pref.tabSelected),
-				tab_line: dimColour(colour, pref.tabSelectedBorder + pref.tabSelected),
-				ntp_background: dimColour(colour, 0),
+				frame: dimColourToString(colour, pref.tabbar),
+				frame_inactive: dimColourToString(colour, pref.tabbar),
+				tab_selected: dimColourToString(colour, pref.tabSelected),
+				tab_line: dimColourToString(colour, pref.tabSelectedBorder + pref.tabSelected),
+				ntp_background: dimColourToString(colour, 0),
 				// Toolbar
-				toolbar: dimColour(colour, pref.toolbar),
-				toolbar_top_separator: dimColour(colour, pref.tabbarBorder + pref.tabbar),
-				toolbar_bottom_separator: dimColour(colour, pref.toolbarBorder + pref.toolbar),
+				toolbar: dimColourToString(colour, pref.toolbar),
+				toolbar_top_separator: dimColourToString(colour, pref.tabbarBorder + pref.tabbar),
+				toolbar_bottom_separator: dimColourToString(colour, pref.toolbarBorder + pref.toolbar),
 				// URL bar
-				toolbar_field: dimColour(colour, pref.toolbarField),
-				toolbar_field_border: dimColour(colour, pref.toolbarFieldBorder + pref.toolbarField),
-				toolbar_field_focus: dimColour(colour, pref.toolbarFieldOnFocus),
+				toolbar_field: dimColourToString(colour, pref.toolbarField),
+				toolbar_field_border: dimColourToString(colour, pref.toolbarFieldBorder + pref.toolbarField),
+				toolbar_field_focus: dimColourToString(colour, pref.toolbarFieldOnFocus),
 				toolbar_field_border_focus: "rgb(70, 118, 160)",
 				// Sidebar
-				sidebar: dimColour(colour, pref.sidebar),
-				sidebar_border: dimColour(colour, pref.sidebar + pref.sidebarBorder),
-				popup: dimColour(colour, pref.popup),
-				popup_border: dimColour(colour, pref.popup + pref.popupBorder),
+				sidebar: dimColourToString(colour, pref.sidebar),
+				sidebar_border: dimColourToString(colour, pref.sidebar + pref.sidebarBorder),
+				popup: dimColourToString(colour, pref.popup),
+				popup_border: dimColourToString(colour, pref.popup + pref.popupBorder),
 				// Static
 				tab_background_text: "rgb(225, 225, 225)",
 				tab_loading: "rgba(0, 0, 0, 0)",

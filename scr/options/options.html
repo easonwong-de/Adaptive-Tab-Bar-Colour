@@ -67,7 +67,7 @@
 			<div class="section custom-policy flexible-policy">
 				<div class="policy-header-input-wrapper">
 					<input type="text" class="policy-header-input" data-placeholder="URLDomainOrRegex" />
-					<div class="policy-header-warning" data-title="warning">
+					<div class="policy-header-warning" data-title="thisPolicyWillBeIgnored">
 						<svg viewBox="0 0 24 24">
 							<use xlink:href="#svg-warning" />
 						</svg>
@@ -125,7 +125,7 @@
 								<div
 									class="slider"
 									data-pref="tabSelected"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -146,7 +146,7 @@
 								<div
 									class="slider"
 									data-pref="tabSelectedBorder"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -170,7 +170,7 @@
 								<div
 									class="slider"
 									data-pref="tabbar"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -191,7 +191,7 @@
 								<div
 									class="slider"
 									data-pref="tabbarBorder"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -215,7 +215,7 @@
 								<div
 									class="slider"
 									data-pref="popup"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -236,7 +236,7 @@
 								<div
 									class="slider"
 									data-pref="popupBorder"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -262,7 +262,7 @@
 								<div
 									class="slider"
 									data-pref="toolbarField"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -283,7 +283,7 @@
 								<div
 									class="slider"
 									data-pref="toolbarFieldOnFocus"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -304,7 +304,7 @@
 								<div
 									class="slider"
 									data-pref="toolbarFieldBorder"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -328,7 +328,7 @@
 								<div
 									class="slider"
 									data-pref="toolbar"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -349,7 +349,7 @@
 								<div
 									class="slider"
 									data-pref="toolbarBorder"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -373,7 +373,7 @@
 								<div
 									class="slider"
 									data-pref="sidebar"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -394,7 +394,7 @@
 								<div
 									class="slider"
 									data-pref="sidebarBorder"
-									data-min="0"
+									data-min="-50"
 									data-max="50"
 									data-step="5"
 									data-value="0"
@@ -417,64 +417,7 @@
 					</div>
 				</div>
 				<div id="tab-2" class="tab">
-					<div id="site-list">
-						<div class="section fixed-policy">
-							<div class="policy-header" data-text="homepageColourLight"></div>
-							<div></div>
-							<div class="colour-input-wrapper" data-pref="homeBackground_light">
-								<input type="text" class="colour-input" value="#ffffff" />
-								<label class="colour-picker-display" for="home-bg-light"></label>
-								<input type="color" value="#ffffff" id="home-bg-light" />
-							</div>
-							<button data-title="reset">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-							</button>
-						</div>
-						<div class="section fixed-policy">
-							<div class="policy-header" data-text="homepageColourDark"></div>
-							<div></div>
-							<div class="colour-input-wrapper" data-pref="homeBackground_dark">
-								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker-display" for="home-bg-dark"></label>
-								<input type="color" value="#2b2a33" id="home-bg-dark" />
-							</div>
-							<button data-title="reset">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-							</button>
-						</div>
-						<div class="section fixed-policy">
-							<div class="policy-header" data-text="fallbackColourLight"></div>
-							<div></div>
-							<div class="colour-input-wrapper" data-pref="fallbackColour_light">
-								<input type="text" class="colour-input" value="#ffffff" />
-								<label class="colour-picker-display" for="fallback-cl-light"></label>
-								<input type="color" value="#ffffff" id="fallback-cl-light" />
-							</div>
-							<button data-title="reset">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-							</button>
-						</div>
-						<div class="section fixed-policy">
-							<div class="policy-header" data-text="fallbackColourDark"></div>
-							<div></div>
-							<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
-								<input type="text" class="colour-input" value="#2b2a33" />
-								<label class="colour-picker-display" for="fallback-cl-dark"></label>
-								<input type="color" value="#2b2a33" id="fallback-cl-dark" />
-							</div>
-							<button data-title="reset">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-							</button>
-						</div>
-					</div>
+					<div class="site-list" id="custom-policy-list"></div>
 					<button id="add-new-rule" data-text="addANewRule" data-title="addANewRule"></button>
 				</div>
 				<div id="tab-3" class="tab">
@@ -522,8 +465,8 @@
 								<div
 									class="slider"
 									data-pref="minContrast_light"
-									data-min="15"
-									data-max="150"
+									data-min="30"
+									data-max="210"
 									data-step="15"
 									data-value="15"
 									data-scale="1"
@@ -544,8 +487,8 @@
 								<div
 									class="slider"
 									data-pref="minContrast_dark"
-									data-min="15"
-									data-max="150"
+									data-min="30"
+									data-max="210"
 									data-step="15"
 									data-value="15"
 									data-scale="1"
@@ -563,6 +506,64 @@
 									</button>
 								</div>
 								<div class="slider-title" data-text="inDarkMode"></div>
+							</div>
+							<div class="site-list">
+								<div class="section fixed-policy">
+									<div class="policy-header" data-text="homepageColourLight"></div>
+									<div></div>
+									<div class="colour-input-wrapper" data-pref="homeBackground_light">
+										<input type="text" class="colour-input" value="#ffffff" />
+										<label class="colour-picker-display" for="home-bg-light"></label>
+										<input type="color" value="#ffffff" id="home-bg-light" />
+									</div>
+									<button data-title="reset">
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-reset" />
+										</svg>
+									</button>
+								</div>
+								<div class="section fixed-policy">
+									<div class="policy-header" data-text="homepageColourDark"></div>
+									<div></div>
+									<div class="colour-input-wrapper" data-pref="homeBackground_dark">
+										<input type="text" class="colour-input" value="#2b2a33" />
+										<label class="colour-picker-display" for="home-bg-dark"></label>
+										<input type="color" value="#2b2a33" id="home-bg-dark" />
+									</div>
+									<button data-title="reset">
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-reset" />
+										</svg>
+									</button>
+								</div>
+								<div class="section fixed-policy">
+									<div class="policy-header" data-text="fallbackColourLight"></div>
+									<div></div>
+									<div class="colour-input-wrapper" data-pref="fallbackColour_light">
+										<input type="text" class="colour-input" value="#ffffff" />
+										<label class="colour-picker-display" for="fallback-cl-light"></label>
+										<input type="color" value="#ffffff" id="fallback-cl-light" />
+									</div>
+									<button data-title="reset">
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-reset" />
+										</svg>
+									</button>
+								</div>
+								<div class="section fixed-policy">
+									<div class="policy-header" data-text="fallbackColourDark"></div>
+									<div></div>
+									<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
+										<input type="text" class="colour-input" value="#2b2a33" />
+										<label class="colour-picker-display" for="fallback-cl-dark"></label>
+										<input type="color" value="#2b2a33" id="fallback-cl-dark" />
+									</div>
+									<button data-title="reset">
+										<svg viewBox="0 0 24 24">
+											<use xlink:href="#svg-reset" />
+										</svg>
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
