@@ -11,7 +11,7 @@
 			"strict_min_version": "112.0"
 		}
 	},
-	"permissions": ["activeTab", "tabs", "theme", "storage", "browserSettings", "management"],
+	"permissions": ["tabs", "theme", "storage", "browserSettings", "management"],
 	"background": {
 		"scripts": ["background.js"],
 		"type": "module",
