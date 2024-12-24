@@ -16,7 +16,7 @@ Während Sie im Web surfen, passt dieses Add-on das Theme von Firefox an das Ers
 <b>Unvereinbar mit:</b>
 
 <ol>
-	<li>Firefox-Versionen älter als <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (veröffentlicht im April 2023)</li> 
+	<li>Firefox-Versionen älter als <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (veröffentlicht im April 2023)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/">Adaptive Theme Creator</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>

@@ -16,7 +16,7 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 <b>Incompatible With:</b>
 
 <ol>
-	<li>Firefox versions older than <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (released in April 2023)</li> 
+	<li>Firefox versions older than <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (released in April 2023)</li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/">Adaptive Theme Creator</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
@@ -27,7 +27,7 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 
 <b>If You’re Using a CSS Theme:</b>
 
-A CSS theme can work with <abbr title="Adaptive Tab Bar Colour">ATBC</abbr> when system colour variables are used. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">This</a> is an example of an <abbr title="Adaptive Tab Bar Colour">ATBC</abbr>-compatible CSS theme.
+A CSS theme can work with <abbr title="Adaptive Tab Bar Color">ATBC</abbr> when system colour variables are used. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">This</a> is an example of an <abbr title="Adaptive Tab Bar Color">ATBC</abbr>-compatible CSS theme.
 
 
 <b>Safety Reminder:</b>
