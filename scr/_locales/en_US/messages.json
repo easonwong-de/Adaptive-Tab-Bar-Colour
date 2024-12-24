@@ -1,10 +1,10 @@
 {
 	"extensionName": {
-		"message": "Adaptive Tab Bar Colour"
+		"message": "Adaptive Tab Bar Color"
 	},
 
 	"extensionDescription": {
-		"message": "Cambia el color del tema de Firefox para que coincida con la apariencia del sitio web."
+		"message": "Changes the color of Firefox theme to match the website’s appearance."
 	},
 
 	"__OPTIONS PAGE__": {
@@ -12,179 +12,179 @@
 	},
 
 	"reinstallTip": {
-		"message": "Los datos de preferencias podrían estar corruptos. Si el problema persiste, por favor, vuelva a instalar el complemento. ¡Disculpe las molestias!"
+		"message": "Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for your inconvenience!"
 	},
 
 	"loading": {
-		"message": "Cargando…"
+		"message": "Loading…"
 	},
 
 	"themeBuilder": {
-		"message": "Creador de temas"
+		"message": "Theme builder"
 	},
 
 	"siteList": {
-		"message": "Lista de sitios"
+		"message": "Site list"
 	},
 
 	"advanced": {
-		"message": "Avanzado"
+		"message": "Advanced"
 	},
 
 	"tabBar": {
-		"message": "Barra de pestañas"
+		"message": "Tab bar"
 	},
 
 	"background": {
-		"message": "Fondo"
+		"message": "Background"
 	},
 
 	"selectedTab": {
-		"message": "Pestaña seleccionada"
+		"message": "Selected tab"
 	},
 
 	"toolbar": {
-		"message": "Barra de herramientas"
+		"message": "Toolbar"
 	},
 
 	"border": {
-		"message": "Borde"
+		"message": "Border"
 	},
 
 	"URLBar": {
-		"message": "Barra de direcciones"
+		"message": "URL bar"
 	},
 
 	"backgroundOnFocus": {
-		"message": "Fondo al enfocar"
+		"message": "Background on focus"
 	},
 
 	"sidebar": {
-		"message": "Barra lateral"
+		"message": "Sidebar"
 	},
 
 	"popUp": {
-		"message": "Ventana emergente"
+		"message": "Pop-up"
 	},
 
 	"thisPolicyWillBeIgnored": {
-		"message": "Esta política será ignorada"
+		"message": "This policy will be ignored"
 	},
 
 	"URLDomainOrRegex": {
-		"message": "URL completa / dominio / regex"
+		"message": "Full URL / domain / regex"
 	},
 
 	"addonNotFound": {
-		"message": "Complemento no encontrado"
+		"message": "Add-on not found"
 	},
 
 	"specifyAColour": {
-		"message": "especificar un color"
+		"message": "specify a color"
 	},
 
 	"useIgnoreThemeColour": {
-		"message": "usar / ignorar color del tema"
+		"message": "use / ignore theme color"
 	},
 
 	"pickColourFromElement": {
-		"message": "seleccionar color desde un elemento"
+		"message": "pick color from element"
 	},
 
 	"anyCSSColour": {
-		"message": "cualquier formato"
+		"message": "any format"
 	},
 
 	"use": {
-		"message": "Usar"
+		"message": "Use"
 	},
 
 	"ignore": {
-		"message": "Ignorar"
+		"message": "Ignore"
 	},
 
 	"querySelector": {
-		"message": "selector de consulta"
+		"message": "query selector"
 	},
 
 	"delete": {
-		"message": "Eliminar"
+		"message": "Delete"
 	},
 
 	"reset": {
-		"message": "Restablecer"
+		"message": "Reset"
 	},
 
 	"addANewRule": {
-		"message": "Añadir una nueva regla"
+		"message": "Add a new rule"
 	},
 
 	"allowLightTabBar": {
-		"message": "Permitir barra de pestañas clara"
+		"message": "Allow light tab bar"
 	},
 
 	"allowLightTabBarTooltip": {
-		"message": "Permitir que la barra de pestañas use un color brillante (texto oscuro sobre barra de pestañas clara)."
+		"message": "Allow tab bar to use bright color (dark text on light tab bar)."
 	},
 
 	"allowDarkTabBar": {
-		"message": "Permitir barra de pestañas oscura"
+		"message": "Allow dark tab bar"
 	},
 
 	"allowDarkTabBarTooltip": {
-		"message": "Permitir que la barra de pestañas use un color oscuro (texto claro sobre barra de pestañas oscura)."
+		"message": "Allow tab bar to use dark color (light text on dark tab bar)."
 	},
 
 	"dynamicColourUpdate": {
-		"message": "Actualización dinámica del color"
+		"message": "Dynamic color update"
 	},
 
 	"dynamicModeTooltip": {
-		"message": "Sigue actualizando el color de la barra de pestañas mientras navegas por una página web."
+		"message": "Keeps updating tab bar color while browsing within a web page."
 	},
 
 	"ignoreDesignatedThemeColour": {
-		"message": "Ignorar el color del tema del sitio web"
+		"message": "Ignore website’s theme color"
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Ignorar siempre el color del tema definido por el sitio web y seleccionar el color de la página web en su lugar."
+		"message": "Always ignore theme color defined by the website and pick color from the web page instead."
 	},
 
 	"minimumContrast": {
-		"message": "Contraste mínimo"
+		"message": "Minimum contrast"
 	},
 
 	"minimumContrastTooltip": {
-		"message": "Establece la relación de contraste mínima entre la barra de pestañas y el texto. El color de la barra de pestañas se ajusta automáticamente si no se cumple la relación."
+		"message": "Set the minimum contrast ratio between the tab bar and text. The tab bar color adjusts automatically if the ratio is unmet."
 	},
 
 	"inLightMode": {
-		"message": "En modo claro"
+		"message": "In light mode"
 	},
 
 	"inDarkMode": {
-		"message": "En modo oscuro"
+		"message": "In dark mode"
 	},
 
 	"homepageColourLight": {
-		"message": "Color de la página de inicio: claro"
+		"message": "Home page color: light"
 	},
 
 	"homepageColourDark": {
-		"message": "Color de la página de inicio: oscuro"
+		"message": "Home page color: dark"
 	},
 
 	"fallbackColourLight": {
-		"message": "Color de reserva: claro"
+		"message": "Fallback color: light"
 	},
 
 	"fallbackColourDark": {
-		"message": "Color de reserva: oscuro"
+		"message": "Fallback color: dark"
 	},
 
 	"reportAnIssue": {
-		"message": "Reportar un problema / enviar sugerencia / traducir este complemento"
+		"message": "Report an issue / submit a suggestion / translate this add-on"
 	},
 
 	"__POPUP__": {
@@ -192,35 +192,35 @@
 	},
 
 	"moreSettings": {
-		"message": "Más ajustes…"
+		"message": "More settings…"
 	},
 
 	"moreSettingsTooltip": {
-		"message": "Abrir la página de opciones"
+		"message": "Open option page"
 	},
 
 	"colourForPDFViewer": {
-		"message": "Usando el color para el visor de PDF"
+		"message": "Using color for PDF viewer"
 	},
 
 	"pageIsProtected": {
-		"message": "Esta página está protegida por el navegador"
+		"message": "This page is protected by browser"
 	},
 
 	"colourForPlainTextViewer": {
-		"message": "Usando el color para el visor de texto plano"
+		"message": "Using color for plain text viewer"
 	},
 
 	"errorOccured": {
-		"message": "Ocurrió un error, utilizando el color de reserva"
+		"message": "An error occurred, using fallback color"
 	},
 
 	"colourForHomePage": {
-		"message": "El color de la barra de pestañas para la página de inicio se puede configurar en los ajustes"
+		"message": "Tab bar color for home page can be configured in settings"
 	},
 
 	"useDefaultColourForAddon": {
-		"message": "Usando el color especificado para las páginas relacionadas con "
+		"message": "Using specified color for pages related to "
 	},
 
 	"useDefaultColourForAddonEnd": {
@@ -228,31 +228,31 @@
 	},
 
 	"useDefaultColourForAddonButton": {
-		"message": "Usar color predeterminado"
+		"message": "Use default color"
 	},
 
 	"useDefaultColourForAddonTitle": {
-		"message": "Usar color predeterminado"
+		"message": "Use default color"
 	},
 
 	"useRecommendedColourForAddon": {
-		"message": "Se encuentra disponible un color recomendado para las páginas relacionadas con "
+		"message": "Recommended color for pages related to "
 	},
 
 	"useRecommendedColourForAddonEnd": {
-		"message": " está disponible"
+		"message": " is available"
 	},
 
 	"useRecommendedColourForAddonButton": {
-		"message": "Usar color recomendado"
+		"message": "Use recommended color"
 	},
 
 	"useRecommendedColourForAddonTitle": {
-		"message": "Usar el color recomendado"
+		"message": "Use the recommended color"
 	},
 
 	"specifyColourForAddon": {
-		"message": "Haz clic en “Especificar un color” para abrir los ajustes y especificar el color de la barra de pestañas para las páginas relacionadas con "
+		"message": "Click “Specify a color” to open settings and specify tab bar color for pages related to "
 	},
 
 	"specifyColourForAddonEnd": {
@@ -260,35 +260,35 @@
 	},
 
 	"specifyColourForAddonButton": {
-		"message": "Especificar un color"
+		"message": "Specify a color"
 	},
 
 	"specifyColourForAddonTitle": {
-		"message": "Abrir los ajustes y especificar un color para las páginas relacionadas con el complemento"
+		"message": "Open settings and specify a color to pages related to the add-on"
 	},
 
 	"themeColourIsUnignored": {
-		"message": "Se está utilizando el color del tema definido por el sitio web, en lugar de ignorarlo por defecto"
+		"message": "Theme color defined by the website is used, instead of being ignored by default"
 	},
 
 	"themeColourNotFound": {
-		"message": "No se ha encontrado el color del tema, el color se seleccionó de la página web"
+		"message": "Theme color is not found, color is picked from the web page"
 	},
 
 	"themeColourIsIgnored": {
-		"message": "El color del tema definido por el sitio web se ha ignorado"
+		"message": "Theme color defined by the website is ignored"
 	},
 
 	"useThemeColourButton": {
-		"message": "Usar color del tema"
+		"message": "Use theme color"
 	},
 
 	"useThemeColourTitle": {
-		"message": "Usar el color del tema definido por el sitio web"
+		"message": "Use theme color defined by the website"
 	},
 
 	"colourIsPickedFrom": {
-		"message": "El color se ha seleccionado de un elemento HTML que coincide con "
+		"message": "Color is picked from an HTML element matching "
 	},
 
 	"colourIsPickedFromEnd": {
@@ -296,46 +296,46 @@
 	},
 
 	"cannotFindElement": {
-		"message": "No se puede encontrar el elemento HTML que coincida con "
+		"message": "Cannot find the HTML element matching "
 	},
 
 	"cannotFindElementEnd": {
-		"message": ", el color se selecciona de la página web en su lugar"
+		"message": ", color is picked from the web page instead"
 	},
 
 	"errorOccuredLocatingElement": {
-		"message": "Ocurrió un error al buscar el elemento HTML que coincide con "
+		"message": "An error occurred while looking for the HTML element matching "
 	},
 
 	"errorOccuredLocatingElementEnd": {
-		"message": ", el color se selecciona de la página web en su lugar"
+		"message": ", color is picked from the web page instead"
 	},
 
 	"colourIsSpecified": {
-		"message": "El color para este sitio está especificado en los ajustes"
+		"message": "Color for this site is specified in the settings"
 	},
 
 	"usingImageViewer": {
-		"message": "Usando el color para el visor de imágenes"
+		"message": "Using color for image viewer"
 	},
 
 	"usingThemeColour": {
-		"message": "Usando el color del tema definido por el sitio web"
+		"message": "Using theme color defined by the website"
 	},
 
 	"ignoreThemeColourButton": {
-		"message": "Ignorar color del tema"
+		"message": "Ignore theme color"
 	},
 
 	"ignoreThemeColourTitle": {
-		"message": "Ignorar el color del tema definido por el sitio web"
+		"message": "Ignore theme color defined by the website"
 	},
 
 	"usingFallbackColour": {
-		"message": "No hay color disponible, se está usando el color de reserva"
+		"message": "No color is available, using fallback color"
 	},
 
 	"colourPickedFromWebpage": {
-		"message": "El color se ha seleccionado correctamente de la página web"
+		"message": "Color is successfully picked from the web page"
 	}
 }
