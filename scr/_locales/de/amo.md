@@ -24,7 +24,7 @@ Während Sie im Web surfen, passt dieses Add-on das Theme von Firefox an das Ers
 
 <br><b>Wenn Sie ein CSS-Theme verwenden:</b>
 
-Ein CSS-Theme kann mit <abbr title="Adaptive Tab Bar Colour">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Dieses</a> ist ein Beispiel für ein <abbr title="Adaptive Tab Bar Colour">ATBC</abbr>-kompatibles CSS-Theme.
+Ein CSS-Theme kann mit <abbr title="Anpassende Tableistenfarbe">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Dieses</a> ist ein Beispiel für ein <abbr title="Anpassende Tableistenfarbe">ATBC</abbr>-kompatibles CSS-Theme.
 
 <br><b>Sicherheitserinnerung:</b>
 

@@ -64,6 +64,9 @@ export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, o
 	policyHeaderInput.value = initialValue;
 	policyHeaderInput.addEventListener("focus", () => policyHeaderInput.select());
 	policyHeaderInput.addEventListener("input", () => onChange(policyHeaderInput.value.trim()));
+	policyHeaderInput.addEventListener("keydown", (event) => {
+		if (event.key === "Enter") policyHeaderInput.blur();
+	});
 }
 
 /**
@@ -100,6 +103,9 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 		colourPicker.style.backgroundColor = colour;
 		colourPickerInput.value = colour;
 		onChange(colour);
+	});
+	colourInput.addEventListener("keydown", (event) => {
+		if (event.key === "Enter") colourInput.blur();
 	});
 	colourInput.addEventListener("input", () => {
 		const colour = hex(colourInput.value);
@@ -182,6 +188,9 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
 	QuerySelectorInput.value = initialQuerySelector;
 	QuerySelectorInput.addEventListener("focus", () => QuerySelectorInput.select());
 	QuerySelectorInput.addEventListener("input", () => onChange(QuerySelectorInput.value.trim()));
+	QuerySelectorInput.addEventListener("keydown", (event) => {
+		if (event.key === "Enter") QuerySelectorInput.blur();
+	});
 }
 
 /**

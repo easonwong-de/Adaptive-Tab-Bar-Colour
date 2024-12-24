@@ -4,10 +4,10 @@
 	},
 
 	"extensionDescription": {
-		"message": "Changes the colour of Firefox tab bar to match the website theme."
+		"message": "Changes the colour of Firefox theme to match the website’s appearance."
 	},
 
-	"option.html & popup.html": {
+	"__OPTIONS PAGE__": {
 		"message": "===================="
 	},
 
@@ -19,60 +19,16 @@
 		"message": "Loading…"
 	},
 
-	"general": {
-		"message": "General"
+	"themeBuilder": {
+		"message": "Theme builder"
 	},
 
-	"customisation": {
-		"message": "Customisation"
+	"siteList": {
+		"message": "Site list"
 	},
 
 	"advanced": {
 		"message": "Advanced"
-	},
-
-	"colourSchemePreference": {
-		"message": "Colour scheme preference"
-	},
-
-	"automatic": {
-		"message": "Automatic"
-	},
-
-	"light": {
-		"message": "Light"
-	},
-
-	"dark": {
-		"message": "Dark"
-	},
-
-	"allowLightTabBar": {
-		"message": "Allow light tab bar"
-	},
-
-	"allowDarkTabBar": {
-		"message": "Allow dark tab bar"
-	},
-
-	"dynamicColourUpdate": {
-		"message": "Dynamic colour update"
-	},
-
-	"ignoreDesignatedThemeColour": {
-		"message": "Ignore designated theme colour"
-	},
-
-	"overlay": {
-		"message": "Overlay"
-	},
-
-	"opacityFactor": {
-		"message": "Opacity factor"
-	},
-
-	"opacityThreshold": {
-		"message": "Opacity threshold"
 	},
 
 	"tabBar": {
@@ -111,8 +67,104 @@
 		"message": "Pop-up"
 	},
 
-	"enableRulesForSpecificDomains": {
-		"message": "Enable rules for specific domains"
+	"thisPolicyWillBeIgnored": {
+		"message": "This policy will be ignored"
+	},
+
+	"URLDomainOrRegex": {
+		"message": "Full URL / domain / regex"
+	},
+
+	"addonNotFound": {
+		"message": "Add-on not found"
+	},
+
+	"specifyAColour": {
+		"message": "specify a colour"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "use / ignore theme colour"
+	},
+
+	"pickColourFromElement": {
+		"message": "pick colour from element"
+	},
+
+	"anyCSSColour": {
+		"message": "any format"
+	},
+
+	"use": {
+		"message": "Use"
+	},
+
+	"ignore": {
+		"message": "Ignore"
+	},
+
+	"querySelector": {
+		"message": "query selector"
+	},
+
+	"delete": {
+		"message": "Delete"
+	},
+
+	"reset": {
+		"message": "Reset"
+	},
+
+	"addANewRule": {
+		"message": "Add a new rule"
+	},
+
+	"allowLightTabBar": {
+		"message": "Allow light tab bar"
+	},
+
+	"allowLightTabBarTooltip": {
+		"message": "Allow tab bar to use bright colour (dark text on light tab bar)."
+	},
+
+	"allowDarkTabBar": {
+		"message": "Allow dark tab bar"
+	},
+
+	"allowDarkTabBarTooltip": {
+		"message": "Allow tab bar to use dark colour (light text on dark tab bar)."
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Dynamic colour update"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Keeps updating tab bar colour while browsing within a web page."
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignore website’s theme colour"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Always ignore theme colour defined by the website and pick colour from the web page instead."
+	},
+
+	"minimumContrast": {
+		"message": "Minimum contrast"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Set the minimum contrast ratio between the tab bar and text. The tab bar colour adjusts automatically if the ratio is unmet."
+	},
+
+	"inLightMode": {
+		"message": "In light mode"
+	},
+
+	"inDarkMode": {
+		"message": "In dark mode"
 	},
 
 	"homepageColourLight": {
@@ -120,7 +172,7 @@
 	},
 
 	"homepageColourDark": {
-		"message": "Home page color: dark"
+		"message": "Home page colour: dark"
 	},
 
 	"fallbackColourLight": {
@@ -135,80 +187,16 @@
 		"message": "Report an issue / submit a suggestion / translate this add-on"
 	},
 
+	"__POPUP__": {
+		"message": "===================="
+	},
+
 	"moreSettings": {
 		"message": "More settings…"
 	},
 
 	"moreSettingsTooltip": {
 		"message": "Open option page"
-	},
-
-	"options.js && popup.js": {
-		"message": "===================="
-	},
-
-	"resetRuleConfirm": {
-		"message": "Do you want to reset all the rules?"
-	},
-
-	"specifyAColour": {
-		"message": "specify a colour"
-	},
-
-	"ignoreThemeColour": {
-		"message": "ignore theme colour"
-	},
-
-	"useThemeColour": {
-		"message": "use theme colour"
-	},
-
-	"useQuerySelector": {
-		"message": "use query selector"
-	},
-
-	"useSystemColourScheme": {
-		"message": "Use system colour scheme"
-	},
-
-	"useLightColourScheme": {
-		"message": "Use light colour scheme"
-	},
-
-	"useDarkColourScheme": {
-		"message": "Use dark colour scheme"
-	},
-
-	"forceModeTooltip_bright": {
-		"message": "Allow tab bar to turn bright (might cause flashing)"
-	},
-
-	"forceModeTooltip_dark": {
-		"message": "Allow tab bar to turn dark (might cause flashing)"
-	},
-
-	"dynamicModeTooltip": {
-		"message": "Keeps updating tab bar colour while browsing within a web page"
-	},
-
-	"noThemeColourModeTooltip": {
-		"message": "Always ignore theme colour defined by the website"
-	},
-
-	"delete": {
-		"message": "Delete"
-	},
-
-	"reset": {
-		"message": "Reset"
-	},
-
-	"resetDomainSpecificRules": {
-		"message": "Reset domain-specific rules"
-	},
-
-	"addANewRule": {
-		"message": "Add a new rule"
 	},
 
 	"colourForPDFViewer": {
@@ -236,7 +224,7 @@
 	},
 
 	"useDefaultColourForAddonEnd": {
-		"message": ""
+		"message": "__EMPTY__"
 	},
 
 	"useDefaultColourForAddonButton": {
@@ -268,7 +256,7 @@
 	},
 
 	"specifyColourForAddonEnd": {
-		"message": ""
+		"message": "__EMPTY__"
 	},
 
 	"specifyColourForAddonButton": {
@@ -279,12 +267,8 @@
 		"message": "Open settings and specify a colour to pages related to the add-on"
 	},
 
-	"atbc.js": {
-		"message": "===================="
-	},
-
 	"themeColourIsUnignored": {
-		"message": "Theme colour defined by the website is un-ignored"
+		"message": "Theme colour defined by the website is used, instead of being ignored by default"
 	},
 
 	"themeColourNotFound": {
@@ -308,11 +292,27 @@
 	},
 
 	"colourIsPickedFromEnd": {
-		"message": ""
+		"message": "__EMPTY__"
+	},
+
+	"cannotFindElement": {
+		"message": "Cannot find the HTML element matching "
+	},
+
+	"cannotFindElementEnd": {
+		"message": ", colour is picked from the web page instead"
+	},
+
+	"errorOccuredLocatingElement": {
+		"message": "An error occurred while looking for the HTML element matching "
+	},
+
+	"errorOccuredLocatingElementEnd": {
+		"message": ", colour is picked from the web page instead"
 	},
 
 	"colourIsSpecified": {
-		"message": "Colour for this domain is specified in the settings"
+		"message": "Colour for this site is specified in the settings"
 	},
 
 	"usingImageViewer": {
@@ -337,9 +337,5 @@
 
 	"colourPickedFromWebpage": {
 		"message": "Colour is successfully picked from the web page"
-	},
-
-	"end": {
-		"message": "===================="
 	}
 }

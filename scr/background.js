@@ -290,7 +290,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				frame_inactive: dimColourToString(colour, -pref.tabbar * 1.5),
 				tab_selected: dimColourToString(colour, -pref.tabSelected * 1.5),
 				tab_line: dimColourToString(colour, (-pref.tabSelectedBorder - pref.tabSelected) * 1.5),
-				ntp_background: dimColourToString(colour, 0),
+				ntp_background: dimColourToString(colourCode["HOME"][current.scheme], 0),
 				// Toolbar
 				toolbar: dimColourToString(colour, -pref.toolbar * 1.5),
 				toolbar_top_separator: dimColourToString(colour, (-pref.tabbarBorder - pref.tabbar) * 1.5),
@@ -333,7 +333,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				frame_inactive: dimColourToString(colour, pref.tabbar),
 				tab_selected: dimColourToString(colour, pref.tabSelected),
 				tab_line: dimColourToString(colour, pref.tabSelectedBorder + pref.tabSelected),
-				ntp_background: dimColourToString(colour, 0),
+				ntp_background: dimColourToString(colourCode["HOME"][current.scheme], 0),
 				// Toolbar
 				toolbar: dimColourToString(colour, pref.toolbar),
 				toolbar_top_separator: dimColourToString(colour, pref.tabbarBorder + pref.tabbar),

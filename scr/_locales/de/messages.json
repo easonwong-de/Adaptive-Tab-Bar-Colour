@@ -4,75 +4,31 @@
 	},
 
 	"extensionDescription": {
-		"message": "Ändert die Farbe der Firefox-Tableiste, um zum Design der Website zu passen."
+		"message": "Ändert die Farbe des Firefox-Themes, um dem Erscheinungsbild der Website zu entsprechen."
 	},
 
-	"option.html & popup.html": {
+	"__OPTIONS PAGE__": {
 		"message": "===================="
 	},
 
 	"reinstallTip": {
-		"message": "Einstellungsdaten könnten beschädigt sein. Bitte entfernen Sie das Add-on und installieren Sie es nach dem Neustart von Firefox erneut. Es tut mir leid für Ihre Unannehmlichkeiten!"
+		"message": "Einstellungsdaten könnten beschädigt sein. Wenn das Problem weiterhin besteht, installieren Sie das Add-on bitte neu. Entschuldigung für die Unannehmlichkeiten!"
 	},
 
 	"loading": {
-		"message": "Laden…"
+		"message": "Lädt…"
 	},
 
-	"general": {
-		"message": "Allgemein"
+	"themeBuilder": {
+		"message": "Theme-Editor"
 	},
 
-	"customisation": {
-		"message": "Personalisierung"
+	"siteList": {
+		"message": "Seitenliste"
 	},
 
 	"advanced": {
 		"message": "Erweitert"
-	},
-
-	"colourSchemePreference": {
-		"message": "Farbschema-Präferenz"
-	},
-
-	"automatic": {
-		"message": "Automatisch"
-	},
-
-	"light": {
-		"message": "Hell"
-	},
-
-	"dark": {
-		"message": "Dunkel"
-	},
-
-	"allowLightTabBar": {
-		"message": "Helle Tableiste erlauben"
-	},
-
-	"allowDarkTabBar": {
-		"message": "Dunkle Tableiste erlauben"
-	},
-
-	"dynamicColourUpdate": {
-		"message": "Dynamische Farbe-Aktualisierung"
-	},
-
-	"ignoreDesignatedThemeColour": {
-		"message": "Vorgegebene Theme-Farbe ignorieren"
-	},
-
-	"overlay": {
-		"message": "Overlay"
-	},
-
-	"opacityFactor": {
-		"message": "Opazitätsfaktor"
-	},
-
-	"opacityThreshold": {
-		"message": "Opazitätsschwelle"
 	},
 
 	"tabBar": {
@@ -111,16 +67,112 @@
 		"message": "Pop-up"
 	},
 
-	"enableRulesForSpecificDomains": {
-		"message": "Regeln für bestimmte Domains"
+	"thisPolicyWillBeIgnored": {
+		"message": "Diese Policy wird ignoriert"
+	},
+
+	"URLDomainOrRegex": {
+		"message": "Voll-URL / Domain / Regex"
+	},
+
+	"addonNotFound": {
+		"message": "Add-on nicht gefunden"
+	},
+
+	"specifyAColour": {
+		"message": "eine Farbe angeben"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "Theme-Farbe an / aus"
+	},
+
+	"pickColourFromElement": {
+		"message": "Farbe aus Element"
+	},
+
+	"anyCSSColour": {
+		"message": "jedes Format"
+	},
+
+	"use": {
+		"message": "An"
+	},
+
+	"ignore": {
+		"message": "Aus"
+	},
+
+	"querySelector": {
+		"message": "Query-Selector"
+	},
+
+	"delete": {
+		"message": "Löschen"
+	},
+
+	"reset": {
+		"message": "Zurücksetzen"
+	},
+
+	"addANewRule": {
+		"message": "Neue Policy hinzufügen"
+	},
+
+	"allowLightTabBar": {
+		"message": "Helle Tableiste erlauben"
+	},
+
+	"allowLightTabBarTooltip": {
+		"message": "Erlaubt der Tableiste, helle Farben zu verwenden (dunkler Text auf heller Tableiste)."
+	},
+
+	"allowDarkTabBar": {
+		"message": "Dunkle Tableiste erlauben"
+	},
+
+	"allowDarkTabBarTooltip": {
+		"message": "Erlaubt der Tableiste, dunkle Farben zu verwenden (heller Text auf dunkler Tableiste)."
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Dynamische Farbaktualisierung"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Aktualisiert die Farbe der Tableiste während des Surfens auf einer Webseite ständig."
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Theme-Farbe der Website ignorieren"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Ignoriert immer die von der Website definierte Theme-Farbe und wählt stattdessen die Farbe von der Webseite."
+	},
+
+	"minimumContrast": {
+		"message": "Minimaler Kontrast"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Stellt den minimalen Kontrast zwischen Tableiste und ihrem Text ein. Die Farbe der Tableiste wird automatisch angepasst, wenn der Kontrast nicht erreicht wird."
+	},
+
+	"inLightMode": {
+		"message": "Im hellen Modus"
+	},
+
+	"inDarkMode": {
+		"message": "Im dunklen Modus"
 	},
 
 	"homepageColourLight": {
-		"message": "Farbe der Startseite: hell"
+		"message": "Startseitenfarbe: hell"
 	},
 
 	"homepageColourDark": {
-		"message": "Farbe der Startseite: dunkel"
+		"message": "Startseitenfarbe: dunkel"
 	},
 
 	"fallbackColourLight": {
@@ -132,7 +184,11 @@
 	},
 
 	"reportAnIssue": {
-		"message": "Problem melden / Vorschlag einreichen / diese Erweiterung übersetzen"
+		"message": "Ein Problem melden / einen Vorschlag einreichen / dieses Add-on übersetzen"
+	},
+
+	"__POPUP__": {
+		"message": "===================="
 	},
 
 	"moreSettings": {
@@ -140,87 +196,19 @@
 	},
 
 	"moreSettingsTooltip": {
-		"message": "Optionen öffnen"
-	},
-
-	"option.js": {
-		"message": "===================="
-	},
-
-	"resetRuleConfirm": {
-		"message": "Möchten Sie alle Regeln zurücksetzen?"
-	},
-
-	"specifyAColour": {
-		"message": "Farbe festlegen"
-	},
-
-	"ignoreThemeColour": {
-		"message": "Theme-Farbe ignorieren"
-	},
-
-	"useThemeColour": {
-		"message": "Theme-Farbe verwenden"
-	},
-
-	"useQuerySelector": {
-		"message": "Query-Selector verwenden"
-	},
-
-	"useSystemColourScheme": {
-		"message": "System-Farbschema verwenden"
-	},
-
-	"useLightColourScheme": {
-		"message": "Helles Farbschema verwenden"
-	},
-
-	"useDarkColourScheme": {
-		"message": "Dunkles Farbschema verwenden"
-	},
-
-	"forceModeTooltip_bright": {
-		"message": "Tab-Leiste kann hell werden (kann zu Blinken führen)"
-	},
-
-	"forceModeTooltip_dark": {
-		"message": "Tab-Leiste kann dunkel werden (kann zu Blinken führen)"
-	},
-
-	"dynamicModeTooltip": {
-		"message": "Aktualisiert die Tab-Leistenfarbe während des Browsens innerhalb einer Webseite"
-	},
-
-	"noThemeColourModeTooltip": {
-		"message": "Theme-Farbe der Webseite immer ignorieren"
-	},
-
-	"delete": {
-		"message": "Löschen"
-	},
-
-	"reset": {
-		"message": "Zurücksetzen"
-	},
-
-	"resetDomainSpecificRules": {
-		"message": "Domänenspezifische Regeln zurücksetzen"
-	},
-
-	"addANewRule": {
-		"message": "Neue Regel hinzufügen"
+		"message": "Optionenseite öffnen"
 	},
 
 	"colourForPDFViewer": {
-		"message": "Farbe für PDF-Anzeige verwenden"
+		"message": "Farbe für PDF-Viewer verwenden"
 	},
 
 	"pageIsProtected": {
-		"message": "Diese Seite ist durch den Browser geschützt"
+		"message": "Diese Seite wird vom Browser geschützt"
 	},
 
 	"colourForPlainTextViewer": {
-		"message": "Farbe für Reintext-Seite verwenden"
+		"message": "Farbe für Plain-Text-Viewer verwenden"
 	},
 
 	"errorOccured": {
@@ -228,70 +216,126 @@
 	},
 
 	"colourForHomePage": {
-		"message": "Die Tab-Leistenfarbe für die Startseite kann in den Einstellungen konfiguriert werden"
+		"message": "Die Farbe der Tableiste für die Startseite kann in den Einstellungen konfiguriert werden"
 	},
 
 	"useDefaultColourForAddon": {
-		"message": "Verwende angegebene Farbe für Seiten im Zusammenhang mit <b>$1</b><label id='info_action' title='Standardfarbe verwenden'><span>Standardfarbe verwenden</span></label>"
+		"message": "Spezifizierte Farbe für Seiten, die zu "
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": " gehören, wird verwendet"
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Standardfarbe verwenden"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Standardfarbe verwenden"
 	},
 
 	"useRecommendedColourForAddon": {
-		"message": "Empfohlene Farbe für Seiten im Zusammenhang mit <b>$1</b> ist verfügbar<label id='info_action' title='Empfohlene Farbe verwenden'><span>Empfohlene Farbe verwenden</span></label>"
+		"message": "Empfohlene Farbe für Seiten, die zu "
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " gehören, ist verfügbar"
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Empfohlene Farbe verwenden"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Empfohlene Farbe verwenden"
 	},
 
 	"specifyColourForAddon": {
-		"message": "Klicken Sie auf „Farbe festlegen“, um die Einstellungen zu öffnen und die Tab-Leistenfarbe für Seiten im Zusammenhang mit <b>$1</b> festzulegen<label id='info_action' title='Einstellungen öffnen und Farbe für $1 festlegen'><span>Farbe festlegen</span></label>"
+		"message": "Klicken Sie auf „Eine Farbe angeben“, um die Einstellungen zu öffnen und die Farbe der Tableiste für Seiten, die zu "
 	},
 
-	"atbc.js": {
-		"message": "===================="
+	"specifyColourForAddonEnd": {
+		"message": " gehören, anzugeben"
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Eine Farbe angeben"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Einstellungen öffnen und eine Farbe für die Seiten des Add-ons angeben"
 	},
 
 	"themeColourIsUnignored": {
-		"message": "Vom Webseiten-Design definierte Theme-Farbe wird nicht ignoriert<label id='info_action' title='Vom Webseiten-Design definierte Theme-Farbe nicht verwenden' data-action='IGNORE_THEME'><span>Theme-Farbe nicht verwenden</span></label>"
+		"message": "Die von der Website definierte Theme-Farbe wird verwendet, anstatt standardmäßig ignoriert zu werden"
 	},
 
 	"themeColourNotFound": {
-		"message": "Theme-Farbe wurde nicht gefunden, Farbe wird von der Webseite übernommen"
+		"message": "Theme-Farbe wurde nicht gefunden, Farbe wird von der Webseite gewählt"
 	},
 
 	"themeColourIsIgnored": {
-		"message": "Vom Webseiten-Design definierte Theme-Farbe wird ignoriert<label id='info_action' title='Vom Webseiten-Design definierte Theme-Farbe verwenden' data-action='UN_IGNORE_THEME'><span>Theme-Farbe verwenden</span></label>"
+		"message": "Die von der Website definierte Theme-Farbe wird ignoriert"
+	},
+
+	"useThemeColourButton": {
+		"message": "Theme-Farbe verwenden"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Die von der Website definierte Theme-Farbe verwenden"
 	},
 
 	"colourIsPickedFrom": {
-		"message": "Farbe wird von einem HTML-Element abgeleitet, das zu <b>$1</b> passt"
+		"message": "Die Farbe wird von einem HTML-Element ausgewählt, das mit "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": " übereinstimmt"
+	},
+
+	"cannotFindElement": {
+		"message": "Das HTML-Element, das mit "
+	},
+
+	"cannotFindElementEnd": {
+		"message": " übereinstimmt, konnte nicht gefunden werden. Die Farbe wird stattdessen von der Webseite gewählt"
+	},
+
+	"errorOccuredLocatingElement": {
+		"message": "Ein Fehler ist aufgetreten, während nach dem HTML-Element gesucht wurde, das mit "
+	},
+
+	"errorOccuredLocatingElementEnd": {
+		"message": " übereinstimmt. Die Farbe wird stattdessen von der Webseite gewählt"
 	},
 
 	"colourIsSpecified": {
-		"message": "Farbe für diese Domain ist in den Einstellungen festgelegt"
-	},
-
-	"bacauseThemeColourIsIgnored": {
-		"message": ", da die vom Webseiten-Design definierte Theme-Farbe ignoriert wird<label id='info_action' title='Vom Webseiten-Design definierte Theme-Farbe verwenden' data-action='UN_IGNORE_THEME'><span>Theme-Farbe doch verwenden</span></label>"
+		"message": "Die Farbe für diese Seite ist in den Einstellungen angegeben"
 	},
 
 	"usingImageViewer": {
-		"message": "Verwende <b>chrome://global/skin/media/imagedoc-darknoise.png</b> als Hintergrund"
-	},
-
-	"usingColourForPlainText": {
-		"message": "Verwende Farbe von <b>resource://content-accessible/plaintext.css</b>"
+		"message": "Farbe für Bild-Viewer verwenden"
 	},
 
 	"usingThemeColour": {
-		"message": "Verwende vom Webseiten-Design definierte Theme-Farbe<label id='info_action' title='Vom Webseiten-Design definierte Theme-Farbe nicht verwenden' data-action='IGNORE_THEME'><span>Theme-Farbe nicht verwenden</span></label>"
+		"message": "Die von der Website definierte Theme-Farbe wird verwendet"
+	},
+
+	"ignoreThemeColourButton": {
+		"message": "Theme-Farbe ignorieren"
+	},
+
+	"ignoreThemeColourTitle": {
+		"message": "Die von der Website definierte Theme-Farbe ignorieren"
 	},
 
 	"usingFallbackColour": {
-		"message": "Keine Farbe verfügbar, verwende Fallback-Farbe"
+		"message": "Keine Farbe verfügbar, Fallback-Farbe wird verwendet"
 	},
 
 	"colourPickedFromWebpage": {
-		"message": "Farbe wird erfolgreich von der Webseite übernommen"
-	},
-
-	"end": {
-		"message": "===================="
+		"message": "Farbe erfolgreich von der Webseite gewählt"
 	}
 }

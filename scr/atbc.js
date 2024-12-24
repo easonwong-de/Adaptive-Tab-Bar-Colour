@@ -193,19 +193,25 @@ function findColour_policy() {
 		return true;
 	} else if (conf.policy.type === "QUERY_SELECTOR") {
 		const querySelector = conf.policy.value;
-		try {
-			const element = document.querySelector(querySelector);
-			response.additionalInfo = querySelector;
-			if (element) {
-				response.colour = getColourFromElement(element);
-				response.reason = "QS_USED";
-			} else {
-				findComputedColour();
-				response.reason = "QS_FAILED";
-			}
-		} catch (error) {
+		if (querySelector === "") {
 			findComputedColour();
+			response.additionalInfo = "nothing"
 			response.reason = "QS_ERROR";
+		} else {
+			try {
+				const element = document.querySelector(querySelector);
+				response.additionalInfo = querySelector;
+				if (element) {
+					response.colour = getColourFromElement(element);
+					response.reason = "QS_USED";
+				} else {
+					findComputedColour();
+					response.reason = "QS_FAILED";
+				}
+			} catch (error) {
+				findComputedColour();
+				response.reason = "QS_ERROR";
+			}
 		}
 	} else {
 		response.reason = "COLOUR_SPECIFIED";

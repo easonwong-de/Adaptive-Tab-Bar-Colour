@@ -131,7 +131,7 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 	const deleteButton = policySection.querySelector("button");
 	let initialColour = "#000000";
 	let initialUseThemeColour = true;
-	let initialQuerySelector = "div#nav";
+	let initialQuerySelector = "";
 	switch (policy.type) {
 		case "COLOUR":
 			initialColour = policy.value;

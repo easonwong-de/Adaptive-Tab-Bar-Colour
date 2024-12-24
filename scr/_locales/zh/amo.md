@@ -24,10 +24,10 @@
 
 <br><b>若閣下使用 CSS Theme：</b>
 
-一個 CSS theme 可以與 適應性變色標題列 相容，若其採用默認的顏色變數。譬如，<a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">這</a>是一個與 適應性變色標題列 相容的 CSS theme。
+一個 CSS theme 若其採用默認的顏色變數，可以與 適應性變色標題列 相容。譬如，<a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">這</a>是一個與 適應性變色標題列 相容的 CSS theme。
 
 <br><b>安全提示：</b>
 
 小心懷有惡意的網頁畫面：請注意區別瀏覽器介面和網頁畫面。請參考：<a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>。（由 <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a> 提出）
 
-<br>閣下可移步 GitHub 為此專案加星標：https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour
+<br>閣下可移步 GitHub 為此專案加星標：<a href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour">https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour</a>
