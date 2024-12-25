@@ -22,7 +22,7 @@
 	"themeBuilder": {
 		"message": "Creador de temas"
 	},
-	
+
 	"siteList": {
 		"message": "Lista de sitios"
 	},
@@ -194,7 +194,7 @@
 	"moreSettings": {
 		"message": "Más opciones…"
 	},
-	
+
 	"moreSettingsTooltip": {
 		"message": "Abrir página de opciones"
 	},
@@ -338,3 +338,4 @@
 	"colourPickedFromWebpage": {
 		"message": "El color se ha tomado con éxito de la página web"
 	}
+}

@@ -34,7 +34,7 @@ export default class preference {
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
 		siteList: {},
-		version: [2, 2],
+		version: [2, 2, 1],
 	};
 
 	#default_prefContent = {
@@ -61,7 +61,7 @@ export default class preference {
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
 		siteList: {},
-		version: [2, 2],
+		version: [2, 2, 1],
 	};
 
 	/** Legacy pref keys and their current version */
@@ -247,7 +247,7 @@ export default class preference {
 			}
 			this.#prefContent.siteList = newSiteList;
 		}
-		this.#prefContent.version = [2, 2];
+		this.#prefContent.version = [2, 2, 1];
 		await this.save();
 	}
 
