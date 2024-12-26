@@ -1,12 +1,13 @@
 "use strict";
 
-import { hex } from "./colour.js";
 import {
+	addonVersion,
 	default_homeBackground_light,
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
 } from "./default_values.js";
+import { hex } from "./colour.js";
 
 export default class preference {
 	/** The content of the preference */
@@ -34,7 +35,7 @@ export default class preference {
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
 		siteList: {},
-		version: [2, 2, 1],
+		version: addonVersion,
 	};
 
 	#default_prefContent = {
@@ -61,7 +62,7 @@ export default class preference {
 		fallbackColour_light: default_fallbackColour_light,
 		fallbackColour_dark: default_fallbackColour_dark,
 		siteList: {},
-		version: [2, 2, 1],
+		version: addonVersion,
 	};
 
 	/** Legacy pref keys and their current version */
@@ -247,7 +248,7 @@ export default class preference {
 			}
 			this.#prefContent.siteList = newSiteList;
 		}
-		this.#prefContent.version = [2, 2, 1];
+		this.#prefContent.version = addonVersion;
 		await this.save();
 	}
 
