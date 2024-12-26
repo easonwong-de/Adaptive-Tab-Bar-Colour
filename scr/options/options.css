@@ -359,9 +359,7 @@ div.sponsor {
 
 .policy-header {
 	margin-inline: 0.5rem auto;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	max-width: 100%;
 }
 
 .custom-policy .policy-header {
