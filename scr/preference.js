@@ -352,6 +352,7 @@ export default class preference {
 	 * Stores the preferences from the instance to the browser storage.
 	 */
 	async save() {
+		await browser.storage.local.clear();
 		await browser.storage.local.set(this.#prefContent);
 	}
 
