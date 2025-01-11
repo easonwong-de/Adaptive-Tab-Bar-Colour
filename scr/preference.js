@@ -141,7 +141,13 @@ export default class preference {
 	 */
 	async normalise() {
 		const storedPref = await browser.storage.local.get();
-		if (!(storedPref["version"] >= [1, 7] || storedPref["last_version"] >= [1, 7])) {
+		// If there's no version number, if last version was before v1.7, or if it was v2.2.1
+		// Resets the preference
+		if (
+			(!storedPref.last_version && !storedPref.version) ||
+			storedPref.last_version < [1, 7] ||
+			(storedPref.last_version && storedPref.version == [2, 2, 1])
+		) {
 			this.reset();
 			await this.save();
 			return;
@@ -529,6 +535,6 @@ export default class preference {
  * @param {number} num
  */
 function x100IfSmallerThan1(num) {
-	if (0 < num && num < 1) return Math.round(num * 100);
+	if (-1 < num && num < 1) return Math.round(num * 100);
 	else return +num;
 }
