@@ -146,7 +146,7 @@ export default class preference {
 		if (
 			(!storedPref.last_version && !storedPref.version) ||
 			storedPref.last_version < [1, 7] ||
-			(storedPref.last_version && storedPref.version == [2, 2, 1])
+			storedPref.version == [2, 2, 1]
 		) {
 			this.reset();
 			await this.save();
