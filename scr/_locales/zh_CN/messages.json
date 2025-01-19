@@ -1,10 +1,10 @@
 {
 	"extensionName": {
-		"message": "適應性變色標題列"
+		"message": "自适应标签栏颜色"
 	},
 
 	"extensionDescription": {
-		"message": "改變 Firefox 佈景主題，使之與網頁融為一體。"
+		"message": "改变 Firefox 背景主题，使其与网页融为一体。"
 	},
 
 	"__OPTIONS PAGE__": {
@@ -12,27 +12,27 @@
 	},
 
 	"reinstallTip": {
-		"message": "設定檔可能已損壞，請考慮嘗試重新安裝此擴充套件。"
+		"message": "插件可能已损坏，请尝试重新安装本插件。"
 	},
 
 	"loading": {
-		"message": "載入中⋯⋯"
+		"message": "加载中……"
 	},
 
 	"themeBuilder": {
-		"message": "佈景主題"
+		"message": "背景主题"
 	},
 
 	"siteList": {
-		"message": "自訂規則"
+		"message": "自定义规则"
 	},
 
 	"advanced": {
-		"message": "進階設定"
+		"message": "进阶设置"
 	},
 
 	"tabBar": {
-		"message": "分頁標籤列"
+		"message": "标签栏"
 	},
 
 	"background": {
@@ -40,55 +40,55 @@
 	},
 
 	"selectedTab": {
-		"message": "選中的分頁標籤"
+		"message": "被选中的标签页"
 	},
 
 	"toolbar": {
-		"message": "工具列"
+		"message": "工具栏"
 	},
 
 	"border": {
-		"message": "邊界"
+		"message": "边界"
 	},
 
 	"URLBar": {
-		"message": "網址列"
+		"message": "地址栏"
 	},
 
 	"backgroundOnFocus": {
-		"message": "選中時的背景"
+		"message": "被选中时的背景"
 	},
 
 	"sidebar": {
-		"message": "側邊列"
+		"message": "侧栏"
 	},
 
 	"popUp": {
-		"message": "選單"
+		"message": "弹出菜单"
 	},
 
 	"thisPolicyWillBeIgnored": {
-		"message": "這項規則將不生效"
+		"message": "这项规则将不会生效"
 	},
 
 	"URLDomainOrRegex": {
-		"message": "完整網址 / 域名 / 正則表達式"
+		"message": "完整网址 / 域名 / 正则表达式"
 	},
 
 	"addonNotFound": {
-		"message": "未找到該套件"
+		"message": "未找到该插件"
 	},
 
 	"specifyAColour": {
-		"message": "指定顏色"
+		"message": "指定颜色"
 	},
 
 	"useIgnoreThemeColour": {
-		"message": "採用 / 忽略主題色"
+		"message": "使用 / 忽略主题色"
 	},
 
 	"pickColourFromElement": {
-		"message": "從網頁元件取色"
+		"message": "从网页元素取色"
 	},
 
 	"anyCSSColour": {
@@ -96,7 +96,7 @@
 	},
 
 	"use": {
-		"message": "採用"
+		"message": "使用"
 	},
 
 	"ignore": {
@@ -108,55 +108,55 @@
 	},
 
 	"delete": {
-		"message": "移除"
+		"message": "删除"
 	},
 
 	"reset": {
-		"message": "重設"
+		"message": "重新设定"
 	},
 
 	"addANewRule": {
-		"message": "新建自訂規則"
+		"message": "新建自定义规则"
 	},
 
 	"allowLightTabBar": {
-		"message": "允許標題列採用亮色"
+		"message": "允许标签栏使用亮色"
 	},
 
 	"allowLightTabBarTooltip": {
-		"message": "允許標題列採用亮色（深色文字和淺色背景）。"
+		"message": "允许标签栏使用亮色（深色文字和淺色背景）。"
 	},
 
 	"allowDarkTabBar": {
-		"message": "允許標題列採用暗色"
+		"message": "允许标签栏使用暗色"
 	},
 
 	"allowDarkTabBarTooltip": {
-		"message": "允許標題列採用暗色（淺色文字和深色背景）。"
+		"message": "允许标签栏使用暗色（浅色文字和深色背景）。"
 	},
 
 	"dynamicColourUpdate": {
-		"message": "動態更新顏色"
+		"message": "动态更新颜色"
 	},
 
 	"dynamicModeTooltip": {
-		"message": "在同一網頁停留時，持續更新標題列顏色。"
+		"message": "在同一个网页停留时，持续更新标题栏颜色。"
 	},
 
 	"ignoreDesignatedThemeColour": {
-		"message": "總是忽略網站指定的主題色"
+		"message": "总是忽略网站指定的主题色"
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "總是不採用網站指定的主題色，而採用其他方法取得適合網頁的標題列顏色。"
+		"message": "总是忽略网站指定的主题色，而是采用其他方法取得适合网页的标题栏颜色。"
 	},
 
 	"minimumContrast": {
-		"message": "最小對比度設定"
+		"message": "最小对比度设置"
 	},
 
 	"minimumContrastTooltip": {
-		"message": "在此設定標題列和文字的最小對比度。若該指標未達到，標題列會調整其顏色使之達到設定的最小對比度。"
+		"message": "在此设置标题栏和文字的最小对比度。如果未达到该指标，标题栏会调整其颜色使之达到设置的最小对比度。"
 	},
 
 	"inLightMode": {
@@ -168,23 +168,23 @@
 	},
 
 	"homepageColourLight": {
-		"message": "首頁背景色（亮色）"
+		"message": "首页背景色（亮色）"
 	},
 
 	"homepageColourDark": {
-		"message": "首頁背景色（暗色）"
+		"message": "首页背景色（暗色）"
 	},
 
 	"fallbackColourLight": {
-		"message": "備選顏色（亮色）"
+		"message": "备选颜色（亮色）"
 	},
 
 	"fallbackColourDark": {
-		"message": "備選顏色（暗色）"
+		"message": "备选颜色（暗色）"
 	},
 
 	"reportAnIssue": {
-		"message": "回報問題 / 提供建議 / 提供繙譯"
+		"message": "报告问题 / 提供建议 / 提供翻译"
 	},
 
 	"__POPUP__": {
@@ -192,107 +192,107 @@
 	},
 
 	"moreSettings": {
-		"message": "更多設定"
+		"message": "更多设置"
 	},
 
 	"moreSettingsTooltip": {
-		"message": "開啟設定頁"
+		"message": "打开设置页"
 	},
 
 	"colourForPDFViewer": {
-		"message": "按 PDF 閱讀器著色"
+		"message": "按 PDF 阅读器着色"
 	},
 
 	"pageIsProtected": {
-		"message": "此頁面受瀏覽器保護"
+		"message": "此页面受浏览器保护"
 	},
 
 	"colourForPlainTextViewer": {
-		"message": "按文本閱讀器著色"
+		"message": "按文本阅读器着色"
 	},
 
 	"errorOccured": {
-		"message": "發生錯誤，採用備選顏色"
+		"message": "发生错误，使用备选颜色"
 	},
 
 	"colourForHomePage": {
-		"message": "首頁背景色可在設定頁調整"
+		"message": "首页背景色可在设置页调整"
 	},
 
 	"useDefaultColourForAddon": {
-		"message": "採用為 "
+		"message": "使用 "
 	},
 
 	"useDefaultColourForAddonEnd": {
-		"message": " 相關頁面指定的顏色"
+		"message": " 相关页面指定的颜色"
 	},
 
 	"useDefaultColourForAddonButton": {
-		"message": "採用默認顏色"
+		"message": "使用默认颜色"
 	},
 
 	"useDefaultColourForAddonTitle": {
-		"message": "採用默認顏色"
+		"message": "使用默认颜色"
 	},
 
 	"useRecommendedColourForAddon": {
-		"message": "可採用為 "
+		"message": "可使用 "
 	},
 
 	"useRecommendedColourForAddonEnd": {
-		"message": " 相關頁面推介的顏色"
+		"message": " 相关页面推荐的颜色"
 	},
 
 	"useRecommendedColourForAddonButton": {
-		"message": "採用推介顏色"
+		"message": "使用推荐的颜色"
 	},
 
 	"useRecommendedColourForAddonTitle": {
-		"message": "採用推介顏色"
+		"message": "使用推荐的颜色"
 	},
 
 	"specifyColourForAddon": {
-		"message": "點擊「指定顏色」以開啟設定頁。您可為 "
+		"message": "点击「指定颜色」打开设置页。您可为 "
 	},
 
 	"specifyColourForAddonEnd": {
-		"message": " 相關頁面指定一個顏色"
+		"message": " 相关的页面指定一个颜色"
 	},
 
 	"specifyColourForAddonButton": {
-		"message": "指定顏色"
+		"message": "指定颜色"
 	},
 
 	"specifyColourForAddonTitle": {
-		"message": "開啟設定頁來為此套件相關頁面指定顏色"
+		"message": "打开设置页来为此插件的相关页面指定颜色"
 	},
 
 	"themeColourIsUnignored": {
-		"message": "此網站指定的主題色被解除忽略"
+		"message": "此网站指定的主题色被重新采用"
 	},
 
 	"themeColourNotFound": {
-		"message": "網站未指定主題色，標題列顏色是從網頁獲取"
+		"message": "网站未指定主题色，标题栏颜色是从网页获取"
 	},
 
 	"themeColourIsIgnored": {
-		"message": "此網站指定的主題色被忽略"
+		"message": "此网站指定的主题色被忽略"
 	},
 
 	"useThemeColourButton": {
-		"message": "採用主題色"
+		"message": "使用主题色"
 	},
 
 	"useThemeColourTitle": {
-		"message": "採用此網站指定的主題色"
+		"message": "使用此网站指定的主题色"
 	},
 
 	"colourIsPickedFrom": {
-		"message": "標題列顏色是從符合 "
+		"message": "标题栏的颜色是从符合 "
 	},
 
 	"colourIsPickedFromEnd": {
-		"message": "的網頁元件獲取"
+		"message": " 的网页元素中获取"
 	},
 
 	"cannotFindElement": {
@@ -300,42 +300,42 @@
 	},
 
 	"cannotFindElementEnd": {
-		"message": " 的網頁元件，標題列顏色是按一般方法從網頁中獲取"
+		"message": " 的网页元素，标题栏的颜色将会按普通方法从网页中获取"
 	},
 
 	"errorOccuredLocatingElement": {
-		"message": "當尋找符合 "
+		"message": "当寻找符合 "
 	},
 
 	"errorOccuredLocatingElementEnd": {
-		"message": " 的網頁元件時發生錯誤，標題列顏色是按一般方法從網頁中獲取"
+		"message": " 的网页元素時发生错误，标题栏的颜色将会按普通方法从网页中获取"
 	},
 
 	"colourIsSpecified": {
-		"message": "此網站對應的標題列顏色已被指定"
+		"message": "此网站对应的标题栏颜色已被指定"
 	},
 
 	"usingImageViewer": {
-		"message": "按圖像預覽器著色"
+		"message": "按图像查看器着色"
 	},
 
 	"usingThemeColour": {
-		"message": "採用此網站指定的主題色"
+		"message": "使用此网站指定的主题色"
 	},
 
 	"ignoreThemeColourButton": {
-		"message": "忽略此主題色"
+		"message": "忽略此主题色"
 	},
 
 	"ignoreThemeColourTitle": {
-		"message": "忽略此網站指定的主題色"
+		"message": "忽略此网站指定的主题色"
 	},
 
 	"usingFallbackColour": {
-		"message": "未能從網頁獲取顏色，採用備選顏色"
+		"message": "未能从网页获取颜色，使用备选颜色"
 	},
 
 	"colourPickedFromWebpage": {
-		"message": "標題列顏色是按一般方法從網頁中獲取"
+		"message": "标题栏的颜色将会按普通方法从网页中获取"
 	}
 }
