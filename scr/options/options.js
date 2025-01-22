@@ -53,7 +53,7 @@ const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
 fixedPolicies.forEach(setupFixedPolicySection);
 
 /**
- * @param {HTMLElement} fixedPolicySection 
+ * @param {HTMLElement} fixedPolicySection
  */
 function setupFixedPolicySection(fixedPolicySection) {
 	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
@@ -71,9 +71,9 @@ function setupFixedPolicySection(fixedPolicySection) {
 }
 
 /**
- * @param {HTMLElement} policySection 
- * @param {number} id 
- * @param {object} policy 
+ * @param {HTMLElement} policySection
+ * @param {number} id
+ * @param {object} policy
  */
 async function setupColourPolicySection(policySection, id, policy) {
 	setColourPolicySectionId(policySection, id);
@@ -98,9 +98,9 @@ async function setupColourPolicySection(policySection, id, policy) {
 }
 
 /**
- * @param {HTMLElement} policySection 
- * @param {number} id 
- * @param {object} policy 
+ * @param {HTMLElement} policySection
+ * @param {number} id
+ * @param {object} policy
  */
 function setupFlexiblePolicySection(policySection, id, policy) {
 	setFlexiblePolicySectionId(policySection, id);
@@ -182,9 +182,9 @@ document.querySelector("#add-new-rule").onclick = async () => {
 };
 
 /**
- * @param {number} id 
- * @param {object} policy 
- * @returns 
+ * @param {number} id
+ * @param {object} policy
+ * @returns
  */
 async function createPolicySection(id, policy) {
 	if (policy.headerType === "URL") {
@@ -201,7 +201,7 @@ async function createPolicySection(id, policy) {
 }
 
 /**
- * @param {HTMLElement} policySection 
+ * @param {HTMLElement} policySection
  */
 function removePolicySection(policySection) {
 	policySection.remove();
@@ -260,6 +260,14 @@ function updateSliders() {
 	});
 }
 
+function updateFixedPolicySection() {
+	fixedPolicies.forEach((fixedPolicySection) => {
+		const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
+		const key = colourInputWrapper.dataset.pref;
+		setColourInputValue(colourInputWrapper, pref[key]);
+	});
+}
+
 /**
  * @param {number} nthTry
  */
@@ -288,6 +296,7 @@ async function updateOptionsPage() {
 		if (!document.hasFocus()) {
 			updateCheckboxes();
 			updateSliders();
+			updateFixedPolicySection();
 			await updateSiteList();
 		}
 		await updateAllowDarkLightText();

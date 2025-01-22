@@ -65,25 +65,25 @@ export default class preference {
 		version: addonVersion,
 	};
 
-	/** Legacy pref keys and their current version */
+	/** Current pref keys and their legacy version */
 	#legacyPrefKey = {
-		force: "allowDarkLight",
-		tabbar_color: "tabbar",
-		tab_selected_color: "tabSelected",
-		toolbar_color: "toolbar",
-		separator_opacity: "toolbarBorder",
-		toolbar_field_color: "toolbarField",
-		toolbar_field_focus_color: "toolbarFieldOnFocus",
-		sidebar_color: "sidebar",
-		sidebar_border_color: "sidebarBorder",
-		popup_color: "popup",
-		popup_border_color: "popupBorder",
-		light_color: "homeBackground_light",
-		dark_color: "homeBackground_dark",
-		light_fallback_color: "fallbackColour_light",
-		dark_fallback_color: "fallbackColour_dark",
-		reservedColor_cs: "siteList",
-		last_version: "version",
+		allowDarkLight: "force",
+		tabbar: "tabbar_color",
+		tabSelected: "tab_selected_color",
+		toolbar: "toolbar_color",
+		toolbarBorder: "separator_opacity",
+		toolbarField: "toolbar_field_color",
+		toolbarFieldOnFocus: "toolbar_field_focus_color",
+		sidebar: "sidebar_color",
+		sidebarBorder: "sidebar_border_color",
+		popup: "popup_color",
+		popupBorder: "popup_border_color",
+		homeBackground_light: "light_color",
+		homeBackground_dark: "dark_color",
+		fallbackColour_light: "light_fallback_color",
+		fallbackColour_dark: "dark_fallback_color",
+		siteList: "reservedColor_cs",
+		version: "last_version",
 	};
 
 	/** Expected data type of pref values */
@@ -152,17 +152,10 @@ export default class preference {
 			await this.save();
 			return;
 		}
-		for (const key in storedPref) {
-			if (key in this.#prefContent) {
-				this.#prefContent[key] = storedPref[key];
-			} else if (key in this.#legacyPrefKey) {
-				this.#prefContent[this.#legacyPrefKey[key]] = storedPref[key];
-			}
-		}
-		for (const key in this.#expectedTypes) {
-			if (typeof this.#prefContent[key] !== this.#expectedTypes[key]) {
+		for (const key in this.#prefContent) {
+			this.#prefContent[key] = storedPref[key] || storedPref[this.#legacyPrefKey[key]];
+			if (typeof this.#prefContent[key] !== this.#expectedTypes[key])
 				this.#prefContent[key] = this.#default_prefContent[key];
-			}
 		}
 		// Updating from before v1.7.4
 		// Clears possible empty policies caused by a bug
@@ -195,65 +188,66 @@ export default class preference {
 			this.#prefContent.allowDarkLight = true;
 			this.#prefContent.dynamic = true;
 			this.#prefContent.noThemeColour = true;
-			// Now colour offset values are stored in integer
-			this.#prefContent.tabbar = x100IfSmallerThan1(this.#prefContent.tabbar);
-			this.#prefContent.tabbarBorder = x100IfSmallerThan1(this.#prefContent.tabbarBorder);
-			this.#prefContent.tabSelected = x100IfSmallerThan1(this.#prefContent.tabSelected);
-			this.#prefContent.tabSelectedBorder = x100IfSmallerThan1(this.#prefContent.tabSelectedBorder);
-			this.#prefContent.toolbar = x100IfSmallerThan1(this.#prefContent.toolbar);
-			this.#prefContent.toolbarBorder = x100IfSmallerThan1(this.#prefContent.toolbarBorder);
-			this.#prefContent.toolbarField = x100IfSmallerThan1(this.#prefContent.toolbarField);
-			this.#prefContent.toolbarFieldBorder = x100IfSmallerThan1(this.#prefContent.toolbarFieldBorder);
-			this.#prefContent.toolbarFieldOnFocus = x100IfSmallerThan1(this.#prefContent.toolbarFieldOnFocus);
-			this.#prefContent.sidebar = x100IfSmallerThan1(this.#prefContent.sidebar);
-			this.#prefContent.sidebarBorder = x100IfSmallerThan1(this.#prefContent.sidebarBorder);
-			this.#prefContent.popup = x100IfSmallerThan1(this.#prefContent.popup);
-			this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
 			// Re-formatting site list
 			const newSiteList = {};
 			let id = 1;
 			for (const site in this.#prefContent.siteList) {
 				const legacyPolicy = this.#prefContent.siteList[site];
-				if (legacyPolicy === "IGNORE_THEME") {
-					newSiteList[id] = {
+				if (typeof legacyPolicy !== "string") {
+					continue;
+				} else if (legacyPolicy === "IGNORE_THEME") {
+					newSiteList[id++] = {
 						headerType: "URL",
 						header: site,
 						type: "THEME_COLOUR",
 						value: false,
 					};
 				} else if (legacyPolicy === "UN_IGNORE_THEME") {
-					newSiteList[id] = {
+					newSiteList[id++] = {
 						headerType: "URL",
 						header: site,
 						type: "THEME_COLOUR",
 						value: true,
 					};
 				} else if (legacyPolicy.startsWith("QS_")) {
-					newSiteList[id] = {
+					newSiteList[id++] = {
 						headerType: "URL",
 						header: site,
 						type: "QUERY_SELECTOR",
 						value: legacyPolicy.replace("QS_", ""),
 					};
 				} else if (site.startsWith("Add-on ID: ")) {
-					newSiteList[id] = {
+					newSiteList[id++] = {
 						headerType: "ADDON_ID",
 						header: site.replace("Add-on ID: ", ""),
 						type: "COLOUR",
 						value: hex(legacyPolicy),
 					};
 				} else {
-					newSiteList[id] = {
+					newSiteList[id++] = {
 						headerType: "URL",
 						header: site,
 						type: "COLOUR",
 						value: hex(legacyPolicy),
 					};
 				}
-				id++;
 			}
 			this.#prefContent.siteList = newSiteList;
 		}
+		// Makes sure colour offset values are stored in integer
+		this.#prefContent.tabbar = x100IfSmallerThan1(this.#prefContent.tabbar);
+		this.#prefContent.tabbarBorder = x100IfSmallerThan1(this.#prefContent.tabbarBorder);
+		this.#prefContent.tabSelected = x100IfSmallerThan1(this.#prefContent.tabSelected);
+		this.#prefContent.tabSelectedBorder = x100IfSmallerThan1(this.#prefContent.tabSelectedBorder);
+		this.#prefContent.toolbar = x100IfSmallerThan1(this.#prefContent.toolbar);
+		this.#prefContent.toolbarBorder = x100IfSmallerThan1(this.#prefContent.toolbarBorder);
+		this.#prefContent.toolbarField = x100IfSmallerThan1(this.#prefContent.toolbarField);
+		this.#prefContent.toolbarFieldBorder = x100IfSmallerThan1(this.#prefContent.toolbarFieldBorder);
+		this.#prefContent.toolbarFieldOnFocus = x100IfSmallerThan1(this.#prefContent.toolbarFieldOnFocus);
+		this.#prefContent.sidebar = x100IfSmallerThan1(this.#prefContent.sidebar);
+		this.#prefContent.sidebarBorder = x100IfSmallerThan1(this.#prefContent.sidebarBorder);
+		this.#prefContent.popup = x100IfSmallerThan1(this.#prefContent.popup);
+		this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
 		this.#prefContent.version = addonVersion;
 		await this.save();
 	}
