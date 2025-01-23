@@ -93,6 +93,9 @@ export default class preference {
 	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
 	 */
 	valid() {
+		if (Object.keys(this.#prefContent).length !== Object.keys(this.#default_prefContent).length) {
+			return false;
+		}
 		for (const key in this.#default_prefContent) {
 			if (typeof this.#prefContent[key] !== typeof this.#default_prefContent[key]) {
 				return false;
