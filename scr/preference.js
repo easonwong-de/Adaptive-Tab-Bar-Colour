@@ -38,6 +38,7 @@ export default class preference {
 		version: addonVersion,
 	};
 
+	/** Default content of the preference */
 	#default_prefContent = {
 		tabbar: 0,
 		tabbarBorder: 0,
@@ -66,7 +67,7 @@ export default class preference {
 	};
 
 	/** Current pref keys and their legacy version */
-	#legacyPrefKey = {
+	#legacyKey = {
 		allowDarkLight: "force",
 		tabbar: "tabbar_color",
 		tabSelected: "tab_selected_color",
@@ -86,42 +87,14 @@ export default class preference {
 		version: "last_version",
 	};
 
-	/** Expected data type of pref values */
-	#expectedTypes = {
-		tabbar: "number",
-		tabbarBorder: "number",
-		tabSelected: "number",
-		tabSelectedBorder: "number",
-		toolbar: "number",
-		toolbarBorder: "number",
-		toolbarField: "number",
-		toolbarFieldBorder: "number",
-		toolbarFieldOnFocus: "number",
-		sidebar: "number",
-		sidebarBorder: "number",
-		popup: "number",
-		popupBorder: "number",
-		minContrast_light: "number",
-		minContrast_dark: "number",
-		allowDarkLight: "boolean",
-		dynamic: "boolean",
-		noThemeColour: "boolean",
-		homeBackground_light: "string",
-		homeBackground_dark: "string",
-		fallbackColour_light: "string",
-		fallbackColour_dark: "string",
-		siteList: "object",
-		version: "object",
-	};
-
 	/**
 	 * Validates that each property in the `#prefContent` object has the expected data type.
 	 *
 	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
 	 */
 	valid() {
-		for (const key in this.#expectedTypes) {
-			if (typeof this.#prefContent[key] !== this.#expectedTypes[key]) {
+		for (const key in this.#default_prefContent) {
+			if (typeof this.#prefContent[key] !== typeof this.#default_prefContent[key]) {
 				return false;
 			}
 		}
@@ -135,14 +108,13 @@ export default class preference {
 	 *
 	 * The function adjusts fields as necessary, filling in any missing values to maintain a complete preference structure.
 	 *
-	 * If the existing preferences date back before v1.7, replaces the old pref with the default pref.
+	 * If the existing preferences date back before v1.7, or has the version number of 2.2.1, replaces the old pref with the default pref.
 	 *
 	 * Once executed, the normalised preferences are loaded in the instance and saved to browser storage.
 	 */
 	async normalise() {
 		const storedPref = await browser.storage.local.get();
-		// If there's no version number, if last version was before v1.7, or if it was v2.2.1
-		// Resets the preference
+		// If there's no version number, if last version was before v1.7, or if it was v2.2.1, resets the preference
 		if (
 			(!storedPref.last_version && !storedPref.version) ||
 			(storedPref.last_version && storedPref.last_version < [1, 7]) ||
@@ -152,19 +124,20 @@ export default class preference {
 			await this.save();
 			return;
 		}
-		for (const key in this.#prefContent) {
-			this.#prefContent[key] = storedPref[key] || storedPref[this.#legacyPrefKey[key]];
-			if (typeof this.#prefContent[key] !== this.#expectedTypes[key])
-				this.#prefContent[key] = this.#default_prefContent[key];
-		}
-		// Updating from before v1.7.4
-		// Clears possible empty policies caused by a bug
-		if (this.#prefContent.version < [1, 7, 4]) {
-			delete this.#prefContent.siteList[undefined];
+		// Transfers the stored pref into the instance
+		this.#prefContent = {};
+		for (const key in this.#default_prefContent) {
+			this.#prefContent[key] =
+				storedPref[key] ?? storedPref[this.#legacyKey[key]] ?? this.#default_prefContent[key];
+			if (typeof this.#prefContent[key] !== typeof this.#default_prefContent[key]) {
+				this.reset(key);
+			}
 		}
 		// Updating from before v1.7.5
-		// Converts legacy policies to query selector format
+		// Converts from legacy format to query selector format
 		if (this.#prefContent.version < [1, 7, 5]) {
+			// Clears possible empty policies
+			delete this.#prefContent.siteList[undefined];
 			for (const site in this.#prefContent.siteList) {
 				const legacyPolicy = this.#prefContent.siteList[site];
 				if (typeof legacyPolicy !== "string") {
@@ -184,7 +157,7 @@ export default class preference {
 		}
 		// Updating from before v2.2
 		if (this.#prefContent.version < [2, 2]) {
-			// Turns on allow dark / light tab bar, dynamic, and no theme colour settings
+			// Turns on allow dark / light tab bar, dynamic, and no theme colour settings for once
 			this.#prefContent.allowDarkLight = true;
 			this.#prefContent.dynamic = true;
 			this.#prefContent.noThemeColour = true;
@@ -248,6 +221,7 @@ export default class preference {
 		this.#prefContent.sidebarBorder = x100IfSmallerThan1(this.#prefContent.sidebarBorder);
 		this.#prefContent.popup = x100IfSmallerThan1(this.#prefContent.popup);
 		this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
+		// Updates the pref version
 		this.#prefContent.version = addonVersion;
 		await this.save();
 	}
@@ -326,7 +300,9 @@ export default class preference {
 	}
 
 	/**
-	 * Resets a single preference if a valid key is specified. Resets all preferences if the key is not specified.
+	 * Resets a single preference if a valid key is specified.
+	 *
+	 * Resets all preferences if the key is not specified or invalid.
 	 *
 	 * @param {string | null} key
 	 */
