@@ -181,6 +181,35 @@ document.querySelector("#add-new-rule").onclick = async () => {
 	applySettings();
 };
 
+document.querySelector("#save-pref").onclick = () => {
+	const prefLink = document.createElement("a");
+	prefLink.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(pref.prefToJSON())}`);
+	prefLink.setAttribute("download", "atbc_pref.json");
+	prefLink.style.display = "none";
+	document.body.appendChild(prefLink);
+	prefLink.click();
+	document.body.removeChild(prefLink);
+};
+
+document.querySelector("#load-pref").onclick = () => {
+	const prefInput = document.createElement("input");
+	prefInput.setAttribute("type", "file");
+	prefInput.style.display = "none";
+	prefInput.addEventListener("change", async () => {
+		const file = prefInput.files[0];
+		const reader = new FileReader();
+		reader.onload = async () => {
+			const prefJSON = reader.result;
+			pref.JSONToPref(prefJSON);
+			await applySettings();
+		};
+		reader.readAsText(file);
+	});
+	document.body.appendChild(prefInput);
+	prefInput.click();
+	document.body.removeChild(prefInput);
+};
+
 /**
  * @param {number} id
  * @param {object} policy

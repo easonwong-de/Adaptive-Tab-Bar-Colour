@@ -105,15 +105,15 @@ export default class preference {
 	}
 
 	/**
-	 * Normalises saved preferences to a consistent format (v2.2).
+	 * Normalises saved preferences to a consistent format.
 	 *
 	 * Ensures compatibility across various versions of saved preferences by converting them to the latest standard format.
 	 *
 	 * The function adjusts fields as necessary, filling in any missing values to maintain a complete preference structure.
 	 *
-	 * If the existing preferences date back before v1.7, or has the version number of 2.2.1, replaces the old pref with the default pref.
+	 * If the existing preferences don't have a version number, date back before v1.7, or has the version number of 2.2.1, the default pref will overwrite the old pref.
 	 *
-	 * Once executed, the normalised preferences are loaded in the instance and saved to browser storage.
+	 * Once executed, the normalised preferences are loaded in the instance and saved to the browser storage.
 	 */
 	async normalise() {
 		const storedPref = await browser.storage.local.get();
@@ -121,7 +121,7 @@ export default class preference {
 		if (
 			(!storedPref.last_version && !storedPref.version) ||
 			(storedPref.last_version && storedPref.last_version < [1, 7]) ||
-			(storedPref.version && JSON.stringify(storedPref.version) == "[2,2,1]")
+			(storedPref.version && JSON.stringify(storedPref.version) === "[2,2,1]")
 		) {
 			this.reset();
 			await this.save();
@@ -333,6 +333,20 @@ export default class preference {
 	async save() {
 		await browser.storage.local.clear();
 		await browser.storage.local.set(this.#prefContent);
+	}
+
+	prefToJSON() {
+		return JSON.stringify(this.#prefContent);
+	}
+
+	async JSONToPref(JSONString) {
+		try {
+			this.#prefContent = JSON.parse(JSONString);
+			await this.normalise();
+			return true;
+		} catch (error) {
+			return false;
+		}
 	}
 
 	get allowDarkLight() {
