@@ -347,7 +347,6 @@ async function updateElements() {
  * @param {number} nthTry
  */
 async function updateAllowDarkLightText(nthTry = 0) {
-	// bugged
 	if (nthTry > 10) return;
 	try {
 		const allowDarkLightTitle = document.querySelector("#allow-dark-light-title");

@@ -73,10 +73,11 @@ svg {
 	align-self: center;
 	fill: none;
 	height: 1em;
-	margin: auto;
-	stroke: var(--text-colour-normal);
+	margin: 0;
+	stroke: currentColor;
 	stroke-linecap: round;
 	stroke-linejoin: round;
 	stroke-width: 2px;
+	vertical-align: middle;
 	width: 1em;
 }

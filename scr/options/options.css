@@ -123,17 +123,20 @@ button {
 	width: 2rem;
 }
 
-.long-button {
+.text-button {
 	align-items: center;
 	background-color: var(--colour-2);
 	border: none;
 	border-radius: 4px;
+	box-sizing: border-box;
 	color: var(--text-colour-normal);
 	display: flex;
+	font-size: inherit;
+	gap: 0.5rem;
 	height: 2rem;
-	justify-content: center;
-	padding: 0;
-	text-align: center;
+	justify-content: start;
+	padding: 0 0.5rem;
+	text-align: start;
 	width: 100%;
 }
 
@@ -150,13 +153,13 @@ select {
 }
 
 button:hover,
-.long-button:hover,
+.text-button:hover,
 select:hover {
 	background-color: var(--colour-3);
 }
 
 button:active,
-.long-button:active,
+.text-button:active,
 select:active {
 	background-color: var(--colour-5);
 }
@@ -356,9 +359,16 @@ p#reinstall-tip {
 	background-color: var(--colour-4);
 }
 
-div.sponsor {
+#sponsor {
 	display: flex;
 	gap: 0.5rem;
+	filter: saturate(0) brightness(1.1);
+}
+
+@media (prefers-color-scheme: dark) {
+	#sponsor {
+		filter: sepia(1) hue-rotate(218deg) saturate(0.5) brightness(0.7);
+	}
 }
 
 /* List */
