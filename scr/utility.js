@@ -3,13 +3,13 @@
 /**
  * @returns Firefox version. 0 if cannot be found.
  */
-export function checkVersion() {
+/* export function checkVersion() {
 	let userAgent = navigator.userAgent;
 	let version = 0;
 	let ind = userAgent.lastIndexOf("Firefox");
 	if (ind !== -1) version = userAgent.substring(ind + 8);
 	return version;
-}
+} */
 
 const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -42,16 +42,35 @@ export async function getCurrentScheme() {
 }
 
 /**
+ * Updates the text content and title of elements based on localisation data attributes.
+ *
+ * Finds elements with `data-text`, `data-title`, or `data-placeholder` attributes, retrieves the localised text using the `msg` function, and assigns it to the element's `textContent`, `title`, or `placeholder`.
+ *
+ * @param {Document} webDocument The document to localise.
+ */
+export function localise(webDocument) {
+	webDocument.querySelectorAll("[data-text]").forEach((element) => {
+		element.textContent = msg(element.dataset.text);
+	});
+	webDocument.querySelectorAll("[data-title]").forEach((element) => {
+		element.title = msg(element.dataset.title);
+	});
+	webDocument.querySelectorAll("[data-placeholder]").forEach((element) => {
+		element.placeholder = msg(element.dataset.placeholder);
+	});
+}
+
+/**
  * Inquires localised messages.
  *
- * If no localised string is found, returns `Localisation missing: <handle>`
- *
  * @param {string} handle A handle in _locales.
+ * If the handle is not found, returns `i18n missing: ${handle}`.
+ * If the localisation value is `__EMPTY__`, returns an empty string.
  */
 export function msg(handle) {
 	const localisedMessage = browser.i18n.getMessage(handle);
 	if (!localisedMessage) {
-		return `<${handle}>`;
+		return `i18n missing: ${handle}`;
 	} else if (localisedMessage === "__EMPTY__") {
 		return "";
 	} else {

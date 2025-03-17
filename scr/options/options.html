@@ -50,7 +50,7 @@
 					</g>
 				</defs>
 			</svg>
-			<div class="section custom-policy colour-policy">
+			<div class="section policy colour-policy">
 				<div class="policy-header"></div>
 				<div></div>
 				<div class="colour-input-wrapper">
@@ -64,7 +64,7 @@
 					</svg>
 				</button>
 			</div>
-			<div class="section custom-policy flexible-policy">
+			<div class="section policy flexible-policy">
 				<div class="policy-header-input-wrapper">
 					<input type="text" class="policy-header-input" data-placeholder="URLDomainOrRegex" />
 					<div class="policy-header-warning" data-title="thisPolicyWillBeIgnored">
@@ -117,493 +117,495 @@
 			</div>
 			<hr />
 			<div>
-				<div id="tab-1" class="tab">
-					<div class="grid two-columns">
-						<div class="column">
-							<div class="section">
-								<div class="section-title" data-text="selectedTab"></div>
-								<div
-									class="slider"
-									data-pref="tabSelected"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="background"></div>
-								<div
-									class="slider"
-									data-pref="tabSelectedBorder"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="border"></div>
+				<div id="tab-1" class="tab grid-two-columns">
+					<div class="column">
+						<div class="section">
+							<div class="section-title" data-text="selectedTab"></div>
+							<div
+								class="slider"
+								data-pref="tabSelected"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
 							</div>
-							<div class="section">
-								<div class="section-title" data-text="tabBar"></div>
-								<div
-									class="slider"
-									data-pref="tabbar"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="background"></div>
-								<div
-									class="slider"
-									data-pref="tabbarBorder"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="border"></div>
+							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider"
+								data-pref="tabSelectedBorder"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
 							</div>
-							<div class="section">
-								<div class="section-title" data-text="popUp"></div>
-								<div
-									class="slider"
-									data-pref="popup"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="background"></div>
-								<div
-									class="slider"
-									data-pref="popupBorder"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="border"></div>
-							</div>
+							<div class="slider-title" data-text="border"></div>
 						</div>
-						<div class="column">
-							<div class="section">
-								<div class="section-title" data-text="URLBar"></div>
-								<div
-									class="slider"
-									data-pref="toolbarField"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="background"></div>
-								<div
-									class="slider"
-									data-pref="toolbarFieldOnFocus"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="backgroundOnFocus"></div>
-								<div
-									class="slider"
-									data-pref="toolbarFieldBorder"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="border"></div>
+						<div class="section">
+							<div class="section-title" data-text="tabBar"></div>
+							<div
+								class="slider"
+								data-pref="tabbar"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
 							</div>
-							<div class="section">
-								<div class="section-title" data-text="toolbar"></div>
-								<div
-									class="slider"
-									data-pref="toolbar"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="background"></div>
-								<div
-									class="slider"
-									data-pref="toolbarBorder"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="border"></div>
+							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider"
+								data-pref="tabbarBorder"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
 							</div>
-							<div class="section">
-								<div class="section-title" data-text="sidebar"></div>
-								<div
-									class="slider"
-									data-pref="sidebar"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="background"></div>
-								<div
-									class="slider"
-									data-pref="sidebarBorder"
-									data-min="-50"
-									data-max="50"
-									data-step="5"
-									data-value="0"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-minus" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-add" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="border"></div>
+							<div class="slider-title" data-text="border"></div>
+						</div>
+						<div class="section">
+							<div class="section-title" data-text="popUp"></div>
+							<div
+								class="slider"
+								data-pref="popup"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
 							</div>
+							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider"
+								data-pref="popupBorder"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="border"></div>
+						</div>
+					</div>
+					<div class="column">
+						<div class="section">
+							<div class="section-title" data-text="URLBar"></div>
+							<div
+								class="slider"
+								data-pref="toolbarField"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider"
+								data-pref="toolbarFieldOnFocus"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="backgroundOnFocus"></div>
+							<div
+								class="slider"
+								data-pref="toolbarFieldBorder"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="border"></div>
+						</div>
+						<div class="section">
+							<div class="section-title" data-text="toolbar"></div>
+							<div
+								class="slider"
+								data-pref="toolbar"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider"
+								data-pref="toolbarBorder"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="border"></div>
+						</div>
+						<div class="section">
+							<div class="section-title" data-text="sidebar"></div>
+							<div
+								class="slider"
+								data-pref="sidebar"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider"
+								data-pref="sidebarBorder"
+								data-min="-50"
+								data-max="50"
+								data-step="5"
+								data-value="0"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-minus" />
+									</svg>
+								</button>
+								<div class="slider-body percentage"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-add" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="border"></div>
 						</div>
 					</div>
 				</div>
-				<div id="tab-2" class="tab">
-					<div class="site-list" id="custom-policy-list"></div>
+				<div id="tab-2" class="tab grid-one-column">
+					<div class="list" id="policy-list"></div>
 					<button id="add-new-rule" data-text="addANewRule" data-title="addANewRule"></button>
 				</div>
-				<div id="tab-3" class="tab">
-					<div class="grid two-columns">
-						<div class="column">
-							<div class="section">
-								<div
-									id="allow-dark-light-title"
-									class="section-title"
-									data-text="allowLightTabBar"
-								></div>
-								<div class="checkbox-wrapper">
-									<input type="checkbox" data-pref="allowDarkLight" id="allow-dark-light" />
-									<label
-										id="allow-dark-light-caption"
-										for="allow-dark-light"
-										class="section-text"
-										data-text="allowDarkTabBarTooltip"
-									></label>
-								</div>
-							</div>
-							<div class="section">
-								<div class="section-title" data-text="dynamicColourUpdate"></div>
-								<div class="checkbox-wrapper">
-									<input id="dynamic" type="checkbox" data-pref="dynamic" />
-									<label for="dynamic" class="section-text" data-text="dynamicModeTooltip"></label>
-								</div>
-							</div>
-							<div class="section">
-								<div class="section-title" data-text="ignoreDesignatedThemeColour"></div>
-								<div class="checkbox-wrapper">
-									<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
-									<label
-										for="no-theme-color"
-										class="section-text"
-										data-text="ignoreDesignatedThemeColourTooltip"
-									></label>
-								</div>
-							</div>
-							<div class="section">
-								<button id="export-pref" class="long-button">
-									<span data-text="exportSettings"></span>
-									<a id="export-pref-link" class="hidden" download="atbc_pref.json"></a>
-								</button>
-								<label for="import-pref-link" class="long-button">
-									<span data-text="importSettings"></span>
-									<input id="import-pref-link" class="hidden" type="file" accept=".json" />
-								</label>
-								<button id="reset-pref" class="long-button">
-									<span data-text="resetAll"></span>
-								</button>
+				<div id="tab-3" class="tab grid-two-columns">
+					<div class="column">
+						<div class="section">
+							<div
+								id="allow-dark-light-title"
+								class="section-title"
+								data-text="allowLightTabBar"
+							></div>
+							<div class="checkbox-wrapper">
+								<input type="checkbox" data-pref="allowDarkLight" id="allow-dark-light" />
+								<label
+									id="allow-dark-light-caption"
+									for="allow-dark-light"
+									class="section-text"
+									data-text="allowDarkTabBarTooltip"
+								></label>
 							</div>
 						</div>
-						<div class="column">
-							<div class="section">
-								<div class="section-title" data-text="minimumContrast"></div>
-								<div class="section-text" data-text="minimumContrastTooltip"></div>
-								<div
-									class="slider"
-									data-pref="minContrast_light"
-									data-min="0"
-									data-max="210"
-									data-step="15"
-									data-value="0"
-									data-scale="1"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-circle" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-contrast" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="inLightMode"></div>
-								<div
-									class="slider"
-									data-pref="minContrast_dark"
-									data-min="0"
-									data-max="210"
-									data-step="15"
-									data-value="0"
-									data-scale="1"
-								>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-circle" />
-										</svg>
-									</button>
-									<div class="slider-body"></div>
-									<button>
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-contrast" />
-										</svg>
-									</button>
-								</div>
-								<div class="slider-title" data-text="inDarkMode"></div>
+						<div class="section">
+							<div class="section-title" data-text="dynamicColourUpdate"></div>
+							<div class="checkbox-wrapper">
+								<input id="dynamic" type="checkbox" data-pref="dynamic" />
+								<label for="dynamic" class="section-text" data-text="dynamicModeTooltip"></label>
 							</div>
-							<div class="site-list">
-								<div class="section fixed-policy">
-									<div class="policy-header" data-text="homepageColourLight"></div>
-									<div></div>
-									<div class="colour-input-wrapper" data-pref="homeBackground_light">
-										<input
-											type="text"
-											class="colour-input"
-											value="#ffffff"
-											data-placeholder="anyCSSColour"
-										/>
-										<label class="colour-picker-display" for="home-bg-light"></label>
-										<input type="color" value="#ffffff" id="home-bg-light" />
-									</div>
-									<button data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-reset" />
-										</svg>
-									</button>
+						</div>
+						<div class="section">
+							<div class="section-title" data-text="ignoreDesignatedThemeColour"></div>
+							<div class="checkbox-wrapper">
+								<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
+								<label
+									for="no-theme-color"
+									class="section-text"
+									data-text="ignoreDesignatedThemeColourTooltip"
+								></label>
+							</div>
+						</div>
+						<div class="section">
+							<button id="export-pref" class="long-button">
+								<span data-text="exportSettings"></span>
+								<a id="export-pref-link" class="hidden" download="atbc_pref.json"></a>
+							</button>
+							<label for="import-pref-link" class="long-button">
+								<span data-text="importSettings"></span>
+								<input id="import-pref-link" class="hidden" type="file" accept=".json" />
+							</label>
+							<button id="reset-theme-builder" class="long-button">
+								<span data-text="resetThemeBuilder"></span>
+							</button>
+							<button id="reset-site-list" class="long-button">
+								<span data-text="resetSiteList"></span>
+							</button>
+							<button id="reset-advanced" class="long-button">
+								<span data-text="resetAdvanced"></span>
+							</button>
+						</div>
+					</div>
+					<div class="column">
+						<div class="section">
+							<div class="section-title" data-text="minimumContrast"></div>
+							<div class="section-text" data-text="minimumContrastTooltip"></div>
+							<div
+								class="slider"
+								data-pref="minContrast_light"
+								data-min="0"
+								data-max="210"
+								data-step="15"
+								data-value="0"
+								data-scale="1"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-circle" />
+									</svg>
+								</button>
+								<div class="slider-body"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-contrast" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="inLightMode"></div>
+							<div
+								class="slider"
+								data-pref="minContrast_dark"
+								data-min="0"
+								data-max="210"
+								data-step="15"
+								data-value="0"
+								data-scale="1"
+							>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-circle" />
+									</svg>
+								</button>
+								<div class="slider-body"></div>
+								<button>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-contrast" />
+									</svg>
+								</button>
+							</div>
+							<div class="slider-title" data-text="inDarkMode"></div>
+						</div>
+						<div class="list">
+							<div class="section fixed-policy">
+								<div class="policy-header" data-text="homepageColourLight"></div>
+								<div></div>
+								<div class="colour-input-wrapper" data-pref="homeBackground_light">
+									<input
+										type="text"
+										class="colour-input"
+										value="#ffffff"
+										data-placeholder="anyCSSColour"
+									/>
+									<label class="colour-picker-display" for="home-bg-light"></label>
+									<input type="color" value="#ffffff" id="home-bg-light" />
 								</div>
-								<div class="section fixed-policy">
-									<div class="policy-header" data-text="homepageColourDark"></div>
-									<div></div>
-									<div class="colour-input-wrapper" data-pref="homeBackground_dark">
-										<input
-											type="text"
-											class="colour-input"
-											value="#2b2a33"
-											data-placeholder="anyCSSColour"
-										/>
-										<label class="colour-picker-display" for="home-bg-dark"></label>
-										<input type="color" value="#2b2a33" id="home-bg-dark" />
-									</div>
-									<button data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-reset" />
-										</svg>
-									</button>
+								<button data-title="reset">
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-reset" />
+									</svg>
+								</button>
+							</div>
+							<div class="section fixed-policy">
+								<div class="policy-header" data-text="homepageColourDark"></div>
+								<div></div>
+								<div class="colour-input-wrapper" data-pref="homeBackground_dark">
+									<input
+										type="text"
+										class="colour-input"
+										value="#2b2a33"
+										data-placeholder="anyCSSColour"
+									/>
+									<label class="colour-picker-display" for="home-bg-dark"></label>
+									<input type="color" value="#2b2a33" id="home-bg-dark" />
 								</div>
-								<div class="section fixed-policy">
-									<div class="policy-header" data-text="fallbackColourLight"></div>
-									<div></div>
-									<div class="colour-input-wrapper" data-pref="fallbackColour_light">
-										<input
-											type="text"
-											class="colour-input"
-											value="#ffffff"
-											data-placeholder="anyCSSColour"
-										/>
-										<label class="colour-picker-display" for="fallback-cl-light"></label>
-										<input type="color" value="#ffffff" id="fallback-cl-light" />
-									</div>
-									<button data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-reset" />
-										</svg>
-									</button>
+								<button data-title="reset">
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-reset" />
+									</svg>
+								</button>
+							</div>
+							<div class="section fixed-policy">
+								<div class="policy-header" data-text="fallbackColourLight"></div>
+								<div></div>
+								<div class="colour-input-wrapper" data-pref="fallbackColour_light">
+									<input
+										type="text"
+										class="colour-input"
+										value="#ffffff"
+										data-placeholder="anyCSSColour"
+									/>
+									<label class="colour-picker-display" for="fallback-cl-light"></label>
+									<input type="color" value="#ffffff" id="fallback-cl-light" />
 								</div>
-								<div class="section fixed-policy">
-									<div class="policy-header" data-text="fallbackColourDark"></div>
-									<div></div>
-									<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
-										<input
-											type="text"
-											class="colour-input"
-											value="#2b2a33"
-											data-placeholder="anyCSSColour"
-										/>
-										<label class="colour-picker-display" for="fallback-cl-dark"></label>
-										<input type="color" value="#2b2a33" id="fallback-cl-dark" />
-									</div>
-									<button data-title="reset">
-										<svg viewBox="0 0 24 24">
-											<use xlink:href="#svg-reset" />
-										</svg>
-									</button>
+								<button data-title="reset">
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-reset" />
+									</svg>
+								</button>
+							</div>
+							<div class="section fixed-policy">
+								<div class="policy-header" data-text="fallbackColourDark"></div>
+								<div></div>
+								<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
+									<input
+										type="text"
+										class="colour-input"
+										value="#2b2a33"
+										data-placeholder="anyCSSColour"
+									/>
+									<label class="colour-picker-display" for="fallback-cl-dark"></label>
+									<input type="color" value="#2b2a33" id="fallback-cl-dark" />
 								</div>
+								<button data-title="reset">
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-reset" />
+									</svg>
+								</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 			<hr />
-			<div class="footer">
+			<div id="footer">
 				<div>
 					<a
 						href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues"

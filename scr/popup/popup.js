@@ -3,7 +3,7 @@
 import { recommendedColour_addon, default_protectedPageColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
 import preference from "../preference.js";
-import { msg } from "../utility.js";
+import { localise } from "../utility.js";
 
 const pref = new preference();
 
@@ -139,6 +139,10 @@ function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
 
 async function updateInfoDisplay() {
 	const tabsOnCurrentWindow = await browser.tabs.query({ active: true, status: "complete", currentWindow: true });
+	if (tabsOnCurrentWindow.length === 0) {
+		setInfoDisplay({ reason: "PROTECTED_PAGE" });
+		return;
+	}
 	const tab = tabsOnCurrentWindow[0];
 	const url = new URL(tab.url);
 	if (
@@ -181,23 +185,6 @@ async function updatePopup() {
 }
 
 /**
- * Updates the text content and title of elements based on localisation data attributes.
- *
- * Finds elements with `data-text`, `data-title`, or `data-placeholder` attributes, retrieves the localised text using the `msg` function, and assigns it to the element's `textContent`, `title`, or `placeholder`.
- */
-function localise() {
-	document.querySelectorAll("[data-text]").forEach((element) => {
-		element.textContent = msg(element.dataset.text);
-	});
-	document.querySelectorAll("[data-title]").forEach((element) => {
-		element.title = msg(element.dataset.title);
-	});
-	document.querySelectorAll("[data-placeholder]").forEach((element) => {
-		element.placeholder = msg(element.dataset.placeholder);
-	});
-}
-
-/**
  * Triggers colour update.
  */
 async function applySettings() {
@@ -208,5 +195,6 @@ async function applySettings() {
 browser.storage.onChanged.addListener(updatePopup);
 browser.theme.onUpdated.addListener(updatePopup);
 document.addEventListener("pageshow", updatePopup);
-document.addEventListener("DOMContentLoaded", localise);
 updatePopup();
+
+document.addEventListener("DOMContentLoaded", () => localise(document));

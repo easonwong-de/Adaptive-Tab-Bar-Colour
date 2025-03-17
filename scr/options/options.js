@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { msg } from "../utility.js";
+import { localise, msg } from "../utility.js";
 import {
 	setupCheckbox,
 	setCheckboxValue,
@@ -26,7 +26,7 @@ const pref = new preference();
 
 const settingsWrapper = document.querySelector("#settings-wrapper");
 const loadingWrapper = document.querySelector("#loading-wrapper");
-const customPolicyList = document.querySelector("#custom-policy-list");
+const policyList = document.querySelector("#policy-list");
 
 const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
 tabSwitches.forEach((tabSwitch) => {
@@ -92,7 +92,7 @@ async function setupColourPolicySection(policySection, id, policy) {
 	});
 	deleteButton.onclick = () => {
 		pref.removePolicy(policySection.dataset.id);
-		removePolicySection(policySection);
+		policySection.remove();
 		applySettings();
 	};
 }
@@ -164,7 +164,7 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 	});
 	deleteButton.onclick = () => {
 		pref.removePolicy(policySection.dataset.id);
-		removePolicySection(policySection);
+		policySection.remove();
 		applySettings();
 	};
 }
@@ -177,7 +177,7 @@ document.querySelector("#add-new-rule").onclick = async () => {
 		value: "#000000",
 	};
 	const id = pref.addPolicy(policy);
-	customPolicyList.appendChild(await createPolicySection(id, policy));
+	policyList.appendChild(await createPolicySection(id, policy));
 	applySettings();
 };
 
@@ -195,25 +195,58 @@ importPref.addEventListener("change", async () => {
 	if (!file) return;
 	const reader = new FileReader();
 	reader.onload = async () => {
-		try {
-			const prefJSON = reader.result;
-			await pref.JSONToPref(prefJSON);
+		const prefJSON = reader.result;
+		if (await pref.JSONToPref(prefJSON)) {
 			await applySettings();
 			await updateElements();
-		} catch (error) {
-			console.error("Failed to import preferences:", error);
-			alert("Failed to import preferences. Please check the file format.");
+		} else {
+			//
 		}
 	};
 	reader.onerror = () => {
-		console.error("File reading error:", reader.error);
-		alert("Failed to read the file. Please try again.");
+		//
 	};
 	reader.readAsText(file);
 });
 
-document.querySelector("#reset-pref").onclick = async () => {
-	pref.reset();
+document.querySelector("#reset-theme-builder").onclick = async () => {
+	[
+		"tabbar",
+		"tabbarBorder",
+		"tabSelected",
+		"tabSelectedBorder",
+		"toolbar",
+		"toolbarBorder",
+		"toolbarField",
+		"toolbarFieldBorder",
+		"toolbarFieldOnFocus",
+		"sidebar",
+		"sidebarBorder",
+		"popup",
+		"popupBorder",
+	].forEach((key) => pref.reset(key));
+	await applySettings();
+	await updateElements();
+};
+
+document.querySelector("#reset-site-list").onclick = async () => {
+	pref.reset("siteList");
+	await applySettings();
+	await updateElements();
+};
+
+document.querySelector("#reset-advanced").onclick = async () => {
+	[
+		"allowDarkLight",
+		"dynamic",
+		"noThemeColour",
+		"homeBackground_light",
+		"homeBackground_dark",
+		"fallbackColour_light",
+		"fallbackColour_dark",
+		"minContrast_light",
+		"minContrast_dark",
+	].forEach((key) => pref.reset(key));
 	await applySettings();
 	await updateElements();
 };
@@ -225,23 +258,16 @@ document.querySelector("#reset-pref").onclick = async () => {
  */
 async function createPolicySection(id, policy) {
 	if (policy.headerType === "URL") {
-		const templateFlexiblePolicySection = document.querySelector("#template .custom-policy.flexible-policy");
+		const templateFlexiblePolicySection = document.querySelector("#template .policy.flexible-policy");
 		const policySection = templateFlexiblePolicySection.cloneNode(true);
 		setupFlexiblePolicySection(policySection, id, policy);
 		return policySection;
 	} else if (policy.headerType === "ADDON_ID") {
-		const templateColourPolicySection = document.querySelector("#template .custom-policy.colour-policy");
+		const templateColourPolicySection = document.querySelector("#template .policy.colour-policy");
 		const policySection = templateColourPolicySection.cloneNode(true);
 		await setupColourPolicySection(policySection, id, policy);
 		return policySection;
 	}
-}
-
-/**
- * @param {HTMLElement} policySection
- */
-function removePolicySection(policySection) {
-	policySection.remove();
 }
 
 function updateCheckboxes() {
@@ -267,11 +293,11 @@ function updateFixedPolicySection() {
 async function updateSiteList() {
 	for (const id in pref.siteList) {
 		const policy = pref.siteList[id];
-		const policySection = document.querySelector(`.custom-policy[data-id='${id}']`);
+		const policySection = policyList.querySelector(`.policy[data-id='${id}']`);
 		if (policy && !policySection) {
-			customPolicyList.appendChild(await createPolicySection(id, policy));
+			policyList.appendChild(await createPolicySection(id, policy));
 		} else if (!policy && policySection) {
-			removePolicySection(policySection);
+			policySection.remove();
 		} else if (!policy && !policySection) {
 			continue;
 		} else if (policy.headerType === "URL" && policySection.classList.contains("flexible-policy")) {
@@ -303,6 +329,11 @@ async function updateSiteList() {
 			policySection.replaceWith(await createPolicySection(id, policy));
 		}
 	}
+	policyList.querySelectorAll(`.policy`).forEach((policySection) => {
+		if (!(policySection.dataset.id in pref.siteList)) {
+			policySection.remove();
+		}
+	});
 }
 
 async function updateElements() {
@@ -316,6 +347,7 @@ async function updateElements() {
  * @param {number} nthTry
  */
 async function updateAllowDarkLightText(nthTry = 0) {
+	// bugged
 	if (nthTry > 10) return;
 	try {
 		const allowDarkLightTitle = document.querySelector("#allow-dark-light-title");
@@ -359,21 +391,4 @@ browser.storage.onChanged.addListener(updateOptionsPage);
 document.addEventListener("pageshow", updateOptionsPage);
 updateOptionsPage();
 
-/**
- * Updates the text content and title of elements based on localisation data attributes.
- *
- * Finds elements with `data-text`, `data-title`, or `data-placeholder` attributes, retrieves the localised text using the `msg` function, and assigns it to the element's `textContent`, `title`, or `placeholder`.
- */
-function localise() {
-	document.querySelectorAll("[data-text]").forEach((element) => {
-		element.textContent = msg(element.dataset.text);
-	});
-	document.querySelectorAll("[data-title]").forEach((element) => {
-		element.title = msg(element.dataset.title);
-	});
-	document.querySelectorAll("[data-placeholder]").forEach((element) => {
-		element.placeholder = msg(element.dataset.placeholder);
-	});
-}
-
-document.addEventListener("DOMContentLoaded", localise);
+document.addEventListener("DOMContentLoaded", () => localise(document));
