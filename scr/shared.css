@@ -64,7 +64,8 @@ html {
 	}
 }
 
-#template {
+#template,
+.hidden {
 	display: none;
 }
 

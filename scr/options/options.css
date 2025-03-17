@@ -18,6 +18,12 @@ body {
 	grid-template-columns: 1fr 1fr;
 }
 
+@media screen and (max-width: 450px) {
+	.two-columns {
+		grid-template-columns: 1fr;
+	}
+}
+
 .column {
 	display: flex;
 	flex-direction: column;
@@ -66,42 +72,6 @@ body {
 
 /* Elements */
 
-button {
-	align-items: center;
-	background-color: var(--colour-2);
-	border: none;
-	border-radius: 4px;
-	color: var(--text-colour-normal);
-	display: flex;
-	height: 2rem;
-	justify-content: center;
-	padding: 0;
-	text-align: center;
-	width: 2rem;
-}
-
-select {
-	background-color: var(--colour-2);
-	border: none;
-	border-radius: 4px;
-	color: var(--text-colour-normal);
-	display: flex;
-	height: 2rem;
-	padding-inline: 0.5rem 0;
-	vertical-align: middle;
-	width: max-content;
-}
-
-button:hover,
-select:hover {
-	background-color: var(--colour-3);
-}
-
-button:active,
-select:active {
-	background-color: var(--colour-5);
-}
-
 a:link,
 a:visited {
 	color: var(--link-colour-normal);
@@ -124,6 +94,58 @@ hr {
 	height: 1px;
 	margin: 0;
 	width: 100%;
+}
+
+button {
+	align-items: center;
+	background-color: var(--colour-2);
+	border: none;
+	border-radius: 4px;
+	color: var(--text-colour-normal);
+	display: flex;
+	height: 2rem;
+	justify-content: center;
+	padding: 0;
+	text-align: center;
+	width: 2rem;
+}
+
+.long-button {
+	align-items: center;
+	background-color: var(--colour-2);
+	border: none;
+	border-radius: 4px;
+	color: var(--text-colour-normal);
+	display: flex;
+	height: 2rem;
+	justify-content: center;
+	padding: 0;
+	text-align: center;
+	width: 100%;
+}
+
+select {
+	background-color: var(--colour-2);
+	border: none;
+	border-radius: 4px;
+	color: var(--text-colour-normal);
+	display: flex;
+	height: 2rem;
+	padding-inline: 0.5rem 0;
+	vertical-align: middle;
+	width: max-content;
+}
+
+button:hover,
+.long-button:hover,
+select:hover {
+	background-color: var(--colour-3);
+}
+
+button:active,
+.long-button:active,
+select:active {
+	background-color: var(--colour-5);
 }
 
 input[type="color"] {

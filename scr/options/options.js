@@ -181,33 +181,41 @@ document.querySelector("#add-new-rule").onclick = async () => {
 	applySettings();
 };
 
-document.querySelector("#save-pref").onclick = () => {
-	const prefLink = document.createElement("a");
-	prefLink.setAttribute("href", `data:text/plain;charset=utf-8,${encodeURIComponent(pref.prefToJSON())}`);
-	prefLink.setAttribute("download", "atbc_pref.json");
-	prefLink.style.display = "none";
-	document.body.appendChild(prefLink);
-	prefLink.click();
-	document.body.removeChild(prefLink);
+document.querySelector("#export-pref").onclick = () => {
+	const exportPref = document.querySelector("#export-pref-link");
+	const blob = new Blob([pref.prefToJSON()], { type: "text/plain" });
+	const url = URL.createObjectURL(blob);
+	exportPref.href = url;
+	exportPref.click();
 };
 
-document.querySelector("#load-pref").onclick = () => {
-	const prefInput = document.createElement("input");
-	prefInput.setAttribute("type", "file");
-	prefInput.style.display = "none";
-	prefInput.addEventListener("change", async () => {
-		const file = prefInput.files[0];
-		const reader = new FileReader();
-		reader.onload = async () => {
+const importPref = document.querySelector("#import-pref-link");
+importPref.addEventListener("change", async () => {
+	const file = importPref.files[0];
+	if (!file) return;
+	const reader = new FileReader();
+	reader.onload = async () => {
+		try {
 			const prefJSON = reader.result;
-			pref.JSONToPref(prefJSON);
+			await pref.JSONToPref(prefJSON);
 			await applySettings();
-		};
-		reader.readAsText(file);
-	});
-	document.body.appendChild(prefInput);
-	prefInput.click();
-	document.body.removeChild(prefInput);
+			await updateElements();
+		} catch (error) {
+			console.error("Failed to import preferences:", error);
+			alert("Failed to import preferences. Please check the file format.");
+		}
+	};
+	reader.onerror = () => {
+		console.error("File reading error:", reader.error);
+		alert("Failed to read the file. Please try again.");
+	};
+	reader.readAsText(file);
+});
+
+document.querySelector("#reset-pref").onclick = async () => {
+	pref.reset();
+	await applySettings();
+	await updateElements();
 };
 
 /**
@@ -234,6 +242,26 @@ async function createPolicySection(id, policy) {
  */
 function removePolicySection(policySection) {
 	policySection.remove();
+}
+
+function updateCheckboxes() {
+	checkboxes.forEach((checkbox) => {
+		setCheckboxValue(checkbox, pref[checkbox.dataset.pref]);
+	});
+}
+
+function updateSliders() {
+	sliders.forEach((slider) => {
+		setSliderValue(slider, pref[slider.dataset.pref]);
+	});
+}
+
+function updateFixedPolicySection() {
+	fixedPolicies.forEach((fixedPolicySection) => {
+		const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
+		const key = colourInputWrapper.dataset.pref;
+		setColourInputValue(colourInputWrapper, pref[key]);
+	});
 }
 
 async function updateSiteList() {
@@ -277,24 +305,11 @@ async function updateSiteList() {
 	}
 }
 
-function updateCheckboxes() {
-	checkboxes.forEach((checkbox) => {
-		setCheckboxValue(checkbox, pref[checkbox.dataset.pref]);
-	});
-}
-
-function updateSliders() {
-	sliders.forEach((slider) => {
-		setSliderValue(slider, pref[slider.dataset.pref]);
-	});
-}
-
-function updateFixedPolicySection() {
-	fixedPolicies.forEach((fixedPolicySection) => {
-		const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
-		const key = colourInputWrapper.dataset.pref;
-		setColourInputValue(colourInputWrapper, pref[key]);
-	});
+async function updateElements() {
+	updateCheckboxes();
+	updateSliders();
+	updateFixedPolicySection();
+	await updateSiteList();
 }
 
 /**
@@ -322,12 +337,7 @@ async function updateAllowDarkLightText(nthTry = 0) {
 async function updateOptionsPage() {
 	await pref.load();
 	if (pref.valid()) {
-		if (!document.hasFocus()) {
-			updateCheckboxes();
-			updateSliders();
-			updateFixedPolicySection();
-			await updateSiteList();
-		}
+		if (!document.hasFocus()) await updateElements();
 		await updateAllowDarkLightText();
 		loadingWrapper.hidden = true;
 		settingsWrapper.hidden = false;
@@ -335,6 +345,19 @@ async function updateOptionsPage() {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
 }
+
+/**
+ * Triggers colour update.
+ */
+async function applySettings() {
+	await pref.save();
+	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
+}
+
+browser.theme.onUpdated.addListener(updateOptionsPage);
+browser.storage.onChanged.addListener(updateOptionsPage);
+document.addEventListener("pageshow", updateOptionsPage);
+updateOptionsPage();
 
 /**
  * Updates the text content and title of elements based on localisation data attributes.
@@ -353,16 +376,4 @@ function localise() {
 	});
 }
 
-/**
- * Triggers colour update.
- */
-async function applySettings() {
-	await pref.save();
-	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
-}
-
-browser.theme.onUpdated.addListener(updateOptionsPage);
-browser.storage.onChanged.addListener(updateOptionsPage);
-document.addEventListener("pageshow", updateOptionsPage);
 document.addEventListener("DOMContentLoaded", localise);
-updateOptionsPage();

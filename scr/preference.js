@@ -11,7 +11,7 @@ import { hex } from "./colour.js";
 
 export default class preference {
 	/** The content of the preference */
-	#prefContent = {
+	#content = {
 		tabbar: 0,
 		tabbarBorder: 0,
 		tabSelected: 10,
@@ -25,7 +25,7 @@ export default class preference {
 		sidebarBorder: 5,
 		popup: 5,
 		popupBorder: 5,
-		minContrast_light: 165,
+		minContrast_light: 90,
 		minContrast_dark: 45,
 		allowDarkLight: true,
 		dynamic: true,
@@ -39,7 +39,7 @@ export default class preference {
 	};
 
 	/** Default content of the preference */
-	#default_prefContent = {
+	#default_content = {
 		tabbar: 0,
 		tabbarBorder: 0,
 		tabSelected: 10,
@@ -53,7 +53,7 @@ export default class preference {
 		sidebarBorder: 5,
 		popup: 5,
 		popupBorder: 5,
-		minContrast_light: 165,
+		minContrast_light: 90,
 		minContrast_dark: 45,
 		allowDarkLight: true,
 		dynamic: true,
@@ -88,87 +88,113 @@ export default class preference {
 	};
 
 	/**
+	 * Loads the preferences from the browser storage to the instance.
+	 */
+	async load() {
+		this.#content = await browser.storage.local.get();
+	}
+
+	/**
+	 * Stores the preferences from the instance to the browser storage.
+	 */
+	async save() {
+		await browser.storage.local.clear();
+		await browser.storage.local.set(this.#content);
+	}
+
+	/**
 	 * Validates that each property in the `#prefContent` object has the expected data type.
 	 *
 	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
 	 */
 	valid() {
-		if (Object.keys(this.#prefContent).length !== Object.keys(this.#default_prefContent).length) {
-			return false;
-		}
-		for (const key in this.#default_prefContent) {
-			if (typeof this.#prefContent[key] !== typeof this.#default_prefContent[key]) {
-				return false;
-			}
+		if (Object.keys(this.#content).length !== Object.keys(this.#default_content).length) return false;
+		for (const key in this.#default_content) {
+			if (typeof this.#content[key] !== typeof this.#default_content[key]) return false;
 		}
 		return true;
 	}
 
 	/**
-	 * Normalises saved preferences to a consistent format.
+	 * Resets a single preference if a valid key is specified.
 	 *
-	 * Ensures compatibility across various versions of saved preferences by converting them to the latest standard format.
+	 * Resets all preferences if the key is not specified or invalid.
+	 *
+	 * @param {string | null} key The key of the preference to reset.
+	 */
+	reset(key = null) {
+		if (key in this.#default_content) {
+			this.#content[key] = this.#default_content[key];
+		} else {
+			this.#content = {};
+			for (const key in this.#default_content) {
+				this.#content[key] = this.#default_content[key];
+			}
+		}
+	}
+
+	/**
+	 * Normalises the preferences content to a consistent format.
 	 *
 	 * The function adjusts fields as necessary, filling in any missing values to maintain a complete preference structure.
 	 *
 	 * If the existing preferences don't have a version number, date back before v1.7, or has the version number of 2.2.1, the default pref will overwrite the old pref.
 	 *
-	 * Once executed, the normalised preferences are loaded in the instance and saved to the browser storage.
+	 * Once executed, the preferences in the instance are normalised.
 	 */
 	async normalise() {
-		const storedPref = await browser.storage.local.get();
 		// If there's no version number, if last version was before v1.7, or if it was v2.2.1, resets the preference
 		if (
-			(!storedPref.last_version && !storedPref.version) ||
-			(storedPref.last_version && storedPref.last_version < [1, 7]) ||
-			(storedPref.version && JSON.stringify(storedPref.version) === "[2,2,1]")
+			(!this.#content.last_version && !this.#content.version) ||
+			(this.#content.last_version && this.#content.last_version < [1, 7]) ||
+			(this.#content.version && JSON.stringify(this.#content.version) === "[2,2,1]")
 		) {
 			this.reset();
 			await this.save();
 			return;
 		}
 		// Transfers the stored pref into the instance
-		this.#prefContent = {};
-		for (const key in this.#default_prefContent) {
-			this.#prefContent[key] =
-				storedPref[key] ?? storedPref[this.#legacyKey[key]] ?? this.#default_prefContent[key];
-			if (typeof this.#prefContent[key] !== typeof this.#default_prefContent[key]) {
+		const oldContent = Object.assign({}, this.#content);
+		this.#content = {};
+		for (const key in this.#default_content) {
+			this.#content[key] = oldContent[key] ?? oldContent[this.#legacyKey[key]] ?? this.#default_content[key];
+			if (typeof this.#content[key] !== typeof this.#default_content[key]) {
 				this.reset(key);
 			}
 		}
 		// Updating from before v1.7.5
 		// Converts from legacy format to query selector format
-		if (this.#prefContent.version < [1, 7, 5]) {
+		if (this.#content.version < [1, 7, 5]) {
 			// Clears possible empty policies
-			delete this.#prefContent.siteList[undefined];
-			for (const site in this.#prefContent.siteList) {
-				const legacyPolicy = this.#prefContent.siteList[site];
+			delete this.#content.siteList[undefined];
+			for (const site in this.#content.siteList) {
+				const legacyPolicy = this.#content.siteList[site];
 				if (typeof legacyPolicy !== "string") {
 					continue;
 				} else if (legacyPolicy.startsWith("TAG_")) {
-					this.#prefContent.siteList[site] = legacyPolicy.replace("TAG_", "QS_");
+					this.#content.siteList[site] = legacyPolicy.replace("TAG_", "QS_");
 				} else if (legacyPolicy.startsWith("CLASS_")) {
-					this.#prefContent.siteList[site] = legacyPolicy.replace("CLASS_", "QS_.");
+					this.#content.siteList[site] = legacyPolicy.replace("CLASS_", "QS_.");
 				} else if (legacyPolicy.startsWith("ID_")) {
-					this.#prefContent.siteList[site] = legacyPolicy.replace("ID_", "QS_#");
+					this.#content.siteList[site] = legacyPolicy.replace("ID_", "QS_#");
 				} else if (legacyPolicy.startsWith("NAME_")) {
-					this.#prefContent.siteList[site] = `${legacyPolicy.replace("NAME_", "QS_[name='")}']`;
+					this.#content.siteList[site] = `${legacyPolicy.replace("NAME_", "QS_[name='")}']`;
 				} else if (legacyPolicy === "") {
-					delete this.#prefContent.siteList[site];
+					delete this.#content.siteList[site];
 				}
 			}
 		}
 		// Updating from before v2.2
-		if (this.#prefContent.version < [2, 2]) {
+		if (this.#content.version < [2, 2]) {
 			// Turns on allow dark / light tab bar, dynamic, and no theme colour settings for once
-			this.#prefContent.allowDarkLight = true;
-			this.#prefContent.dynamic = true;
-			this.#prefContent.noThemeColour = true;
+			this.#content.allowDarkLight = true;
+			this.#content.dynamic = true;
+			this.#content.noThemeColour = true;
 			// Re-formatting site list
 			const newSiteList = {};
 			let id = 1;
-			for (const site in this.#prefContent.siteList) {
-				const legacyPolicy = this.#prefContent.siteList[site];
+			for (const site in this.#content.siteList) {
+				const legacyPolicy = this.#content.siteList[site];
 				if (typeof legacyPolicy !== "string") {
 					continue;
 				} else if (legacyPolicy === "IGNORE_THEME") {
@@ -208,25 +234,58 @@ export default class preference {
 					};
 				}
 			}
-			this.#prefContent.siteList = newSiteList;
+			this.#content.siteList = newSiteList;
+		}
+		// Updating from before v2.4
+		if (this.#content.version < [2, 4]) {
+			if (this.#content.minContrast_light === 165) this.#content.minContrast_light = 90;
 		}
 		// Makes sure colour offset values are stored in integer
-		this.#prefContent.tabbar = x100IfSmallerThan1(this.#prefContent.tabbar);
-		this.#prefContent.tabbarBorder = x100IfSmallerThan1(this.#prefContent.tabbarBorder);
-		this.#prefContent.tabSelected = x100IfSmallerThan1(this.#prefContent.tabSelected);
-		this.#prefContent.tabSelectedBorder = x100IfSmallerThan1(this.#prefContent.tabSelectedBorder);
-		this.#prefContent.toolbar = x100IfSmallerThan1(this.#prefContent.toolbar);
-		this.#prefContent.toolbarBorder = x100IfSmallerThan1(this.#prefContent.toolbarBorder);
-		this.#prefContent.toolbarField = x100IfSmallerThan1(this.#prefContent.toolbarField);
-		this.#prefContent.toolbarFieldBorder = x100IfSmallerThan1(this.#prefContent.toolbarFieldBorder);
-		this.#prefContent.toolbarFieldOnFocus = x100IfSmallerThan1(this.#prefContent.toolbarFieldOnFocus);
-		this.#prefContent.sidebar = x100IfSmallerThan1(this.#prefContent.sidebar);
-		this.#prefContent.sidebarBorder = x100IfSmallerThan1(this.#prefContent.sidebarBorder);
-		this.#prefContent.popup = x100IfSmallerThan1(this.#prefContent.popup);
-		this.#prefContent.popupBorder = x100IfSmallerThan1(this.#prefContent.popupBorder);
+		[
+			"tabbar",
+			"tabbarBorder",
+			"tabSelected",
+			"tabSelectedBorder",
+			"toolbar",
+			"toolbarBorder",
+			"toolbarField",
+			"toolbarFieldBorder",
+			"toolbarFieldOnFocus",
+			"sidebar",
+			"sidebarBorder",
+			"popup",
+			"popupBorder",
+		].forEach((key) => {
+			this.#content[key] = x100IfSmallerThan1(this.#content[key]);
+		});
 		// Updates the pref version
-		this.#prefContent.version = addonVersion;
-		await this.save();
+		this.#content.version = addonVersion;
+	}
+
+	/**
+	 * Converts the pref to a JSON string.
+	 * @returns The JSON string of the pref.
+	 */
+	prefToJSON() {
+		return JSON.stringify(this.#content);
+	}
+
+	/**
+	 * Loads pref from a JSON string and normalises it. Returns `false` if the JSON string is invalid.
+	 *
+	 * @param {string} JSONString The JSON string to load pref from.
+	 * @returns `true` if the JSON string is converted to the pref, otherwise `false`.
+	 */
+	async JSONToPref(JSONString) {
+		try {
+			const parsedJSON = JSON.parse(JSONString);
+			if (typeof parsedJSON !== "object" || parsedJSON === null) return false;
+			this.#content = parsedJSON;
+			await this.normalise();
+			return true;
+		} catch (error) {
+			return false;
+		}
 	}
 
 	/**
@@ -240,7 +299,7 @@ export default class preference {
 	 * @param {string} headerType `URL` (by default), or `ADDON_ID`.
 	 */
 	getPolicy(site, headerType = "URL") {
-		return this.#prefContent.siteList[this.getPolicyId(site, headerType)];
+		return this.#content.siteList[this.getPolicyId(site, headerType)];
 	}
 
 	/**
@@ -255,8 +314,8 @@ export default class preference {
 	 */
 	getPolicyId(site, headerType = "URL") {
 		let result = 0;
-		for (const id in this.#prefContent.siteList) {
-			const policy = this.#prefContent.siteList[id];
+		for (const id in this.#content.siteList) {
+			const policy = this.#content.siteList[id];
 			if (!policy || policy.header === "" || policy.headerType !== headerType) {
 				continue;
 			} else if (policy.header === site) {
@@ -288,8 +347,8 @@ export default class preference {
 	 */
 	addPolicy(policy) {
 		let id = 1;
-		while (id in this.#prefContent.siteList) id++;
-		this.#prefContent.siteList[id] = policy;
+		while (id in this.#content.siteList) id++;
+		this.#content.siteList[id] = policy;
 		return id;
 	}
 
@@ -299,222 +358,175 @@ export default class preference {
 	 * @param {number | string} id The ID of a policy.
 	 */
 	removePolicy(id) {
-		this.#prefContent.siteList[id] = null;
-	}
-
-	/**
-	 * Resets a single preference if a valid key is specified.
-	 *
-	 * Resets all preferences if the key is not specified or invalid.
-	 *
-	 * @param {string | null} key
-	 */
-	reset(key = null) {
-		if (key in this.#default_prefContent) {
-			this.#prefContent[key] = this.#default_prefContent[key];
-		} else {
-			this.#prefContent = {};
-			for (const key in this.#default_prefContent) {
-				this.#prefContent[key] = this.#default_prefContent[key];
-			}
-		}
-	}
-
-	/**
-	 * Loads the preferences from the browser storage to the instance.
-	 */
-	async load() {
-		this.#prefContent = await browser.storage.local.get();
-	}
-
-	/**
-	 * Stores the preferences from the instance to the browser storage.
-	 */
-	async save() {
-		await browser.storage.local.clear();
-		await browser.storage.local.set(this.#prefContent);
-	}
-
-	prefToJSON() {
-		return JSON.stringify(this.#prefContent);
-	}
-
-	async JSONToPref(JSONString) {
-		try {
-			this.#prefContent = JSON.parse(JSONString);
-			await this.normalise();
-			return true;
-		} catch (error) {
-			return false;
-		}
+		this.#content.siteList[id] = null;
 	}
 
 	get allowDarkLight() {
-		return this.#prefContent.allowDarkLight;
+		return this.#content.allowDarkLight;
 	}
 	set allowDarkLight(value) {
-		this.#prefContent.allowDarkLight = value;
+		this.#content.allowDarkLight = value;
 	}
 
 	get dynamic() {
-		return this.#prefContent.dynamic;
+		return this.#content.dynamic;
 	}
 	set dynamic(value) {
-		this.#prefContent.dynamic = value;
+		this.#content.dynamic = value;
 	}
 
 	get noThemeColour() {
-		return this.#prefContent.noThemeColour;
+		return this.#content.noThemeColour;
 	}
 	set noThemeColour(value) {
-		this.#prefContent.noThemeColour = value;
+		this.#content.noThemeColour = value;
 	}
 
 	get tabbar() {
-		return this.#prefContent.tabbar;
+		return this.#content.tabbar;
 	}
 	set tabbar(value) {
-		this.#prefContent.tabbar = value;
+		this.#content.tabbar = value;
 	}
 
 	get tabbarBorder() {
-		return this.#prefContent.tabbarBorder;
+		return this.#content.tabbarBorder;
 	}
 	set tabbarBorder(value) {
-		this.#prefContent.tabbarBorder = value;
+		this.#content.tabbarBorder = value;
 	}
 
 	get tabSelected() {
-		return this.#prefContent.tabSelected;
+		return this.#content.tabSelected;
 	}
 	set tabSelected(value) {
-		this.#prefContent.tabSelected = value;
+		this.#content.tabSelected = value;
 	}
 
 	get tabSelectedBorder() {
-		return this.#prefContent.tabSelectedBorder;
+		return this.#content.tabSelectedBorder;
 	}
 	set tabSelectedBorder(value) {
-		this.#prefContent.tabSelectedBorder = value;
+		this.#content.tabSelectedBorder = value;
 	}
 
 	get toolbar() {
-		return this.#prefContent.toolbar;
+		return this.#content.toolbar;
 	}
 	set toolbar(value) {
-		this.#prefContent.toolbar = value;
+		this.#content.toolbar = value;
 	}
 
 	get toolbarBorder() {
-		return this.#prefContent.toolbarBorder;
+		return this.#content.toolbarBorder;
 	}
 	set toolbarBorder(value) {
-		this.#prefContent.toolbarBorder = value;
+		this.#content.toolbarBorder = value;
 	}
 
 	get toolbarField() {
-		return this.#prefContent.toolbarField;
+		return this.#content.toolbarField;
 	}
 	set toolbarField(value) {
-		this.#prefContent.toolbarField = value;
+		this.#content.toolbarField = value;
 	}
 
 	get toolbarFieldBorder() {
-		return this.#prefContent.toolbarFieldBorder;
+		return this.#content.toolbarFieldBorder;
 	}
 	set toolbarFieldBorder(value) {
-		this.#prefContent.toolbarFieldBorder = value;
+		this.#content.toolbarFieldBorder = value;
 	}
 
 	get toolbarFieldOnFocus() {
-		return this.#prefContent.toolbarFieldOnFocus;
+		return this.#content.toolbarFieldOnFocus;
 	}
 	set toolbarFieldOnFocus(value) {
-		this.#prefContent.toolbarFieldOnFocus = value;
+		this.#content.toolbarFieldOnFocus = value;
 	}
 
 	get sidebar() {
-		return this.#prefContent.sidebar;
+		return this.#content.sidebar;
 	}
 	set sidebar(value) {
-		this.#prefContent.sidebar = value;
+		this.#content.sidebar = value;
 	}
 
 	get sidebarBorder() {
-		return this.#prefContent.sidebarBorder;
+		return this.#content.sidebarBorder;
 	}
 	set sidebarBorder(value) {
-		this.#prefContent.sidebarBorder = value;
+		this.#content.sidebarBorder = value;
 	}
 
 	get popup() {
-		return this.#prefContent.popup;
+		return this.#content.popup;
 	}
 	set popup(value) {
-		this.#prefContent.popup = value;
+		this.#content.popup = value;
 	}
 
 	get popupBorder() {
-		return this.#prefContent.popupBorder;
+		return this.#content.popupBorder;
 	}
 	set popupBorder(value) {
-		this.#prefContent.popupBorder = value;
+		this.#content.popupBorder = value;
 	}
 
 	get minContrast_light() {
-		return this.#prefContent.minContrast_light;
+		return this.#content.minContrast_light;
 	}
 	set minContrast_light(value) {
-		this.#prefContent.minContrast_light = value;
+		this.#content.minContrast_light = value;
 	}
 
 	get minContrast_dark() {
-		return this.#prefContent.minContrast_dark;
+		return this.#content.minContrast_dark;
 	}
 	set minContrast_dark(value) {
-		this.#prefContent.minContrast_dark = value;
+		this.#content.minContrast_dark = value;
 	}
 
 	get homeBackground_light() {
-		return this.#prefContent.homeBackground_light;
+		return this.#content.homeBackground_light;
 	}
 	set homeBackground_light(value) {
-		this.#prefContent.homeBackground_light = value;
+		this.#content.homeBackground_light = value;
 	}
 
 	get homeBackground_dark() {
-		return this.#prefContent.homeBackground_dark;
+		return this.#content.homeBackground_dark;
 	}
 	set homeBackground_dark(value) {
-		this.#prefContent.homeBackground_dark = value;
+		this.#content.homeBackground_dark = value;
 	}
 
 	get fallbackColour_light() {
-		return this.#prefContent.fallbackColour_light;
+		return this.#content.fallbackColour_light;
 	}
 	set fallbackColour_light(value) {
-		this.#prefContent.fallbackColour_light = value;
+		this.#content.fallbackColour_light = value;
 	}
 
 	get fallbackColour_dark() {
-		return this.#prefContent.fallbackColour_dark;
+		return this.#content.fallbackColour_dark;
 	}
 	set fallbackColour_dark(value) {
-		this.#prefContent.fallbackColour_dark = value;
+		this.#content.fallbackColour_dark = value;
 	}
 
 	get siteList() {
-		return this.#prefContent.siteList;
+		return this.#content.siteList;
 	}
 	set siteList(value) {
-		this.#prefContent.siteList = value;
+		this.#content.siteList = value;
 	}
 
 	get version() {
-		return this.#prefContent.version;
+		return this.#content.version;
 	}
 	set version(value) {
-		this.#prefContent.version = value;
+		this.#content.version = value;
 	}
 }
 

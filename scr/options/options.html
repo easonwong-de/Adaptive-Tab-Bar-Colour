@@ -458,9 +458,17 @@
 								</div>
 							</div>
 							<div class="section">
-								<button id="save-pref">Save</button>
-								<button id="load-pref">Load</button>
-								<button id="reset-pref">Reset</button>
+								<button id="export-pref" class="long-button">
+									<span data-text="exportSettings"></span>
+									<a id="export-pref-link" class="hidden" download="atbc_pref.json"></a>
+								</button>
+								<label for="import-pref-link" class="long-button">
+									<span data-text="importSettings"></span>
+									<input id="import-pref-link" class="hidden" type="file" accept=".json" />
+								</label>
+								<button id="reset-pref" class="long-button">
+									<span data-text="resetAll"></span>
+								</button>
 							</div>
 						</div>
 						<div class="column">
@@ -470,10 +478,10 @@
 								<div
 									class="slider"
 									data-pref="minContrast_light"
-									data-min="30"
+									data-min="0"
 									data-max="210"
 									data-step="15"
-									data-value="15"
+									data-value="0"
 									data-scale="1"
 								>
 									<button>
@@ -492,10 +500,10 @@
 								<div
 									class="slider"
 									data-pref="minContrast_dark"
-									data-min="30"
+									data-min="0"
 									data-max="210"
 									data-step="15"
-									data-value="15"
+									data-value="0"
 									data-scale="1"
 								>
 									<button>

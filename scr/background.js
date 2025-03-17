@@ -72,7 +72,9 @@ const current = {
  * Initialises the pref and current.
  */
 async function initialise() {
+	await pref.load();
 	await pref.normalise();
+	await pref.save();
 	await update();
 }
 
