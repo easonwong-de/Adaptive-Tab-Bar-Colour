@@ -1,38 +1,34 @@
-<b>Was macht dieses Add-on?</b>
 
-Während Sie im Web surfen, passt dieses Add-on das Theme von Firefox an das Erscheinungsbild der Website an, die Sie gerade ansehen – ähnlich wie macOS Safari die Tableiste einfärbt.
+**Was macht die Erweiterung?**
 
+Während du im Web surfst, ändert diese Erweiterung das Theme von Firefox, um es an das Erscheinungsbild der von dir besuchten Website anzupassen – ähnlich wie macOS Safari seine Tableiste einfärbt.
 
-<b>Funktioniert gut mit:</b>
+**Funktioniert gut mit:**
 
-<ol>
-	<li><a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/stylish/">Stylish</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
-</ol>
+- [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
+- [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
+- [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
+- [automaticDark](https://addons.mozilla.org/firefox/addon/automatic-dark/)
 
+**Inkompatibel mit:**
 
-<b>Unvereinbar mit:</b>
+- Firefox-Versionen älter als [112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) (veröffentlicht im April 2023)
+- [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
+- [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
+- [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
+- [Envify](https://addons.mozilla.org/firefox/addon/envify/)
+- und jede andere Erweiterung, die das Firefox-Theme ändert
 
-<ol>
-	<li>Firefox-Versionen älter als <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (veröffentlicht im April 2023)</li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/">Adaptive Theme Creator</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
-	<li>und alle anderen Add-ons, die das Firefox-Theme ändern</li>
-</ol>
+**Falls du ein CSS-Theme verwendest:**
 
+Ein CSS-Theme kann mit **Anpassende Tableistenfarbe** funktionieren, wenn Systemfarbvariablen verwendet werden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) ist ein Beispiel für ein kompatibles CSS-Theme.
 
-<b>Wenn Sie ein CSS-Theme verwenden:</b>
+**Falls du Linux mit einem GTK-Theme verwendest:**
 
-Ein CSS-Theme kann mit <abbr title="Anpassende Tableistenfarbe">ATBC</abbr> funktionieren, wenn Systemfarbvariablen verwendet werden. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">Dieses</a> ist ein Beispiel für ein <abbr title="Anpassende Tableistenfarbe">ATBC</abbr>-kompatibles CSS-Theme.
+Die Titelleisten-Schaltflächen von Firefox könnten auf den Windows-Stil zurückgesetzt werden. Um dies zu verhindern, öffne die erweiterten Einstellungen (`about:config`) und setze `widget.gtk.non-native-titlebar-buttons.enabled` auf `false`. (Dank an [@anselstetter](https://github.com/anselstetter/))
 
+**Sicherheitswarnung:**
 
-<b>Sicherheitserinnerung:</b>
+Achte auf bösartige Web-UIs: Unterscheide zwischen der Benutzeroberfläche des Browsers und der Benutzeroberfläche einer Website. Siehe [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Dank an [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
 
-Achten Sie auf bösartige Web-UIs: Bitte unterscheiden Sie zwischen der Browser-Oberfläche und der Web-Oberfläche. Siehe <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Dank an <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)
-
-
-Geben Sie diesem Projekt gerne einen Stern auf GitHub: <a href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour">https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour</a>
+Gib diesem Projekt gerne einen Stern auf GitHub: [https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour)
