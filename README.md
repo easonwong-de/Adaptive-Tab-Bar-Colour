@@ -18,10 +18,10 @@ Changes the colour of Firefox theme to match the website’s appearance.
 
 While you browse the web, this add-on changes the theme of Firefox to match the appearance of the website you are viewing — just like how macOS Safari tints its tab bar.
 
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="80%">  
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="80%">  
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="80%">  
-<img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="80%">
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272045.png" width="45%">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272046.png" width="45%">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272047.png" width="45%">  
+<img src="https://addons.mozilla.org/user-media/previews/full/272/272048.png" width="45%">
 
 <br>
 
@@ -51,9 +51,16 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 
 ## If You’re Using a CSS Theme:
 
-A CSS theme can work with [ATBC](## "Adaptive Tab Bar Colour"), when system colour variables are used. <a href="https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS">This</a> is an example of an [ATBC](## "Adaptive Tab Bar Colour")-compatible CSS theme.
+A CSS theme can work with ATBC (Adaptive Tab Bar Colour) when system colour variables are used (e.g. `--lwt-accent-color` for tab bar colour). [This](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) is an example of an ATBC-compatible CSS theme.
 
-<img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png" width="45%"><img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png" width="45%">
+<img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png" width="45%">
+<img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png" width="45%">
+
+<br>
+
+## If You’re Using Linux with a GTK Theme:
+
+Firefox’s titlebar buttons may revert to the Windows style. To prevent this, open Advanced Preferences (`about:config`) and set `widget.gtk.non-native-titlebar-buttons.enabled` to `false`. (Thanks to [@anselstetter](https://github.com/anselstetter/))
 
 <br>
 
