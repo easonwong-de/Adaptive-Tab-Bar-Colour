@@ -195,7 +195,7 @@ function findColour_policy() {
 		const querySelector = conf.policy.value;
 		if (querySelector === "") {
 			findComputedColour();
-			response.additionalInfo = "nothing"
+			response.additionalInfo = "nothing";
 			response.reason = "QS_ERROR";
 		} else {
 			try {
@@ -285,41 +285,36 @@ function findThemeColour() {
  * Sets `response.colour` using web elements.
  *
  * If no legal colour can be found, fallback colour will be used.
- *
- * @author emilio on GitHub (modified by easonwong-de).
  */
 function findComputedColour() {
 	response.colour = rgba([0, 0, 0, 0]);
-	// Selects the element 3 pixels below the middle point of the top edge of the screen
-	let element = document.elementFromPoint(window.innerWidth / 2, 3);
-	for (element; element; element = element.parentElement) {
-		if (response.colour.a === 1) break;
+	// Selects all the elements 3 pixels below the middle point of the top edge of the viewport
+	// It's a shame that `elementsFromPoint()` doesn't work with elements with `pointer-events: none`
+	for (const element of document.elementsFromPoint(window.innerWidth / 2, 3)) {
 		// Only if the element is wide (90 % of screen) and thick (20 pixels) enough will it be included in the calculation
 		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20) {
-			let colourBottom = getColourFromElement(element);
-			if (colourBottom.a === 0) continue;
-			response.colour = overlayColour(response.colour, colourBottom);
+			let elementColour = getColourFromElement(element);
+			if (elementColour.a === 0) continue;
+			response.colour = overlayColour(response.colour, elementColour);
+		}
+		if (response.colour.a === 1) {
+			response.reason = "COLOUR_PICKED";
+			return true;
 		}
 	}
-	// If the colour is still not opaque, overlay it over the web page body
-	// If the body is still not opaque, use fallback colour
-	if (response.colour.a === 1) {
-		response.reason = "COLOUR_PICKED";
-		return true;
-	} else {
-		const body = document.getElementsByTagName("body")[0];
-		if (body) {
-			const BodyColour = getColourFromElement(body);
-			if (BodyColour.a === 1) {
-				response.colour = overlayColour(response.colour, BodyColour);
-				response.reason = "COLOUR_PICKED";
-				return true;
-			}
+	// Colour is still not opaque, overlay it over the document body
+	const body = document.body;
+	if (body) {
+		const bodyColour = getColourFromElement(body);
+		if (bodyColour.a === 1) {
+			response.colour = overlayColour(response.colour, bodyColour);
+			response.reason = "COLOUR_PICKED";
+			return true;
 		}
-		response.colour = "FALLBACK";
-		response.reason = "FALLBACK_COLOUR";
-		return true;
 	}
+	response.colour = "FALLBACK";
+	response.reason = "FALLBACK_COLOUR";
+	return true;
 }
 
 /**
@@ -364,14 +359,7 @@ function overlayColour(colourTop, colourBottom) {
  */
 function rgba(colour) {
 	if (typeof colour === "string") {
-		if (
-			colour === "DEFAULT" ||
-			colour === "IMAGEVIEWER" ||
-			colour === "PLAINTEXT" ||
-			colour === "HOME" ||
-			colour === "FALLBACK"
-		)
-			return colour;
+		if (colour in ["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"]) return colour;
 		const canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		const canvasFillStyle = canvas.fillStyle;
@@ -394,7 +382,7 @@ function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour === "object") {
+	} else if (typeof colour === "object" && colour?.length === 4) {
 		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	} else {
 		return null;

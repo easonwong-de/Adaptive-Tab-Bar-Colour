@@ -11,14 +11,7 @@
  */
 export function rgba(colour) {
 	if (typeof colour === "string") {
-		if (
-			colour === "DEFAULT" ||
-			colour === "IMAGEVIEWER" ||
-			colour === "PLAINTEXT" ||
-			colour === "HOME" ||
-			colour === "FALLBACK"
-		)
-			return colour;
+		if (colour in ["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"]) return colour;
 		const canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		const canvasFillStyle = canvas.fillStyle;
@@ -41,7 +34,7 @@ export function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour === "object") {
+	} else if (typeof colour === "object" && colour?.length === 4) {
 		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	} else {
 		return null;
@@ -58,9 +51,9 @@ export function hex(colour) {
 	if (canvasFillStyle.startsWith("#")) {
 		return `${canvasFillStyle}`;
 	} else {
-		const colourRGBA = rgba(colour);
-		if (typeof colourRGBA !== "object") return "#000000";
-		return `#${((1 << 24) | (colourRGBA.r << 16) | (colourRGBA.g << 8) | colourRGBA.b).toString(16).slice(1)}`;
+		const RGBAColour = rgba(colour);
+		if (typeof RGBAColour !== "object") return "#000000";
+		return `#${((1 << 24) | (RGBAColour.r << 16) | (RGBAColour.g << 8) | RGBAColour.b).toString(16).slice(1)}`;
 	}
 }
 
