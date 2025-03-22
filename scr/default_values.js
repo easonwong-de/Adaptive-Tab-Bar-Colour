@@ -15,7 +15,7 @@ export const default_fallbackColour_dark = "#2b2a33";
 /**
  * Colours for about:pages.
  */
-export const default_aboutPageColour = Object.freeze({
+export const aboutPageColour = Object.freeze({
 	checkerboard: { light: "DEFAULT", dark: undefined },
 	"devtools-toolbox": { light: "DEFAULT", dark: "rgb(12, 12, 13)" },
 	firefoxview: { light: "HOME", dark: "HOME" },
@@ -31,9 +31,9 @@ export const default_aboutPageColour = Object.freeze({
 });
 
 /**
- * Colours for protected pages.
+ * Colours for restricted sites.
  */
-export const default_protectedPageColour = Object.freeze({
+export const restrictedSiteColour = Object.freeze({
 	"accounts-static.cdn.mozilla.net": { light: "DEFAULT", dark: "DEFAULT" },
 	"accounts.firefox.com": { light: "rgb(250, 250, 253)", dark: undefined },
 	"addons.cdn.mozilla.net": { light: "DEFAULT", dark: "DEFAULT" },
@@ -51,7 +51,7 @@ export const default_protectedPageColour = Object.freeze({
  *
  * @todo Adds light / dark attributes.
  */
-export const recommendedColour_addon = Object.freeze({
+export const recommendedAddonPageColour = Object.freeze({
 	"adguardadblocker@adguard.com": "#131313",
 	"enhancerforyoutube@maximerf.addons.mozilla.org": "#282a2d",
 	"languagetool-webextension@languagetool.org": "#111113",

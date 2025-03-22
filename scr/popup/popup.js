@@ -1,6 +1,6 @@
 "use strict";
 
-import { recommendedColour_addon, default_protectedPageColour } from "../default_values.js";
+import { recommendedAddonPageColour, restrictedSiteColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
 import preference from "../preference.js";
 import { localise } from "../utility.js";
@@ -25,39 +25,28 @@ sliders.forEach((slider) =>
 /**
  * @param {tabs.Tab} tab
  */
-async function getWebPageInfo(tab) {
+async function getWindowInfo(tab) {
 	const url = new URL(tab.url);
-	try {
-		const response = await browser.tabs.sendMessage(tab.id, { header: "INFO_REQUEST" });
-		const actions = {
-			THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
-			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
-			THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
+	const windowId = tab.windowId;
+	const windowInfo = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
+	const themeReasons = {
+		THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
+		THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
+		THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
+	};
+	const reason = windowInfo.reason;
+	if (reason in themeReasons) {
+		return {
+			reason: reason,
+			additionalInfo: null,
+			infoAction: async () => {
+				pref.addPolicy({ header: url.hostname, ...themeReasons[reason] });
+				await applySettings();
+				await updatePopupSelection();
+			},
 		};
-		const reason = response.reason;
-		if (reason in actions) {
-			return {
-				reason: reason,
-				additionalInfo: null,
-				infoAction: async () => {
-					pref.addPolicy({ header: url.hostname, ...actions[reason] });
-					await applySettings();
-					await updatePopupSelection();
-				},
-			};
-		} else {
-			return response;
-		}
-	} catch (error) {
-		if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-			return { reason: "PDF_VIEWER" };
-		} else if (tab.favIconUrl?.startsWith("chrome:")) {
-			return { reason: "PROTECTED_PAGE" };
-		} else if (new RegExp(`^https?:\/\/${tab.title}$`).test(url.href)) {
-			return { reason: "TEXT_VIEWER" };
-		} else {
-			return { reason: "ERROR_OCCURRED" };
-		}
+	} else {
+		return windowInfo;
 	}
 }
 
@@ -78,11 +67,11 @@ async function getAddonPageInfo(tab) {
 					additionalInfo: addon.name,
 					infoAction: async () => await specifyColourForAddon(addon.id, null),
 				};
-			} else if (addon.id in recommendedColour_addon) {
+			} else if (addon.id in recommendedAddonPageColour) {
 				return {
 					reason: "ADDON_RECOM",
 					additionalInfo: addon.name,
-					infoAction: async () => await specifyColourForAddon(addon.id, recommendedColour_addon[addon.id]),
+					infoAction: async () => await specifyColourForAddon(addon.id, recommendedAddonPageColour[addon.id]),
 				};
 			} else {
 				return {
@@ -151,10 +140,10 @@ async function updateInfoDisplay() {
 		url.href.startsWith("about:newtab")
 	) {
 		setInfoDisplay({ reason: "HOME_PAGE" });
-	} else if (url.protocol === "about:" || url.hostname in default_protectedPageColour) {
+	} else if (url.protocol === "about:" || url.hostname in restrictedSiteColour) {
 		setInfoDisplay({ reason: "PROTECTED_PAGE" });
 	} else if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "file:") {
-		setInfoDisplay(await getWebPageInfo(tab));
+		setInfoDisplay(await getWindowInfo(tab));
 	} else if (url.protocol === "moz-extension:") {
 		setInfoDisplay(await getAddonPageInfo(tab));
 	} else {

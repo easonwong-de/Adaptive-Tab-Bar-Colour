@@ -32,7 +32,8 @@ const response = {
 };
 
 /**
- * Runs the given function with a maximum rate of 100ms.
+ * Runs the given function with a maximum rate of 4 Hz.
+ *
  * @param {function} action Fuction without debounce.
  * @returns Function with debounce.
  * @author cloone8 on GitHub.
@@ -70,25 +71,16 @@ const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_anima
  * Sets up / turns off dynamic update.
  */
 function setDynamicUpdate() {
-	if (conf.dynamic) {
-		document.addEventListener("click", findAndSendColour_debounce);
-		document.addEventListener("resize", findAndSendColour_debounce);
-		document.addEventListener("scroll", findAndSendColour_debounce);
-		document.addEventListener("visibilitychange", findAndSendColour_debounce);
-		document.addEventListener("transitionend", findAndSendColour_animation_debounce);
-		document.addEventListener("transitioncancel", findAndSendColour_animation_debounce);
-		document.addEventListener("animationend", findAndSendColour_animation_debounce);
-		document.addEventListener("animationcancel", findAndSendColour_animation_debounce);
-	} else {
-		document.removeEventListener("click", findAndSendColour_debounce);
-		document.removeEventListener("resize", findAndSendColour_debounce);
-		document.removeEventListener("scroll", findAndSendColour_debounce);
-		document.removeEventListener("visibilitychange", findAndSendColour_debounce);
-		document.removeEventListener("transitionend", findAndSendColour_animation_debounce);
-		document.removeEventListener("transitioncancel", findAndSendColour_animation_debounce);
-		document.removeEventListener("animationend", findAndSendColour_animation_debounce);
-		document.removeEventListener("animationcancel", findAndSendColour_animation_debounce);
-	}
+	["click", "resize", "scroll", "visibilitychange"].forEach((event) => {
+		conf.dynamic
+			? document.addEventListener(event, findAndSendColour_debounce)
+			: document.removeEventListener(event, findAndSendColour_debounce);
+	});
+	["transitionend", "transitioncancel", "animationend", "animationcancel"].forEach((transition) => {
+		conf.dynamic
+			? document.addEventListener(transition, findAndSendColour_animation_debounce)
+			: document.removeEventListener(transition, findAndSendColour_animation_debounce);
+	});
 }
 
 // Detects `meta[name=theme-color]` changes
@@ -256,23 +248,21 @@ function findColour_noPolicy() {
 
 /**
  * Looks for pre-determined meta `theme-color`.
+ *
  * @returns Returns `false` if no legal `theme-color` can be found.
  */
 function findThemeColour() {
 	const colourScheme = window.matchMedia("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
-	const metaThemeColourWithScheme = document.querySelector(
-		`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`
-	);
-	const metaThemeColour = document.querySelector(`meta[name="theme-color"]`);
-	if (metaThemeColourWithScheme) {
-		response.colour = rgba(metaThemeColourWithScheme.content);
-	} else if (metaThemeColour) {
+	const metaThemeColour =
+		document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`) ??
+		document.querySelector(`meta[name="theme-color"]`);
+	if (metaThemeColour) {
 		response.colour = rgba(metaThemeColour.content);
 	} else {
 		return false;
 	}
-	// Returns true if it is legal (opaque) and can be sent to background.js
-	// Otherwise, return false and trigger getComputedColour()
+	// Return `true` if `theme-color` is opaque and can be sent to `background.js`
+	// Otherwise, return false and trigger `getComputedColour()`
 	if (response.colour.a === 1) {
 		response.reason = "THEME_USED";
 		return true;
@@ -282,7 +272,7 @@ function findThemeColour() {
 }
 
 /**
- * Sets `response.colour` using web elements.
+ * Looks for `response.colour` from web elements.
  *
  * If no legal colour can be found, fallback colour will be used.
  */
@@ -319,12 +309,17 @@ function findComputedColour() {
 
 /**
  * @param {HTMLElement} element The element to get colour from.
- * @returns Returns the colour of the element in object, transparent if it can't be found.
+ * @returns The colour of the element in RGBA object
+ * @returns Transparent RGBA object if it can't be found.
  */
 function getColourFromElement(element) {
 	if (!element) return rgba([0, 0, 0, 0]);
-	let colour = getComputedStyle(element).backgroundColor;
-	return colour ? rgba(colour) : rgba([0, 0, 0, 0]);
+	const colour = getComputedStyle(element).backgroundColor;
+	if (!colour) return rgba([0, 0, 0, 0]);
+	const RGBAColour = rgba(colour);
+	const opacity = getComputedStyle(element).opacity;
+	if (opacity !== "1") RGBAColour.a = RGBAColour.a * opacity;
+	return RGBAColour;
 }
 
 /**
@@ -350,16 +345,16 @@ function overlayColour(colourTop, colourBottom) {
 }
 
 /**
- * Converts any colour to a rgba object.
+ * Converts any colour to an RGBA object.
  *
- * @author JayB on Stack Overflow (modified by easonwong-de).
- * @param {string | Number[]} colour Colour to convert or a colour code.
- * @returns Returns the colour in rgba object. Pure black if invalid.
+ * @param {string | number[]} colour Colour to convert or a colour code.
+ * @returns Returns the colour in RGBA object.
+ * @returns Returns pure black if the input is invalid.
  * @returns Returns the same colour code if the input is a colour code.
  */
 function rgba(colour) {
 	if (typeof colour === "string") {
-		if (colour in ["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"]) return colour;
+		if (["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"].includes(colour)) return colour;
 		const canvas = document.createElement("canvas").getContext("2d");
 		canvas.fillStyle = colour;
 		const canvasFillStyle = canvas.fillStyle;
@@ -382,7 +377,7 @@ function rgba(colour) {
 				a: result[3],
 			};
 		}
-	} else if (typeof colour === "object" && colour?.length === 4) {
+	} else if (Array.isArray(colour)) {
 		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	} else {
 		return null;

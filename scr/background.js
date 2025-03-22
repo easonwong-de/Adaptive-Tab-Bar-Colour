@@ -23,9 +23,9 @@
  * An object that defines the appearance of the Firefox chrome.
  */
 
-import { default_aboutPageColour, default_protectedPageColour } from "./default_values.js";
+import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
 import preference from "./preference.js";
-import { rgba, dimColourToString, contrastCorrection } from "./colour.js";
+import { rgba, dimColourString, contrastCorrection } from "./colour.js";
 import { onSchemeChanged, getCurrentScheme } from "./utility.js";
 
 /** Preference */
@@ -59,12 +59,16 @@ const colourCode = {
 
 /** Variables */
 const current = {
-	scheme: "light", // "light" or "dark"
+	/** `light` or `dark` */
+	scheme: "light",
+	/** windowId: { reason, additionalInfo, corrected } */
+	windowInfo: {},
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
 	},
 	async update() {
 		this.scheme = await getCurrentScheme();
+		this.windowInfo = {};
 	},
 };
 
@@ -116,8 +120,53 @@ async function handleMessage(message, sender) {
 			return setFrameColour(tab, message.response.colour);
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
+		case "INFO_REQUEST":
+			return current.windowInfo[message.windowId];
 		default:
 			return update();
+	}
+}
+
+/**
+ * Updates the colour for an active tab of a window.
+ *
+ * @param {tabs.Tab} tab The active tab.
+ */
+async function updateTab(tab) {
+	const url = new URL(tab.url);
+	const policy = pref.getPolicy(url);
+	if (policy?.type === "COLOUR") {
+		setFrameColour(tab, policy.value, "COLOUR_SPECIFIED");
+	} else {
+		setFrameColour(...(await getProtectedPageColour(tab, url)));
+	}
+}
+
+async function getProtectedPageColour(tab, url) {
+	if (url.protocol === "view-source:") {
+		setFrameColour(tab, "PLAINTEXT", "TEXT_VIEWER");
+	} else if (url.protocol === "chrome:" || url.protocol === "resource:" || url.protocol === "jar:file:") {
+		if (
+			url.href.endsWith(".txt") ||
+			url.href.endsWith(".css") ||
+			url.href.endsWith(".jsm") ||
+			url.href.endsWith(".js")
+		) {
+			setFrameColour(tab, "PLAINTEXT", "TEXT_VIEWER");
+		} else if (url.href.endsWith(".png") || url.href.endsWith(".jpg")) {
+			setFrameColour(tab, "IMAGEVIEWER");
+		} else {
+			setFrameColour(tab, "SYSTEM");
+		}
+	} else if (url.protocol === "about:") {
+		setFrameColour(tab, getAboutPageColour(url.pathname));
+	} else if (url.hostname in restrictedSiteColour) {
+		setFrameColour(tab, getRestrictedSiteColour(url.hostname));
+	} else if (url.protocol === "moz-extension:") {
+		setFrameColour(tab, await getAddonPageColour(url.href));
+	} else {
+		// To-do: unify site lists for about / protected pages with those for normal web pages
+		setFrameColour(tab, await getWebPageColour(tab));
 	}
 }
 
@@ -125,10 +174,10 @@ async function handleMessage(message, sender) {
  * @param {string} pathname
  */
 function getAboutPageColour(pathname) {
-	if (default_aboutPageColour[pathname]?.[current.scheme]) {
-		return rgba(default_aboutPageColour[pathname][current.scheme]);
-	} else if (default_aboutPageColour[pathname]?.[current.reversedScheme]) {
-		return rgba(default_aboutPageColour[pathname][current.reversedScheme]);
+	if (aboutPageColour[pathname]?.[current.scheme]) {
+		return rgba(aboutPageColour[pathname][current.scheme]);
+	} else if (aboutPageColour[pathname]?.[current.reversedScheme]) {
+		return rgba(aboutPageColour[pathname][current.reversedScheme]);
 	} else {
 		return "DEFAULT";
 	}
@@ -137,11 +186,11 @@ function getAboutPageColour(pathname) {
 /**
  * @param {string} hostname
  */
-function getProtectedPageColour(hostname) {
-	if (default_protectedPageColour[hostname]?.[current.scheme]) {
-		return rgba(default_protectedPageColour[hostname][current.scheme]);
-	} else if (default_protectedPageColour[hostname]?.[current.reversedScheme]) {
-		return rgba(default_protectedPageColour[hostname][current.reversedScheme]);
+function getRestrictedSiteColour(hostname) {
+	if (restrictedSiteColour[hostname]?.[current.scheme]) {
+		return rgba(restrictedSiteColour[hostname][current.scheme]);
+	} else if (restrictedSiteColour[hostname]?.[current.reversedScheme]) {
+		return rgba(restrictedSiteColour[hostname][current.reversedScheme]);
 	} else {
 		return "FALLBACK";
 	}
@@ -172,7 +221,7 @@ async function getAddonPageColour(url) {
  *
  * @param {tabs.Tab} tab The tab to contact.
  */
-async function getWebPageColour(tab) {
+async function getWebPageColour(tab, policy = undefined) {
 	const url = tab.url;
 	try {
 		const response = await browser.tabs.sendMessage(tab.id, {
@@ -180,7 +229,7 @@ async function getWebPageColour(tab) {
 			conf: {
 				dynamic: pref.dynamic,
 				noThemeColour: pref.noThemeColour,
-				policy: pref.getPolicy(url),
+				policy: policy,
 			},
 		});
 		return response.colour;
@@ -201,40 +250,6 @@ async function getWebPageColour(tab) {
 		} else {
 			return "FALLBACK";
 		}
-	}
-}
-
-/**
- * Updates the colour for an active tab of a window.
- *
- * @param {tabs.Tab} tab The active tab.
- */
-async function updateTab(tab) {
-	const url = new URL(tab.url);
-	if (url.protocol === "view-source:") {
-		setFrameColour(tab, "PLAINTEXT");
-	} else if (url.protocol === "chrome:" || url.protocol === "resource:" || url.protocol === "jar:file:") {
-		if (
-			url.href.endsWith(".txt") ||
-			url.href.endsWith(".css") ||
-			url.href.endsWith(".jsm") ||
-			url.href.endsWith(".js")
-		) {
-			setFrameColour(tab, "PLAINTEXT");
-		} else if (url.href.endsWith(".png") || url.href.endsWith(".jpg")) {
-			setFrameColour(tab, "IMAGEVIEWER");
-		} else {
-			setFrameColour(tab, "SYSTEM");
-		}
-	} else if (url.protocol === "about:") {
-		setFrameColour(tab, getAboutPageColour(url.pathname));
-	} else if (url.hostname in default_protectedPageColour) {
-		setFrameColour(tab, getProtectedPageColour(url.hostname));
-	} else if (url.protocol === "moz-extension:") {
-		setFrameColour(tab, await getAddonPageColour(url.href));
-	} else {
-		// To-do: unify site lists for about / protected pages with those for normal web pages
-		setFrameColour(tab, await getWebPageColour(tab));
 	}
 }
 
@@ -263,6 +278,7 @@ function setFrameColour(tab, colour) {
 				pref.minContrast_dark
 			);
 			applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
+			current.windowInfo[windowId].corrected = correctionResult.corrected;
 		}
 	} else {
 		const correctionResult = contrastCorrection(
@@ -273,6 +289,7 @@ function setFrameColour(tab, colour) {
 			pref.minContrast_dark
 		);
 		applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
+		current.windowInfo[windowId].corrected = correctionResult.corrected;
 	}
 }
 
@@ -280,44 +297,43 @@ function setFrameColour(tab, colour) {
  * Constructs a theme and applies it to a given window.
  *
  * @param {number} windowId The ID of the window.
- * @param {object} colour Colour of the frame, in rgba object.
+ * @param {object} colour Colour of the frame, in RGBA object.
  * @param {string} colourScheme `light` or `dark`.
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {
 		const theme = {
 			colors: {
-				// Tabbar & tab
-				frame: dimColourToString(colour, -pref.tabbar * 1.5),
-				frame_inactive: dimColourToString(colour, -pref.tabbar * 1.5),
-				tab_selected: dimColourToString(colour, -pref.tabSelected * 1.5),
-				tab_line: dimColourToString(colour, (-pref.tabSelectedBorder - pref.tabSelected) * 1.5),
-				ntp_background: dimColourToString(colourCode["HOME"][current.scheme], 0),
-				// Toolbar
-				toolbar: dimColourToString(colour, -pref.toolbar * 1.5),
-				toolbar_top_separator: dimColourToString(colour, (-pref.tabbarBorder - pref.tabbar) * 1.5),
-				toolbar_bottom_separator: dimColourToString(colour, (-pref.toolbarBorder - pref.toolbar) * 1.5),
-				// URL bar
-				toolbar_field: dimColourToString(colour, -pref.toolbarField * 1.5),
-				toolbar_field_border: dimColourToString(colour, (-pref.toolbarFieldBorder - pref.toolbarField) * 1.5),
-				toolbar_field_focus: dimColourToString(colour, -pref.toolbarFieldOnFocus * 1.5),
-				toolbar_field_border_focus: "rgb(130, 180, 245)",
-				// Sidebar & popup
-				sidebar: dimColourToString(colour, -pref.sidebar * 1.5),
-				sidebar_border: dimColourToString(colour, (-pref.sidebar - pref.sidebarBorder) * 1.5),
-				popup: dimColourToString(colour, -pref.popup * 1.5),
-				popup_border: dimColourToString(colour, (-pref.popup - pref.popupBorder) * 1.5),
-				// Static
-				tab_background_text: "rgb(30, 30, 30)",
-				tab_loading: "rgba(0, 0, 0, 0)",
+				// active
+				button_background_active: dimColourString(colour, -1.5 * pref.tabSelected),
+				frame: dimColourString(colour, -1.5 * pref.tabbar),
+				frame_inactive: dimColourString(colour, -1.5 * pref.tabbar),
+				ntp_background: dimColourString(colourCode.HOME[current.scheme], 0),
+				popup: dimColourString(colour, -1.5 * pref.popup),
+				popup_border: dimColourString(colour, -1.5 * (pref.popup + pref.popupBorder)),
+				sidebar: dimColourString(colour, -1.5 * pref.sidebar),
+				sidebar_border: dimColourString(colour, -1.5 * (pref.sidebar + pref.sidebarBorder)),
+				tab_line: dimColourString(colour, -1.5 * (pref.tabSelectedBorder + pref.tabSelected)),
+				tab_selected: dimColourString(colour, -1.5 * pref.tabSelected),
+				toolbar: dimColourString(colour, -1.5 * pref.toolbar),
+				toolbar_bottom_separator: dimColourString(colour, -1.5 * (pref.toolbarBorder + pref.toolbar)),
+				toolbar_field: dimColourString(colour, -1.5 * pref.toolbarField),
+				toolbar_field_border: dimColourString(colour, -1.5 * (pref.toolbarFieldBorder + pref.toolbarField)),
+				toolbar_field_focus: dimColourString(colour, -1.5 * pref.toolbarFieldOnFocus),
+				toolbar_top_separator: dimColourString(colour, -1.5 * (pref.tabbarBorder + pref.tabbar)),
+				// static
+				icons: "rgb(0, 0, 0)",
 				ntp_text: "rgb(0, 0, 0)",
-				toolbar_text: "rgb(0, 0, 0)",
-				toolbar_field_text: "rgba(0, 0, 0)",
 				popup_text: "rgb(0, 0, 0)",
 				sidebar_text: "rgb(0, 0, 0)",
-				button_background_hover: "rgba(0, 0, 0, 0.10)",
-				button_background_active: "rgba(0, 0, 0, 0.15)",
-				icons: "rgb(30, 30, 30)",
+				tab_background_text: "rgb(0, 0, 0)",
+				tab_text: "rgb(0, 0, 0)",
+				toolbar_field_text: "rgb(0, 0, 0)",
+				toolbar_text: "rgb(0, 0, 0)",
+				button_background_hover: "rgba(0, 0, 0, 0.11)",
+				ntp_card_background: "rgba(0, 0, 0, 0.11)",
+				toolbar_vertical_separator: "rgba(0, 0, 0, 0.11)",
+				toolbar_field_border_focus: null,
 			},
 			properties: {
 				// More on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#properties
@@ -328,39 +344,40 @@ function applyTheme(windowId, colour, colourScheme) {
 		browser.theme.update(windowId, theme);
 	}
 	if (colourScheme === "dark") {
+		console.log(dimColourString(colour, pref.toolbarField));
+
 		const theme = {
 			colors: {
-				// Tabbar & tab
-				frame: dimColourToString(colour, pref.tabbar),
-				frame_inactive: dimColourToString(colour, pref.tabbar),
-				tab_selected: dimColourToString(colour, pref.tabSelected),
-				tab_line: dimColourToString(colour, pref.tabSelectedBorder + pref.tabSelected),
-				ntp_background: dimColourToString(colourCode["HOME"][current.scheme], 0),
-				// Toolbar
-				toolbar: dimColourToString(colour, pref.toolbar),
-				toolbar_top_separator: dimColourToString(colour, pref.tabbarBorder + pref.tabbar),
-				toolbar_bottom_separator: dimColourToString(colour, pref.toolbarBorder + pref.toolbar),
-				// URL bar
-				toolbar_field: dimColourToString(colour, pref.toolbarField),
-				toolbar_field_border: dimColourToString(colour, pref.toolbarFieldBorder + pref.toolbarField),
-				toolbar_field_focus: dimColourToString(colour, pref.toolbarFieldOnFocus),
-				toolbar_field_border_focus: "rgb(70, 118, 160)",
-				// Sidebar
-				sidebar: dimColourToString(colour, pref.sidebar),
-				sidebar_border: dimColourToString(colour, pref.sidebar + pref.sidebarBorder),
-				popup: dimColourToString(colour, pref.popup),
-				popup_border: dimColourToString(colour, pref.popup + pref.popupBorder),
-				// Static
-				tab_background_text: "rgb(225, 225, 225)",
-				tab_loading: "rgba(0, 0, 0, 0)",
+				// active
+				button_background_active: dimColourString(colour, pref.tabSelected),
+				frame: dimColourString(colour, pref.tabbar),
+				frame_inactive: dimColourString(colour, pref.tabbar),
+				ntp_background: dimColourString(colourCode.HOME[current.scheme], 0),
+				popup: dimColourString(colour, pref.popup),
+				popup_border: dimColourString(colour, pref.popup + pref.popupBorder),
+				sidebar: dimColourString(colour, pref.sidebar),
+				sidebar_border: dimColourString(colour, pref.sidebar + pref.sidebarBorder),
+				tab_line: dimColourString(colour, pref.tabSelectedBorder + pref.tabSelected),
+				tab_selected: dimColourString(colour, pref.tabSelected),
+				toolbar: dimColourString(colour, pref.toolbar),
+				toolbar_bottom_separator: dimColourString(colour, pref.toolbarBorder + pref.toolbar),
+				toolbar_field: dimColourString(colour, pref.toolbarField),
+				toolbar_field_border: dimColourString(colour, pref.toolbarFieldBorder + pref.toolbarField),
+				toolbar_field_focus: dimColourString(colour, pref.toolbarFieldOnFocus),
+				toolbar_top_separator: dimColourString(colour, pref.tabbarBorder + pref.tabbar),
+				// static
+				icons: "rgb(255, 255, 255)",
 				ntp_text: "rgb(255, 255, 255)",
-				toolbar_text: "rgb(255, 255, 255)",
+				popup_text: "rgb(255, 255, 255)",
+				sidebar_text: "rgb(255, 255, 255)",
+				tab_background_text: "rgb(255, 255, 255)",
+				tab_text: "rgb(255, 255, 255)",
 				toolbar_field_text: "rgb(255, 255, 255)",
-				popup_text: "rgb(225, 225, 225)",
-				sidebar_text: "rgb(225, 225, 225)",
-				button_background_active: "rgba(255, 255, 255, 0.15)",
-				button_background_hover: "rgba(255, 255, 255, 0.10)",
-				icons: "rgb(225, 225, 225)",
+				toolbar_text: "rgb(255, 255, 255)",
+				button_background_hover: "rgba(255, 255, 255, 0.11)",
+				ntp_card_background: "rgba(255, 255, 255, 0.11)",
+				toolbar_vertical_separator: "rgba(255, 255, 255, 0.11)",
+				toolbar_field_border_focus: null,
 			},
 			properties: {
 				color_scheme: "system",
