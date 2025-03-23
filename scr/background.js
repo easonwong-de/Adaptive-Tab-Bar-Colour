@@ -76,9 +76,9 @@ const current = {
  * Triggers colour change in all windows.
  */
 async function update() {
-	await current.update();
 	if (!pref.valid()) await initialise();
 	const activeTabs = await browser.tabs.query({ active: true, status: "complete" });
+	await current.update();
 	activeTabs.forEach(updateTab);
 }
 

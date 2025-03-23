@@ -44,13 +44,16 @@ function updateSliders() {
 	});
 }
 
-async function updateInfoDisplay() {
+async function updateInfoDisplay(nthTry = 0) {
+	if (nthTry > 3) {
+		setInfoDisplay({ reason: "ERROR_OCCURRED" });
+		return;
+	}
 	try {
 		const window = await browser.windows.getCurrent({ populate: true });
 		const windowId = window.id;
 		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
-		console.table(info);
-
+		if (!info) setTimeout(() => updateInfoDisplay(++nthTry), 10);
 		const actions = {
 			THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
 			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
@@ -75,8 +78,6 @@ async function updateInfoDisplay() {
 			setInfoDisplay(info);
 		}
 	} catch (error) {
-		console.error(error);
-
 		setInfoDisplay({ reason: "ERROR_OCCURRED" });
 	}
 }
@@ -143,6 +144,9 @@ function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
 
+/**
+ * Updates popup's text and background colour.
+ */
 async function updatePopupColour() {
 	const body = document.body;
 	const theme = await browser.theme.getCurrent();

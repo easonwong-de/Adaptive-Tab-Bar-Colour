@@ -50,12 +50,7 @@ sliders.forEach((slider) =>
 );
 
 const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
-fixedPolicies.forEach(setupFixedPolicySection);
-
-/**
- * @param {HTMLElement} fixedPolicySection
- */
-function setupFixedPolicySection(fixedPolicySection) {
+fixedPolicies.forEach((fixedPolicySection) => {
 	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
 	const resetButton = fixedPolicySection.querySelector("button");
@@ -68,33 +63,37 @@ function setupFixedPolicySection(fixedPolicySection) {
 		await applySettings();
 		setColourInputValue(colourInputWrapper, pref[key]);
 	};
-}
+});
+
+document.querySelector("#add-new-rule").onclick = async () => {
+	const policy = {
+		headerType: "URL",
+		header: "",
+		type: "COLOUR",
+		value: "#000000",
+	};
+	const id = pref.addPolicy(policy);
+	policyList.appendChild(await createPolicySection(id, policy));
+	applySettings();
+};
 
 /**
- * @param {HTMLElement} policySection
  * @param {number} id
  * @param {object} policy
+ * @returns
  */
-async function setupColourPolicySection(policySection, id, policy) {
-	setColourPolicySectionId(policySection, id);
-	const policyHeader = policySection.querySelector(".policy-header");
-	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
-	const deleteButton = policySection.querySelector("button");
-	try {
-		const addon = await browser.management.get(policy.header);
-		policyHeader.textContent = addon.name;
-	} catch (error) {
-		policyHeader.textContent = msg("addonNotFound");
+async function createPolicySection(id, policy) {
+	if (policy.headerType === "URL") {
+		const templateFlexiblePolicySection = document.querySelector("#template .policy.flexible-policy");
+		const policySection = templateFlexiblePolicySection.cloneNode(true);
+		setupFlexiblePolicySection(policySection, id, policy);
+		return policySection;
+	} else if (policy.headerType === "ADDON_ID") {
+		const templateColourPolicySection = document.querySelector("#template .policy.colour-policy");
+		const policySection = templateColourPolicySection.cloneNode(true);
+		await setupColourPolicySection(policySection, id, policy);
+		return policySection;
 	}
-	setupColourInput(colourInputWrapper, policy.value, (newColour) => {
-		pref.siteList[id].value = newColour;
-		applySettings();
-	});
-	deleteButton.onclick = () => {
-		pref.removePolicy(policySection.dataset.id);
-		policySection.remove();
-		applySettings();
-	};
 }
 
 /**
@@ -169,17 +168,32 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 	};
 }
 
-document.querySelector("#add-new-rule").onclick = async () => {
-	const policy = {
-		headerType: "URL",
-		header: "",
-		type: "COLOUR",
-		value: "#000000",
+/**
+ * @param {HTMLElement} policySection
+ * @param {number} id
+ * @param {object} policy
+ */
+async function setupColourPolicySection(policySection, id, policy) {
+	setColourPolicySectionId(policySection, id);
+	const policyHeader = policySection.querySelector(".policy-header");
+	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+	const deleteButton = policySection.querySelector("button");
+	try {
+		const addon = await browser.management.get(policy.header);
+		policyHeader.textContent = addon.name;
+	} catch (error) {
+		policyHeader.textContent = msg("addonNotFound");
+	}
+	setupColourInput(colourInputWrapper, policy.value, (newColour) => {
+		pref.siteList[id].value = newColour;
+		applySettings();
+	});
+	deleteButton.onclick = () => {
+		pref.removePolicy(policySection.dataset.id);
+		policySection.remove();
+		applySettings();
 	};
-	const id = pref.addPolicy(policy);
-	policyList.appendChild(await createPolicySection(id, policy));
-	applySettings();
-};
+}
 
 document.querySelector("#export-pref").onclick = () => {
 	const exportPref = document.querySelector("#export-pref-link");
@@ -200,11 +214,11 @@ importPref.addEventListener("change", async () => {
 			await applySettings();
 			await updateElements();
 		} else {
-			//
+			console.error("Error reading file");
 		}
 	};
 	reader.onerror = () => {
-		//
+		console.error("Error reading file");
 	};
 	reader.readAsText(file);
 });
@@ -251,23 +265,23 @@ document.querySelector("#reset-advanced").onclick = async () => {
 	await updateElements();
 };
 
-/**
- * @param {number} id
- * @param {object} policy
- * @returns
- */
-async function createPolicySection(id, policy) {
-	if (policy.headerType === "URL") {
-		const templateFlexiblePolicySection = document.querySelector("#template .policy.flexible-policy");
-		const policySection = templateFlexiblePolicySection.cloneNode(true);
-		setupFlexiblePolicySection(policySection, id, policy);
-		return policySection;
-	} else if (policy.headerType === "ADDON_ID") {
-		const templateColourPolicySection = document.querySelector("#template .policy.colour-policy");
-		const policySection = templateColourPolicySection.cloneNode(true);
-		await setupColourPolicySection(policySection, id, policy);
-		return policySection;
+async function updateOptionsPage() {
+	await pref.load();
+	if (pref.valid()) {
+		if (!document.hasFocus()) await updateElements();
+		await updateAllowDarkLightText();
+		loadingWrapper.hidden = true;
+		settingsWrapper.hidden = false;
+	} else {
+		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
+}
+
+async function updateElements() {
+	updateCheckboxes();
+	updateSliders();
+	updateFixedPolicySection();
+	await updateSiteList();
 }
 
 function updateCheckboxes() {
@@ -336,13 +350,6 @@ async function updateSiteList() {
 	});
 }
 
-async function updateElements() {
-	updateCheckboxes();
-	updateSliders();
-	updateFixedPolicySection();
-	await updateSiteList();
-}
-
 /**
  * @param {number} nthTry
  */
@@ -361,19 +368,7 @@ async function updateAllowDarkLightText(nthTry = 0) {
 		}
 	} catch (error) {
 		console.error(error);
-		await updateAllowDarkLightText(++nthTry);
-	}
-}
-
-async function updateOptionsPage() {
-	await pref.load();
-	if (pref.valid()) {
-		if (!document.hasFocus()) await updateElements();
-		await updateAllowDarkLightText();
-		loadingWrapper.hidden = true;
-		settingsWrapper.hidden = false;
-	} else {
-		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
+		setTimeout(async () => await updateAllowDarkLightText(++nthTry), 10);
 	}
 }
 
