@@ -351,7 +351,7 @@ function overlayColour(colourTop, colourBottom) {
  * @returns Returns the same colour code if the input is a colour code.
  * @returns Returns transparent by default.
  */
-export function rgba(colour) {
+function rgba(colour) {
 	if (typeof colour === "string") {
 		if (["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"].includes(colour)) return colour;
 		const canvas = document.createElement("canvas").getContext("2d");

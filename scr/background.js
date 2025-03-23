@@ -108,17 +108,21 @@ async function prefUpdate() {
  */
 async function handleMessage(message, sender) {
 	const tab = sender.tab;
-	const header = message?.header;
+	const header = message.header;
 	switch (header) {
 		case "INIT_REQUEST":
 			await initialise();
+			break;
 		case "PREF_CHANGED":
 			await prefUpdate();
+			break;
 		case "SCRIPT_LOADED":
 			updateTab(tab);
+			break;
 		case "UPDATE_COLOUR":
 			current.info[tab.windowId] = message.response;
 			setFrameColour(tab, message.response.colour);
+			break;
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
 		case "INFO_REQUEST":
@@ -126,7 +130,7 @@ async function handleMessage(message, sender) {
 		default:
 			update();
 	}
-	return;
+	return true;
 }
 
 /**
@@ -137,7 +141,6 @@ async function handleMessage(message, sender) {
 async function updateTab(tab) {
 	const windowId = tab.windowId;
 	const tabColour = await getTabColour(tab);
-	console.log(tabColour);
 	current.info[windowId] = tabColour;
 	setFrameColour(tab, tabColour.colour);
 }
@@ -150,7 +153,7 @@ async function updateTab(tab) {
  * Otherwise, sends a message to the tab to get the colour.
  *
  * If the message fails, returns the result of `getProtectedPageColour`.
- * 
+ *
  * Returns the colour as an RGBA object or a colour code.
  *
  * @param {tabs.Tab} tab The tab.

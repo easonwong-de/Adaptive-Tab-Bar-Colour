@@ -46,9 +46,11 @@ function updateSliders() {
 
 async function updateInfoDisplay() {
 	try {
-		const window = await browser.windows.getCurrent();
+		const window = await browser.windows.getCurrent({ populate: true });
 		const windowId = window.id;
 		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
+		console.table(info);
+
 		const actions = {
 			THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
 			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
@@ -73,6 +75,8 @@ async function updateInfoDisplay() {
 			setInfoDisplay(info);
 		}
 	} catch (error) {
+		console.error(error);
+
 		setInfoDisplay({ reason: "ERROR_OCCURRED" });
 	}
 }
@@ -81,14 +85,14 @@ async function updateInfoDisplay() {
  * @param {string} addonId
  */
 async function getAddonPageInfo(addonId) {
-	addonName = (await browser.management.get(addonId)).name;
+	const addonName = (await browser.management.get(addonId)).name;
 	if (pref.getPolicy(addonId, "ADDON_ID")) {
 		return {
 			reason: "ADDON_SPECIFIED",
 			additionalInfo: addonName,
 			infoAction: async () => await specifyColourForAddon(addonId, null),
 		};
-	} else if (addon.id in recommendedAddonPageColour) {
+	} else if (addonId in recommendedAddonPageColour) {
 		return {
 			reason: "ADDON_RECOM",
 			additionalInfo: addonName,
