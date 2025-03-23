@@ -7,6 +7,7 @@
  * @returns Returns the colour in RGBA object.
  * @returns Returns pure black if the input is invalid.
  * @returns Returns the same colour code if the input is a colour code.
+ * @returns Returns transparent by default.
  */
 export function rgba(colour) {
 	if (typeof colour === "string") {
@@ -36,7 +37,7 @@ export function rgba(colour) {
 	} else if (Array.isArray(colour)) {
 		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	} else {
-		return null;
+		return { r: 0, g: 0, b: 0, a: 0 };
 	}
 }
 

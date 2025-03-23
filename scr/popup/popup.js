@@ -1,8 +1,8 @@
 "use strict";
 
+import preference from "../preference.js";
 import { recommendedAddonPageColour, restrictedSiteColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
-import preference from "../preference.js";
 import { localise } from "../utility.js";
 
 const pref = new preference();
@@ -23,64 +23,83 @@ sliders.forEach((slider) =>
 );
 
 /**
- * @param {tabs.Tab} tab
+ * Updates infobox's content and popup's text and background colour.
  */
-async function getWindowInfo(tab) {
-	const url = new URL(tab.url);
-	const windowId = tab.windowId;
-	const windowInfo = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
-	const themeReasons = {
-		THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
-		THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
-		THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
-	};
-	const reason = windowInfo.reason;
-	if (reason in themeReasons) {
-		return {
-			reason: reason,
-			additionalInfo: null,
-			infoAction: async () => {
-				pref.addPolicy({ header: url.hostname, ...themeReasons[reason] });
-				await applySettings();
-				await updatePopupSelection();
-			},
-		};
+async function updatePopup() {
+	await pref.load();
+	if (pref.valid()) {
+		updateSliders();
+		await updateInfoDisplay();
+		await updatePopupColour();
+		loadingWrapper.hidden = true;
+		settingsWrapper.hidden = false;
 	} else {
-		return windowInfo;
+		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
+	}
+}
+
+function updateSliders() {
+	sliders.forEach((slider) => {
+		setSliderValue(slider, pref[slider.dataset.pref]);
+	});
+}
+
+async function updateInfoDisplay() {
+	try {
+		const window = await browser.windows.getCurrent();
+		const windowId = window.id;
+		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
+		const actions = {
+			THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
+			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
+			THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
+		};
+		if (window.tabs.length === 0) {
+			setInfoDisplay({ reason: "PROTECTED_PAGE" });
+		} else if (info.reason === "ADDON") {
+			const addonInfo = await getAddonPageInfo(info.additionalInfo);
+			setInfoDisplay(addonInfo);
+		} else if (info.reason in actions) {
+			setInfoDisplay({
+				reason: info.reason,
+				additionalInfo: null,
+				infoAction: async () => {
+					pref.addPolicy({ header: new URL(window.tabs[0].url).hostname, ...actions[reason] });
+					await applySettings();
+					await updatePopupSelection();
+				},
+			});
+		} else {
+			setInfoDisplay(info);
+		}
+	} catch (error) {
+		setInfoDisplay({ reason: "ERROR_OCCURRED" });
 	}
 }
 
 /**
- * @param {tabs.Tab} tab
+ * @param {string} addonId
  */
-async function getAddonPageInfo(tab) {
-	const uuid = tab.url.split(/\/|\?/)[2];
-	const addonList = await browser.management.getAll();
-	for (const addon of addonList) {
-		if (!(addon.type === "extension" && addon.hostPermissions)) continue;
-		for (const host of addon.hostPermissions) {
-			if (!(host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2])) {
-				continue;
-			} else if (pref.getPolicy(addon.id, "ADDON_ID")) {
-				return {
-					reason: "ADDON_SPECIFIED",
-					additionalInfo: addon.name,
-					infoAction: async () => await specifyColourForAddon(addon.id, null),
-				};
-			} else if (addon.id in recommendedAddonPageColour) {
-				return {
-					reason: "ADDON_RECOM",
-					additionalInfo: addon.name,
-					infoAction: async () => await specifyColourForAddon(addon.id, recommendedAddonPageColour[addon.id]),
-				};
-			} else {
-				return {
-					reason: "ADDON_DEFAULT",
-					additionalInfo: addon.name,
-					infoAction: async () => await specifyColourForAddon(addon.id, "#333333", true),
-				};
-			}
-		}
+async function getAddonPageInfo(addonId) {
+	addonName = (await browser.management.get(addonId)).name;
+	if (pref.getPolicy(addonId, "ADDON_ID")) {
+		return {
+			reason: "ADDON_SPECIFIED",
+			additionalInfo: addonName,
+			infoAction: async () => await specifyColourForAddon(addonId, null),
+		};
+	} else if (addon.id in recommendedAddonPageColour) {
+		return {
+			reason: "ADDON_RECOM",
+			additionalInfo: addonName,
+			infoAction: async () => await specifyColourForAddon(addonId, recommendedAddonPageColour[addonId]),
+		};
+	} else {
+		return {
+			reason: "ADDON_DEFAULT",
+			additionalInfo: addonName,
+			infoAction: async () => await specifyColourForAddon(addonId, "#333333", true),
+		};
 	}
 }
 
@@ -104,12 +123,6 @@ async function specifyColourForAddon(addonId, colourHex, openOptionsPage = false
 	if (openOptionsPage) browser.runtime.openOptionsPage();
 }
 
-function updateSliders() {
-	sliders.forEach((slider) => {
-		setSliderValue(slider, pref[slider.dataset.pref]);
-	});
-}
-
 /**
  * Changes the content shown in info display panel.
  *
@@ -126,51 +139,11 @@ function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
 
-async function updateInfoDisplay() {
-	const tabsOnCurrentWindow = await browser.tabs.query({ active: true, status: "complete", currentWindow: true });
-	if (tabsOnCurrentWindow.length === 0) {
-		setInfoDisplay({ reason: "PROTECTED_PAGE" });
-		return;
-	}
-	const tab = tabsOnCurrentWindow[0];
-	const url = new URL(tab.url);
-	if (
-		url.href.startsWith("about:firefoxview") ||
-		url.href.startsWith("about:home") ||
-		url.href.startsWith("about:newtab")
-	) {
-		setInfoDisplay({ reason: "HOME_PAGE" });
-	} else if (url.protocol === "about:" || url.hostname in restrictedSiteColour) {
-		setInfoDisplay({ reason: "PROTECTED_PAGE" });
-	} else if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "file:") {
-		setInfoDisplay(await getWindowInfo(tab));
-	} else if (url.protocol === "moz-extension:") {
-		setInfoDisplay(await getAddonPageInfo(tab));
-	} else {
-		setInfoDisplay({ reason: "PROTECTED_PAGE" });
-	}
-}
-
 async function updatePopupColour() {
-	const body = document.querySelector("body");
+	const body = document.body;
 	const theme = await browser.theme.getCurrent();
-	body.style.backgroundColor = theme["colors"]["popup"];
-}
-
-/**
- * Updates infobox's content and popup's text and background colour.
- */
-async function updatePopup() {
-	await pref.load();
-	if (pref.valid()) {
-		updateSliders();
-		await updateInfoDisplay();
-		await updatePopupColour();
-		loadingWrapper.hidden = true;
-		settingsWrapper.hidden = false;
-	} else {
-		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
-	}
+	body.style.backgroundColor = theme.colors.popup;
+	body.style.color = theme.colors.popup_text;
 }
 
 /**

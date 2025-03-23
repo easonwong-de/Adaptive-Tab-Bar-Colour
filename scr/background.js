@@ -23,8 +23,8 @@
  * An object that defines the appearance of the Firefox chrome.
  */
 
-import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
 import preference from "./preference.js";
+import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
 import { rgba, dimColourString, contrastCorrection } from "./colour.js";
 import { onSchemeChanged, getCurrentScheme } from "./utility.js";
 
@@ -61,34 +61,16 @@ const colourCode = {
 const current = {
 	/** `light` or `dark` */
 	scheme: "light",
-	/** windowId: { reason, additionalInfo, corrected } */
-	windowInfo: {},
+	/** windowId: { colour?, reason, additionalInfo?, corrected? } */
+	info: {},
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
 	},
 	async update() {
 		this.scheme = await getCurrentScheme();
-		this.windowInfo = {};
+		this.info = {};
 	},
 };
-
-/**
- * Initialises the pref and current.
- */
-async function initialise() {
-	await pref.load();
-	await pref.normalise();
-	await pref.save();
-	await update();
-}
-
-/**
- * Updates pref cache and triggers colour change in all windows.
- */
-async function prefUpdate() {
-	await pref.load();
-	await update();
-}
 
 /**
  * Triggers colour change in all windows.
@@ -101,72 +83,130 @@ async function update() {
 }
 
 /**
- * Handles incoming messages based on their `reason` codes.
+ * Initialises `pref` and `current`.
+ */
+async function initialise() {
+	await pref.load();
+	await pref.normalise();
+	await pref.save();
+	await update();
+}
+
+/**
+ * Updates `pref` and triggers colour change in all windows.
+ */
+async function prefUpdate() {
+	await pref.load();
+	await update();
+}
+
+/**
+ * Handles incoming messages based on their `header`.
  *
- * @param {object} message The message object containing the `reason` and any additional data.
- * @param {runtime.MessageSender} sender Information about the message sender.
+ * @param {object} message The message object containing the `header` and any additional data.
+ * @param {runtime.MessageSender} sender The message sender.
  */
 async function handleMessage(message, sender) {
 	const tab = sender.tab;
 	const header = message?.header;
 	switch (header) {
 		case "INIT_REQUEST":
-			return await initialise();
+			await initialise();
 		case "PREF_CHANGED":
-			return await prefUpdate();
+			await prefUpdate();
 		case "SCRIPT_LOADED":
-			return setFrameColour(tab, await getWebPageColour(tab));
-		case "COLOUR_UPDATE":
-			return setFrameColour(tab, message.response.colour);
+			updateTab(tab);
+		case "UPDATE_COLOUR":
+			current.info[tab.windowId] = message.response;
+			setFrameColour(tab, message.response.colour);
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
 		case "INFO_REQUEST":
-			return current.windowInfo[message.windowId];
+			return current.info[message.windowId];
 		default:
-			return update();
+			update();
+	}
+	return;
+}
+
+/**
+ * Updates the colour for a tab.
+ *
+ * @param {tabs.Tab} tab The tab.
+ */
+async function updateTab(tab) {
+	const windowId = tab.windowId;
+	const tabColour = await getTabColour(tab);
+	console.log(tabColour);
+	current.info[windowId] = tabColour;
+	setFrameColour(tab, tabColour.colour);
+}
+
+/**
+ * Determines the colour for a tab.
+ *
+ * If an `URL:COLOUR` policy is set, returns the colour value.
+ *
+ * Otherwise, sends a message to the tab to get the colour.
+ *
+ * If the message fails, returns the result of `getProtectedPageColour`.
+ * 
+ * Returns the colour as an RGBA object or a colour code.
+ *
+ * @param {tabs.Tab} tab The tab.
+ */
+async function getTabColour(tab) {
+	const policy = pref.getPolicy(tab.url);
+	if (policy?.headerType === "URL" && policy?.type === "COLOUR") {
+		return { colour: rgba(policy.value), reason: "COLOUR_SPECIFIED" };
+	} else {
+		try {
+			return await browser.tabs.sendMessage(tab.id, {
+				dynamic: pref.dynamic,
+				noThemeColour: pref.noThemeColour,
+				policy: policy,
+			});
+		} catch (error) {
+			return await getProtectedPageColour(tab);
+		}
 	}
 }
 
 /**
- * Updates the colour for an active tab of a window.
+ * Determines the colour for a protected page.
  *
- * @param {tabs.Tab} tab The active tab.
+ * @param {tabs.Tab} tab The tab.
  */
-async function updateTab(tab) {
+async function getProtectedPageColour(tab) {
 	const url = new URL(tab.url);
-	const policy = pref.getPolicy(url);
-	if (policy?.type === "COLOUR") {
-		setFrameColour(tab, policy.value, "COLOUR_SPECIFIED");
-	} else {
-		setFrameColour(...(await getProtectedPageColour(tab, url)));
-	}
-}
-
-async function getProtectedPageColour(tab, url) {
-	if (url.protocol === "view-source:") {
-		setFrameColour(tab, "PLAINTEXT", "TEXT_VIEWER");
-	} else if (url.protocol === "chrome:" || url.protocol === "resource:" || url.protocol === "jar:file:") {
-		if (
-			url.href.endsWith(".txt") ||
-			url.href.endsWith(".css") ||
-			url.href.endsWith(".jsm") ||
-			url.href.endsWith(".js")
-		) {
-			setFrameColour(tab, "PLAINTEXT", "TEXT_VIEWER");
-		} else if (url.href.endsWith(".png") || url.href.endsWith(".jpg")) {
-			setFrameColour(tab, "IMAGEVIEWER");
-		} else {
-			setFrameColour(tab, "SYSTEM");
-		}
+	if ([("about:firefoxview", "about:firefoxview", "about:newtab")].some((href) => url.href.startsWith(href))) {
+		return { colour: "HOME", reason: "HOME_PAGE" };
 	} else if (url.protocol === "about:") {
-		setFrameColour(tab, getAboutPageColour(url.pathname));
-	} else if (url.hostname in restrictedSiteColour) {
-		setFrameColour(tab, getRestrictedSiteColour(url.hostname));
+		return getAboutPageColour(url.pathname);
+	} else if (url.protocol === "view-source:") {
+		return { colour: "PLAINTEXT", reason: "PROTECTED_PAGE" };
+	} else if (["chrome:", "resource:", "jar:file:"].includes(url.protocol)) {
+		if ([".txt", ".css", ".jsm", ".js"].some((extention) => url.href.endsWith(extention))) {
+			return { colour: "PLAINTEXT", reason: "PROTECTED_PAGE" };
+		} else if ([(".png", ".jpg")].some((extention) => url.href.endsWith(extention))) {
+			return { colour: "IMAGEVIEWER", reason: "PROTECTED_PAGE" };
+		} else {
+			return { colour: "SYSTEM", reason: "PROTECTED_PAGE" };
+		}
 	} else if (url.protocol === "moz-extension:") {
-		setFrameColour(tab, await getAddonPageColour(url.href));
+		return await getAddonPageColour(url.href);
+	} else if (url.hostname in restrictedSiteColour) {
+		return getRestrictedSiteColour(url.hostname);
+	} else if (url.href.startsWith("data:image")) {
+		return { colour: "IMAGEVIEWER", reason: "IMAGE_VIEWER" };
+	} else if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+		return { colour: "PDFVIEWER", reason: "PDF_VIEWER" };
+	} else if (tab.favIconUrl?.startsWith("chrome:")) {
+		return { colour: "DEFAULT", reason: "PROTECTED_PAGE" };
+	} else if (url.href.match(new RegExp(`https?:\/\/${tab.title}$`))) {
+		return { colour: "PLAINTEXT", reason: "TEXT_VIEWER" };
 	} else {
-		// To-do: unify site lists for about / protected pages with those for normal web pages
-		setFrameColour(tab, await getWebPageColour(tab));
+		return { colour: "FALLBACK", reason: "FALLBACK_COLOUR" };
 	}
 }
 
@@ -175,11 +215,11 @@ async function getProtectedPageColour(tab, url) {
  */
 function getAboutPageColour(pathname) {
 	if (aboutPageColour[pathname]?.[current.scheme]) {
-		return rgba(aboutPageColour[pathname][current.scheme]);
+		return { colour: rgba(aboutPageColour[pathname][current.scheme]), reason: "PROTECTED_PAGE" };
 	} else if (aboutPageColour[pathname]?.[current.reversedScheme]) {
-		return rgba(aboutPageColour[pathname][current.reversedScheme]);
+		return { colour: rgba(aboutPageColour[pathname][current.reversedScheme]), reason: "PROTECTED_PAGE" };
 	} else {
-		return "DEFAULT";
+		return { colour: "DEFAULT", reason: "PROTECTED_PAGE" };
 	}
 }
 
@@ -188,11 +228,11 @@ function getAboutPageColour(pathname) {
  */
 function getRestrictedSiteColour(hostname) {
 	if (restrictedSiteColour[hostname]?.[current.scheme]) {
-		return rgba(restrictedSiteColour[hostname][current.scheme]);
+		return { colour: rgba(restrictedSiteColour[hostname][current.scheme]), reason: "PROTECTED_PAGE" };
 	} else if (restrictedSiteColour[hostname]?.[current.reversedScheme]) {
-		return rgba(restrictedSiteColour[hostname][current.reversedScheme]);
+		return { colour: rgba(restrictedSiteColour[hostname][current.reversedScheme]), reason: "PROTECTED_PAGE" };
 	} else {
-		return "FALLBACK";
+		return { colour: "FALLBACK", reason: "PROTECTED_PAGE" };
 	}
 }
 
@@ -202,64 +242,31 @@ function getRestrictedSiteColour(hostname) {
 async function getAddonPageColour(url) {
 	const uuid = url.split(/\/|\?/)[2];
 	const addonList = await browser.management.getAll();
+	let addonId = null;
 	for (const addon of addonList) {
-		if (!(addon.type === "extension" && addon.hostPermissions)) continue;
+		if (addon.type !== "extension" || !addon.hostPermissions) continue;
+		if (addonId) break;
 		for (const host of addon.hostPermissions) {
 			if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-				const colour = pref.getPolicy(addon.id, "ADDON_ID");
-				if (colour) {
-					return rgba(colour.value);
-				} else continue;
-			} else continue;
+				addonId = addon.id;
+				break;
+			}
 		}
 	}
-	return "ADDON";
+	if (!addonId) return { colour: "ADDON", reason: "ADDON" };
+	const policy = pref.getPolicy(addonId, "ADDON_ID");
+	return policy
+		? { colour: rgba(policy.value), reason: "ADDON", additionalInfo: addonId }
+		: { colour: "ADDON", reason: "ADDON", additionalInfo: addonId };
 }
 
 /**
- * Configures the content script and uses the tab's colour to apply theme.
+ * Applies given colour to the browser frame of a tab.
  *
- * @param {tabs.Tab} tab The tab to contact.
- */
-async function getWebPageColour(tab, policy = undefined) {
-	const url = tab.url;
-	try {
-		const response = await browser.tabs.sendMessage(tab.id, {
-			header: "COLOUR_REQUEST",
-			conf: {
-				dynamic: pref.dynamic,
-				noThemeColour: pref.noThemeColour,
-				policy: policy,
-			},
-		});
-		return response.colour;
-	} catch (error) {
-		if (url.startsWith("data:image")) {
-			// Viewing an image on data:image (content script is blocked on data:pages)
-			return "IMAGEVIEWER";
-		} else if (url.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-			// When viewing a PDF file, Firefox blocks content script
-			return "PDFVIEWER";
-		} else if (tab.favIconUrl?.startsWith("chrome:")) {
-			// The page probably failed to load (content script is also blocked on website that failed to load)
-			return "DEFAULT";
-		} else if (url.match(new RegExp(`https?:\/\/${tab.title}$`))) {
-			// When viewing plain text online, Firefox blocks content script
-			// In this case, the tab title is the same as the URL
-			return "PLAINTEXT";
-		} else {
-			return "FALLBACK";
-		}
-	}
-}
-
-/**
- * Applies given colour to the browser chrome.
- *
- * If the tab is inactive, nothing will be done. Colour will be adjusted if the contrast ratio is not adequate.
+ * Colour will be adjusted until the contrast ratio is adequate, and it will be stored in `current.info`.
  *
  * @param {tabs.Tab} tab The tab in a window, whose frame is being changed.
- * @param {object | string} colour The colour to change to (in rgb object) or a colour code. Colour codes are: `HOME`, `FALLBACK`, `IMAGEVIEWER` (dark only), `PLAINTEXT`, `SYSTEM`, `ADDON`, `PDFVIEWER`, and `DEFAULT`.
+ * @param {object | string} colour An RGBA object or a colour code.
  */
 function setFrameColour(tab, colour) {
 	if (!tab?.active) return;
@@ -278,7 +285,7 @@ function setFrameColour(tab, colour) {
 				pref.minContrast_dark
 			);
 			applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
-			current.windowInfo[windowId].corrected = correctionResult.corrected;
+			current.info[windowId].corrected = correctionResult.corrected;
 		}
 	} else {
 		const correctionResult = contrastCorrection(
@@ -289,7 +296,7 @@ function setFrameColour(tab, colour) {
 			pref.minContrast_dark
 		);
 		applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
-		current.windowInfo[windowId].corrected = correctionResult.corrected;
+		current.info[windowId].corrected = correctionResult.corrected;
 	}
 }
 
@@ -344,8 +351,6 @@ function applyTheme(windowId, colour, colourScheme) {
 		browser.theme.update(windowId, theme);
 	}
 	if (colourScheme === "dark") {
-		console.log(dimColourString(colour, pref.toolbarField));
-
 		const theme = {
 			colors: {
 				// active

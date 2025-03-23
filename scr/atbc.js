@@ -23,7 +23,7 @@ const conf = {
  *
  * `reason` determines the content shown in the popup infobox & text in the button.
  *
- * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`, `IMAGE_VIEWER`, `PDF_VIEWER`, `ERROR_OCCURRED`, `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON_SPECIFIED`, `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`, `THEME_IGNORED`, `THEME_USED`, `QS_USED`, `QS_FAILED`, `QS_ERROR`, `COLOUR_SPECIFIED`.
+ * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`, `IMAGE_VIEWER`, `PDF_VIEWER`, `ERROR_OCCURRED`, `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON` (only for `popup.js`, in which case, `additionalInfo` stores the window's ID), `ADDON_SPECIFIED`, `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`, `THEME_IGNORED`, `THEME_USED`, `QS_USED`, `QS_FAILED`, `QS_ERROR`, `COLOUR_SPECIFIED`.
  */
 const response = {
 	reason: null,
@@ -115,12 +115,10 @@ onStyleInjection.observe(document.documentElement, { childList: true });
 onStyleInjection.observe(document.head, { childList: true });
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-	if (message.header === "COLOUR_REQUEST") {
-		conf.dynamic = message.conf.dynamic;
-		conf.noThemeColour = message.conf.noThemeColour;
-		conf.policy = message.conf.policy;
-		setDynamicUpdate();
-	}
+	conf.dynamic = message.dynamic;
+	conf.noThemeColour = message.noThemeColour;
+	conf.policy = message.policy;
+	setDynamicUpdate();
 	findColour();
 	sendResponse(response);
 });
@@ -142,7 +140,7 @@ function findColour() {
  */
 function findAndSendColour() {
 	if (document.visibilityState === "visible" && findColour())
-		browser.runtime.sendMessage({ header: "COLOUR_UPDATE", response: response });
+		browser.runtime.sendMessage({ header: "UPDATE_COLOUR", response: response });
 }
 
 /**
@@ -153,7 +151,7 @@ function findAndSendColour_animation() {
 }
 
 /**
- * Sets `response.colour` with the help of the custom rule.
+ * Sets `response.colour` with the help of the custom rule.^
  *
  * @returns True if a meta `theme-color` or a custom for the web page can be found.
  */
@@ -351,8 +349,9 @@ function overlayColour(colourTop, colourBottom) {
  * @returns Returns the colour in RGBA object.
  * @returns Returns pure black if the input is invalid.
  * @returns Returns the same colour code if the input is a colour code.
+ * @returns Returns transparent by default.
  */
-function rgba(colour) {
+export function rgba(colour) {
 	if (typeof colour === "string") {
 		if (["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"].includes(colour)) return colour;
 		const canvas = document.createElement("canvas").getContext("2d");
@@ -380,7 +379,7 @@ function rgba(colour) {
 	} else if (Array.isArray(colour)) {
 		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
 	} else {
-		return null;
+		return { r: 0, g: 0, b: 0, a: 0 };
 	}
 }
 
