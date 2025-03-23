@@ -35,17 +35,17 @@ tabSwitches.forEach((tabSwitch) => {
 
 const checkboxes = document.querySelectorAll("[type='checkbox']");
 checkboxes.forEach((checkbox) =>
-	setupCheckbox(checkbox, (key, value) => {
+	setupCheckbox(checkbox, async (key, value) => {
 		pref[key] = value;
-		applySettings();
+		await applySettings();
 	})
 );
 
 const sliders = document.querySelectorAll(".slider");
 sliders.forEach((slider) =>
-	setupSlider(slider, (key, value) => {
+	setupSlider(slider, async (key, value) => {
 		pref[key] = value;
-		applySettings();
+		await applySettings();
 	})
 );
 
@@ -54,9 +54,9 @@ fixedPolicies.forEach((fixedPolicySection) => {
 	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
 	const resetButton = fixedPolicySection.querySelector("button");
-	setupColourInput(colourInputWrapper, pref[key], (colour) => {
+	setupColourInput(colourInputWrapper, pref[key], async (colour) => {
 		pref[key] = colour;
-		applySettings();
+		await applySettings();
 	});
 	resetButton.onclick = async () => {
 		pref.reset(key);
@@ -74,7 +74,7 @@ document.querySelector("#add-new-rule").onclick = async () => {
 	};
 	const id = pref.addPolicy(policy);
 	policyList.appendChild(await createPolicySection(id, policy));
-	applySettings();
+	await applySettings();
 };
 
 /**
@@ -106,7 +106,7 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 	policySection.classList.toggle("warning", policy.header === "");
 	const select = policySection.querySelector("select");
 	select.className = select.value = policy.type;
-	select.addEventListener("change", () => {
+	select.addEventListener("change", async () => {
 		pref.siteList[id].type = select.className = select.value;
 		switch (select.value) {
 			case "COLOUR":
@@ -121,7 +121,7 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 			default:
 				break;
 		}
-		applySettings();
+		await applySettings();
 	});
 	const policyHeaderInputWrapper = policySection.querySelector(".policy-header-input-wrapper");
 	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
@@ -144,27 +144,27 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 		default:
 			break;
 	}
-	setupPolicyHeaderInput(policyHeaderInputWrapper, policy.header, (newHeader) => {
+	setupPolicyHeaderInput(policyHeaderInputWrapper, policy.header, async (newHeader) => {
 		policySection.classList.toggle("warning", newHeader === "");
 		pref.siteList[id].header = newHeader;
-		applySettings();
+		await applySettings();
 	});
-	setupColourInput(colourInputWrapper, initialColour, (newColour) => {
+	setupColourInput(colourInputWrapper, initialColour, async (newColour) => {
 		pref.siteList[id].value = newColour;
-		applySettings();
+		await applySettings();
 	});
-	setupThemeColourSwitch(themeColourSwitch, initialUseThemeColour, (newUseThemeColour) => {
+	setupThemeColourSwitch(themeColourSwitch, initialUseThemeColour, async (newUseThemeColour) => {
 		pref.siteList[id].value = newUseThemeColour;
-		applySettings();
+		await applySettings();
 	});
-	setupQuerySelectorInput(querySelectorInputWrapper, initialQuerySelector, (newQuerySelector) => {
+	setupQuerySelectorInput(querySelectorInputWrapper, initialQuerySelector, async (newQuerySelector) => {
 		pref.siteList[id].value = newQuerySelector;
-		applySettings();
+		await applySettings();
 	});
-	deleteButton.onclick = () => {
+	deleteButton.onclick = async () => {
 		pref.removePolicy(policySection.dataset.id);
 		policySection.remove();
-		applySettings();
+		await applySettings();
 	};
 }
 
@@ -184,14 +184,14 @@ async function setupColourPolicySection(policySection, id, policy) {
 	} catch (error) {
 		policyHeader.textContent = msg("addonNotFound");
 	}
-	setupColourInput(colourInputWrapper, policy.value, (newColour) => {
+	setupColourInput(colourInputWrapper, policy.value, async (newColour) => {
 		pref.siteList[id].value = newColour;
-		applySettings();
+		await applySettings();
 	});
-	deleteButton.onclick = () => {
+	deleteButton.onclick = async () => {
 		pref.removePolicy(policySection.dataset.id);
 		policySection.remove();
-		applySettings();
+		await applySettings();
 	};
 }
 
@@ -217,9 +217,7 @@ importPref.addEventListener("change", async () => {
 			console.error("Error reading file");
 		}
 	};
-	reader.onerror = () => {
-		console.error("Error reading file");
-	};
+	reader.onerror = () => console.error("Error reading file");
 	reader.readAsText(file);
 });
 
@@ -285,15 +283,11 @@ async function updateElements() {
 }
 
 function updateCheckboxes() {
-	checkboxes.forEach((checkbox) => {
-		setCheckboxValue(checkbox, pref[checkbox.dataset.pref]);
-	});
+	checkboxes.forEach((checkbox) => setCheckboxValue(checkbox, pref[checkbox.dataset.pref]));
 }
 
 function updateSliders() {
-	sliders.forEach((slider) => {
-		setSliderValue(slider, pref[slider.dataset.pref]);
-	});
+	sliders.forEach((slider) => setSliderValue(slider, pref[slider.dataset.pref]));
 }
 
 function updateFixedPolicySection() {
@@ -373,12 +367,32 @@ async function updateAllowDarkLightText(nthTry = 0) {
 }
 
 /**
- * Triggers colour update.
+ * Saves the preference to browser storage and triggers colour update.
+ * 
+ * Maximum frequency is 4 Hz.
  */
-async function applySettings() {
-	await pref.save();
-	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
-}
+const applySettings = (() => {
+	let timeout;
+	let lastCall = 0;
+	const limitMs = 250;
+	const action = async () => {
+		await pref.save();
+		await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
+	};
+	return async () => {
+		const now = Date.now();
+		clearTimeout(timeout);
+		if (now - lastCall >= limitMs) {
+			lastCall = now;
+			await action();
+		} else {
+			timeout = setTimeout(async () => {
+				lastCall = Date.now();
+				await action();
+			}, limitMs - (now - lastCall));
+		}
+	};
+})();
 
 browser.theme.onUpdated.addListener(updateOptionsPage);
 browser.storage.onChanged.addListener(updateOptionsPage);

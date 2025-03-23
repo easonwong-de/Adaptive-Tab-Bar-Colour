@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { recommendedAddonPageColour, restrictedSiteColour } from "../default_values.js";
+import { recommendedAddonPageColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
 import { localise } from "../utility.js";
 
@@ -17,9 +17,9 @@ moreCustomButton.onclick = () => browser.runtime.openOptionsPage();
 
 const sliders = document.querySelectorAll(".slider");
 sliders.forEach((slider) =>
-	setupSlider(slider, (key, value) => {
+	setupSlider(slider, async (key, value) => {
 		pref[key] = value;
-		applySettings();
+		await applySettings();
 	})
 );
 
@@ -141,7 +141,7 @@ async function specifyColourForAddon(addonId, colourHex, openOptionsPage = false
  * @param {string | null} options.additionalInfo Additional information to display on the panel.
  * @param {function | null} options.infoAction The function called by the `.info-action` button being clicked.
  */
-function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
+function setInfoDisplay({ reason = "ERROR_OCCURRED", additionalInfo = null, infoAction = null }) {
 	infoDisplay.className = reason;
 	const additionalInfoDisplay = infoDisplay.querySelector(`[name='${reason}'] .additional-info`);
 	const infoActionButton = infoDisplay.querySelector(`[name='${reason}'] .info-action`);

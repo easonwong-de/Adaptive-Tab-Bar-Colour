@@ -1,14 +1,14 @@
 "use strict";
 
 /*
- * Workflow of content script
+ * Workflow of content script:
  *
  * On load:
- * 		notifies background -> background sends back configurations -> sends colours
+ * notifies background -> background sends back configurations -> sends colours;
  *
  * After load:
- * 		1. pref is changed, background sends configurations -> sends colour;
- * 		2. (dynamic colour is on) sends colour automaticaly
+ * 1. pref is changed, background sends configurations -> sends colour;
+ * 2. (dynamic colour is on) sends colour automaticaly;
  */
 
 /** Configurations of the content script */
@@ -32,96 +32,41 @@ const response = {
 };
 
 /**
- * Runs the given function with a maximum rate of 4 Hz.
+ * Finds colour and send to background.
  *
- * @param {function} action Fuction without debounce.
- * @returns Function with debounce.
- * @author cloone8 on GitHub.
+ * Maximum frequency is 4 Hz.
  */
-function addDebounce(action) {
-	const timeoutMs = 250;
-	return () => {
-		const currentTime = Date.now();
-		if (debounceTimeoutId) {
-			// Clear pending function
-			clearTimeout(debounceTimeoutId);
-			debounceTimeoutId = null;
-		}
-		if (currentTime - timeoutMs > debouncePrevRun) {
-			// No timeout => call the function right away
-			debouncePrevRun = currentTime;
-			action();
+const findAndSendColour = (() => {
+	let timeout;
+	let lastCall = 0;
+	const limitMs = 250;
+	const action = async () => {
+		if (document.visibilityState === "visible" && findColour())
+			browser.runtime.sendMessage({ header: "UPDATE_COLOUR", response: response });
+	};
+	return async () => {
+		const now = Date.now();
+		clearTimeout(timeout);
+		if (now - lastCall >= limitMs) {
+			lastCall = now;
+			await action();
 		} else {
-			// Blocked by timeout => delay the function call
-			debounceTimeoutId = setTimeout(() => {
-				debouncePrevRun = Date.now();
-				debounceTimeoutId = null;
-				action();
-			}, timeoutMs - (currentTime - debouncePrevRun));
+			timeout = setTimeout(async () => {
+				lastCall = Date.now();
+				await action();
+			}, limitMs - (now - lastCall));
 		}
 	};
-}
-
-var debouncePrevRun = 0;
-var debounceTimeoutId = null;
-const findAndSendColour_debounce = addDebounce(findAndSendColour);
-const findAndSendColour_animation_debounce = addDebounce(findAndSendColour_animation);
+})();
 
 /**
- * Sets up / turns off dynamic update.
+ * Finds colour and send to background but requires focus in document.
+ *
+ * This fits transition / animation events better.
  */
-function setDynamicUpdate() {
-	["click", "resize", "scroll", "visibilitychange"].forEach((event) => {
-		conf.dynamic
-			? document.addEventListener(event, findAndSendColour_debounce)
-			: document.removeEventListener(event, findAndSendColour_debounce);
-	});
-	["transitionend", "transitioncancel", "animationend", "animationcancel"].forEach((transition) => {
-		conf.dynamic
-			? document.addEventListener(transition, findAndSendColour_animation_debounce)
-			: document.removeEventListener(transition, findAndSendColour_animation_debounce);
-	});
+function findAndSendColour_focus() {
+	if (document.hasFocus()) findAndSendColour();
 }
-
-// Detects `meta[name=theme-color]` changes
-const onThemeColourChange = new MutationObserver(findAndSendColour);
-const themeColourMetaTag = document.querySelector("meta[name=theme-color]");
-if (themeColourMetaTag) onThemeColourChange.observe(themeColourMetaTag, { attributes: true });
-
-// Detects Dark Reader
-const onDarkReaderChange = new MutationObserver(findAndSendColour);
-onDarkReaderChange.observe(document.documentElement, {
-	attributes: true,
-	attributeFilter: ["data-darkreader-mode"],
-});
-
-// Detects style injections & `meta[name=theme-color]` being added or altered
-const onStyleInjection = new MutationObserver((mutations) => {
-	mutations.forEach((mutation) => {
-		if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "STYLE") {
-			findAndSendColour();
-		} else if (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName === "STYLE") {
-			findAndSendColour();
-		} else if (
-			mutation.addedNodes.length > 0 &&
-			mutation.addedNodes[0].nodeName === "META" &&
-			mutation.addedNodes[0].name === "theme-color"
-		) {
-			onThemeColourChange.observe(mutation.addedNodes[0], { attributes: true });
-		}
-	});
-});
-onStyleInjection.observe(document.documentElement, { childList: true });
-onStyleInjection.observe(document.head, { childList: true });
-
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-	conf.dynamic = message.dynamic;
-	conf.noThemeColour = message.noThemeColour;
-	conf.policy = message.policy;
-	setDynamicUpdate();
-	findColour();
-	sendResponse(response);
-});
 
 /**
  * Finds colour.
@@ -136,21 +81,6 @@ function findColour() {
 }
 
 /**
- * Finds colour and send to background.
- */
-function findAndSendColour() {
-	if (document.visibilityState === "visible" && findColour())
-		browser.runtime.sendMessage({ header: "UPDATE_COLOUR", response: response });
-}
-
-/**
- * Finds colour and send to background (fix for transitionend event).
- */
-function findAndSendColour_animation() {
-	if (document.hasFocus()) findAndSendColour();
-}
-
-/**
  * Sets `response.colour` with the help of the custom rule.^
  *
  * @returns True if a meta `theme-color` or a custom for the web page can be found.
@@ -161,30 +91,27 @@ function findColour_policy() {
 		(!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) ||
 		(conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false)
 	) {
-		// Picks colour from the website
 		return false;
 	} else if (conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) {
-		// User prefers igoring theme colour, but sets to use meta theme-color for this host
-		if (findThemeColour()) {
+		if (findColour_theme()) {
 			response.reason = "THEME_UNIGNORED";
 		} else {
-			findComputedColour();
+			findColour_element();
 			response.reason = "THEME_MISSING";
 		}
 		return true;
 	} else if (!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false) {
-		// User sets to ignore the meta theme-color of this host
-		if (findThemeColour()) {
-			findComputedColour();
+		if (findColour_theme()) {
+			findColour_element();
 			response.reason = "THEME_IGNORED";
 		} else {
-			findComputedColour();
+			findColour_element();
 		}
 		return true;
 	} else if (conf.policy.type === "QUERY_SELECTOR") {
 		const querySelector = conf.policy.value;
 		if (querySelector === "") {
-			findComputedColour();
+			findColour_element();
 			response.additionalInfo = "nothing";
 			response.reason = "QS_ERROR";
 		} else {
@@ -195,11 +122,11 @@ function findColour_policy() {
 					response.colour = getColourFromElement(element);
 					response.reason = "QS_USED";
 				} else {
-					findComputedColour();
+					findColour_element();
 					response.reason = "QS_FAILED";
 				}
 			} catch (error) {
-				findComputedColour();
+				findColour_element();
 				response.reason = "QS_ERROR";
 			}
 		}
@@ -208,7 +135,7 @@ function findColour_policy() {
 		response.additionalInfo = null;
 		response.colour = rgba(conf.policy.value);
 	}
-	// Returns ture if reponse colour is legal and can be sent to background.js
+	// Returns ture if reponse colour is legal and can be sent to `background.js`
 	return response.colour?.a === 1;
 }
 
@@ -220,27 +147,25 @@ function findColour_noPolicy() {
 		getComputedStyle(document.documentElement).backgroundImage ==
 		`url("chrome://global/skin/media/imagedoc-darknoise.png")`
 	) {
-		// Image viewer
-		// Firefox chooses imagedoc-darknoise.png as the background of image viewer
-		// Doesn't work with images on data:image url, which will be dealt with in background.js
+		// Firefox chooses `imagedoc-darknoise.png` as the background of image viewer
+		// Doesn't work with images on `data:image` url, which will be dealt with in `background.js`
 		response.reason = "IMAGE_VIEWER";
 		response.colour = "IMAGEVIEWER";
 	} else if (
 		document.getElementsByTagName("link")[0]?.href === "resource://content-accessible/plaintext.css" &&
 		getColourFromElement(document.body).a !== 1
 	) {
-		// Plain text viewer
 		// Firefox seems to have blocked content script when viewing plain text online
 		// Thus this may only works for viewing local text file
 		response.reason = "TEXT_VIEWER";
 		response.colour = "PLAINTEXT";
-	} else if (findThemeColour()) {
+	} else if (findColour_theme()) {
 		if (conf.noThemeColour) {
-			findComputedColour();
+			findColour_element();
 			response.reason = "THEME_IGNORED";
 		}
 	} else {
-		findComputedColour();
+		findColour_element();
 	}
 }
 
@@ -249,7 +174,7 @@ function findColour_noPolicy() {
  *
  * @returns Returns `false` if no legal `theme-color` can be found.
  */
-function findThemeColour() {
+function findColour_theme() {
 	const colourScheme = window.matchMedia("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
 	const metaThemeColour =
 		document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`) ??
@@ -274,7 +199,7 @@ function findThemeColour() {
  *
  * If no legal colour can be found, fallback colour will be used.
  */
-function findComputedColour() {
+function findColour_element() {
 	response.colour = rgba([0, 0, 0, 0]);
 	// Selects all the elements 3 pixels below the middle point of the top edge of the viewport
 	// It's a shame that `elementsFromPoint()` doesn't work with elements with `pointer-events: none`
@@ -382,6 +307,63 @@ function rgba(colour) {
 		return { r: 0, g: 0, b: 0, a: 0 };
 	}
 }
+
+// Receives configurations and sends back colour
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	conf.dynamic = message.dynamic;
+	conf.noThemeColour = message.noThemeColour;
+	conf.policy = message.policy;
+	setDynamicUpdate();
+	findColour();
+	sendResponse(response);
+});
+
+/**
+ * Sets up / turns off dynamic update.
+ */
+function setDynamicUpdate() {
+	["click", "resize", "scroll", "visibilitychange"].forEach((event) => {
+		conf.dynamic
+			? document.addEventListener(event, findAndSendColour)
+			: document.removeEventListener(event, findAndSendColour);
+	});
+	["transitionend", "transitioncancel", "animationend", "animationcancel"].forEach((transition) => {
+		conf.dynamic
+			? document.addEventListener(transition, findAndSendColour_focus)
+			: document.removeEventListener(transition, findAndSendColour_focus);
+	});
+}
+
+// Detects `meta[name=theme-color]` changes
+const onThemeColourChange = new MutationObserver(findAndSendColour);
+const themeColourMetaTag = document.querySelector("meta[name=theme-color]");
+if (themeColourMetaTag) onThemeColourChange.observe(themeColourMetaTag, { attributes: true });
+
+// Detects Dark Reader
+const onDarkReaderChange = new MutationObserver(findAndSendColour);
+onDarkReaderChange.observe(document.documentElement, {
+	attributes: true,
+	attributeFilter: ["data-darkreader-mode"],
+});
+
+// Detects style injections & `meta[name=theme-color]` being added or altered
+const onStyleInjection = new MutationObserver((mutations) => {
+	mutations.forEach((mutation) => {
+		if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "STYLE") {
+			findAndSendColour();
+		} else if (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName === "STYLE") {
+			findAndSendColour();
+		} else if (
+			mutation.addedNodes.length > 0 &&
+			mutation.addedNodes[0].nodeName === "META" &&
+			mutation.addedNodes[0].name === "theme-color"
+		) {
+			onThemeColourChange.observe(mutation.addedNodes[0], { attributes: true });
+		}
+	});
+});
+onStyleInjection.observe(document.documentElement, { childList: true });
+onStyleInjection.observe(document.head, { childList: true });
 
 // Sends colour to background as soon as the page loads
 browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });

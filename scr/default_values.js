@@ -17,16 +17,19 @@ export const default_fallbackColour_dark = "#2b2a33";
  */
 export const aboutPageColour = Object.freeze({
 	checkerboard: { light: "DEFAULT", dark: undefined },
+	deleteprofile: { light: "DEFAULT", dark: "rgb(43, 42, 51)" },
 	"devtools-toolbox": { light: "DEFAULT", dark: "rgb(12, 12, 13)" },
+	editprofile: { light: "DEFAULT", dark: "rgb(43, 42, 51)" },
 	firefoxview: { light: "HOME", dark: "HOME" },
 	home: { light: "HOME", dark: "HOME" },
 	logo: { light: undefined, dark: "IMAGEVIEWER" },
-	mozilla: { light: undefined, dark: "rgb(143, 15, 7)" },
+	mozilla: { light: undefined, dark: "rgb(128, 0, 0)" },
 	newtab: { light: "HOME", dark: "HOME" },
+	newprofile: { light: "DEFAULT", dark: "rgb(43, 42, 51)" },
 	performance: { light: "DEFAULT", dark: "rgb(35, 34, 42)" },
-	plugins: { light: "DEFAULT", dark: "rgb(43, 42, 50)" },
+	plugins: { light: "DEFAULT", dark: "rgb(43, 42, 51)" },
 	privatebrowsing: { light: undefined, dark: "rgb(37, 0, 62)" },
-	processes: { light: "rgb(238, 238, 238)", dark: "rgb(43, 42, 50)" },
+	processes: { light: "rgb(238, 238, 238)", dark: "rgb(50, 49, 58)" },
 	"sync-log": { light: "rgb(236, 236, 236)", dark: "rgb(40, 40, 40)" },
 });
 

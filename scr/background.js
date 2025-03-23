@@ -182,8 +182,10 @@ async function getTabColour(tab) {
  */
 async function getProtectedPageColour(tab) {
 	const url = new URL(tab.url);
-	if ([("about:firefoxview", "about:firefoxview", "about:newtab")].some((href) => url.href.startsWith(href))) {
+	if (["about:firefoxview", "about:home", "about:newtab"].some((href) => url.href.startsWith(href))) {
 		return { colour: "HOME", reason: "HOME_PAGE" };
+	} else if (url.href === "about:blank" && tab.title.startsWith("about:") && tab.title.endsWith("profile")) {
+		return getAboutPageColour(tab.title.slice(6));
 	} else if (url.protocol === "about:") {
 		return getAboutPageColour(url.pathname);
 	} else if (url.protocol === "view-source:") {
@@ -191,7 +193,7 @@ async function getProtectedPageColour(tab) {
 	} else if (["chrome:", "resource:", "jar:file:"].includes(url.protocol)) {
 		if ([".txt", ".css", ".jsm", ".js"].some((extention) => url.href.endsWith(extention))) {
 			return { colour: "PLAINTEXT", reason: "PROTECTED_PAGE" };
-		} else if ([(".png", ".jpg")].some((extention) => url.href.endsWith(extention))) {
+		} else if ([".png", ".jpg"].some((extention) => url.href.endsWith(extention))) {
 			return { colour: "IMAGEVIEWER", reason: "PROTECTED_PAGE" };
 		} else {
 			return { colour: "SYSTEM", reason: "PROTECTED_PAGE" };
@@ -341,7 +343,6 @@ function applyTheme(windowId, colour, colourScheme) {
 				toolbar_field_text: "rgb(0, 0, 0)",
 				toolbar_text: "rgb(0, 0, 0)",
 				button_background_hover: "rgba(0, 0, 0, 0.11)",
-				ntp_card_background: "rgba(0, 0, 0, 0.11)",
 				toolbar_vertical_separator: "rgba(0, 0, 0, 0.11)",
 				toolbar_field_border_focus: null,
 			},
@@ -383,7 +384,6 @@ function applyTheme(windowId, colour, colourScheme) {
 				toolbar_field_text: "rgb(255, 255, 255)",
 				toolbar_text: "rgb(255, 255, 255)",
 				button_background_hover: "rgba(255, 255, 255, 0.11)",
-				ntp_card_background: "rgba(255, 255, 255, 0.11)",
 				toolbar_vertical_separator: "rgba(255, 255, 255, 0.11)",
 				toolbar_field_border_focus: null,
 			},

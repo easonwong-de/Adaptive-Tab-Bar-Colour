@@ -264,7 +264,7 @@ export default class preference {
 
 	/**
 	 * Converts the pref to a JSON string.
-	 * 
+	 *
 	 * @returns The JSON string of the pref.
 	 */
 	prefToJSON() {
