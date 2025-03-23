@@ -10,6 +10,7 @@ const pref = new preference();
 const loadingWrapper = document.querySelector("#loading-wrapper");
 const settingsWrapper = document.querySelector("#settings-wrapper");
 const infoDisplay = document.querySelector("#info-display-wrapper");
+const colourCorrectionInfo = document.querySelector("#colour-correction-info");
 
 const moreCustomButton = document.querySelector("#custom-popup");
 moreCustomButton.onclick = () => browser.runtime.openOptionsPage();
@@ -50,8 +51,13 @@ async function updateInfoDisplay(nthTry = 0) {
 		return;
 	}
 	try {
-		const window = await browser.windows.getCurrent({ populate: true });
-		const windowId = window.id;
+		const activeTabs = await browser.tabs.query({ active: true, status: "complete", currentWindow: true });
+		if (activeTabs.length === 0) {
+			setInfoDisplay({ reason: "PROTECTED_PAGE" });
+			colourCorrectionInfo.classList.toggle("hidden", true);
+			return;
+		}
+		const windowId = activeTabs[0].windowId;
 		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
 		if (!info) setTimeout(() => updateInfoDisplay(++nthTry), 10);
 		const actions = {
@@ -59,9 +65,8 @@ async function updateInfoDisplay(nthTry = 0) {
 			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
 			THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
 		};
-		if (window.tabs.length === 0) {
-			setInfoDisplay({ reason: "PROTECTED_PAGE" });
-		} else if (info.reason === "ADDON") {
+		colourCorrectionInfo.classList.toggle("hidden", !info.corrected);
+		if (info.reason === "ADDON") {
 			const addonInfo = await getAddonPageInfo(info.additionalInfo);
 			setInfoDisplay(addonInfo);
 		} else if (info.reason in actions) {
@@ -69,9 +74,9 @@ async function updateInfoDisplay(nthTry = 0) {
 				reason: info.reason,
 				additionalInfo: null,
 				infoAction: async () => {
-					pref.addPolicy({ header: new URL(window.tabs[0].url).hostname, ...actions[reason] });
+					const header = new URL(activeTabs[0].url).hostname;
+					pref.addPolicy({ header: header, ...actions[info.reason] });
 					await applySettings();
-					await updatePopupSelection();
 				},
 			});
 		} else {
@@ -148,10 +153,9 @@ function setInfoDisplay({ reason, additionalInfo = null, infoAction = null }) {
  * Updates popup's text and background colour.
  */
 async function updatePopupColour() {
-	const body = document.body;
 	const theme = await browser.theme.getCurrent();
-	body.style.backgroundColor = theme.colors.popup;
-	body.style.color = theme.colors.popup_text;
+	document.documentElement.style.setProperty("--background-colour", theme.colors.popup);
+	document.documentElement.style.setProperty("--text-colour", theme.colors.popup_text);
 }
 
 /**

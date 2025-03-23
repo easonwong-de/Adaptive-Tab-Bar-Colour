@@ -1,7 +1,8 @@
 @import "../shared.css";
 
 body {
-	color: var(--text-colour-normal);
+	color: var(--text-colour, var(--text-colour-normal));
+	background-color: var(--background-colour, var(--colour-0));
 	margin: 0;
 	padding: 8px;
 	width: 22em !important;
@@ -10,6 +11,7 @@ body {
 /* Layout */
 
 #info-display-wrapper,
+#colour-correction-info,
 #loading {
 	border-radius: 4px;
 	display: block;
@@ -42,9 +44,12 @@ hr {
 }
 
 .section-group-title {
+	background-image: linear-gradient(to top, transparent, var(--background-colour) 16px);
 	font-weight: 600;
-	padding: 4px;
+	padding: 8px 4px 16px;
+	position: sticky;
 	text-align: center;
+	top: 0;
 }
 
 .section-group {
@@ -80,7 +85,8 @@ hr {
 	flex: 1;
 }
 
-#info-display-wrapper {
+#info-display-wrapper,
+#colour-correction-info {
 	border: 1px solid var(--transparent-0);
 	line-height: 1.5rem;
 }
@@ -143,7 +149,7 @@ button {
 	background-color: transparent;
 	border: none;
 	border-radius: 4px;
-	color: var(--text-colour-normal);
+	color: inherit;
 	display: flex;
 	margin: 0;
 	padding: 8px;

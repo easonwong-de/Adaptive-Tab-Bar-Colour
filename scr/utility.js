@@ -64,13 +64,13 @@ export function localise(webDocument) {
  * Inquires localised messages.
  *
  * @param {string} handle A handle in _locales.
- * If the handle is not found, returns `i18n missing: ${handle}`.
+ * If the handle is not found, returns `i18n <${handle}>`.
  * If the localisation value is `__EMPTY__`, returns an empty string.
  */
 export function msg(handle) {
 	const localisedMessage = browser.i18n.getMessage(handle);
 	if (!localisedMessage) {
-		return `i18n missing: ${handle}`;
+		return `i18n <${handle}>`;
 	} else if (localisedMessage === "__EMPTY__") {
 		return "";
 	} else {
