@@ -62,4 +62,4 @@ Firefox’s titlebar buttons may revert to the Windows style. To prevent this, o
 
 ## Safety Reminder:
 
-Beware of malicious web UIs: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Credit to <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)
+Beware of malicious web UIs: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Thanks to <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)

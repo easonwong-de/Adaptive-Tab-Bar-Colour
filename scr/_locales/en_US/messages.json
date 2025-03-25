@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Always ignore theme color defined by the website and pick color from the web page instead."
+		"message": "Some websites provide a theme color themselves. Turn on this option to ignore these colors."
 	},
 
 	"minimumContrast": {
@@ -181,6 +181,50 @@
 
 	"fallbackColourDark": {
 		"message": "Fallback color: dark"
+	},
+
+	"exportSettings": {
+		"message": "Export settings"
+	},
+
+	"settingsAreExported": {
+		"message": "Settings have been exported to your download folder."
+	},
+
+	"importSettings": {
+		"message": "Import settings"
+	},
+
+	"settingsAreImported": {
+		"message": "Settings have been imported."
+	},
+
+	"importFailed": {
+		"message": "Failed to import settings. Please try again."
+	},
+
+	"resetThemeBuilder": {
+		"message": "Reset theme builder"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "Are you sure you want to reset the theme builder?"
+	},
+
+	"resetSiteList": {
+		"message": "Reset site list"
+	},
+
+	"confirmResetSiteList": {
+		"message": "Are you sure you want to reset the site list?"
+	},
+
+	"resetAdvanced": {
+		"message": "Reset advanced settings"
+	},
+
+	"confirmResetAdvanced": {
+		"message": "Are you sure you want to reset the advanced settings?"
 	},
 
 	"reportAnIssue": {
@@ -336,6 +380,10 @@
 	},
 
 	"colourPickedFromWebpage": {
-		"message": "Color is successfully picked from the web page"
+		"message": "Color is picked from the web page"
+	},
+
+	"colourIsAdjusted": {
+		"message": "The original color has been adjusted to ensure minimum contrast"
 	}
 }

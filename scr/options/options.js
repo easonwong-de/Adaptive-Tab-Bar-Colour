@@ -201,6 +201,7 @@ document.querySelector("#export-pref").onclick = () => {
 	const url = URL.createObjectURL(blob);
 	exportPref.href = url;
 	exportPref.click();
+	alert(msg("settingsAreExported"));
 };
 
 const importPref = document.querySelector("#import-pref-link");
@@ -213,15 +214,17 @@ importPref.addEventListener("change", async () => {
 		if (await pref.JSONToPref(prefJSON)) {
 			await applySettings();
 			await updateElements();
+			alert(msg("settingsAreImported"));
 		} else {
-			console.error("Error reading file");
+			alert(msg("importFailed"));
 		}
 	};
-	reader.onerror = () => console.error("Error reading file");
+	reader.onerror = () => alert(msg("importFailed"));
 	reader.readAsText(file);
 });
 
 document.querySelector("#reset-theme-builder").onclick = async () => {
+	if (!confirm(msg("confirmResetThemeBuilder"))) return;
 	[
 		"tabbar",
 		"tabbarBorder",
@@ -242,12 +245,14 @@ document.querySelector("#reset-theme-builder").onclick = async () => {
 };
 
 document.querySelector("#reset-site-list").onclick = async () => {
+	if (!confirm(msg("confirmResetSiteList"))) return;
 	pref.reset("siteList");
 	await applySettings();
 	await updateElements();
 };
 
 document.querySelector("#reset-advanced").onclick = async () => {
+	if (!confirm(msg("confirmResetAdvanced"))) return;
 	[
 		"allowDarkLight",
 		"dynamic",
@@ -368,7 +373,7 @@ async function updateAllowDarkLightText(nthTry = 0) {
 
 /**
  * Saves the preference to browser storage and triggers colour update.
- * 
+ *
  * Maximum frequency is 4 Hz.
  */
 const applySettings = (() => {

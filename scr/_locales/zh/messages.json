@@ -1,6 +1,6 @@
 {
 	"extensionName": {
-		"message": "適應性變色標題列"
+		"message": "變色標題列"
 	},
 
 	"extensionDescription": {
@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "總是不採用網站指定的主題色，而採用其他方法取得適合網頁的標題列顏色。"
+		"message": "有些網站會提供一個主題色。啟用此選項，這些顏色將被自動忽略。"
 	},
 
 	"minimumContrast": {
@@ -181,6 +181,50 @@
 
 	"fallbackColourDark": {
 		"message": "備選顏色（暗色）"
+	},
+
+	"exportSettings": {
+		"message": "儲存偏好設定"
+	},
+
+	"settingsAreExported": {
+		"message": "偏好設定已儲存至下載文檔夾。"
+	},
+
+	"importSettings": {
+		"message": "載入偏好設定"
+	},
+
+	"settingsAreImported": {
+		"message": "已載入偏好設定。"
+	},
+
+	"importFailed": {
+		"message": "載入偏好設定失敗。請重試。"
+	},
+
+	"resetThemeBuilder": {
+		"message": "重設佈景主題設定"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "是否確認重設佈景主題設定？"
+	},
+
+	"resetSiteList": {
+		"message": "重設自訂規則"
+	},
+
+	"confirmResetSiteList": {
+		"message": "是否確認重設自訂規則？"
+	},
+
+	"resetAdvanced": {
+		"message": "重設進階設定"
+	},
+
+	"confirmResetAdvanced": {
+		"message": "是否確認重設進階設定？"
 	},
 
 	"reportAnIssue": {
@@ -337,5 +381,9 @@
 
 	"colourPickedFromWebpage": {
 		"message": "標題列顏色是按一般方法從網頁中獲取"
+	},
+
+	"colourIsAdjusted": {
+		"message": "為達到最近對比度，原顏色已被調整"
 	}
 }

@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Ignoriert immer die von der Website definierte Theme-Farbe und wählt stattdessen die Farbe von der Webseite."
+		"message": "Einige Websites geben selbst eine Theme-Farbe an. Aktivieren Sie diese Option, um diese Farben zu ignorieren."
 	},
 
 	"minimumContrast": {
@@ -181,6 +181,50 @@
 
 	"fallbackColourDark": {
 		"message": "Fallback-Farbe: dunkel"
+	},
+
+	"exportSettings": {
+		"message": "Einstellungen exportieren"
+	},
+
+	"settingsAreExported": {
+		"message": "Einstellungen wurden in Ihren Download-Ordner exportiert."
+	},
+
+	"importSettings": {
+		"message": "Einstellungen importieren"
+	},
+
+	"settingsAreImported": {
+		"message": "Einstellungen wurden importiert."
+	},
+
+	"importFailed": {
+		"message": "Einstellungen konnten nicht importiert werden. Bitte versuchen Sie es erneut."
+	},
+
+	"resetThemeBuilder": {
+		"message": "Theme-Editor zurücksetzen"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "Sind Sie sicher, dass Sie den Theme-Editor zurücksetzen möchten?"
+	},
+
+	"resetSiteList": {
+		"message": "Seitenliste zurücksetzen"
+	},
+
+	"confirmResetSiteList": {
+		"message": "Sind Sie sicher, dass Sie die Seitenliste zurücksetzen möchten?"
+	},
+
+	"resetAdvanced": {
+		"message": "Erweiterte Einstellungen zurücksetzen"
+	},
+
+	"confirmResetAdvanced": {
+		"message": "Sind Sie sicher, dass Sie die erweiterten Einstellungen zurücksetzen möchten?"
 	},
 
 	"reportAnIssue": {
@@ -337,5 +381,9 @@
 
 	"colourPickedFromWebpage": {
 		"message": "Farbe erfolgreich von der Webseite gewählt"
+	},
+
+	"colourIsAdjusted": {
+		"message": "Die Originalfarbe wurde angepasst, um den minimalen Kontrast zu gewährleisten"
 	}
 }
