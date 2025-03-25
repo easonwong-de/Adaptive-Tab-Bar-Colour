@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Ignorar siempre el color del tema definido por el sitio web y seleccionar el color de la página web en su lugar."
+    	"message": "Algunos sitios web proporcionan su propio color de tema. Activa esta opción para ignorar estos colores."
 	},
 
 	"minimumContrast": {
@@ -181,6 +181,50 @@
 
 	"fallbackColourDark": {
 		"message": "Color de respaldo: oscuro"
+	},
+
+	"exportSettings": {
+		"message": "Exportar configuración"
+	},
+
+	"settingsAreExported": {
+		"message": "Las configuraciones han sido exportadas a tu carpeta de descargas."
+	},
+
+	"importSettings": {
+		"message": "Importar configuraciones"
+	},
+
+	"settingsAreImported": {
+		"message": "Las configuraciones han sido importadas."
+	},
+
+	"importFailed": {
+		"message": "Error al importar configuraciones. Por favor, inténtalo de nuevo."
+	},
+
+	"resetThemeBuilder": {
+		"message": "Restablecer el creador de temas"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "¿Estás seguro de que quieres restablecer el creador de temas?"
+	},
+
+	"resetSiteList": {
+		"message": "Restablecer la lista de sitios"
+	},
+
+	"confirmResetSiteList": {
+		"message": "¿Estás seguro de que quieres restablecer la lista de sitios?"
+	},
+
+	"resetAdvanced": {
+		"message": "Restablecer la configuración avanzada"
+	},
+
+	"confirmResetAdvanced": {
+		"message": "¿Estás seguro de que quieres restablecer la configuración avanzada?"
 	},
 
 	"reportAnIssue": {
@@ -337,5 +381,9 @@
 
 	"colourPickedFromWebpage": {
 		"message": "El color se ha tomado con éxito de la página web"
+	},
+
+	"colourIsAdjusted": {
+		"message": "El color original ha sido ajustado para asegurar un contraste mínimo."
 	}
 }
