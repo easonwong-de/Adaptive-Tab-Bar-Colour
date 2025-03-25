@@ -188,44 +188,44 @@
 	},
 
 	"settingsAreExported": {
-        "message": "Las configuraciones han sido exportadas a tu carpeta de descargas."
+		"message": "Las configuraciones han sido exportadas a tu carpeta de descargas."
 	},
 
 	"importSettings": {
-        "message": "Importar configuraciones"
-    },
+		"message": "Importar configuraciones"
+	},
 
-    "settingsAreImported": {
-        "message": "Las configuraciones han sido importadas."
-    },
+	"settingsAreImported": {
+		"message": "Las configuraciones han sido importadas."
+	},
 
-    "importFailed": {
-        "message": "Error al importar configuraciones. Por favor, inténtalo de nuevo."
-    },
+	"importFailed": {
+		"message": "Error al importar configuraciones. Por favor, inténtalo de nuevo."
+	},
 
-    "resetThemeBuilder": {
-        "message": "Restablecer el creador de temas"
-    },
+	"resetThemeBuilder": {
+		"message": "Restablecer el creador de temas"
+	},
 
-    "confirmResetThemeBuilder": {
-        "message": "¿Estás seguro de que quieres restablecer el creador de temas?"
-    },
+	"confirmResetThemeBuilder": {
+		"message": "¿Estás seguro de que quieres restablecer el creador de temas?"
+	},
 
-    "resetSiteList": {
-        "message": "Restablecer la lista de sitios"
-    },
+	"resetSiteList": {
+		"message": "Restablecer la lista de sitios"
+	},
 
-    "confirmResetSiteList": {
-        "message": "¿Estás seguro de que quieres restablecer la lista de sitios?"
-    },
+	"confirmResetSiteList": {
+		"message": "¿Estás seguro de que quieres restablecer la lista de sitios?"
+	},
 
-    "resetAdvanced": {
-        "message": "Restablecer la configuración avanzada"
-    },
+	"resetAdvanced": {
+		"message": "Restablecer la configuración avanzada"
+	},
 
-    "confirmResetAdvanced": {
-        "message": "¿Estás seguro de que quieres restablecer la configuración avanzada?"
-    },
+	"confirmResetAdvanced": {
+		"message": "¿Estás seguro de que quieres restablecer la configuración avanzada?"
+	},
 
 	"reportAnIssue": {
 		"message": "Reportar un problema / enviar una sugerencia / traducir esta extensión"
@@ -384,6 +384,6 @@
 	},
 
 	"colourIsAdjusted": {
-    	"message": "El color original ha sido ajustado para asegurar un contraste mínimo."
+		"message": "El color original ha sido ajustado para asegurar un contraste mínimo."
 	}
 }
