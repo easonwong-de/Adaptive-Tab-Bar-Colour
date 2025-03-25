@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-    "message": "Algunos sitios web proporcionan su propio color de tema. Activa esta opción para ignorar estos colores."
+    	"message": "Algunos sitios web proporcionan su propio color de tema. Activa esta opción para ignorar estos colores."
 	},
 
 	"minimumContrast": {
