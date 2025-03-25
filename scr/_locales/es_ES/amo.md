@@ -18,9 +18,13 @@ Mientras navegas por la web, este complemento cambia el tema de Firefox para que
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - y cualquier otro complemento que modifique el tema de Firefox
 
-**Para Los Que Disfrutan De Los Temas CSS:**
+**Si estás usando un tema CSS:**
 
-Un tema CSS puede funcionar con ATBC cuando se utilizan variables de color del sistema. [Esto](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) es un ejemplo de un tema compatible con ATBC.
+Un tema CSS puede funcionar con ATBC (Color de barra de pestañas adaptativo) cuando se utilizan variables de color del sistema (por ejemplo, --lwt-accent-color para el color de la barra de pestañas). [Este](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) es un ejemplo de un tema CSS compatible con ATBC.
+
+**Si estás usando Linux con un tema GTK:**
+
+Los botones de la barra de título de Firefox pueden volver al estilo de Windows. Para evitar esto, abre las Preferencias avanzadas (`about:config`) y establece `widget.gtk.non-native-titlebar-buttons.enabled` en `false`. (Gracias a [@anselstetter](https://github.com/anselstetter/))
 
 **Advertencia De Seguridad:**
 
