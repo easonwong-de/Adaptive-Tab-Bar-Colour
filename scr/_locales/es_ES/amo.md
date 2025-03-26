@@ -20,7 +20,7 @@ Mientras navegas por la web, este complemento cambia el tema de Firefox para que
 
 **Si estás usando un tema CSS:**
 
-Un tema CSS puede funcionar con ATBC (Color de barra de pestañas adaptativo) cuando se utilizan variables de color del sistema (por ejemplo, --lwt-accent-color para el color de la barra de pestañas). [Este](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) es un ejemplo de un tema CSS compatible con ATBC.
+Un tema CSS puede funcionar con ATBC (Adaptive Tab Bar Colour) cuando se utilizan variables de color del sistema (por ejemplo, `--lwt-accent-color` para el color de la barra de pestañas). [Este](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) es un ejemplo de un tema CSS compatible con ATBC.
 
 **Si estás usando Linux con un tema GTK:**
 
@@ -28,6 +28,6 @@ Los botones de la barra de título de Firefox pueden volver al estilo de Windows
 
 **Advertencia De Seguridad:**
 
-Cuidado con las interfaces web maliciosas: distinga entre la interfaz de usuario del navegador y la interfaz de usuario web. Consulte [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Crédito a [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
+Cuidado con las interfaces web maliciosas: distinga entre la interfaz de usuario del navegador y la interfaz de usuario web. Consulte [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Gracias a [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
 
 Siéntete libre de dar una estrella a este proyecto en GitHub: [https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour)

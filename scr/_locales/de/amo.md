@@ -1,4 +1,3 @@
-
 **Was macht die Erweiterung?**
 
 Während du im Web surfst, ändert diese Erweiterung das Theme von Firefox, um es an das Erscheinungsbild der von dir besuchten Website anzupassen – ähnlich wie macOS Safari seine Tableiste einfärbt.
@@ -21,7 +20,7 @@ Während du im Web surfst, ändert diese Erweiterung das Theme von Firefox, um e
 
 **Falls du ein CSS-Theme verwendest:**
 
-Ein CSS-Theme kann mit **Anpassende Tableistenfarbe** funktionieren, wenn Systemfarbvariablen verwendet werden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) ist ein Beispiel für ein kompatibles CSS-Theme.
+Ein CSS-Theme kann mit Anpassender Tableistenfarbe funktionieren, wenn Systemfarbvariablen verwendet werden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) ist ein Beispiel für ein kompatibles CSS-Theme.
 
 **Falls du Linux mit einem GTK-Theme verwendest:**
 
