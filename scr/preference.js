@@ -291,17 +291,18 @@ export default class preference {
 	}
 
 	/**
-	 * Returns the policy for a URL / add-on ID from the site list.
+	 * Returns the policy for a policy ID / URL / add-on ID from the site list.
 	 *
 	 * Newly added policies have higher priority.
 	 *
 	 * Returns `undefined` if nothing matches.
 	 *
-	 * @param {string} site URL or add-on ID.
+	 * @param {number | string} site Policy ID, URL or add-on ID.
 	 * @param {string} headerType `URL` (by default), or `ADDON_ID`.
 	 */
 	getPolicy(site, headerType = "URL") {
-		return this.#content.siteList[this.getPolicyId(site, headerType)];
+		if (typeof site === "number") return this.#content.siteList[site];
+		else return this.#content.siteList[this.getPolicyId(site, headerType)];
 	}
 
 	/**
@@ -352,6 +353,16 @@ export default class preference {
 		while (id in this.#content.siteList) id++;
 		this.#content.siteList[id] = policy;
 		return id;
+	}
+
+	/**
+	 * Rewrites a certain policy.
+	 *
+	 * @param {number | string} id The ID of the policy.
+	 * @param {object} policy The new policy.
+	 */
+	rewritePolicy(id, policy) {
+		this.#content.siteList[id] = policy;
 	}
 
 	/**

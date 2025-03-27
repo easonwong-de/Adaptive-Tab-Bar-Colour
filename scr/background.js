@@ -168,16 +168,16 @@ async function updateTab(tab) {
  */
 async function getTabColour(tab) {
 	const policy = pref.getPolicy(tab.url);
-	if (policy?.headerType === "URL" && policy?.type === "COLOUR") {
-		return { colour: rgba(policy.value), reason: "COLOUR_SPECIFIED" };
-	} else {
-		try {
-			return await browser.tabs.sendMessage(tab.id, {
-				dynamic: pref.dynamic,
-				noThemeColour: pref.noThemeColour,
-				policy: policy,
-			});
-		} catch (error) {
+	try {
+		return await browser.tabs.sendMessage(tab.id, {
+			dynamic: pref.dynamic,
+			noThemeColour: pref.noThemeColour,
+			policy: policy,
+		});
+	} catch (error) {
+		if (policy?.headerType === "URL" && policy?.type === "COLOUR") {
+			return { colour: rgba(policy.value), reason: "COLOUR_SPECIFIED" };
+		} else {
 			return await getProtectedPageColour(tab);
 		}
 	}

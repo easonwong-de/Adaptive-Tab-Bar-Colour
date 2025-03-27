@@ -57,7 +57,8 @@ async function updateInfoDisplay(nthTry = 0) {
 			colourCorrectionInfo.classList.toggle("hidden", true);
 			return;
 		}
-		const windowId = activeTabs[0].windowId;
+		const tab = activeTabs[0];
+		const windowId = tab.windowId;
 		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
 		if (!info) setTimeout(() => updateInfoDisplay(++nthTry), 10);
 		const actions = {
@@ -74,8 +75,14 @@ async function updateInfoDisplay(nthTry = 0) {
 				reason: info.reason,
 				additionalInfo: null,
 				infoAction: async () => {
-					const header = new URL(activeTabs[0].url).hostname;
-					pref.addPolicy({ header: header, ...actions[info.reason] });
+					const header = new URL(tab.url).hostname;
+					const policyId = pref.getPolicyId(tab.url);
+					const policy = pref.getPolicy(policyId);
+					if (policyId && policy?.header === header && policy?.type === "THEME_COLOUR") {
+						pref.rewritePolicy(policyId, { header: header, ...actions[info.reason] });
+					} else {
+						pref.addPolicy({ header: header, ...actions[info.reason] });
+					}
 					await applySettings();
 				},
 			});
