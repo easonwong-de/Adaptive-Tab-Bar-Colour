@@ -100,7 +100,7 @@ async function updateInfoDisplay(nthTry = 0) {
 			setInfoDisplay(info);
 		}
 	} catch (error) {
-		setInfoDisplay({ reason: "ERROR_OCCURRED" });
+		setTimeout(() => updateInfoDisplay(++nthTry), 50);
 	}
 }
 
