@@ -203,6 +203,10 @@
 		"message": "按 PDF 阅读器着色"
 	},
 
+	"colourForJSONViewer": {
+		"message": "按 JSON 阅读器着色"
+	},
+
 	"pageIsProtected": {
 		"message": "此页面受浏览器保护"
 	},

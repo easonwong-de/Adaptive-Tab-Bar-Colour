@@ -26,7 +26,7 @@
 import preference from "./preference.js";
 import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
 import { rgba, dimColourString, contrastCorrection } from "./colour.js";
-import { onSchemeChanged, getCurrentScheme } from "./utility.js";
+import { onSchemeChanged, getCurrentScheme, getSystemScheme } from "./utility.js";
 
 /** Preference */
 const pref = new preference();
@@ -54,6 +54,14 @@ const colourCode = {
 	ADDON: { light: rgba([236, 236, 236, 1]), dark: rgba([50, 50, 50, 1]) },
 	PDFVIEWER: { light: rgba([249, 249, 250, 1]), dark: rgba([56, 56, 61, 1]) },
 	IMAGEVIEWER: { light: undefined, dark: rgba([33, 33, 33, 1]) },
+	JSONVIEWER: {
+		get light() {
+			return getSystemScheme() === "light" ? rgba([249, 249, 250, 1]) : undefined;
+		},
+		get dark() {
+			return getSystemScheme() === "dark" ? rgba([12, 12, 13, 1]) : undefined;
+		},
+	},
 	DEFAULT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
 };
 
@@ -206,6 +214,8 @@ async function getProtectedPageColour(tab) {
 		return { colour: "IMAGEVIEWER", reason: "IMAGE_VIEWER" };
 	} else if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
 		return { colour: "PDFVIEWER", reason: "PDF_VIEWER" };
+	} else if (url.href.endsWith(".json") || tab.title.endsWith(".json")) {
+		return { colour: "JSONVIEWER", reason: "JSON_VIEWER" };
 	} else if (tab.favIconUrl?.startsWith("chrome:")) {
 		return { colour: "DEFAULT", reason: "PROTECTED_PAGE" };
 	} else if (url.href.match(new RegExp(`https?:\/\/${tab.title}$`))) {

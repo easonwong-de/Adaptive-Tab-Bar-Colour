@@ -247,6 +247,10 @@
 		"message": "按 PDF 閱讀器著色"
 	},
 
+	"colourForJSONViewer": {
+		"message": "按 JSON 閱讀器著色"
+	},
+
 	"pageIsProtected": {
 		"message": "此頁面受瀏覽器保護"
 	},

@@ -1,16 +1,5 @@
 "use strict";
 
-/**
- * @returns Firefox version. 0 if cannot be found.
- */
-/* export function checkVersion() {
-	let userAgent = navigator.userAgent;
-	let version = 0;
-	let ind = userAgent.lastIndexOf("Firefox");
-	if (ind !== -1) version = userAgent.substring(ind + 8);
-	return version;
-} */
-
 const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 
 /**
@@ -20,6 +9,15 @@ const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
  */
 export function onSchemeChanged(listener) {
 	darkSchemeDetection?.addEventListener("change", listener);
+}
+
+/**
+ * Detects the current system colour scheme.
+ *
+ * @returns {"dark" | "light"} The current system colour scheme, either "dark" or "light".
+ */
+export function getSystemScheme() {
+	return darkSchemeDetection?.matches ? "dark" : "light";
 }
 
 /**
@@ -33,12 +31,8 @@ export function onSchemeChanged(listener) {
  */
 export async function getCurrentScheme() {
 	const webAppearanceSetting = await browser.browserSettings.overrideContentColorScheme.get({});
-	const scheme = webAppearanceSetting.value;
-	if (scheme === "light" || scheme === "dark") {
-		return scheme;
-	} else {
-		return darkSchemeDetection?.matches ? "dark" : "light";
-	}
+	const webAppearance = webAppearanceSetting.value;
+	return webAppearance === "light" || webAppearance === "dark" ? webAppearance : getSystemScheme();
 }
 
 /**

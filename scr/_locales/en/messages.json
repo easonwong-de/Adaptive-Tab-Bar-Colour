@@ -247,6 +247,10 @@
 		"message": "Using colour for PDF viewer"
 	},
 
+	"colourForJSONViewer": {
+		"message": "Using colour for JSON viewer"
+	},
+
 	"pageIsProtected": {
 		"message": "This page is protected by browser"
 	},
