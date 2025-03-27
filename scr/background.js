@@ -344,7 +344,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				toolbar_text: "rgb(0, 0, 0)",
 				button_background_hover: "rgba(0, 0, 0, 0.11)",
 				toolbar_vertical_separator: "rgba(0, 0, 0, 0.11)",
-				toolbar_field_border_focus: null,
+				toolbar_field_border_focus: "AccentColor",
 			},
 			properties: {
 				// More on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#properties
@@ -385,7 +385,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				toolbar_text: "rgb(255, 255, 255)",
 				button_background_hover: "rgba(255, 255, 255, 0.11)",
 				toolbar_vertical_separator: "rgba(255, 255, 255, 0.11)",
-				toolbar_field_border_focus: null,
+				toolbar_field_border_focus: "AccentColor",
 			},
 			properties: {
 				color_scheme: "system",
