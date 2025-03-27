@@ -62,9 +62,9 @@ async function updateInfoDisplay(nthTry = 0) {
 		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
 		if (!info) setTimeout(() => updateInfoDisplay(++nthTry), 10);
 		const actions = {
-			THEME_UNIGNORED: { headerType: "URL", type: "THEME_COLOUR", value: false },
-			THEME_USED: { headerType: "URL", type: "THEME_COLOUR", value: false },
-			THEME_IGNORED: { headerType: "URL", type: "THEME_COLOUR", value: true },
+			THEME_UNIGNORED: { value: false },
+			THEME_USED: { value: false },
+			THEME_IGNORED: { value: true },
 		};
 		colourCorrectionInfo.classList.toggle("hidden", !info.corrected);
 		if (info.reason === "ADDON") {
@@ -79,9 +79,19 @@ async function updateInfoDisplay(nthTry = 0) {
 					const policyId = pref.getPolicyId(tab.url);
 					const policy = pref.getPolicy(policyId);
 					if (policyId && policy?.header === header && policy?.type === "THEME_COLOUR") {
-						pref.rewritePolicy(policyId, { header: header, ...actions[info.reason] });
+						pref.rewritePolicy(policyId, {
+							headerType: "URL",
+							header: header,
+							type: "THEME_COLOUR",
+							...actions[info.reason],
+						});
 					} else {
-						pref.addPolicy({ header: header, ...actions[info.reason] });
+						pref.addPolicy({
+							headerType: "URL",
+							header: header,
+							type: "THEME_COLOUR",
+							...actions[info.reason],
+						});
 					}
 					await applySettings();
 				},
