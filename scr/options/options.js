@@ -367,7 +367,7 @@ async function updateAllowDarkLightText(nthTry = 0) {
 		}
 	} catch (error) {
 		console.error(error);
-		setTimeout(async () => await updateAllowDarkLightText(++nthTry), 10);
+		setTimeout(async () => await updateAllowDarkLightText(++nthTry), 50);
 	}
 }
 

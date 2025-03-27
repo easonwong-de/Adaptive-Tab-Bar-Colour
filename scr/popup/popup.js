@@ -60,7 +60,7 @@ async function updateInfoDisplay(nthTry = 0) {
 		const tab = activeTabs[0];
 		const windowId = tab.windowId;
 		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
-		if (!info) setTimeout(() => updateInfoDisplay(++nthTry), 10);
+		if (!info) return setTimeout(() => updateInfoDisplay(++nthTry), 50);
 		const actions = {
 			THEME_UNIGNORED: { value: false },
 			THEME_USED: { value: false },
