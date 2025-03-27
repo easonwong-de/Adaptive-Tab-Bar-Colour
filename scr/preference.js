@@ -238,6 +238,7 @@ export default class preference {
 		}
 		// Updating from before v2.4
 		if (this.#content.version < [2, 4]) {
+			browser.theme.reset();
 			if (this.#content.minContrast_light === 165) this.#content.minContrast_light = 90;
 		}
 		// Makes sure colour offset values are stored in integer

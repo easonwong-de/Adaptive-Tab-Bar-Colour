@@ -365,5 +365,19 @@ const onStyleInjection = new MutationObserver((mutations) => {
 onStyleInjection.observe(document.documentElement, { childList: true });
 onStyleInjection.observe(document.head, { childList: true });
 
-// Sends colour to background as soon as the page loads
-browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });
+/**
+ * Sends colour to background as soon as the page loads
+ */
+function sendMessageOnLoad(nthTry = 0) {
+	try {
+		browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });
+	} catch (error) {
+		if (nthTry > 3) {
+			console.error(error);
+		} else {
+			setTimeout(() => sendMessageOnLoad(++nthTry), 50);
+		}
+	}
+}
+
+sendMessageOnLoad();
