@@ -7,7 +7,7 @@
  * The colour scheme of the operating system, usually light or dark.
  *
  * Browser colour scheme:
- * The "website appearance" settings of Firefox, which can be light, dark, or auto.
+ * The "website appearance" settings of Chrome, which can be light, dark, or auto.
  *
  * current.scheme:
  * Derived from System and Browser colour scheme and decides whether the light theme or dark theme is preferred.
@@ -20,7 +20,7 @@
  * It is often more related to the branding than the appearance of the website.
  *
  * Theme:
- * An object that defines the appearance of the Firefox chrome.
+ * An object that defines the appearance of the Chrome chrome.
  */
 
 import preference from "./preference.js";
@@ -85,7 +85,7 @@ const current = {
  */
 async function update() {
 	if (!pref.valid()) await initialise();
-	const activeTabs = await browser.tabs.query({ active: true, status: "complete" });
+	const activeTabs = await chrome.tabs.query({ active: true, status: "complete" });
 	await current.update();
 	activeTabs.forEach(updateTab);
 }
@@ -169,7 +169,7 @@ async function updateTab(tab) {
 async function getTabColour(tab) {
 	const policy = pref.getPolicy(tab.url);
 	try {
-		return await browser.tabs.sendMessage(tab.id, {
+		return await chrome.tabs.sendMessage(tab.id, {
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
 			policy: policy,
@@ -190,7 +190,7 @@ async function getTabColour(tab) {
  */
 async function getProtectedPageColour(tab) {
 	const url = new URL(tab.url);
-	if (["about:firefoxview", "about:home", "about:newtab"].some((href) => url.href.startsWith(href))) {
+	if (["about:home", "about:newtab"].some((href) => url.href.startsWith(href))) {
 		return { colour: "HOME", reason: "HOME_PAGE" };
 	} else if (url.href === "about:blank" && tab.title.startsWith("about:") && tab.title.endsWith("profile")) {
 		return getAboutPageColour(tab.title.slice(6));
@@ -206,8 +206,6 @@ async function getProtectedPageColour(tab) {
 		} else {
 			return { colour: "SYSTEM", reason: "PROTECTED_PAGE" };
 		}
-	} else if (url.protocol === "moz-extension:") {
-		return await getAddonPageColour(url.href);
 	} else if (url.hostname in restrictedSiteColour) {
 		return getRestrictedSiteColour(url.hostname);
 	} else if (url.href.startsWith("data:image")) {
@@ -249,30 +247,6 @@ function getRestrictedSiteColour(hostname) {
 	} else {
 		return { colour: "FALLBACK", reason: "PROTECTED_PAGE" };
 	}
-}
-
-/**
- * @param {string} url
- */
-async function getAddonPageColour(url) {
-	const uuid = url.split(/\/|\?/)[2];
-	const addonList = await browser.management.getAll();
-	let addonId = null;
-	for (const addon of addonList) {
-		if (addon.type !== "extension" || !addon.hostPermissions) continue;
-		if (addonId) break;
-		for (const host of addon.hostPermissions) {
-			if (host.startsWith("moz-extension:") && uuid === host.split(/\/|\?/)[2]) {
-				addonId = addon.id;
-				break;
-			}
-		}
-	}
-	if (!addonId) return { colour: "ADDON", reason: "ADDON" };
-	const policy = pref.getPolicy(addonId, "ADDON_ID");
-	return policy
-		? { colour: rgba(policy.value), reason: "ADDON", additionalInfo: addonId }
-		: { colour: "ADDON", reason: "ADDON", additionalInfo: addonId };
 }
 
 /**
@@ -362,7 +336,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				content_color_scheme: "system",
 			},
 		};
-		browser.theme.update(windowId, theme);
+		chrome.theme.update(windowId, theme);
 	}
 	if (colourScheme === "dark") {
 		const theme = {
@@ -402,17 +376,16 @@ function applyTheme(windowId, colour, colourScheme) {
 				content_color_scheme: "system",
 			},
 		};
-		browser.theme.update(windowId, theme);
+		chrome.theme.update(windowId, theme);
 	}
 }
 
 (async () => {
 	await initialise();
 	onSchemeChanged(update);
-	browser.tabs.onUpdated.addListener(update);
-	browser.tabs.onActivated.addListener(update);
-	browser.tabs.onAttached.addListener(update);
-	browser.windows.onFocusChanged.addListener(update);
-	browser.browserSettings.overrideContentColorScheme.onChange.addListener(update);
-	browser.runtime.onMessage.addListener(handleMessage);
+	chrome.tabs.onUpdated.addListener(update);
+	chrome.tabs.onActivated.addListener(update);
+	chrome.tabs.onAttached.addListener(update);
+	chrome.windows.onFocusChanged.addListener(update);
+	chrome.runtime.onMessage.addListener(handleMessage);
 })();

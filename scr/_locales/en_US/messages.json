@@ -4,7 +4,7 @@
 	},
 
 	"extensionDescription": {
-		"message": "Changes the color of Firefox theme to match the website’s appearance."
+		"message": "Changes the color of Chrome theme to match the website’s appearance."
 	},
 
 	"__OPTIONS PAGE__": {
@@ -12,7 +12,7 @@
 	},
 
 	"reinstallTip": {
-		"message": "Preference data could be corrupted. If the issue preserves, please re-install the add-on. Apologies for your inconvenience!"
+		"message": "Preference data could be corrupted. If the issue persists, please re-install the add-on. Apologies for your inconvenience!"
 	},
 
 	"loading": {
