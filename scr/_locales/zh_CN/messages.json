@@ -12,7 +12,7 @@
 	},
 
 	"reinstallTip": {
-		"message": "插件可能已损坏，请尝试重新安装本插件。"
+		"message": "配置文件可能已损坏，请尝试重新安装本插件。"
 	},
 
 	"loading": {
@@ -28,7 +28,7 @@
 	},
 
 	"advanced": {
-		"message": "进阶设置"
+		"message": "高级设置"
 	},
 
 	"tabBar": {
@@ -104,7 +104,7 @@
 	},
 
 	"querySelector": {
-		"message": "query selector"
+		"message": "CSS 选择器名称"
 	},
 
 	"delete": {
@@ -124,7 +124,7 @@
 	},
 
 	"allowLightTabBarTooltip": {
-		"message": "允许标签栏使用亮色（深色文字和淺色背景）。"
+		"message": "允许标签栏使用亮色（深色文字和浅色背景）。"
 	},
 
 	"allowDarkTabBar": {
@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "总是忽略网站指定的主题色，而是采用其他方法取得适合网页的标题栏颜色。"
+		"message": "总是忽略网站指定的主题色，而是采用其他方法获取适合网页的标题栏颜色。"
 	},
 
 	"minimumContrast": {
@@ -156,7 +156,7 @@
 	},
 
 	"minimumContrastTooltip": {
-		"message": "在此设置标题栏和文字的最小对比度。如果未达到该指标，标题栏会调整其颜色使之达到设置的最小对比度。"
+		"message": "在此设置标题栏和文字的最小对比度。如果未达到该指标，标签栏的颜色将会被调整，使之达到设置的最小对比度。"
 	},
 
 	"inLightMode": {
@@ -183,6 +183,50 @@
 		"message": "备选颜色（暗色）"
 	},
 
+	"exportSettings": {
+		"message": "保存偏好设置至文件"
+	},
+
+	"settingsAreExported": {
+		"message": "偏好设置已经被保存到下载文件夹。"
+	},
+
+	"importSettings": {
+		"message": "从文件导入偏好设置"
+	},
+
+	"settingsAreImported": {
+		"message": "已导入偏好设置。"
+	},
+
+	"importFailed": {
+		"message": "导入偏好设置失败。请检查文件是否正确并重试。"
+	},
+
+	"resetThemeBuilder": {
+		"message": "重新设置背景主题"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "是否确认重新设置背景主题？"
+	},
+
+	"resetSiteList": {
+		"message": "重新设置自定义站点规则"
+	},
+
+	"confirmResetSiteList": {
+		"message": "是否确认重新设置自定义站点规则？"
+	},
+
+	"resetAdvanced": {
+		"message": "重新设置高级设置"
+	},
+
+	"confirmResetAdvanced": {
+		"message": "是否确认重新设置高级设置？"
+	},
+
 	"reportAnIssue": {
 		"message": "报告问题 / 提供建议 / 提供翻译"
 	},
@@ -200,11 +244,11 @@
 	},
 
 	"colourForPDFViewer": {
-		"message": "按 PDF 阅读器着色"
+		"message": "从 PDF 阅读器获取颜色"
 	},
 
 	"colourForJSONViewer": {
-		"message": "按 JSON 阅读器着色"
+		"message": "从 JSON 阅读器获取颜色"
 	},
 
 	"pageIsProtected": {
@@ -212,7 +256,7 @@
 	},
 
 	"colourForPlainTextViewer": {
-		"message": "按文本阅读器着色"
+		"message": "从文本阅读器获取颜色"
 	},
 
 	"errorOccured": {
@@ -244,7 +288,7 @@
 	},
 
 	"useRecommendedColourForAddonEnd": {
-		"message": " 相关页面推荐的颜色"
+		"message": " 相关页面指定的颜色"
 	},
 
 	"useRecommendedColourForAddonButton": {
@@ -276,7 +320,7 @@
 	},
 
 	"themeColourNotFound": {
-		"message": "网站未指定主题色，标题栏颜色是从网页获取"
+		"message": "网站未指定主题色，标签栏的颜色将从网页获取"
 	},
 
 	"themeColourIsIgnored": {
@@ -312,7 +356,7 @@
 	},
 
 	"errorOccuredLocatingElementEnd": {
-		"message": " 的网页元素時发生错误，标题栏的颜色将会按普通方法从网页中获取"
+		"message": " 的网页元素时发生错误，标题栏的颜色将会按普通方法从网页中获取"
 	},
 
 	"colourIsSpecified": {
@@ -341,5 +385,9 @@
 
 	"colourPickedFromWebpage": {
 		"message": "标题栏的颜色将会按普通方法从网页中获取"
+	},
+
+	"colourIsAdjusted": {
+		"message": "为达到最小对比度设置，原颜色已被调整"
 	}
 }
