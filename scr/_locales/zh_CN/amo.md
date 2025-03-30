@@ -20,7 +20,7 @@
 
 **如果您使用 CSS 主题：**
 
-如果一个 CSS 主题使用默认的颜色参数，则其可以与 自适应标签栏颜色 兼容。比如，[WhiteSurFirefoxThemeMacOS](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) 是一个与 自适应标签栏颜色 兼容的的 CSS 主题。
+如果一个 CSS 主题使用默认的颜色参数，则其可以与 变色标签栏 兼容。比如，[WhiteSurFirefoxThemeMacOS](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) 是一个与 变色标签栏 兼容的的 CSS 主题。
 
 **如果您使用的是 Linux 的 GTK 主题：**
 
