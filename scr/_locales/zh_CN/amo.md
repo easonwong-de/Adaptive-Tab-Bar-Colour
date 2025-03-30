@@ -20,19 +20,14 @@
 
 **如果您使用 CSS 主题：**
 
-如果一个 CSS 主题使用默认的颜色参数，则其可以与 自适应标签栏颜色 兼容。
-
-比如，[WhiteSurFirefoxThemeMacOS](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) 是一个与 自适应标签栏颜色 兼容的的 CSS 主题。
+如果一个 CSS 主题使用默认的颜色参数，则其可以与 自适应标签栏颜色 兼容。比如，[WhiteSurFirefoxThemeMacOS](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) 是一个与 自适应标签栏颜色 兼容的的 CSS 主题。
 
 **如果您使用的是 Linux 的 GTK 主题：**
 
-Firefox 的标题栏按钮可能会被重置为 Windows 风格。
-
-为了避免这种情况，请打开高级首选项（`about:config`），并将 `widget.gtk.non-native-titlebar-buttons.enabled` 设置为 `false`。（感谢 [@anselstetter](https://github.com/anselstetter/)）
+Firefox 的标题栏按钮可能会被重置为 Windows 风格。为了避免这种情况，请打开高级首选项（`about:config`），并将 `widget.gtk.non-native-titlebar-buttons.enabled` 设置为 `false`。（感谢 [@anselstetter](https://github.com/anselstetter/)）
 
 **安全提示：**
 
-小心带有恶意的网页界面：请注意区分浏览器页面和网页界面。 \
-请参考：[The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/)。（由 [u/KazaHesto](https://www.reddit.com/user/KazaHesto/) 提出）
+小心带有恶意的网页界面：请注意区分浏览器页面和网页界面。请参考：[The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/)。（感谢 [u/KazaHesto](https://www.reddit.com/user/KazaHesto/)）
 
 欢迎您为 GitHub 仓库点亮 star：[https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour)

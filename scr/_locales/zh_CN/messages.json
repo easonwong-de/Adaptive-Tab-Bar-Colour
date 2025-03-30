@@ -148,7 +148,7 @@
 	},
 
 	"ignoreDesignatedThemeColourTooltip": {
-		"message": "总是忽略网站指定的主题色，而是采用其他方法获取适合网页的标题栏颜色。"
+		"message": "有些网站会提供一个主题色。开启此选项，这些颜色将被自动忽略。"
 	},
 
 	"minimumContrast": {
@@ -320,7 +320,7 @@
 	},
 
 	"themeColourNotFound": {
-		"message": "网站未指定主题色，标签栏的颜色将从网页获取"
+		"message": "网站未指定主题色，标签栏的颜色已从网页获取"
 	},
 
 	"themeColourIsIgnored": {
@@ -348,7 +348,7 @@
 	},
 
 	"cannotFindElementEnd": {
-		"message": " 的网页元素，标题栏的颜色将会按普通方法从网页中获取"
+		"message": " 的网页元素，标题栏的颜色已按普通方法从网页中获取"
 	},
 
 	"errorOccuredLocatingElement": {
@@ -356,7 +356,7 @@
 	},
 
 	"errorOccuredLocatingElementEnd": {
-		"message": " 的网页元素时发生错误，标题栏的颜色将会按普通方法从网页中获取"
+		"message": " 的网页元素时发生错误，标题栏的颜色已按普通方法从网页中获取"
 	},
 
 	"colourIsSpecified": {
@@ -384,7 +384,7 @@
 	},
 
 	"colourPickedFromWebpage": {
-		"message": "标题栏的颜色将会按普通方法从网页中获取"
+		"message": "标题栏的颜色已按普通方法从网页中获取"
 	},
 
 	"colourIsAdjusted": {
