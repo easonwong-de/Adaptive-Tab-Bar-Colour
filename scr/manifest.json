@@ -1,6 +1,6 @@
 {
-	"name": "__MSG_extensionName__",
-	"description": "__MSG_extensionDescription__",
+	"name": "Theme",
+	"description": "Makes the browser window color same as page.",
 	"version": "2.4",
 	"author": "Eason Wong",
 	"homepage_url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
@@ -22,7 +22,7 @@
 	},
 	"action": {
 		"default_popup": "popup/popup.html",
-		"default_title": "__MSG_extensionName__",
+		"default_title": "Theme",
 		"default_icon": {
 			"16": "images/ATBC_16.png",
 			"32": "images/ATBC_32.png",

@@ -7,9 +7,10 @@
 		"message": "Changes the color of Chrome theme to match the website’s appearance."
 	},
 
-	"__OPTIONS PAGE__": {
+	"optionsPage": {
 		"message": "===================="
 	},
+
 
 	"reinstallTip": {
 		"message": "Preference data could be corrupted. If the issue persists, please re-install the add-on. Apologies for your inconvenience!"
@@ -231,9 +232,10 @@
 		"message": "Report an issue / submit a suggestion / translate this add-on"
 	},
 
-	"__POPUP__": {
+	"popup": {
 		"message": "===================="
 	},
+
 
 	"moreSettings": {
 		"message": "More settings…"
