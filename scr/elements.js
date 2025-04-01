@@ -50,7 +50,7 @@ export function setSliderValue(slider, value) {
 	const percentage = (value - +slider.dataset.min) / (+slider.dataset.max - +slider.dataset.min);
 	const scale = slider.dataset.scale;
 	slider.dataset.value = value;
-	sliderBody.textContent = scale ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
+	sliderBody.textContent = scale && value !== 0 ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
 	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
 }
 
