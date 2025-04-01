@@ -241,7 +241,6 @@ export default class preference {
 			browser.theme.reset();
 			if (this.#content.minContrast_light === 165) this.#content.minContrast_light = 90;
 		}
-		// Makes sure colour offset values are stored in integer
 		[
 			"tabbar",
 			"tabbarBorder",
@@ -257,7 +256,10 @@ export default class preference {
 			"popup",
 			"popupBorder",
 		].forEach((key) => {
-			this.#content[key] = x100IfSmallerThan1(this.#content[key]);
+			this.#content[key] = this.validateNumericPref(this.#content[key], { min: -50, max: 50, step: 5 });
+		});
+		["minContrast_light", "minContrast_dark"].forEach((key) => {
+			this.#content[key] = this.validateNumericPref(this.#content[key], { min: 0, max: 210, step: 15 });
 		});
 		// Updates the pref version
 		this.#content.version = addonVersion;
@@ -372,6 +374,24 @@ export default class preference {
 	 */
 	removePolicy(id) {
 		this.#content.siteList[id] = null;
+	}
+
+	/**
+	 * Validates and adjusts a numeric preference based on given constraints.
+	 *
+	 * @param {number} num The number to validate.
+	 * @param {object} options The constraints for validation.
+	 * @param {number} options.min The minimum allowed value.
+	 * @param {number} options.max The maximum allowed value.
+	 * @param {number} options.step The step size for rounding.
+	 * @returns {number} The validated and adjusted number.
+	 */
+	validateNumericPref(num, { min, max, step }) {
+		if (-1 < num && num < 1) num = Math.round(num * 100);
+		num = Math.max(min, Math.min(max, num));
+		const remainder = (num - min) % step;
+		if (remainder !== 0) num = remainder >= step / 2 ? num + (step - remainder) : num - remainder;
+		return Math.round(num);
 	}
 
 	get allowDarkLight() {
@@ -541,12 +561,4 @@ export default class preference {
 	set version(value) {
 		this.#content.version = value;
 	}
-}
-
-/**
- * @param {number} num
- */
-function x100IfSmallerThan1(num) {
-	if (-1 < num && num < 1) return Math.round(num * 100);
-	else return +num;
 }
