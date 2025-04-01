@@ -7,7 +7,7 @@
 		"message": "Changes the colour of Firefox theme to match the website’s appearance."
 	},
 
-	"__OPTIONS PAGE__": {
+	"optionspage": {
 		"message": "===================="
 	},
 
