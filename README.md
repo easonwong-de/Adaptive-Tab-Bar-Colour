@@ -50,7 +50,7 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 
 A CSS theme can work with ATBC (Adaptive Tab Bar Colour) when system colour variables are used (e.g. `--lwt-accent-color` for tab bar colour). [This](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) is an example of an ATBC-compatible CSS theme.
 
-<img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_1.png" width="45%"> <img src="https://raw.githubusercontent.com/easonwong-de/WhiteSurFirefoxThemeMacOS/master/githubpreview/White_Sur_%26_ATBC_2.png" width="45%">
+<img src="https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme/raw/main/assets/adaptive-sur-1.png" width="45%"> <img src="https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme/raw/main/assets/adaptive-sur-2.png" width="45%">
 
 <br>
 
