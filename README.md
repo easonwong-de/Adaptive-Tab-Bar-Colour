@@ -1,4 +1,4 @@
-![Icon](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/blob/main/scr/images/ATBC_128.png)  
+![Icon](scr/images/ATBC_128.png)  
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)
 ![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)
 ![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-colour?color=blue&label=version)
@@ -9,7 +9,7 @@
 Changes the colour of Firefox theme to match the website’s appearance.
 
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
-	<img src="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/blob/main/Badges/Get_Addon_Badge_Firefox.png?raw=true" width="178" height="48">
+	<img src="assets/get-addon-badge-firefox.png" width="178" height="48">
 </a>
 
 <br>
