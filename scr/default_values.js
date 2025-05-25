@@ -65,3 +65,21 @@ export const recommendedAddonPageColour = Object.freeze({
 	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": "#fffffe",
 	"{e7476172-097c-4b77-b56e-f56a894adca9}": "#151f2a",
 });
+
+/**
+ * All possible colour codes.
+ *
+ * Each of which represents a certain colour determined by the browser.
+ */
+export const colourCodes = [
+	"HOME",
+	"FALLBACK",
+	"PLAINTEXT",
+	"SYSTEM",
+	"ADDON",
+	"PDFVIEWER",
+	"IMAGEVIEWER ",
+	"JSONVIEWER",
+	"DEFAULT",
+	"ACCENT",
+];
