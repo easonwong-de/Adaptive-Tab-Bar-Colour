@@ -268,41 +268,29 @@ function overlayColour(colourTop, colourBottom) {
 }
 
 /**
- * Converts any colour to an RGBA object.
+ * Converts a colour input into an RGBA object. Accepts CSS colour strings and RGBA arrays.
  *
- * @param {string | number[]} colour Colour to convert or a colour code.
- * @returns Returns the colour in RGBA object.
- * @returns Returns pure black if the input is invalid.
- * @returns Returns the same colour code if the input is a colour code.
- * @returns Returns transparent by default.
+ * @param {string | number[]} colour The colour input. Can be a CSS string, or an [r, g, b, a] array.
+ * @returns An RGBA object.
  */
 function rgba(colour) {
 	if (typeof colour === "string") {
-		if (["DEFAULT", "IMAGEVIEWER", "PLAINTEXT", "HOME", "FALLBACK"].includes(colour)) return colour;
-		const canvas = document.createElement("canvas").getContext("2d");
-		canvas.fillStyle = colour;
-		const canvasFillStyle = canvas.fillStyle;
-		if (canvasFillStyle.startsWith("#")) {
-			const r = canvasFillStyle[1] + canvasFillStyle[2];
-			const g = canvasFillStyle[3] + canvasFillStyle[4];
-			const b = canvasFillStyle[5] + canvasFillStyle[6];
+		const ctx = document.createElement("canvas").getContext("2d");
+		ctx.fillStyle = colour;
+		const parsedColour = ctx.fillStyle;
+		if (parsedColour.startsWith("#")) {
 			return {
-				r: parseInt(r, 16),
-				g: parseInt(g, 16),
-				b: parseInt(b, 16),
+				r: parseInt(parsedColour.slice(1, 3), 16),
+				g: parseInt(parsedColour.slice(3, 5), 16),
+				b: parseInt(parsedColour.slice(5, 7), 16),
 				a: 1,
 			};
-		} else {
-			const result = canvasFillStyle.match(/[.?\d]+/g).map(Number);
-			return {
-				r: result[0],
-				g: result[1],
-				b: result[2],
-				a: result[3],
-			};
 		}
+		const [r, g, b, a] = parsedColour.match(/[.?\d]+/g).map(Number);
+		return { r, g, b, a };
 	} else if (Array.isArray(colour)) {
-		return { r: colour[0], g: colour[1], b: colour[2], a: colour[3] };
+		const [r, g, b, a] = colour;
+		return { r, g, b, a };
 	} else {
 		return { r: 0, g: 0, b: 0, a: 0 };
 	}
