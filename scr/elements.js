@@ -1,10 +1,12 @@
 "use strict";
 
-import { hex } from "../colour.js";
+import colour from "./colour.js";
 
 /**
- * @param {HTMLElement} checkbox
- * @param {function} onChange
+ * Sets up a checkbox element with an onChange callback.
+ * 
+ * @param {HTMLElement} checkbox - The checkbox element to set up.
+ * @param {(pref: string, checked: boolean) => void} onChange - Callback invoked when the checkbox is clicked.
  */
 export function setupCheckbox(checkbox, onChange) {
 	checkbox.onclick = () => {
@@ -13,16 +15,20 @@ export function setupCheckbox(checkbox, onChange) {
 }
 
 /**
- * @param {HTMLElement} checkbox
- * @param {boolean} value
+ * Sets the checked state of a checkbox element.
+ * 
+ * @param {HTMLElement} checkbox - The checkbox element.
+ * @param {boolean} value - The value to set (checked or not).
  */
 export function setCheckboxValue(checkbox, value) {
 	checkbox.checked = value;
 }
 
 /**
- * @param {HTMLElement} slider
- * @param {function} onChange
+ * Sets up a slider element with increment / decrement buttons and an onChange callback.
+ * 
+ * @param {HTMLElement} slider - The slider element to set up.
+ * @param {(pref: string, value: number) => void} onChange - Callback invoked when the slider value changes.
  */
 export function setupSlider(slider, onChange) {
 	const minusButton = slider.querySelector("button:nth-of-type(1)");
@@ -42,22 +48,27 @@ export function setupSlider(slider, onChange) {
 }
 
 /**
- * @param {HTMLElement} slider
- * @param {number} value
+ * Sets the value of a slider element and updates its display.
+ * 
+ * @param {HTMLElement} slider - The slider element.
+ * @param {number} value - The value to set.
  */
 export function setSliderValue(slider, value) {
 	const sliderBody = slider.querySelector(".slider-body");
 	const percentage = (value - +slider.dataset.min) / (+slider.dataset.max - +slider.dataset.min);
 	const scale = slider.dataset.scale;
 	slider.dataset.value = value;
-	sliderBody.textContent = scale && value !== 0 ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
+	sliderBody.textContent =
+		scale && value !== 0 ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
 	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
 }
 
 /**
- * @param {HTMLElement} policyHeaderInputWrapper
- * @param {string} initialValue
- * @param {function} onChange
+ * Sets up a policy header input field with an initial value and onChange callback.
+ * 
+ * @param {HTMLElement} policyHeaderInputWrapper - The wrapper element containing the input.
+ * @param {string} initialValue - The initial value to set.
+ * @param {(value: string) => void} onChange - Callback invoked when the input value changes.
  */
 export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, onChange) {
 	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
@@ -70,7 +81,10 @@ export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, o
 }
 
 /**
- * @param {HTMLElement} policyHeaderInputWrapper
+ * Sets the value of a policy header input field.
+ * 
+ * @param {HTMLElement} policyHeaderInputWrapper - The wrapper element containing the input.
+ * @param {string} value - The value to set.
  */
 export function setPolicyHeaderInputValue(policyHeaderInputWrapper, value) {
 	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
@@ -78,7 +92,10 @@ export function setPolicyHeaderInputValue(policyHeaderInputWrapper, value) {
 }
 
 /**
- * @param {HTMLElement} policyHeaderInputWrapper
+ * Gets the value of a policy header input field.
+ * 
+ * @param {HTMLElement} policyHeaderInputWrapper - The wrapper element containing the input.
+ * @returns {string} The current value of the input.
  */
 export function getPolicyHeaderInputValue(policyHeaderInputWrapper) {
 	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
@@ -86,8 +103,11 @@ export function getPolicyHeaderInputValue(policyHeaderInputWrapper) {
 }
 
 /**
- * @param {HTMLElement} colourInputWrapper
- * @param {function} onChange
+ * Sets up a colour input field and colour picker with an initial colour and onChange callback.
+ * 
+ * @param {HTMLElement} colourInputWrapper - The wrapper element containing the colour input and picker.
+ * @param {string} initialColour - The initial colour value (hex).
+ * @param {(colour: string) => void} onChange - Callback invoked when the colour changes.
  */
 export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 	const colourInput = colourInputWrapper.querySelector(".colour-input");
@@ -98,20 +118,20 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 	colourPickerInput.value = initialColour;
 	colourInput.addEventListener("focus", () => colourInput.select());
 	colourInput.addEventListener("blur", () => {
-		const colour = hex(colourInput.value);
-		colourInput.value = colour;
-		colourPicker.style.backgroundColor = colour;
-		colourPickerInput.value = colour;
-		onChange(colour);
+		const hex = new colour().parse(colourInput.value).toHex();
+		colourInput.value = hex;
+		colourPicker.style.backgroundColor = hex;
+		colourPickerInput.value = hex;
+		onChange(hex);
 	});
 	colourInput.addEventListener("keydown", (event) => {
 		if (event.key === "Enter") colourInput.blur();
 	});
 	colourInput.addEventListener("input", () => {
-		const colour = hex(colourInput.value);
-		colourPicker.style.backgroundColor = colour;
-		colourPickerInput.value = colour;
-		onChange(colour);
+		const hex = new colour().parse(colourInput.value).toHex();
+		colourPicker.style.backgroundColor = hex;
+		colourPickerInput.value = hex;
+		onChange(hex);
 	});
 	colourPickerInput.addEventListener("input", () => {
 		const colour = colourPickerInput.value;
@@ -122,8 +142,10 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 }
 
 /**
- * @param {HTMLElement} colourInputWrapper
- * @param {string} value
+ * Sets the value of a colour input field and updates the picker display.
+ * 
+ * @param {HTMLElement} colourInputWrapper - The wrapper element containing the colour input and picker.
+ * @param {string} value - The colour value to set (hex).
  */
 export function setColourInputValue(colourInputWrapper, value) {
 	const colourInput = colourInputWrapper.querySelector(".colour-input");
@@ -135,7 +157,10 @@ export function setColourInputValue(colourInputWrapper, value) {
 }
 
 /**
- * @param {HTMLElement} colourInputWrapper
+ * Gets the value of a colour input field.
+ * 
+ * @param {HTMLElement} colourInputWrapper - The wrapper element containing the colour input and picker.
+ * @returns {string} The current colour value (hex).
  */
 export function getColourInputValue(colourInputWrapper) {
 	const colourPicker = colourInputWrapper.querySelector("input[type='color']");
@@ -143,9 +168,11 @@ export function getColourInputValue(colourInputWrapper) {
 }
 
 /**
- * @param {HTMLElement} themeColourSwitchWrapper
- * @param {boolean} initialSelection
- * @param {function} onChange
+ * Sets up a theme colour switch with an initial selection and onChange callback.
+ * 
+ * @param {HTMLElement} themeColourSwitchWrapper - The wrapper containing the radio buttons.
+ * @param {boolean} initialSelection - Whether to use the theme colour initially.
+ * @param {(useTheme: boolean) => void} onChange - Callback invoked when the selection changes.
  */
 export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelection, onChange) {
 	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
@@ -160,8 +187,10 @@ export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelectio
 }
 
 /**
- * @param {HTMLElement} themeColourSwitchWrapper
- * @param {boolean} value
+ * Sets the value of a theme colour switch.
+ * 
+ * @param {HTMLElement} themeColourSwitchWrapper - The wrapper containing the radio buttons.
+ * @param {boolean} value - Whether to use the theme colour.
  */
 export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
 	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
@@ -171,7 +200,10 @@ export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
 }
 
 /**
- * @param {HTMLElement} themeColourSwitchWrapper
+ * Gets the value of a theme colour switch.
+ * 
+ * @param {HTMLElement} themeColourSwitchWrapper - The wrapper containing the radio buttons.
+ * @returns {boolean} True if the theme colour is selected, false otherwise.
  */
 export function getThemeColourSwitchValue(themeColourSwitchWrapper) {
 	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
@@ -179,9 +211,11 @@ export function getThemeColourSwitchValue(themeColourSwitchWrapper) {
 }
 
 /**
- * @param {HTMLElement} QuerySelectorInputWrapper
- * @param {string} initialQuerySelector
- * @param {function} onChange
+ * Sets up a query selector input field with an initial value and onChange callback.
+ * 
+ * @param {HTMLElement} QuerySelectorInputWrapper - The wrapper element containing the input.
+ * @param {string} initialQuerySelector - The initial query selector value.
+ * @param {(value: string) => void} onChange - Callback invoked when the input value changes.
  */
 export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQuerySelector, onChange) {
 	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
@@ -194,8 +228,10 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
 }
 
 /**
- * @param {HTMLElement} QuerySelectorInputWrapper
- * @param {string} value
+ * Sets the value of a query selector input field.
+ * 
+ * @param {HTMLElement} QuerySelectorInputWrapper - The wrapper element containing the input.
+ * @param {string} value - The value to set.
  */
 export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
 	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
@@ -203,7 +239,10 @@ export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
 }
 
 /**
- * @param {HTMLElement} QuerySelectorInputWrapper
+ * Gets the value of a query selector input field.
+ * 
+ * @param {HTMLElement} QuerySelectorInputWrapper - The wrapper element containing the input.
+ * @returns {string} The current value of the input.
  */
 export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
 	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
@@ -211,8 +250,10 @@ export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
 }
 
 /**
- * @param {HTMLElement} policySection
- * @param {number} id
+ * Sets the ID for a colour policy section and updates related element attributes.
+ * 
+ * @param {HTMLElement} policySection - The policy section element.
+ * @param {number} id - The ID to set.
  */
 export function setColourPolicySectionId(policySection, id) {
 	policySection.dataset.id = id;
@@ -221,8 +262,10 @@ export function setColourPolicySectionId(policySection, id) {
 }
 
 /**
- * @param {HTMLElement} policySection
- * @param {number} id
+ * Sets the ID for a flexible policy section and updates related element attributes.
+ * 
+ * @param {HTMLElement} policySection - The policy section element.
+ * @param {number} id - The ID to set.
  */
 export function setFlexiblePolicySectionId(policySection, id) {
 	policySection.dataset.id = id;
