@@ -28,7 +28,7 @@ const conf = {
 const response = {
 	reason: null,
 	additionalInfo: null,
-	colour: rgba([0, 0, 0, 0]),
+	colour: { r: 0, g: 0, b: 0, a: 0 },
 };
 
 /**
@@ -75,13 +75,13 @@ function findColour() {
 	if (document.fullscreenElement) return false;
 	response.reason = null;
 	response.additionalInfo = null;
-	response.colour = rgba([0, 0, 0, 0]);
+	response.colour = { r: 0, g: 0, b: 0, a: 0 };
 	if (!findColour_policy()) findColour_noPolicy();
 	return true;
 }
 
 /**
- * Sets `response.colour` with the help of the custom rule.^
+ * Sets `response.colour` with the help of the custom rule.
  *
  * @returns True if a meta `theme-color` or a custom for the web page can be found.
  */
@@ -92,50 +92,76 @@ function findColour_policy() {
 		(conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false)
 	) {
 		return false;
-	} else if (conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) {
+	} else if (conf.policy.type === "COLOUR") {
+		return findColour_policy_colour();
+	} else if (conf.policy.type === "THEME_COLOUR") {
+		return findColour_policy_themeColour();
+	} else if (conf.policy.type === "QUERY_SELECTOR") {
+		return findColour_policy_querySelector();
+	} else {
+		return false;
+	}
+}
+
+/**
+ * Handles COLOUR policy.
+ */
+function findColour_policy_colour() {
+	response.reason = "COLOUR_SPECIFIED";
+	response.additionalInfo = null;
+	response.colour = parseColour(conf.policy.value);
+	return response.colour?.a === 1;
+}
+
+/**
+ * Handles THEME_COLOUR policy.
+ */
+function findColour_policy_themeColour() {
+	if (conf.noThemeColour && conf.policy.value === true) {
 		if (findColour_theme()) {
 			response.reason = "THEME_UNIGNORED";
 		} else {
-			findColour_element();
+			findColour_webpage();
 			response.reason = "THEME_MISSING";
 		}
 		return true;
-	} else if (!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false) {
+	} else if (!conf.noThemeColour && conf.policy.value === false) {
 		if (findColour_theme()) {
-			findColour_element();
+			findColour_webpage();
 			response.reason = "THEME_IGNORED";
 		} else {
-			findColour_element();
+			findColour_webpage();
 		}
 		return true;
-	} else if (conf.policy.type === "QUERY_SELECTOR") {
-		const querySelector = conf.policy.value;
-		if (querySelector === "") {
-			findColour_element();
-			response.additionalInfo = "nothing";
-			response.reason = "QS_ERROR";
-		} else {
-			try {
-				const element = document.querySelector(querySelector);
-				response.additionalInfo = querySelector;
-				if (element) {
-					response.colour = getColourFromElement(element);
-					response.reason = "QS_USED";
-				} else {
-					findColour_element();
-					response.reason = "QS_FAILED";
-				}
-			} catch (error) {
-				findColour_element();
-				response.reason = "QS_ERROR";
-			}
-		}
-	} else {
-		response.reason = "COLOUR_SPECIFIED";
-		response.additionalInfo = null;
-		response.colour = rgba(conf.policy.value);
 	}
-	// Returns ture if reponse colour is legal and can be sent to `background.js`
+	return false;
+}
+
+/**
+ * Handles QUERY_SELECTOR policy.
+ */
+function findColour_policy_querySelector() {
+	const querySelector = conf.policy.value;
+	if (querySelector === "") {
+		findColour_webpage();
+		response.additionalInfo = "nothing";
+		response.reason = "QS_ERROR";
+	} else {
+		try {
+			const element = document.querySelector(querySelector);
+			response.additionalInfo = querySelector;
+			if (element) {
+				response.colour = getColourFromElement(element);
+				response.reason = "QS_USED";
+			} else {
+				findColour_webpage();
+				response.reason = "QS_FAILED";
+			}
+		} catch (error) {
+			findColour_webpage();
+			response.reason = "QS_ERROR";
+		}
+	}
 	return response.colour?.a === 1;
 }
 
@@ -144,7 +170,7 @@ function findColour_policy() {
  */
 function findColour_noPolicy() {
 	if (
-		getComputedStyle(document.documentElement).backgroundImage ==
+		getComputedStyle(document.documentElement).backgroundImage ===
 		`url("chrome://global/skin/media/imagedoc-darknoise.png")`
 	) {
 		// Firefox chooses `imagedoc-darknoise.png` as the background of image viewer
@@ -161,11 +187,11 @@ function findColour_noPolicy() {
 		response.colour = "PLAINTEXT";
 	} else if (findColour_theme()) {
 		if (conf.noThemeColour) {
-			findColour_element();
+			findColour_webpage();
 			response.reason = "THEME_IGNORED";
 		}
 	} else {
-		findColour_element();
+		findColour_webpage();
 	}
 }
 
@@ -180,7 +206,7 @@ function findColour_theme() {
 		document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`) ??
 		document.querySelector(`meta[name="theme-color"]`);
 	if (metaThemeColour) {
-		response.colour = rgba(metaThemeColour.content);
+		response.colour = parseColour(metaThemeColour.content);
 	} else {
 		return false;
 	}
@@ -195,12 +221,12 @@ function findColour_theme() {
 }
 
 /**
- * Looks for `response.colour` from web elements.
+ * Looks for `response.colour` from the web page elements.
  *
  * If no legal colour can be found, fallback colour will be used.
  */
-function findColour_element() {
-	response.colour = rgba([0, 0, 0, 0]);
+function findColour_webpage() {
+	response.colour = { r: 0, g: 0, b: 0, a: 0 };
 	// Selects all the elements 3 pixels below the middle point of the top edge of the viewport
 	// It's a shame that `elementsFromPoint()` doesn't work with elements with `pointer-events: none`
 	for (const element of document.elementsFromPoint(window.innerWidth / 2, 3)) {
@@ -231,18 +257,20 @@ function findColour_element() {
 }
 
 /**
- * @param {HTMLElement} element The element to get colour from.
- * @returns The colour of the element in RGBA object
- * @returns Transparent RGBA object if it can't be found.
+ * Gets the computed background color of an element as an RGBA object.
+ *
+ * @param {HTMLElement} element - The element to extract the background color from.
+ * @returns The RGBA color object, or transparent if unavailable.
  */
 function getColourFromElement(element) {
-	if (!element) return rgba([0, 0, 0, 0]);
-	const colour = getComputedStyle(element).backgroundColor;
-	if (!colour) return rgba([0, 0, 0, 0]);
-	const RGBAColour = rgba(colour);
-	const opacity = getComputedStyle(element).opacity;
-	if (opacity !== "1") RGBAColour.a = RGBAColour.a * opacity;
-	return RGBAColour;
+	if (!element) return { r: 0, g: 0, b: 0, a: 0 };
+	const style = getComputedStyle(element);
+	const backgroundColour = style.backgroundColor;
+	if (!backgroundColour) return { r: 0, g: 0, b: 0, a: 0 };
+	const rgba = parseColour(backgroundColour);
+	const opacity = parseFloat(style.opacity);
+	if (!isNaN(opacity) && opacity < 1) rgba.a *= opacity;
+	return rgba;
 }
 
 /**
@@ -256,7 +284,7 @@ function overlayColour(colourTop, colourBottom) {
 	const a = (1 - colourTop.a) * colourBottom.a + colourTop.a;
 	if (a === 0) {
 		// Firefox renders transparent background in rgb(236, 236, 236)
-		return rgba([236, 236, 236, 0]);
+		return { r: 236, g: 236, b: 236, a: 0 };
 	} else {
 		return {
 			r: ((1 - colourTop.a) * colourBottom.a * colourBottom.r + colourTop.a * colourTop.r) / a,
@@ -268,31 +296,26 @@ function overlayColour(colourTop, colourBottom) {
 }
 
 /**
- * Converts a colour input into an RGBA object. Accepts CSS colour strings and RGBA arrays.
+ * Parses a CSS color string and returns its RGBA components.
  *
- * @param {string | number[]} colour The colour input. Can be a CSS string, or an [r, g, b, a] array.
+ * @param {string} colour - The CSS color string to parse (e.g., "#RRGGBB", "rgb(...)", "rgba(...)", or named colors).
  * @returns An RGBA object.
  */
-function rgba(colour) {
-	if (typeof colour === "string") {
-		const ctx = document.createElement("canvas").getContext("2d");
-		ctx.fillStyle = colour;
-		const parsedColour = ctx.fillStyle;
-		if (parsedColour.startsWith("#")) {
-			return {
-				r: parseInt(parsedColour.slice(1, 3), 16),
-				g: parseInt(parsedColour.slice(3, 5), 16),
-				b: parseInt(parsedColour.slice(5, 7), 16),
-				a: 1,
-			};
-		}
+function parseColour(colour) {
+	if (typeof colour !== "string") return { r: 0, g: 0, b: 0, a: 0 };
+	const ctx = document.createElement("canvas").getContext("2d");
+	ctx.fillStyle = colour;
+	const parsedColour = ctx.fillStyle;
+	if (parsedColour.startsWith("#")) {
+		return {
+			r: parseInt(parsedColour.slice(1, 3), 16),
+			g: parseInt(parsedColour.slice(3, 5), 16),
+			b: parseInt(parsedColour.slice(5, 7), 16),
+			a: 1,
+		};
+	} else {
 		const [r, g, b, a] = parsedColour.match(/[.?\d]+/g).map(Number);
 		return { r, g, b, a };
-	} else if (Array.isArray(colour)) {
-		const [r, g, b, a] = colour;
-		return { r, g, b, a };
-	} else {
-		return { r: 0, g: 0, b: 0, a: 0 };
 	}
 }
 
@@ -311,14 +334,12 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
  */
 function setDynamicUpdate() {
 	["click", "resize", "scroll", "visibilitychange"].forEach((event) => {
-		conf.dynamic
-			? document.addEventListener(event, findAndSendColour)
-			: document.removeEventListener(event, findAndSendColour);
+		document.removeEventListener(event, findAndSendColour);
+		if (conf.dynamic) document.addEventListener(event, findAndSendColour);
 	});
 	["transitionend", "transitioncancel", "animationend", "animationcancel"].forEach((transition) => {
-		conf.dynamic
-			? document.addEventListener(transition, findAndSendColour_focus)
-			: document.removeEventListener(transition, findAndSendColour_focus);
+		document.removeEventListener(transition, findAndSendColour_focus);
+		if (conf.dynamic) document.addEventListener(transition, findAndSendColour_focus);
 	});
 }
 
