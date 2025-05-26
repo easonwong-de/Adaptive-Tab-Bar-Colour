@@ -24,46 +24,46 @@
  */
 
 import preference from "./preference.js";
+import colour from "./colour.js";
 import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
-import { rgba, dimColourString, contrastCorrection } from "./colour.js";
 import { onSchemeChanged, getCurrentScheme, getSystemScheme } from "./utility.js";
 
 /** Preference */
 const pref = new preference();
 
 /** Lookup table for codified colours */
-const colourCode = {
+const colourCode = Object.freeze({
 	HOME: {
 		get light() {
-			return rgba(pref.homeBackground_light);
+			return new colour().parse(pref.homeBackground_light);
 		},
 		get dark() {
-			return rgba(pref.homeBackground_dark);
+			return new colour().parse(pref.homeBackground_dark);
 		},
 	},
 	FALLBACK: {
 		get light() {
-			return rgba(pref.fallbackColour_light);
+			return new colour().parse(pref.fallbackColour_light);
 		},
 		get dark() {
-			return rgba(pref.fallbackColour_dark);
+			return new colour().parse(pref.fallbackColour_dark);
 		},
 	},
-	PLAINTEXT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
-	SYSTEM: { light: rgba([255, 255, 255, 1]), dark: rgba([30, 30, 30, 1]) },
-	ADDON: { light: rgba([236, 236, 236, 1]), dark: rgba([50, 50, 50, 1]) },
-	PDFVIEWER: { light: rgba([249, 249, 250, 1]), dark: rgba([56, 56, 61, 1]) },
-	IMAGEVIEWER: { light: undefined, dark: rgba([33, 33, 33, 1]) },
+	PLAINTEXT: { light: new colour().rgba(255, 255, 255, 1), dark: new colour().rgba(28, 27, 34, 1) },
+	SYSTEM: { light: new colour().rgba(255, 255, 255, 1), dark: new colour().rgba(30, 30, 30, 1) },
+	ADDON: { light: new colour().rgba(236, 236, 236, 1), dark: new colour().rgba(50, 50, 50, 1) },
+	PDFVIEWER: { light: new colour().rgba(249, 249, 250, 1), dark: new colour().rgba(56, 56, 61, 1) },
+	IMAGEVIEWER: { light: undefined, dark: new colour().rgba(33, 33, 33, 1) },
 	JSONVIEWER: {
 		get light() {
-			return getSystemScheme() === "light" ? rgba([249, 249, 250, 1]) : undefined;
+			return getSystemScheme() === "light" ? new colour().rgba(249, 249, 250, 1) : undefined;
 		},
 		get dark() {
-			return getSystemScheme() === "dark" ? rgba([12, 12, 13, 1]) : undefined;
+			return getSystemScheme() === "dark" ? new colour().rgba(12, 12, 13, 1) : undefined;
 		},
 	},
-	DEFAULT: { light: rgba([255, 255, 255, 1]), dark: rgba([28, 27, 34, 1]) },
-};
+	DEFAULT: { light: new colour().rgba(255, 255, 255, 1), dark: new colour().rgba(28, 27, 34, 1) },
+});
 
 /** Variables */
 const current = {
@@ -111,8 +111,8 @@ async function prefUpdate() {
 /**
  * Handles incoming messages based on their `header`.
  *
- * @param {object} message The message object containing the `header` and any additional data.
- * @param {runtime.MessageSender} sender The message sender.
+ * @param {object} message - The message object containing the `header` and any additional data.
+ * @param {runtime.MessageSender} sender - The message sender.
  */
 async function handleMessage(message, sender) {
 	const tab = sender.tab;
@@ -129,7 +129,7 @@ async function handleMessage(message, sender) {
 			break;
 		case "UPDATE_COLOUR":
 			current.info[tab.windowId] = message.response;
-			setFrameColour(tab, message.response.colour);
+			setFrameColour(tab, new colour().parse(message.response.colour));
 			break;
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
@@ -144,7 +144,7 @@ async function handleMessage(message, sender) {
 /**
  * Updates the colour for a tab.
  *
- * @param {tabs.Tab} tab The tab.
+ * @param {tabs.Tab} tab - The tab.
  */
 async function updateTab(tab) {
 	const windowId = tab.windowId;
@@ -154,29 +154,29 @@ async function updateTab(tab) {
 }
 
 /**
- * Determines the colour for a tab.
+ * Determines the appropriate colour for a tab.
  *
- * If an `URL:COLOUR` policy is set, returns the colour value.
+ * Tries to get the colour from the content script, falling back to policy or protected page colour if needed.
  *
- * Otherwise, sends a message to the tab to get the colour.
- *
- * If the message fails, returns the result of `getProtectedPageColour`.
- *
- * Returns the colour as an RGBA object or a colour code.
- *
- * @param {tabs.Tab} tab The tab.
+ * @param {tabs.Tab} tab - The tab to extract the colour from.
+ * @returns {Promise<{colour: colour, additionalInfo?: string|undefined, reason: string}>} An object containing the colour, reason, and optional additional info.
  */
 async function getTabColour(tab) {
 	const policy = pref.getPolicy(tab.url);
 	try {
-		return await browser.tabs.sendMessage(tab.id, {
+		const response = await browser.tabs.sendMessage(tab.id, {
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
-			policy: policy,
+			policy,
 		});
+		return {
+			colour: new colour().parse(response.colour),
+			additionalInfo: response.additionalInfo,
+			reason: response.reason,
+		};
 	} catch (error) {
 		if (policy?.headerType === "URL" && policy?.type === "COLOUR") {
-			return { colour: rgba(policy.value), reason: "COLOUR_SPECIFIED" };
+			return { colour: new colour().parse(policy.value), reason: "COLOUR_SPECIFIED" };
 		} else {
 			return await getProtectedPageColour(tab);
 		}
@@ -186,42 +186,42 @@ async function getTabColour(tab) {
 /**
  * Determines the colour for a protected page.
  *
- * @param {tabs.Tab} tab The tab.
+ * @param {tabs.Tab} tab - The tab.
  */
 async function getProtectedPageColour(tab) {
 	const url = new URL(tab.url);
 	if (["about:firefoxview", "about:home", "about:newtab"].some((href) => url.href.startsWith(href))) {
-		return { colour: "HOME", reason: "HOME_PAGE" };
+		return { colour: new colour().parse("HOME"), reason: "HOME_PAGE" };
 	} else if (url.href === "about:blank" && tab.title.startsWith("about:") && tab.title.endsWith("profile")) {
 		return getAboutPageColour(tab.title.slice(6));
 	} else if (url.protocol === "about:") {
 		return getAboutPageColour(url.pathname);
 	} else if (url.protocol === "view-source:") {
-		return { colour: "PLAINTEXT", reason: "PROTECTED_PAGE" };
+		return { colour: new colour().parse("PLAINTEXT"), reason: "PROTECTED_PAGE" };
 	} else if (["chrome:", "resource:", "jar:file:"].includes(url.protocol)) {
 		if ([".txt", ".css", ".jsm", ".js"].some((extention) => url.href.endsWith(extention))) {
-			return { colour: "PLAINTEXT", reason: "PROTECTED_PAGE" };
+			return { colour: new colour().parse("PLAINTEXT"), reason: "PROTECTED_PAGE" };
 		} else if ([".png", ".jpg"].some((extention) => url.href.endsWith(extention))) {
-			return { colour: "IMAGEVIEWER", reason: "PROTECTED_PAGE" };
+			return { colour: new colour().parse("IMAGEVIEWER"), reason: "PROTECTED_PAGE" };
 		} else {
-			return { colour: "SYSTEM", reason: "PROTECTED_PAGE" };
+			return { colour: new colour().parse("SYSTEM"), reason: "PROTECTED_PAGE" };
 		}
 	} else if (url.protocol === "moz-extension:") {
 		return await getAddonPageColour(url.href);
 	} else if (url.hostname in restrictedSiteColour) {
 		return getRestrictedSiteColour(url.hostname);
 	} else if (url.href.startsWith("data:image")) {
-		return { colour: "IMAGEVIEWER", reason: "IMAGE_VIEWER" };
+		return { colour: new colour().parse("IMAGEVIEWER"), reason: "IMAGE_VIEWER" };
 	} else if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
-		return { colour: "PDFVIEWER", reason: "PDF_VIEWER" };
+		return { colour: new colour().parse("PDFVIEWER"), reason: "PDF_VIEWER" };
 	} else if (url.href.endsWith(".json") || tab.title.endsWith(".json")) {
-		return { colour: "JSONVIEWER", reason: "JSON_VIEWER" };
+		return { colour: new colour().parse("JSONVIEWER"), reason: "JSON_VIEWER" };
 	} else if (tab.favIconUrl?.startsWith("chrome:")) {
-		return { colour: "DEFAULT", reason: "PROTECTED_PAGE" };
+		return { colour: new colour().parse("DEFAULT"), reason: "PROTECTED_PAGE" };
 	} else if (url.href.match(new RegExp(`https?:\/\/${tab.title}$`))) {
-		return { colour: "PLAINTEXT", reason: "TEXT_VIEWER" };
+		return { colour: new colour().parse("PLAINTEXT"), reason: "TEXT_VIEWER" };
 	} else {
-		return { colour: "FALLBACK", reason: "FALLBACK_COLOUR" };
+		return { colour: new colour().parse("FALLBACK"), reason: "FALLBACK_COLOUR" };
 	}
 }
 
@@ -230,11 +230,14 @@ async function getProtectedPageColour(tab) {
  */
 function getAboutPageColour(pathname) {
 	if (aboutPageColour[pathname]?.[current.scheme]) {
-		return { colour: rgba(aboutPageColour[pathname][current.scheme]), reason: "PROTECTED_PAGE" };
+		return { colour: new colour().parse(aboutPageColour[pathname][current.scheme]), reason: "PROTECTED_PAGE" };
 	} else if (aboutPageColour[pathname]?.[current.reversedScheme]) {
-		return { colour: rgba(aboutPageColour[pathname][current.reversedScheme]), reason: "PROTECTED_PAGE" };
+		return {
+			colour: new colour().parse(aboutPageColour[pathname][current.reversedScheme]),
+			reason: "PROTECTED_PAGE",
+		};
 	} else {
-		return { colour: "DEFAULT", reason: "PROTECTED_PAGE" };
+		return { colour: new colour().parse("DEFAULT"), reason: "PROTECTED_PAGE" };
 	}
 }
 
@@ -243,11 +246,14 @@ function getAboutPageColour(pathname) {
  */
 function getRestrictedSiteColour(hostname) {
 	if (restrictedSiteColour[hostname]?.[current.scheme]) {
-		return { colour: rgba(restrictedSiteColour[hostname][current.scheme]), reason: "PROTECTED_PAGE" };
+		return { colour: new colour().parse(restrictedSiteColour[hostname][current.scheme]), reason: "PROTECTED_PAGE" };
 	} else if (restrictedSiteColour[hostname]?.[current.reversedScheme]) {
-		return { colour: rgba(restrictedSiteColour[hostname][current.reversedScheme]), reason: "PROTECTED_PAGE" };
+		return {
+			colour: new colour().parse(restrictedSiteColour[hostname][current.reversedScheme]),
+			reason: "PROTECTED_PAGE",
+		};
 	} else {
-		return { colour: "FALLBACK", reason: "PROTECTED_PAGE" };
+		return { colour: new colour().parse("FALLBACK"), reason: "PROTECTED_PAGE" };
 	}
 }
 
@@ -268,11 +274,11 @@ async function getAddonPageColour(url) {
 			}
 		}
 	}
-	if (!addonId) return { colour: "ADDON", reason: "ADDON" };
+	if (!addonId) return { colour: new colour().parse("ADDON"), reason: "ADDON" };
 	const policy = pref.getPolicy(addonId, "ADDON_ID");
 	return policy
-		? { colour: rgba(policy.value), reason: "ADDON", additionalInfo: addonId }
-		: { colour: "ADDON", reason: "ADDON", additionalInfo: addonId };
+		? { colour: new colour().parse(policy.value), reason: "ADDON", additionalInfo: addonId }
+		: { colour: new colour().parse("ADDON"), reason: "ADDON", additionalInfo: addonId };
 }
 
 /**
@@ -280,20 +286,19 @@ async function getAddonPageColour(url) {
  *
  * Colour will be adjusted until the contrast ratio is adequate, and it will be stored in `current.info`.
  *
- * @param {tabs.Tab} tab The tab in a window, whose frame is being changed.
- * @param {object | string} colour An RGBA object or a colour code.
+ * @param {tabs.Tab} tab - The tab in a window, whose frame is being changed.
+ * @param {colour} colour - The colour to apply to the frame.
  */
 function setFrameColour(tab, colour) {
 	if (!tab?.active) return;
 	const windowId = tab.windowId;
-	if (typeof colour === "string") {
-		if (colourCode[colour][current.scheme]) {
-			applyTheme(windowId, colourCode[colour][current.scheme], current.scheme);
-		} else if (colourCode[colour][current.reversedScheme] && pref.allowDarkLight) {
-			applyTheme(windowId, colourCode[colour][current.reversedScheme], current.reversedScheme);
+	if (colour.code) {
+		if (colourCode[colour.code][current.scheme]) {
+			applyTheme(windowId, colourCode[colour.code][current.scheme], current.scheme);
+		} else if (colourCode[colour.code][current.reversedScheme] && pref.allowDarkLight) {
+			applyTheme(windowId, colourCode[colour.code][current.reversedScheme], current.reversedScheme);
 		} else {
-			const correctionResult = contrastCorrection(
-				colourCode[colour][current.reversedScheme],
+			const correctionResult = colourCode[colour][current.reversedScheme].contrastCorrection(
 				current.scheme,
 				pref.allowDarkLight,
 				pref.minContrast_light,
@@ -303,8 +308,7 @@ function setFrameColour(tab, colour) {
 			current.info[windowId].corrected = correctionResult.corrected;
 		}
 	} else {
-		const correctionResult = contrastCorrection(
-			colour,
+		const correctionResult = colour.contrastCorrection(
 			current.scheme,
 			pref.allowDarkLight,
 			pref.minContrast_light,
@@ -318,31 +322,31 @@ function setFrameColour(tab, colour) {
 /**
  * Constructs a theme and applies it to a given window.
  *
- * @param {number} windowId The ID of the window.
- * @param {object} colour Colour of the frame, in RGBA object.
- * @param {string} colourScheme `light` or `dark`.
+ * @param {number} windowId - The ID of the window.
+ * @param {colour} colour - Colour of the frame.
+ * @param {string} colourScheme - `light` or `dark`.
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {
 		const theme = {
 			colors: {
-				// active
-				button_background_active: dimColourString(colour, -1.5 * pref.tabSelected),
-				frame: dimColourString(colour, -1.5 * pref.tabbar),
-				frame_inactive: dimColourString(colour, -1.5 * pref.tabbar),
-				ntp_background: dimColourString(colourCode.HOME[current.scheme], 0),
-				popup: dimColourString(colour, -1.5 * pref.popup),
-				popup_border: dimColourString(colour, -1.5 * (pref.popup + pref.popupBorder)),
-				sidebar: dimColourString(colour, -1.5 * pref.sidebar),
-				sidebar_border: dimColourString(colour, -1.5 * (pref.sidebar + pref.sidebarBorder)),
-				tab_line: dimColourString(colour, -1.5 * (pref.tabSelectedBorder + pref.tabSelected)),
-				tab_selected: dimColourString(colour, -1.5 * pref.tabSelected),
-				toolbar: dimColourString(colour, -1.5 * pref.toolbar),
-				toolbar_bottom_separator: dimColourString(colour, -1.5 * (pref.toolbarBorder + pref.toolbar)),
-				toolbar_field: dimColourString(colour, -1.5 * pref.toolbarField),
-				toolbar_field_border: dimColourString(colour, -1.5 * (pref.toolbarFieldBorder + pref.toolbarField)),
-				toolbar_field_focus: dimColourString(colour, -1.5 * pref.toolbarFieldOnFocus),
-				toolbar_top_separator: dimColourString(colour, -1.5 * (pref.tabbarBorder + pref.tabbar)),
+				// adaptive
+				button_background_active: colour.dim(-1.5 * pref.tabSelected).toRGBA(),
+				frame: colour.dim(-1.5 * pref.tabbar).toRGBA(),
+				frame_inactive: colour.dim(-1.5 * pref.tabbar).toRGBA(),
+				ntp_background: colourCode.HOME[current.scheme].dim(0).toRGBA(),
+				popup: colour.dim(-1.5 * pref.popup).toRGBA(),
+				popup_border: colour.dim(-1.5 * (pref.popup + pref.popupBorder)).toRGBA(),
+				sidebar: colour.dim(-1.5 * pref.sidebar).toRGBA(),
+				sidebar_border: colour.dim(-1.5 * (pref.sidebar + pref.sidebarBorder)).toRGBA(),
+				tab_line: colour.dim(-1.5 * (pref.tabSelectedBorder + pref.tabSelected)).toRGBA(),
+				tab_selected: colour.dim(-1.5 * pref.tabSelected).toRGBA(),
+				toolbar: colour.dim(-1.5 * pref.toolbar).toRGBA(),
+				toolbar_bottom_separator: colour.dim(-1.5 * (pref.toolbarBorder + pref.toolbar)).toRGBA(),
+				toolbar_field: colour.dim(-1.5 * pref.toolbarField).toRGBA(),
+				toolbar_field_border: colour.dim(-1.5 * (pref.toolbarFieldBorder + pref.toolbarField)).toRGBA(),
+				toolbar_field_focus: colour.dim(-1.5 * pref.toolbarFieldOnFocus).toRGBA(),
+				toolbar_top_separator: colour.dim(-1.5 * (pref.tabbarBorder + pref.tabbar)).toRGBA(),
 				// static
 				icons: "rgb(0, 0, 0)",
 				ntp_text: "rgb(0, 0, 0)",
@@ -355,6 +359,8 @@ function applyTheme(windowId, colour, colourScheme) {
 				button_background_hover: "rgba(0, 0, 0, 0.11)",
 				toolbar_vertical_separator: "rgba(0, 0, 0, 0.11)",
 				toolbar_field_border_focus: "AccentColor",
+				popup_highlight: "AccentColor",
+				sidebar_highlight: "AccentColor",
 			},
 			properties: {
 				// More on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#properties
@@ -367,23 +373,23 @@ function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "dark") {
 		const theme = {
 			colors: {
-				// active
-				button_background_active: dimColourString(colour, pref.tabSelected),
-				frame: dimColourString(colour, pref.tabbar),
-				frame_inactive: dimColourString(colour, pref.tabbar),
-				ntp_background: dimColourString(colourCode.HOME[current.scheme], 0),
-				popup: dimColourString(colour, pref.popup),
-				popup_border: dimColourString(colour, pref.popup + pref.popupBorder),
-				sidebar: dimColourString(colour, pref.sidebar),
-				sidebar_border: dimColourString(colour, pref.sidebar + pref.sidebarBorder),
-				tab_line: dimColourString(colour, pref.tabSelectedBorder + pref.tabSelected),
-				tab_selected: dimColourString(colour, pref.tabSelected),
-				toolbar: dimColourString(colour, pref.toolbar),
-				toolbar_bottom_separator: dimColourString(colour, pref.toolbarBorder + pref.toolbar),
-				toolbar_field: dimColourString(colour, pref.toolbarField),
-				toolbar_field_border: dimColourString(colour, pref.toolbarFieldBorder + pref.toolbarField),
-				toolbar_field_focus: dimColourString(colour, pref.toolbarFieldOnFocus),
-				toolbar_top_separator: dimColourString(colour, pref.tabbarBorder + pref.tabbar),
+				// adaptive
+				button_background_active: colour.dim(pref.tabSelected).toRGBA(),
+				frame: colour.dim(pref.tabbar).toRGBA(),
+				frame_inactive: colour.dim(pref.tabbar).toRGBA(),
+				ntp_background: colourCode.HOME[current.scheme].dim(0).toRGBA(),
+				popup: colour.dim(pref.popup).toRGBA(),
+				popup_border: colour.dim(pref.popup + pref.popupBorder).toRGBA(),
+				sidebar: colour.dim(pref.sidebar).toRGBA(),
+				sidebar_border: colour.dim(pref.sidebar + pref.sidebarBorder).toRGBA(),
+				tab_line: colour.dim(pref.tabSelectedBorder + pref.tabSelected).toRGBA(),
+				tab_selected: colour.dim(pref.tabSelected).toRGBA(),
+				toolbar: colour.dim(pref.toolbar).toRGBA(),
+				toolbar_bottom_separator: colour.dim(pref.toolbarBorder + pref.toolbar).toRGBA(),
+				toolbar_field: colour.dim(pref.toolbarField).toRGBA(),
+				toolbar_field_border: colour.dim(pref.toolbarFieldBorder + pref.toolbarField).toRGBA(),
+				toolbar_field_focus: colour.dim(pref.toolbarFieldOnFocus).toRGBA(),
+				toolbar_top_separator: colour.dim(pref.tabbarBorder + pref.tabbar).toRGBA(),
 				// static
 				icons: "rgb(255, 255, 255)",
 				ntp_text: "rgb(255, 255, 255)",
@@ -396,6 +402,8 @@ function applyTheme(windowId, colour, colourScheme) {
 				button_background_hover: "rgba(255, 255, 255, 0.11)",
 				toolbar_vertical_separator: "rgba(255, 255, 255, 0.11)",
 				toolbar_field_border_focus: "AccentColor",
+				popup_highlight: "AccentColor",
+				sidebar_highlight: "AccentColor",
 			},
 			properties: {
 				color_scheme: "system",
