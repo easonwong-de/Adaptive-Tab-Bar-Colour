@@ -1,6 +1,22 @@
 "use strict";
 
-import { colourCodes } from "./default_values";
+/**
+ * All possible colour codes.
+ *
+ * Each of which represents a certain colour determined by the browser.
+ */
+const colourCodes = [
+	"HOME",
+	"FALLBACK",
+	"PLAINTEXT",
+	"SYSTEM",
+	"ADDON",
+	"PDFVIEWER",
+	"IMAGEVIEWER ",
+	"JSONVIEWER",
+	"DEFAULT",
+	"ACCENT",
+];
 
 /**
  * Represents a colour with RGBA channels or a predefined colour code.
@@ -37,7 +53,7 @@ export default class colour {
 	/**
 	 * Parses the given initialiser to set the colour value for the current instance.
 	 *
-	 * @param {string|colour} initialiser - The value to parse. Can be a colour code string, a CSS colour string, or another colour instance.
+	 * @param {string|colour|object} initialiser - The value to parse. Can be a colour code string, a CSS colour string, another colour instance, or an object with r, g, b, a properties.
 	 * @returns {colour} Returns the current colour instance.
 	 * @throws {Error} Throws an error if the input cannot be parsed as a colour.
 	 */
@@ -61,8 +77,16 @@ export default class colour {
 		} else if (initialiser instanceof colour) {
 			if (initialiser.code) this.#code = initialiser.code;
 			else this.rgba(initialiser.r, initialiser.g, initialiser.b, initialiser.a);
+		} else if (
+			typeof initialiser === "object" &&
+			"r" in initialiser &&
+			"g" in initialiser &&
+			"b" in initialiser &&
+			"a" in initialiser
+		) {
+			this.rgba(initialiser.r, initialiser.g, initialiser.b, initialiser.a);
 		} else {
-			throw new Error("The input can't be parsed");
+			throw new Error("The input value can't be parsed");
 		}
 		return this;
 	}
