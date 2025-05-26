@@ -7,7 +7,7 @@ import {
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
 } from "./default_values.js";
-import { hex } from "./colour.js";
+import colour from "./colour.js";
 
 export default class preference {
 	/** The content of the preference */
@@ -223,14 +223,14 @@ export default class preference {
 						headerType: "ADDON_ID",
 						header: site.replace("Add-on ID: ", ""),
 						type: "COLOUR",
-						value: hex(legacyPolicy),
+						value: new colour().parse(legacyPolicy).toHex(),
 					};
 				} else {
 					newSiteList[id++] = {
 						headerType: "URL",
 						header: site,
 						type: "COLOUR",
-						value: hex(legacyPolicy),
+						value: new colour().parse(legacyPolicy).toHex(),
 					};
 				}
 			}
