@@ -16,11 +16,32 @@ export default class colour {
 	#code;
 
 	/**
-	 * Creates a new colour instance from a colour code, CSS colour string, or RGBA array.
+	 * Assigns RGBA values to the colour instance.
 	 *
-	 * @param {string|number[]} [initialiser] - The initial colour value. Can be a colour code (string), a CSS colour string, or an array of RGBA values. If omitted, creates a transparent colour instance.
+	 * @param {number} r - Red channel (0-255).
+	 * @param {number} g - Green channel (0-255).
+	 * @param {number} b - Blue channel (0-255).
+	 * @param {number} a - Alpha channel (0-1).
+	 * @returns {colour} The colour instance with the assigned RGBA values.
+	 * @throws {Error} If the colour is defined by a colour code.
 	 */
-	constructor(initialiser = undefined) {
+	rgba(r, g, b, a) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+		this.#code = undefined;
+		return this;
+	}
+
+	/**
+	 * Parses the given initialiser to set the colour value for the current instance.
+	 *
+	 * @param {string|colour} initialiser - The value to parse. Can be a colour code string, a CSS colour string, or another colour instance.
+	 * @returns {colour} Returns the current colour instance.
+	 * @throws {Error} Throws an error if the input cannot be parsed as a colour.
+	 */
+	parse(initialiser) {
 		if (colourCodes.includes(initialiser)) {
 			this.#code = initialiser;
 		} else if (typeof initialiser === "string") {
@@ -37,27 +58,12 @@ export default class colour {
 			} else {
 				this.rgba(...parsedColour.match(/[.?\d]+/g).map(Number));
 			}
-		} else if (Array.isArray(initialiser)) {
-			this.rgba(...initialiser);
+		} else if (initialiser instanceof colour) {
+			if (initialiser.code) this.#code = initialiser.code;
+			else this.rgba(initialiser.r, initialiser.g, initialiser.b, initialiser.a);
+		} else {
+			throw new Error("The input can't be parsed");
 		}
-	}
-
-	/**
-	 * Assigns RGBA values to the colour instance.
-	 *
-	 * @param {number} r - Red channel (0-255).
-	 * @param {number} g - Green channel (0-255).
-	 * @param {number} b - Blue channel (0-255).
-	 * @param {number} a - Alpha channel (0-1).
-	 * @returns {colour} The colour instance with the assigned RGBA values.
-	 * @throws {Error} If the colour is defined by a colour code.
-	 */
-	rgba(r, g, b, a) {
-		this.#noCode();
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
 		return this;
 	}
 
