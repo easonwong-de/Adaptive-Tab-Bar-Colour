@@ -262,7 +262,7 @@ export default class colour {
 	 */
 	toRGBA() {
 		this.#noCode();
-		return `rgb(${this.#r}, ${this.#g}, ${this.#b}, ${this.#a}))`;
+		return `rgb(${this.#r}, ${this.#g}, ${this.#b}, ${this.#a})`;
 	}
 
 	/**
