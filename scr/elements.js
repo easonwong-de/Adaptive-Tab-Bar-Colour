@@ -4,7 +4,7 @@ import colour from "./colour.js";
 
 /**
  * Sets up a checkbox element with an onChange callback.
- * 
+ *
  * @param {HTMLElement} checkbox - The checkbox element to set up.
  * @param {(pref: string, checked: boolean) => void} onChange - Callback invoked when the checkbox is clicked.
  */
@@ -16,7 +16,7 @@ export function setupCheckbox(checkbox, onChange) {
 
 /**
  * Sets the checked state of a checkbox element.
- * 
+ *
  * @param {HTMLElement} checkbox - The checkbox element.
  * @param {boolean} value - The value to set (checked or not).
  */
@@ -26,7 +26,7 @@ export function setCheckboxValue(checkbox, value) {
 
 /**
  * Sets up a slider element with increment / decrement buttons and an onChange callback.
- * 
+ *
  * @param {HTMLElement} slider - The slider element to set up.
  * @param {(pref: string, value: number) => void} onChange - Callback invoked when the slider value changes.
  */
@@ -49,7 +49,7 @@ export function setupSlider(slider, onChange) {
 
 /**
  * Sets the value of a slider element and updates its display.
- * 
+ *
  * @param {HTMLElement} slider - The slider element.
  * @param {number} value - The value to set.
  */
@@ -65,7 +65,7 @@ export function setSliderValue(slider, value) {
 
 /**
  * Sets up a policy header input field with an initial value and onChange callback.
- * 
+ *
  * @param {HTMLElement} policyHeaderInputWrapper - The wrapper element containing the input.
  * @param {string} initialValue - The initial value to set.
  * @param {(value: string) => void} onChange - Callback invoked when the input value changes.
@@ -82,7 +82,7 @@ export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, o
 
 /**
  * Sets the value of a policy header input field.
- * 
+ *
  * @param {HTMLElement} policyHeaderInputWrapper - The wrapper element containing the input.
  * @param {string} value - The value to set.
  */
@@ -93,7 +93,7 @@ export function setPolicyHeaderInputValue(policyHeaderInputWrapper, value) {
 
 /**
  * Gets the value of a policy header input field.
- * 
+ *
  * @param {HTMLElement} policyHeaderInputWrapper - The wrapper element containing the input.
  * @returns {string} The current value of the input.
  */
@@ -104,7 +104,7 @@ export function getPolicyHeaderInputValue(policyHeaderInputWrapper) {
 
 /**
  * Sets up a colour input field and colour picker with an initial colour and onChange callback.
- * 
+ *
  * @param {HTMLElement} colourInputWrapper - The wrapper element containing the colour input and picker.
  * @param {string} initialColour - The initial colour value (hex).
  * @param {(colour: string) => void} onChange - Callback invoked when the colour changes.
@@ -118,7 +118,7 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 	colourPickerInput.value = initialColour;
 	colourInput.addEventListener("focus", () => colourInput.select());
 	colourInput.addEventListener("blur", () => {
-		const hex = new colour().parse(colourInput.value).toHex();
+		const hex = new colour().parse(colourInput.value, false).toHex();
 		colourInput.value = hex;
 		colourPicker.style.backgroundColor = hex;
 		colourPickerInput.value = hex;
@@ -128,7 +128,7 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 		if (event.key === "Enter") colourInput.blur();
 	});
 	colourInput.addEventListener("input", () => {
-		const hex = new colour().parse(colourInput.value).toHex();
+		const hex = new colour().parse(colourInput.value, false).toHex();
 		colourPicker.style.backgroundColor = hex;
 		colourPickerInput.value = hex;
 		onChange(hex);
@@ -143,7 +143,7 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 
 /**
  * Sets the value of a colour input field and updates the picker display.
- * 
+ *
  * @param {HTMLElement} colourInputWrapper - The wrapper element containing the colour input and picker.
  * @param {string} value - The colour value to set (hex).
  */
@@ -158,7 +158,7 @@ export function setColourInputValue(colourInputWrapper, value) {
 
 /**
  * Gets the value of a colour input field.
- * 
+ *
  * @param {HTMLElement} colourInputWrapper - The wrapper element containing the colour input and picker.
  * @returns {string} The current colour value (hex).
  */
@@ -169,7 +169,7 @@ export function getColourInputValue(colourInputWrapper) {
 
 /**
  * Sets up a theme colour switch with an initial selection and onChange callback.
- * 
+ *
  * @param {HTMLElement} themeColourSwitchWrapper - The wrapper containing the radio buttons.
  * @param {boolean} initialSelection - Whether to use the theme colour initially.
  * @param {(useTheme: boolean) => void} onChange - Callback invoked when the selection changes.
@@ -188,7 +188,7 @@ export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelectio
 
 /**
  * Sets the value of a theme colour switch.
- * 
+ *
  * @param {HTMLElement} themeColourSwitchWrapper - The wrapper containing the radio buttons.
  * @param {boolean} value - Whether to use the theme colour.
  */
@@ -201,7 +201,7 @@ export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
 
 /**
  * Gets the value of a theme colour switch.
- * 
+ *
  * @param {HTMLElement} themeColourSwitchWrapper - The wrapper containing the radio buttons.
  * @returns {boolean} True if the theme colour is selected, false otherwise.
  */
@@ -212,7 +212,7 @@ export function getThemeColourSwitchValue(themeColourSwitchWrapper) {
 
 /**
  * Sets up a query selector input field with an initial value and onChange callback.
- * 
+ *
  * @param {HTMLElement} QuerySelectorInputWrapper - The wrapper element containing the input.
  * @param {string} initialQuerySelector - The initial query selector value.
  * @param {(value: string) => void} onChange - Callback invoked when the input value changes.
@@ -229,7 +229,7 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
 
 /**
  * Sets the value of a query selector input field.
- * 
+ *
  * @param {HTMLElement} QuerySelectorInputWrapper - The wrapper element containing the input.
  * @param {string} value - The value to set.
  */
@@ -240,7 +240,7 @@ export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
 
 /**
  * Gets the value of a query selector input field.
- * 
+ *
  * @param {HTMLElement} QuerySelectorInputWrapper - The wrapper element containing the input.
  * @returns {string} The current value of the input.
  */
@@ -251,7 +251,7 @@ export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
 
 /**
  * Sets the ID for a colour policy section and updates related element attributes.
- * 
+ *
  * @param {HTMLElement} policySection - The policy section element.
  * @param {number} id - The ID to set.
  */
@@ -263,7 +263,7 @@ export function setColourPolicySectionId(policySection, id) {
 
 /**
  * Sets the ID for a flexible policy section and updates related element attributes.
- * 
+ *
  * @param {HTMLElement} policySection - The policy section element.
  * @param {number} id - The ID to set.
  */

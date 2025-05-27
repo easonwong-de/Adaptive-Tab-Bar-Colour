@@ -51,14 +51,15 @@ export default class colour {
 	}
 
 	/**
-	 * Parses the given initialiser to set the colour value for the current instance.
+	 * Parses the given initialiser to set the colour value.
 	 *
-	 * @param {string|colour|object} initialiser - The value to parse. Can be a colour code string, a CSS colour string, another colour instance, or an object with r, g, b, a properties.
-	 * @returns {colour} Returns the current colour instance.
-	 * @throws {Error} Throws an error if the input cannot be parsed as a colour.
+	 * @param {string|object|colour} initialiser - The value to parse. Can be a colour code string, a CSS colour string, an instance of the `colour` class, or an RGBA object.
+	 * @param {boolean} [acceptCode=true] - Whether to accept predefined colour codes.
+	 * @returns {this} Returns the current instance for chaining.
+	 * @throws {Error} Throws an error if the input value can't be parsed.
 	 */
-	parse(initialiser) {
-		if (colourCodes.includes(initialiser)) {
+	parse(initialiser, acceptCode = true) {
+		if (acceptCode && colourCodes.includes(initialiser)) {
 			this.#code = initialiser;
 		} else if (typeof initialiser === "string") {
 			const ctx = document.createElement("canvas").getContext("2d");
