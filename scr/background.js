@@ -342,11 +342,17 @@ function applyTheme(windowId, colour, colourScheme) {
 				tab_line: colour.dim(-1.5 * (pref.tabSelectedBorder + pref.tabSelected)).toRGBA(),
 				tab_selected: colour.dim(-1.5 * pref.tabSelected).toRGBA(),
 				toolbar: colour.dim(-1.5 * pref.toolbar).toRGBA(),
-				toolbar_bottom_separator: colour.dim(-1.5 * (pref.toolbarBorder + pref.toolbar)).toRGBA(),
+				toolbar_bottom_separator:
+					pref.toolbarBorder === 0
+						? "transparent"
+						: colour.dim(-1.5 * (pref.toolbarBorder + pref.toolbar)).toRGBA(),
 				toolbar_field: colour.dim(-1.5 * pref.toolbarField).toRGBA(),
 				toolbar_field_border: colour.dim(-1.5 * (pref.toolbarFieldBorder + pref.toolbarField)).toRGBA(),
 				toolbar_field_focus: colour.dim(-1.5 * pref.toolbarFieldOnFocus).toRGBA(),
-				toolbar_top_separator: colour.dim(-1.5 * (pref.tabbarBorder + pref.tabbar)).toRGBA(),
+				toolbar_top_separator:
+					pref.tabbarBorder === 0
+						? "transparent"
+						: colour.dim(-1.5 * (pref.tabbarBorder + pref.tabbar)).toRGBA(),
 				// static
 				icons: "rgb(0, 0, 0)",
 				ntp_text: "rgb(0, 0, 0)",
@@ -385,11 +391,13 @@ function applyTheme(windowId, colour, colourScheme) {
 				tab_line: colour.dim(pref.tabSelectedBorder + pref.tabSelected).toRGBA(),
 				tab_selected: colour.dim(pref.tabSelected).toRGBA(),
 				toolbar: colour.dim(pref.toolbar).toRGBA(),
-				toolbar_bottom_separator: colour.dim(pref.toolbarBorder + pref.toolbar).toRGBA(),
+				toolbar_bottom_separator:
+					pref.toolbarBorder === 0 ? "transparent" : colour.dim(pref.toolbarBorder + pref.toolbar).toRGBA(),
 				toolbar_field: colour.dim(pref.toolbarField).toRGBA(),
 				toolbar_field_border: colour.dim(pref.toolbarFieldBorder + pref.toolbarField).toRGBA(),
 				toolbar_field_focus: colour.dim(pref.toolbarFieldOnFocus).toRGBA(),
-				toolbar_top_separator: colour.dim(pref.tabbarBorder + pref.tabbar).toRGBA(),
+				toolbar_top_separator:
+					pref.tabbarBorder === 0 ? "transparent" : colour.dim(pref.tabbarBorder + pref.tabbar).toRGBA(),
 				// static
 				icons: "rgb(255, 255, 255)",
 				ntp_text: "rgb(255, 255, 255)",
