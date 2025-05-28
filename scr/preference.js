@@ -338,35 +338,23 @@ export default class preference {
 	}
 
 	/**
-	 * Finds the ID of the 1. most specific 2. most recently created policy that matches the given URL from the site list.
-	 *
-	 * Specificity from high to low:
-	 *
-	 *   1. Exact URL match with or w/o the final "/"
-	 *   2. Regular expression match
-	 *   3. Wildcard pattern match
-	 *   4. Hostname match
-	 * 
-	 * If more than one policies of the same specificity are found, the ID of the most recently created one will be returned.
+	 * Finds the ID of the most recently created policy that matches the given URL from the site list.
 	 *
 	 * @param {string} url - The site URL to match against the policy headers.
 	 * @returns {number} The ID of the most specific matching policy, or 0 if no match is found.
 	 */
 	getURLPolicyId(url) {
 		let result = 0;
-		let specificity = 0;
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
 			if (!policy || policy.header === "" || policy.headerType !== "URL") continue;
-			if (specificity <= 4 && (policy.header === url || policy.header === `${url}/`)) {
+			if (id > result && (policy.header === url || policy.header === `${url}/`)) {
 				result = +id;
-				specificity = 4;
 				continue;
 			}
 			try {
-				if (specificity <= 3 && new RegExp(`^${policy.header}$`).test(url)) {
+				if (id > result && new RegExp(`^${policy.header}$`).test(url)) {
 					result = +id;
-					specificity = 3;
 					continue;
 				}
 			} catch (error) {}
@@ -375,16 +363,14 @@ export default class preference {
 					.replaceAll(/[-/\\^$+?.()|[\]{}]/g, "\\$&")
 					.replaceAll(/\*/g, ".*")
 					.replaceAll(/\?/g, ".");
-				if (specificity <= 2 && new RegExp(`^${wildcardPattern}$`).test(url)) {
+				if (id > result && new RegExp(`^${wildcardPattern}$`).test(url)) {
 					result = +id;
-					specificity = 2;
 					continue;
 				}
 			} catch (error) {}
 			try {
-				if (specificity <= 1 && policy.header === new URL(url).hostname) {
+				if (id > result && policy.header === new URL(url).hostname) {
 					result = +id;
-					specificity = 1;
 					continue;
 				}
 			} catch (error) {}
@@ -394,7 +380,7 @@ export default class preference {
 
 	/**
 	 * Retrieves the policy ID that matches the given add-on ID.
-	 * 
+	 *
 	 * If multiple policies for the same add-on ID are present, return the ID of the most recently created one.
 	 *
 	 * @param {string} addonId - The add-on ID to match against the policy list.
@@ -405,7 +391,7 @@ export default class preference {
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
 			if (!policy || policy?.headerType !== "ADDON_ID") continue;
-			if (policy.header === addonId) {
+			if (id > result && policy.header === addonId) {
 				result = +id;
 				continue;
 			}
