@@ -76,10 +76,10 @@ async function updateInfoDisplay(nthTry = 0) {
 				additionalInfo: null,
 				infoAction: async () => {
 					const header = new URL(tab.url).hostname;
-					const policyId = pref.getPolicyId(tab.url);
+					const policyId = pref.getURLPolicyId(tab.url);
 					const policy = pref.getPolicy(policyId);
 					if (policyId && policy?.header === header && policy?.type === "THEME_COLOUR") {
-						pref.rewritePolicy(policyId, {
+						pref.setPolicy(policyId, {
 							headerType: "URL",
 							header: header,
 							type: "THEME_COLOUR",
@@ -109,7 +109,7 @@ async function updateInfoDisplay(nthTry = 0) {
  */
 async function getAddonPageInfo(addonId) {
 	const addonName = (await browser.management.get(addonId)).name;
-	if (pref.getPolicy(addonId, "ADDON_ID")) {
+	if (pref.getPolicy(pref.getAddonPolicyId(addonId))) {
 		return {
 			reason: "ADDON_SPECIFIED",
 			additionalInfo: addonName,
@@ -144,7 +144,7 @@ async function specifyColourForAddon(addonId, colourHex, openOptionsPage = false
 			value: colourHex,
 		});
 	} else {
-		pref.removePolicy(pref.getPolicyId(addonId, "ADDON_ID"));
+		pref.removePolicy(pref.getAddonPolicyId(addonId));
 	}
 	await applySettings();
 	if (openOptionsPage) browser.runtime.openOptionsPage();

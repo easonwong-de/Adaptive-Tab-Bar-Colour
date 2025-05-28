@@ -256,10 +256,10 @@ export default class preference {
 			"popup",
 			"popupBorder",
 		].forEach((key) => {
-			this.#content[key] = this.validateNumericPref(this.#content[key], { min: -50, max: 50, step: 5 });
+			this.#content[key] = this.#validateNumericPref(this.#content[key], { min: -50, max: 50, step: 5 });
 		});
 		["minContrast_light", "minContrast_dark"].forEach((key) => {
-			this.#content[key] = this.validateNumericPref(this.#content[key], { min: 0, max: 210, step: 15 });
+			this.#content[key] = this.#validateNumericPref(this.#content[key], { min: 0, max: 210, step: 15 });
 		});
 		// Updates the pref version
 		this.#content.version = addonVersion;
@@ -293,61 +293,22 @@ export default class preference {
 	}
 
 	/**
-	 * Returns the policy for a policy ID / URL / add-on ID from the site list.
+	 * Returns the policy for a policy ID from the site list.
 	 *
 	 * Newly added policies have higher priority.
 	 *
 	 * Returns `undefined` if nothing matches.
 	 *
-	 * @param {number | string} site Policy ID, URL or add-on ID.
-	 * @param {string} headerType `URL` (by default), or `ADDON_ID`.
+	 * @param {number} id - Policy ID.
 	 */
-	getPolicy(site, headerType = "URL") {
-		if (typeof site === "number") return this.#content.siteList[site];
-		else return this.#content.siteList[this.getPolicyId(site, headerType)];
-	}
-
-	/**
-	 * Gets the policy ID for a URL / add-on ID from the site list.
-	 *
-	 * Policies with bigger `id` number / newly added policies have higher priority.
-	 *
-	 * Returns `0` if there's no match.
-	 *
-	 * @param {string} site URL or add-on ID.
-	 * @param {string} headerType `URL` (by default), or `ADDON_ID`.
-	 */
-	getPolicyId(site, headerType = "URL") {
-		let result = 0;
-		for (const id in this.#content.siteList) {
-			const policy = this.#content.siteList[id];
-			if (!policy || policy.header === "" || policy.headerType !== headerType) {
-				continue;
-			} else if (policy.header === site) {
-				result = +id;
-				continue;
-			} else if (headerType === "URL") {
-				try {
-					if (policy.header === new URL(site).hostname) {
-						result = +id;
-						continue;
-					}
-				} catch (error) {}
-				try {
-					if (new RegExp(`^${policy.header}\$`).test(site)) {
-						result = +id;
-						continue;
-					}
-				} catch (error) {}
-			}
-		}
-		return result;
+	getPolicy(id) {
+		return this.#content.siteList[id];
 	}
 
 	/**
 	 * Adds a policy to the site list.
 	 *
-	 * @param {object} policy The policy to add.
+	 * @param {object} policy - The policy to add.
 	 * @returns The ID of the policy.
 	 */
 	addPolicy(policy) {
@@ -358,22 +319,98 @@ export default class preference {
 	}
 
 	/**
-	 * Rewrites a certain policy.
+	 * Sets a certain policy to a given ID.
 	 *
-	 * @param {number | string} id The ID of the policy.
-	 * @param {object} policy The new policy.
+	 * @param {number} id - The ID of the policy.
+	 * @param {object} policy - The new policy.
 	 */
-	rewritePolicy(id, policy) {
+	setPolicy(id, policy) {
 		this.#content.siteList[id] = policy;
 	}
 
 	/**
 	 * Removes a policy from the site list by setting the policy to `null`.
 	 *
-	 * @param {number | string} id The ID of a policy.
+	 * @param {number} id - The ID of a policy.
 	 */
 	removePolicy(id) {
 		this.#content.siteList[id] = null;
+	}
+
+	/**
+	 * Finds the ID of the 1. most specific 2. most recently created policy that matches the given URL from the site list.
+	 *
+	 * Specificity from high to low:
+	 *
+	 *   1. Exact URL match with or w/o the final "/"
+	 *   2. Regular expression match
+	 *   3. Wildcard pattern match
+	 *   4. Hostname match
+	 * 
+	 * If more than one policies of the same specificity are found, the ID of the most recently created one will be returned.
+	 *
+	 * @param {string} url - The site URL to match against the policy headers.
+	 * @returns {number} The ID of the most specific matching policy, or 0 if no match is found.
+	 */
+	getURLPolicyId(url) {
+		let result = 0;
+		let specificity = 0;
+		for (const id in this.#content.siteList) {
+			const policy = this.#content.siteList[id];
+			if (!policy || policy.header === "" || policy.headerType !== "URL") continue;
+			if (specificity <= 4 && (policy.header === url || policy.header === `${url}/`)) {
+				result = +id;
+				specificity = 4;
+				continue;
+			}
+			try {
+				if (specificity <= 3 && new RegExp(`^${policy.header}$`).test(url)) {
+					result = +id;
+					specificity = 3;
+					continue;
+				}
+			} catch (error) {}
+			try {
+				const wildcardPattern = policy.header
+					.replaceAll(/[-/\\^$+?.()|[\]{}]/g, "\\$&")
+					.replaceAll(/\*/g, ".*")
+					.replaceAll(/\?/g, ".");
+				if (specificity <= 2 && new RegExp(`^${wildcardPattern}$`).test(url)) {
+					result = +id;
+					specificity = 2;
+					continue;
+				}
+			} catch (error) {}
+			try {
+				if (specificity <= 1 && policy.header === new URL(url).hostname) {
+					result = +id;
+					specificity = 1;
+					continue;
+				}
+			} catch (error) {}
+		}
+		return result;
+	}
+
+	/**
+	 * Retrieves the policy ID that matches the given add-on ID.
+	 * 
+	 * If multiple policies for the same add-on ID are present, return the ID of the most recently created one.
+	 *
+	 * @param {string} addonId - The add-on ID to match against the policy list.
+	 * @returns {number} The ID of the matching policy, or 0 if no match is found.
+	 */
+	getAddonPolicyId(addonId) {
+		let result = 0;
+		for (const id in this.#content.siteList) {
+			const policy = this.#content.siteList[id];
+			if (!policy || policy?.headerType !== "ADDON_ID") continue;
+			if (policy.header === addonId) {
+				result = +id;
+				continue;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -386,7 +423,7 @@ export default class preference {
 	 * @param {number} options.step The step size for rounding.
 	 * @returns {number} The validated and adjusted number.
 	 */
-	validateNumericPref(num, { min, max, step }) {
+	#validateNumericPref(num, { min, max, step }) {
 		if (-1 < num && num < 1) num = Math.round(num * 100);
 		num = Math.max(min, Math.min(max, num));
 		const remainder = (num - min) % step;
@@ -397,6 +434,7 @@ export default class preference {
 	get allowDarkLight() {
 		return this.#content.allowDarkLight;
 	}
+
 	set allowDarkLight(value) {
 		this.#content.allowDarkLight = value;
 	}
@@ -404,6 +442,7 @@ export default class preference {
 	get dynamic() {
 		return this.#content.dynamic;
 	}
+
 	set dynamic(value) {
 		this.#content.dynamic = value;
 	}
@@ -411,6 +450,7 @@ export default class preference {
 	get noThemeColour() {
 		return this.#content.noThemeColour;
 	}
+
 	set noThemeColour(value) {
 		this.#content.noThemeColour = value;
 	}
@@ -418,6 +458,7 @@ export default class preference {
 	get tabbar() {
 		return this.#content.tabbar;
 	}
+
 	set tabbar(value) {
 		this.#content.tabbar = value;
 	}
@@ -425,6 +466,7 @@ export default class preference {
 	get tabbarBorder() {
 		return this.#content.tabbarBorder;
 	}
+
 	set tabbarBorder(value) {
 		this.#content.tabbarBorder = value;
 	}
@@ -432,6 +474,7 @@ export default class preference {
 	get tabSelected() {
 		return this.#content.tabSelected;
 	}
+
 	set tabSelected(value) {
 		this.#content.tabSelected = value;
 	}
@@ -439,6 +482,7 @@ export default class preference {
 	get tabSelectedBorder() {
 		return this.#content.tabSelectedBorder;
 	}
+
 	set tabSelectedBorder(value) {
 		this.#content.tabSelectedBorder = value;
 	}
@@ -446,6 +490,7 @@ export default class preference {
 	get toolbar() {
 		return this.#content.toolbar;
 	}
+
 	set toolbar(value) {
 		this.#content.toolbar = value;
 	}
@@ -453,6 +498,7 @@ export default class preference {
 	get toolbarBorder() {
 		return this.#content.toolbarBorder;
 	}
+
 	set toolbarBorder(value) {
 		this.#content.toolbarBorder = value;
 	}
@@ -460,6 +506,7 @@ export default class preference {
 	get toolbarField() {
 		return this.#content.toolbarField;
 	}
+
 	set toolbarField(value) {
 		this.#content.toolbarField = value;
 	}
@@ -467,6 +514,7 @@ export default class preference {
 	get toolbarFieldBorder() {
 		return this.#content.toolbarFieldBorder;
 	}
+
 	set toolbarFieldBorder(value) {
 		this.#content.toolbarFieldBorder = value;
 	}
@@ -474,6 +522,7 @@ export default class preference {
 	get toolbarFieldOnFocus() {
 		return this.#content.toolbarFieldOnFocus;
 	}
+
 	set toolbarFieldOnFocus(value) {
 		this.#content.toolbarFieldOnFocus = value;
 	}
@@ -481,6 +530,7 @@ export default class preference {
 	get sidebar() {
 		return this.#content.sidebar;
 	}
+
 	set sidebar(value) {
 		this.#content.sidebar = value;
 	}
@@ -488,6 +538,7 @@ export default class preference {
 	get sidebarBorder() {
 		return this.#content.sidebarBorder;
 	}
+
 	set sidebarBorder(value) {
 		this.#content.sidebarBorder = value;
 	}
@@ -495,6 +546,7 @@ export default class preference {
 	get popup() {
 		return this.#content.popup;
 	}
+
 	set popup(value) {
 		this.#content.popup = value;
 	}
@@ -502,6 +554,7 @@ export default class preference {
 	get popupBorder() {
 		return this.#content.popupBorder;
 	}
+
 	set popupBorder(value) {
 		this.#content.popupBorder = value;
 	}
@@ -509,6 +562,7 @@ export default class preference {
 	get minContrast_light() {
 		return this.#content.minContrast_light;
 	}
+
 	set minContrast_light(value) {
 		this.#content.minContrast_light = value;
 	}
@@ -516,6 +570,7 @@ export default class preference {
 	get minContrast_dark() {
 		return this.#content.minContrast_dark;
 	}
+
 	set minContrast_dark(value) {
 		this.#content.minContrast_dark = value;
 	}
@@ -523,6 +578,7 @@ export default class preference {
 	get homeBackground_light() {
 		return this.#content.homeBackground_light;
 	}
+
 	set homeBackground_light(value) {
 		this.#content.homeBackground_light = value;
 	}
@@ -530,6 +586,7 @@ export default class preference {
 	get homeBackground_dark() {
 		return this.#content.homeBackground_dark;
 	}
+
 	set homeBackground_dark(value) {
 		this.#content.homeBackground_dark = value;
 	}
@@ -537,6 +594,7 @@ export default class preference {
 	get fallbackColour_light() {
 		return this.#content.fallbackColour_light;
 	}
+
 	set fallbackColour_light(value) {
 		this.#content.fallbackColour_light = value;
 	}
@@ -544,6 +602,7 @@ export default class preference {
 	get fallbackColour_dark() {
 		return this.#content.fallbackColour_dark;
 	}
+
 	set fallbackColour_dark(value) {
 		this.#content.fallbackColour_dark = value;
 	}
@@ -551,6 +610,7 @@ export default class preference {
 	get siteList() {
 		return this.#content.siteList;
 	}
+
 	set siteList(value) {
 		this.#content.siteList = value;
 	}
@@ -558,6 +618,7 @@ export default class preference {
 	get version() {
 		return this.#content.version;
 	}
+
 	set version(value) {
 		this.#content.version = value;
 	}

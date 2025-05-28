@@ -162,7 +162,7 @@ async function updateTab(tab) {
  * @returns {Promise<{colour: colour, additionalInfo?: string|undefined, reason: string}>} An object containing the colour, reason, and optional additional info.
  */
 async function getTabColour(tab) {
-	const policy = pref.getPolicy(tab.url);
+	const policy = pref.getPolicy(pref.getURLPolicyId(tab.url));
 	try {
 		const response = await browser.tabs.sendMessage(tab.id, {
 			dynamic: pref.dynamic,
@@ -275,7 +275,7 @@ async function getAddonPageColour(url) {
 		}
 	}
 	if (!addonId) return { colour: new colour().parse("ADDON"), reason: "ADDON" };
-	const policy = pref.getPolicy(addonId, "ADDON_ID");
+	const policy = pref.getPolicy(pref.getAddonPolicyId(addonId));
 	return policy
 		? { colour: new colour().parse(policy.value), reason: "ADDON", additionalInfo: addonId }
 		: { colour: new colour().parse("ADDON"), reason: "ADDON", additionalInfo: addonId };
