@@ -73,7 +73,7 @@ document.querySelector("#add-new-rule").onclick = async () => {
 		value: "#000000",
 	};
 	const id = pref.addPolicy(policy);
-	policyList.appendChild(await createPolicySection(id, policy));
+	policyList.appendChild(createPolicySection(id, policy));
 	await applySettings();
 };
 
@@ -82,7 +82,7 @@ document.querySelector("#add-new-rule").onclick = async () => {
  * @param {object} policy
  * @returns
  */
-async function createPolicySection(id, policy) {
+function createPolicySection(id, policy) {
 	if (policy.headerType === "URL") {
 		const templateFlexiblePolicySection = document.querySelector("#template .policy.flexible-policy");
 		const policySection = templateFlexiblePolicySection.cloneNode(true);
@@ -91,7 +91,7 @@ async function createPolicySection(id, policy) {
 	} else if (policy.headerType === "ADDON_ID") {
 		const templateColourPolicySection = document.querySelector("#template .policy.colour-policy");
 		const policySection = templateColourPolicySection.cloneNode(true);
-		await setupColourPolicySection(policySection, id, policy);
+		setupColourPolicySection(policySection, id, policy);
 		return policySection;
 	}
 }
@@ -178,12 +178,6 @@ async function setupColourPolicySection(policySection, id, policy) {
 	const policyHeader = policySection.querySelector(".policy-header");
 	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
 	const deleteButton = policySection.querySelector("button");
-	try {
-		const addon = await browser.management.get(policy.header);
-		policyHeader.textContent = addon.name;
-	} catch (error) {
-		policyHeader.textContent = msg("addonNotFound");
-	}
 	setupColourInput(colourInputWrapper, policy.value, async (newColour) => {
 		pref.siteList[id].value = newColour;
 		await applySettings();
@@ -193,6 +187,12 @@ async function setupColourPolicySection(policySection, id, policy) {
 		policySection.remove();
 		await applySettings();
 	};
+	try {
+		const addon = await browser.management.get(policy.header);
+		policyHeader.textContent = addon.name;
+	} catch (error) {
+		policyHeader.textContent = msg("addonNotFound");
+	}
 }
 
 document.querySelector("#export-pref").onclick = () => {
@@ -213,7 +213,7 @@ importPref.addEventListener("change", async () => {
 		const prefJSON = reader.result;
 		if (await pref.JSONToPref(prefJSON)) {
 			await applySettings();
-			await updateElements();
+			await updateUI();
 			alert(msg("settingsAreImported"));
 		} else {
 			alert(msg("importFailed"));
@@ -241,14 +241,14 @@ document.querySelector("#reset-theme-builder").onclick = async () => {
 		"popupBorder",
 	].forEach((key) => pref.reset(key));
 	await applySettings();
-	await updateElements();
+	await updateUI();
 };
 
 document.querySelector("#reset-site-list").onclick = async () => {
 	if (!confirm(msg("confirmResetSiteList"))) return;
 	pref.reset("siteList");
 	await applySettings();
-	await updateElements();
+	await updateUI();
 };
 
 document.querySelector("#reset-advanced").onclick = async () => {
@@ -265,20 +265,20 @@ document.querySelector("#reset-advanced").onclick = async () => {
 		"minContrast_dark",
 	].forEach((key) => pref.reset(key));
 	await applySettings();
-	await updateElements();
+	await updateUI();
 };
 
 async function updateOptionsPage() {
 	await pref.load();
 	if (pref.valid()) {
-		if (!document.hasFocus()) await updateElements();
+		if (!document.hasFocus()) await updateUI();
 		await updateAllowDarkLightText();
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
 }
 
-async function updateElements() {
+async function updateUI() {
 	updateCheckboxes();
 	updateSliders();
 	updateFixedPolicySection();
@@ -306,7 +306,7 @@ async function updateSiteList() {
 		const policy = pref.siteList[id];
 		const policySection = policyList.querySelector(`.policy[data-id='${id}']`);
 		if (policy && !policySection) {
-			policyList.appendChild(await createPolicySection(id, policy));
+			policyList.appendChild(createPolicySection(id, policy));
 		} else if (!policy && policySection) {
 			policySection.remove();
 		} else if (!policy && !policySection) {
@@ -337,7 +337,7 @@ async function updateSiteList() {
 			const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
 			setColourInputValue(colourInputWrapper, policy.value);
 		} else {
-			policySection.replaceWith(await createPolicySection(id, policy));
+			policySection.replaceWith(createPolicySection(id, policy));
 		}
 	}
 	policyList.querySelectorAll(`.policy`).forEach((policySection) => {
