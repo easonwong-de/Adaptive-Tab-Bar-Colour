@@ -7,7 +7,6 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
 - [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
-- [automaticDark](https://addons.mozilla.org/firefox/addon/automatic-dark/)
 
 **Incompatible With:**
 

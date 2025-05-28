@@ -1,6 +1,6 @@
 {
 	"extensionName": {
-		"message": "Adaptive Tab Bar Color"
+		"message": "Adaptive Tab Bar Colour"
 	},
 
 	"extensionDescription": {
@@ -12,11 +12,11 @@
 	},
 
 	"reinstallTip": {
-		"message": "Les données de préférences pourraient être corrompues. Si le problème persiste, veuillez réinstaller le module complémentaire. Veuillez nous excuser pour la gêne occasionnée !"
+		"message": "Les données de préférences pourraient être corrompues. Si le problème persiste, veuillez réinstaller le module complémentaire. Veuillez nous excuser pour la gêne occasionnée !"
 	},
 
 	"loading": {
-		"message": "Chargement..."
+		"message": "Chargement…"
 	},
 
 	"themeBuilder": {
@@ -208,7 +208,7 @@
 	},
 
 	"confirmResetThemeBuilder": {
-		"message": "Êtes-vous sûr de vouloir réinitialiser le constructeur de thèmes ?"
+		"message": "Êtes-vous sûr de vouloir réinitialiser le constructeur de thèmes ?"
 	},
 
 	"resetSiteList": {

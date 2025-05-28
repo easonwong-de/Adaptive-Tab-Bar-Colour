@@ -7,7 +7,6 @@ Mientras navegas por la web, este complemento cambia el tema de Firefox para que
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
 - [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
-- [automaticDark](https://addons.mozilla.org/firefox/addon/automatic-dark/)
 
 **Incompatible Con:**
 

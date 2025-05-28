@@ -12,7 +12,7 @@
 	},
 
 	"reinstallTip": {
-		"message": "Preference data may be corrupted. If the issue persists, please reinstall the add-on. Apologies for the inconvenience!"
+		"message": "Preference data may be corrupted. If the issue persists, please reinstall the add-on. We apologize for the inconvenience."
 	},
 
 	"loading": {

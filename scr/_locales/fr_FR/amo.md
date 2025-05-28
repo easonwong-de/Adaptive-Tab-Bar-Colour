@@ -7,7 +7,6 @@ Lorsque vous naviguez sur le web, cette extension modifie le thème de Firefox p
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
 - [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
-- [automaticDark](https://addons.mozilla.org/firefox/addon/automatic-dark/)
 
 **Incompatible avec :**
 

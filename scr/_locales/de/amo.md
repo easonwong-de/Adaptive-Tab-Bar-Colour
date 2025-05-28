@@ -7,7 +7,6 @@ Während du im Web surfst, ändert diese Erweiterung das Theme von Firefox, um e
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
 - [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
-- [automaticDark](https://addons.mozilla.org/firefox/addon/automatic-dark/)
 
 **Inkompatibel mit:**
 
