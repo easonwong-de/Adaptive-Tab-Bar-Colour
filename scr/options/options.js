@@ -273,8 +273,6 @@ async function updateOptionsPage() {
 	if (pref.valid()) {
 		if (!document.hasFocus()) await updateElements();
 		await updateAllowDarkLightText();
-		loadingWrapper.hidden = true;
-		settingsWrapper.hidden = false;
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
