@@ -32,8 +32,8 @@ async function updatePopup() {
 		updateSliders();
 		await updateInfoDisplay();
 		await updatePopupColour();
-		loadingWrapper.hidden = true;
-		settingsWrapper.hidden = false;
+		loadingWrapper.classList.toggle("hidden", true);
+		settingsWrapper.classList.toggle("hidden", false);
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
