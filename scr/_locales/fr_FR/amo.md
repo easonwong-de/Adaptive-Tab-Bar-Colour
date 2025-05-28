@@ -19,7 +19,7 @@ Lorsque vous naviguez sur le web, cette extension modifie le thème de Firefox p
 
 **Si vous utilisez un thème CSS :**
 
-Un thème CSS peut fonctionner avec ATBC (Adaptative Tab Bar Color) lorsque des variables de couleur système sont utilisées (par exemple, `--lwt-accent-color` pour la couleur de la barre d'onglets). [Ceci](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) est un exemple de thème CSS compatible avec ATBC.
+Un thème CSS peut fonctionner avec ATBC (Adaptative Tab Bar Colour) lorsque des variables de couleur système sont utilisées (par exemple, `--lwt-accent-color` pour la couleur de la barre d'onglets). [Ceci](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) est un exemple de thème CSS compatible avec ATBC.
 
 **Si vous utilisez Linux avec un thème GTK :**
 
