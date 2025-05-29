@@ -218,7 +218,7 @@ async function getProtectedPageColour(tab) {
 		return { colour: new colour().parse("JSONVIEWER"), reason: "JSON_VIEWER" };
 	} else if (tab.favIconUrl?.startsWith("chrome:")) {
 		return { colour: new colour().parse("DEFAULT"), reason: "PROTECTED_PAGE" };
-	} else if (url.href.match(new RegExp(`https?:\/\/${tab.title}$`))) {
+	} else if (url.href.match(new RegExp(`https?:\/\/${tab.title}$`, "i"))) {
 		return { colour: new colour().parse("PLAINTEXT"), reason: "TEXT_VIEWER" };
 	} else {
 		return { colour: new colour().parse("FALLBACK"), reason: "FALLBACK_COLOUR" };

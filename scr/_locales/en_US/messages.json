@@ -72,7 +72,7 @@
 	},
 
 	"URLDomainOrRegex": {
-		"message": "Full URL / domain / regex"
+		"message": "URL / regex / wildcard / domain"
 	},
 
 	"addonNotFound": {

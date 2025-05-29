@@ -72,7 +72,7 @@
 	},
 
 	"URLDomainOrRegex": {
-		"message": "完整网址 / 域名 / 正则表达式"
+		"message": "网址 / 正则表达式 / 通配符 / 域名"
 	},
 
 	"addonNotFound": {

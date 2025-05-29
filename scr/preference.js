@@ -338,7 +338,18 @@ export default class preference {
 	}
 
 	/**
-	 * Finds the ID of the most recently created policy that matches the given URL from the site list.
+	 * Finds the ID of the most recently created policy from the site list that matches the given URL.
+	 * 
+	 * Policy header supports:
+	 * 
+	 * - Full URL with or w/o trailing slash
+	 * - Regex
+	 * - Wildcard
+	 *   - `**` matches strings of any length
+	 *   - `*` matches any characters except `/`, `.`, and `:`
+	 *   - `?` matches any single character
+	 *   - Scheme (e.g. `https://`) is optional
+	 * - hostname
 	 *
 	 * @param {string} url - The site URL to match against the policy headers.
 	 * @returns {number} The ID of the most specific matching policy, or 0 if no match is found.
@@ -353,17 +364,21 @@ export default class preference {
 				continue;
 			}
 			try {
-				if (id > result && new RegExp(`^${policy.header}$`).test(url)) {
+				if (id > result && new RegExp(`^${policy.header}$`, "i").test(url)) {
 					result = +id;
 					continue;
 				}
 			} catch (error) {}
 			try {
 				const wildcardPattern = policy.header
-					.replaceAll(/[-/\\^$+?.()|[\]{}]/g, "\\$&")
-					.replaceAll(/\*/g, ".*")
-					.replaceAll(/\?/g, ".");
-				if (id > result && new RegExp(`^${wildcardPattern}$`).test(url)) {
+					.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+					.replace(/\*\*/g, "__WILDCARD_MATCH_ALL__")
+					.replace(/\*/g, "[^/.:]*")
+					.replace(/\?/g, ".")
+					.replace(/__WILDCARD_MATCH_ALL__/g, ".*")
+					.replace(/^([a-z]+:\/\/)/i, "$1")
+					.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
+				if (id > result && new RegExp(`^${wildcardPattern}/?$`, "i").test(url)) {
 					result = +id;
 					continue;
 				}
