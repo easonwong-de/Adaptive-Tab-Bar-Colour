@@ -53,16 +53,10 @@ const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
 fixedPolicies.forEach((fixedPolicySection) => {
 	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
 	const key = colourInputWrapper.dataset.pref;
-	const resetButton = fixedPolicySection.querySelector("button");
 	setupColourInput(colourInputWrapper, pref[key], async (colour) => {
 		pref[key] = colour;
 		await applySettings();
 	});
-	resetButton.onclick = async () => {
-		pref.reset(key);
-		await applySettings();
-		setColourInputValue(colourInputWrapper, pref[key]);
-	};
 });
 
 document.querySelector("#add-new-rule").onclick = async () => {

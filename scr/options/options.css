@@ -387,7 +387,7 @@ p#reinstall-tip {
 }
 
 #tab-3 .list .section {
-	grid-template-columns: auto max-content 7.5rem max-content;
+	grid-template-columns: auto max-content 7.5rem;
 }
 
 .list :is(.section:first-of-type) {
