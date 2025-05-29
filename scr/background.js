@@ -367,6 +367,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				toolbar_field_border_focus: "AccentColor",
 				popup_highlight: "AccentColor",
 				sidebar_highlight: "AccentColor",
+				icons_attention: "AccentColor",
 			},
 			properties: {
 				// More on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#properties
@@ -412,6 +413,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				toolbar_field_border_focus: "AccentColor",
 				popup_highlight: "AccentColor",
 				sidebar_highlight: "AccentColor",
+				icons_attention: "AccentColor",
 			},
 			properties: {
 				color_scheme: "system",
