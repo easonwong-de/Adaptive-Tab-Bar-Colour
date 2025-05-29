@@ -339,9 +339,9 @@ export default class preference {
 
 	/**
 	 * Finds the ID of the most recently created policy from the site list that matches the given URL.
-	 * 
+	 *
 	 * Policy header supports:
-	 * 
+	 *
 	 * - Full URL with or w/o trailing slash
 	 * - Regex
 	 * - Wildcard
@@ -369,20 +369,22 @@ export default class preference {
 					continue;
 				}
 			} catch (error) {}
-			try {
-				const wildcardPattern = policy.header
-					.replace(/[.+^${}()|[\]\\]/g, "\\$&")
-					.replace(/\*\*/g, "__WILDCARD_MATCH_ALL__")
-					.replace(/\*/g, "[^/.:]*")
-					.replace(/\?/g, ".")
-					.replace(/__WILDCARD_MATCH_ALL__/g, ".*")
-					.replace(/^([a-z]+:\/\/)/i, "$1")
-					.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
-				if (id > result && new RegExp(`^${wildcardPattern}/?$`, "i").test(url)) {
-					result = +id;
-					continue;
-				}
-			} catch (error) {}
+			if (policy.header.includes("*") || policy.header.includes("?")) {
+				try {
+					const wildcardPattern = policy.header
+						.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+						.replace(/\*\*/g, "::WILDCARD_MATCH_ALL::")
+						.replace(/\*/g, "[^/.:]*")
+						.replace(/\?/g, ".")
+						.replace(/::WILDCARD_MATCH_ALL::/g, ".*")
+						.replace(/^([a-z]+:\/\/)/i, "$1")
+						.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
+					if (id > result && new RegExp(`^${wildcardPattern}/?$`, "i").test(url)) {
+						result = +id;
+						continue;
+					}
+				} catch (error) {}
+			}
 			try {
 				if (id > result && policy.header === new URL(url).hostname) {
 					result = +id;
