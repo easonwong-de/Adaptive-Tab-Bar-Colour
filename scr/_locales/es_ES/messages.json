@@ -92,7 +92,7 @@
 	},
 
 	"anyCSSColour": {
-		"message": "cualquier formato"
+		"message": "Cualquier formato"
 	},
 
 	"use": {
@@ -104,7 +104,7 @@
 	},
 
 	"querySelector": {
-		"message": "selector de consulta"
+		"message": "Selector de consulta"
 	},
 
 	"delete": {

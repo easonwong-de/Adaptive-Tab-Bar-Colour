@@ -104,7 +104,7 @@
 	},
 
 	"querySelector": {
-		"message": "query selector"
+		"message": "CSS 選擇器"
 	},
 
 	"delete": {

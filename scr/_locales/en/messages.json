@@ -92,7 +92,7 @@
 	},
 
 	"anyCSSColour": {
-		"message": "any format"
+		"message": "Any format"
 	},
 
 	"use": {
@@ -104,7 +104,7 @@
 	},
 
 	"querySelector": {
-		"message": "query selector"
+		"message": "Query selector"
 	},
 
 	"delete": {

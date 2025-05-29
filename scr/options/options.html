@@ -76,7 +76,12 @@
 			</div>
 			<div class="section policy flexible-policy">
 				<div class="policy-header-input-wrapper">
-					<input type="text" class="policy-header-input" data-placeholder="URLDomainOrRegex" />
+					<input
+						type="text"
+						class="policy-header-input"
+						data-placeholder="URLDomainOrRegex"
+						data-title="URLDomainOrRegex"
+					/>
 					<div class="policy-header-warning" data-title="thisPolicyWillBeIgnored">
 						<svg viewBox="0 0 24 24">
 							<use xlink:href="#svg-warning" />
@@ -89,7 +94,7 @@
 					<option value="QUERY_SELECTOR" data-text="pickColourFromElement"></option>
 				</select>
 				<div class="colour-input-wrapper">
-					<input type="text" class="colour-input" data-placeholder="anyCSSColour" />
+					<input type="text" class="colour-input" data-placeholder="anyCSSColour" data-title="anyCSSColour" />
 					<label class="colour-picker-display"></label>
 					<input type="color" />
 				</div>
@@ -100,7 +105,7 @@
 					<label class="toggle-switch" data-text="ignore"></label>
 				</div>
 				<div class="qs-input-wrapper">
-					<input type="text" class="qs-input" data-placeholder="querySelector" />
+					<input type="text" class="qs-input" data-placeholder="querySelector" data-title="querySelector" />
 				</div>
 				<button data-title="delete">
 					<svg viewBox="0 0 24 24">
@@ -210,7 +215,17 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="border"></div>
+							<div class="slider-title">
+								<span data-text="border"></span>
+								<span
+									title="If “vertical tabs” are enabled, any non-zero value may cause a gap to appear above the window controls, making them harder to reach."
+									style="cursor: help"
+								>
+									<svg viewBox="0 0 24 24">
+										<use xlink:href="#svg-warning" />
+									</svg>
+								</span>
+							</div>
 						</div>
 						<div class="section">
 							<div class="section-title" data-text="popUp"></div>
@@ -463,6 +478,7 @@
 										class="colour-input"
 										value="#ffffff"
 										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
 									/>
 									<label class="colour-picker-display" for="home-bg-light"></label>
 									<input type="color" value="#ffffff" id="home-bg-light" />
@@ -477,6 +493,7 @@
 										class="colour-input"
 										value="#2b2a33"
 										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
 									/>
 									<label class="colour-picker-display" for="home-bg-dark"></label>
 									<input type="color" value="#2b2a33" id="home-bg-dark" />
@@ -491,6 +508,7 @@
 										class="colour-input"
 										value="#ffffff"
 										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
 									/>
 									<label class="colour-picker-display" for="fallback-cl-light"></label>
 									<input type="color" value="#ffffff" id="fallback-cl-light" />
@@ -505,6 +523,7 @@
 										class="colour-input"
 										value="#2b2a33"
 										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
 									/>
 									<label class="colour-picker-display" for="fallback-cl-dark"></label>
 									<input type="color" value="#2b2a33" id="fallback-cl-dark" />
