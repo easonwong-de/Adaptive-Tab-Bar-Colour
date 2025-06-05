@@ -1,7 +1,7 @@
 "use strict";
 
 /** The version of ATBC */
-export const addonVersion = [2, 5];
+export const addonVersion = [2, 5, 1];
 
 /** Default light homepage colour */
 export const default_homeBackground_light = "#ffffff";
