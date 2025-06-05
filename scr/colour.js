@@ -12,7 +12,7 @@ const colourCodes = [
 	"SYSTEM",
 	"ADDON",
 	"PDFVIEWER",
-	"IMAGEVIEWER ",
+	"IMAGEVIEWER",
 	"JSONVIEWER",
 	"DEFAULT",
 	"ACCENT",
