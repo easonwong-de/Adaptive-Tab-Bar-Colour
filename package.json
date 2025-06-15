@@ -1,0 +1,26 @@
+{
+	"name": "adaptive-tab-bar-colour",
+	"version": "2.5.1",
+	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
+	"scripts": {
+		"start": "web-ext run -s=./src -f=deved",
+		"start:firefox": "web-ext run -s=./src -f=firefox",
+		"start:android": "web-ext run -s=./src -t=firefox-android",
+		"lint": "web-ext lint -s=./src",
+		"build": "web-ext build -s=./src -a=release -o"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour.git"
+	},
+	"author": "Eason Wong <me@easonwong.de> (https://easonwong.de/)",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues",
+		"email": "me@easonwong.de"
+	},
+	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour#readme",
+	"devDependencies": {
+		"web-ext": "^8.7.1"
+	}
+}
