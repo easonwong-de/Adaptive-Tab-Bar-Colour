@@ -7,7 +7,7 @@
 		"start:firefox": "web-ext run -s=./src -f=firefox",
 		"start:android": "web-ext run -s=./src -t=firefox-android",
 		"lint": "web-ext lint -s=./src",
-		"build": "web-ext build -s=./src -a=release -o"
+		"build": "web-ext build -s=./src -a=dist -o"
 	},
 	"repository": {
 		"type": "git",
