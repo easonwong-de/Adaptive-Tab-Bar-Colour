@@ -1,7 +1,7 @@
 {
 	"name": "__MSG_extensionName__",
 	"description": "__MSG_extensionDescription__",
-	"version": "2.5.1",
+	"version": "2.6",
 	"author": "Eason Wong",
 	"homepage_url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"default_locale": "en",
@@ -11,16 +11,28 @@
 			"strict_min_version": "112.0"
 		}
 	},
-	"permissions": ["tabs", "theme", "storage", "browserSettings", "management"],
+	"permissions": [
+		"tabs",
+		"theme",
+		"storage",
+		"browserSettings",
+		"management"
+	],
 	"background": {
-		"scripts": ["background.js"],
+		"scripts": [
+			"background.js"
+		],
 		"type": "module",
 		"persistent": true
 	},
 	"content_scripts": [
 		{
-			"matches": ["<all_urls>"],
-			"js": ["atbc.js"]
+			"matches": [
+				"<all_urls>"
+			],
+			"js": [
+				"atbc.js"
+			]
 		}
 	],
 	"options_ui": {
