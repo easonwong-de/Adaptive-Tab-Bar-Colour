@@ -19,7 +19,7 @@
 
 **若閣下使用 CSS Theme：**
 
-一個 CSS theme 若採用默認的顏色變數，則可以與 變色標題列 相容（例如，`--lwt-accent-color` 須用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS)是一個與 變色標題列 相容的 CSS theme。
+一個 CSS theme 若採用默認的顏色變數，則可以與 變色標題列 相容（例如，`--lwt-accent-color` 須用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 變色標題列 相容的 CSS theme。
 
 **若閣下使用帶有 GTK Theme 的 Linux：**
 

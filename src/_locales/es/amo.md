@@ -19,7 +19,7 @@ Mientras navegas por la web, este complemento cambia el tema de Firefox para que
 
 **Si estás usando un tema CSS:**
 
-Un tema CSS puede funcionar con ATBC (Adaptive Tab Bar Colour) cuando se utilizan variables de color del sistema (por ejemplo, `--lwt-accent-color` para el color de la barra de pestañas). [Este](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) es un ejemplo de un tema CSS compatible con ATBC.
+Un tema CSS puede funcionar con ATBC (Adaptive Tab Bar Colour) cuando se utilizan variables de color del sistema (por ejemplo, `--lwt-accent-color` para el color de la barra de pestañas). [Este](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) es un ejemplo de un tema CSS compatible con ATBC.
 
 **Si estás usando Linux con un tema GTK:**
 

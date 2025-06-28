@@ -19,7 +19,7 @@ Während du im Web surfst, ändert diese Erweiterung das Theme von Firefox, um e
 
 **Falls du ein CSS-Theme verwendest:**
 
-Ein CSS-Theme kann mit Anpassender Tableistenfarbe funktionieren, wenn Systemfarbvariablen verwendet werden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) ist ein Beispiel für ein kompatibles CSS-Theme.
+Ein CSS-Theme kann mit Anpassender Tableistenfarbe funktionieren, wenn Systemfarbvariablen verwendet werden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) ist ein Beispiel für ein kompatibles CSS-Theme.
 
 **Falls du Linux mit einem GTK-Theme verwendest:**
 

@@ -28,7 +28,6 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 	<li><a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/stylish/">Stylish</a></li>
 	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/automatic-dark/">automaticDark</a></li>
 </ol>
 
 <br>
@@ -48,7 +47,7 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 
 ## If You’re Using a CSS Theme:
 
-A CSS theme can work with ATBC (Adaptive Tab Bar Colour) when system colour variables are used (e.g. `--lwt-accent-color` for tab bar colour). [This](https://github.com/easonwong-de/WhiteSurFirefoxThemeMacOS) is an example of an ATBC-compatible CSS theme.
+A CSS theme can work with ATBC (Adaptive Tab Bar Colour) when system colour variables are used (e.g. `--lwt-accent-color` for tab bar colour). [This](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) is an example of an ATBC-compatible CSS theme.
 
 <img src="https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme/raw/main/assets/adaptive-sur-1.png" width="45%"> <img src="https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme/raw/main/assets/adaptive-sur-2.png" width="45%">
 
