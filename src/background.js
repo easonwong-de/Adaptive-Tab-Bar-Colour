@@ -427,14 +427,7 @@ function applyTheme(windowId, colour, colourScheme) {
 (async () => {
 	await initialise();
 	onSchemeChanged(update);
-	browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-		// Ignore hidden/show single events as they don't affect tab bar color
-		// If change is "hidden" + "other", then still process the update
-		if (changeInfo.hidden !== undefined && Object.keys(changeInfo).length === 1) {
-			return;
-		}
-		update();
-	});
+	browser.tabs.onUpdated.addListener(update, { properties: ["status"] });
 	browser.tabs.onActivated.addListener(update);
 	browser.tabs.onAttached.addListener(update);
 	browser.windows.onFocusChanged.addListener(update);
