@@ -1,6 +1,6 @@
 {
 	"name": "adaptive-tab-bar-colour",
-	"version": "2.5.1",
+	"version": "2.6",
 	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
 	"scripts": {
 		"start:dev": "web-ext run -s=./src -f=deved --devtools",
