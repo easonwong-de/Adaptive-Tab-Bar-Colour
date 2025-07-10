@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { localise, msg } from "../utility.js";
+import { localise, msg, supportsThemeAPI } from "../utility.js";
 import {
 	setupCheckbox,
 	setCheckboxValue,
@@ -364,6 +364,32 @@ async function updateAllowDarkLightText(nthTry = 0) {
 }
 
 /**
+ * Check browser support and hide theme builder options if theme API isn't supported
+ */
+function checkBrowserSupport() {
+	if (!supportsThemeAPI()) {
+		document.querySelectorAll("#tab-1 .section").forEach((section) => {
+			const sectionTitle = section.querySelector('.section-title[data-text="tabBar"]');
+			if (!sectionTitle) {
+				section.style.display = "none";
+			}
+		});
+		document.querySelectorAll('#tab-1 .section-title[data-text="tabBar"]').forEach((tabBarTitle) => {
+			const section = tabBarTitle.closest(".section");
+			if (section) {
+				section.querySelectorAll(".slider:not(:first-child)").forEach((slider) => {
+					slider.style.display = "none";
+					const sliderTitle = slider.nextElementSibling;
+					if (sliderTitle && sliderTitle.classList.contains("slider-title")) {
+						sliderTitle.style.display = "none";
+					}
+				});
+			}
+		});
+	}
+}
+
+/**
  * Saves the preference to browser storage and triggers colour update.
  *
  * Maximum frequency is 4 Hz.
@@ -391,9 +417,11 @@ const applySettings = (() => {
 	};
 })();
 
-browser.theme.onUpdated.addListener(updateOptionsPage);
 browser.storage.onChanged.addListener(updateOptionsPage);
 document.addEventListener("pageshow", updateOptionsPage);
+if (supportsThemeAPI()) browser.theme.onUpdated.addListener(updateOptionsPage);
+
+checkBrowserSupport();
 updateOptionsPage();
 
 document.addEventListener("DOMContentLoaded", () => localise(document));

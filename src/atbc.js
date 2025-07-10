@@ -321,13 +321,40 @@ function parseColour(colour) {
 
 // Receives configurations and sends back colour
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-	conf.dynamic = message.dynamic;
-	conf.noThemeColour = message.noThemeColour;
-	conf.policy = message.policy;
-	setDynamicUpdate();
-	findColour();
-	sendResponse(response);
+	switch (message.header) {
+		case "GET_COLOUR":
+			conf.dynamic = message.dynamic;
+			conf.noThemeColour = message.noThemeColour;
+			conf.policy = message.policy;
+			setDynamicUpdate();
+			findColour();
+			sendResponse(response);
+			break;
+		case "SET_THEME_COLOUR":
+			setThemeColourMeta(message.colour);
+			break;
+		default:
+			break;
+	}
 });
+
+/**
+ * Sets theme-color meta tag.
+ *
+ * @param {string} colour - RGBA color string.
+ */
+function setThemeColourMeta(colour) {
+	if (!conf.noThemeColour) return;
+	const existingMetaTag = document.querySelectorAll(`meta[name="theme-color"]`);
+	if (existingMetaTag.length === 0) {
+		const metaTag = document.createElement("meta");
+		metaTag.name = "theme-color";
+		metaTag.content = colour;
+		document.head.appendChild(metaTag);
+	} else {
+		existingMetaTag.forEach((meta) => (meta.content = colour));
+	}
+}
 
 /**
  * Sets up / turns off dynamic update.

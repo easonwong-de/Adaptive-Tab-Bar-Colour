@@ -26,7 +26,7 @@
 import preference from "./preference.js";
 import colour from "./colour.js";
 import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
-import { onSchemeChanged, getCurrentScheme, getSystemScheme } from "./utility.js";
+import { onSchemeChanged, getCurrentScheme, getSystemScheme, supportsThemeAPI } from "./utility.js";
 
 /** Preference */
 const pref = new preference();
@@ -165,6 +165,7 @@ async function getTabColour(tab) {
 	const policy = pref.getPolicy(pref.getURLPolicyId(tab.url));
 	try {
 		const response = await browser.tabs.sendMessage(tab.id, {
+			header: "GET_COLOUR",
 			dynamic: pref.dynamic,
 			noThemeColour: pref.noThemeColour,
 			policy,
@@ -292,11 +293,15 @@ async function getAddonPageColour(url) {
 function setFrameColour(tab, colour) {
 	if (!tab?.active) return;
 	const windowId = tab.windowId;
+	let finalColour, finalScheme;
+
 	if (colour.code) {
 		if (colourCode[colour.code][current.scheme]) {
-			applyTheme(windowId, colourCode[colour.code][current.scheme], current.scheme);
+			finalColour = colourCode[colour.code][current.scheme];
+			finalScheme = current.scheme;
 		} else if (colourCode[colour.code][current.reversedScheme] && pref.allowDarkLight) {
-			applyTheme(windowId, colourCode[colour.code][current.reversedScheme], current.reversedScheme);
+			finalColour = colourCode[colour.code][current.reversedScheme];
+			finalScheme = current.reversedScheme;
 		} else {
 			const correctionResult = colourCode[colour][current.reversedScheme].contrastCorrection(
 				current.scheme,
@@ -304,7 +309,8 @@ function setFrameColour(tab, colour) {
 				pref.minContrast_light,
 				pref.minContrast_dark
 			);
-			applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
+			finalColour = correctionResult.colour;
+			finalScheme = correctionResult.scheme;
 			current.info[windowId].corrected = correctionResult.corrected;
 		}
 	} else {
@@ -314,8 +320,32 @@ function setFrameColour(tab, colour) {
 			pref.minContrast_light,
 			pref.minContrast_dark
 		);
-		applyTheme(windowId, correctionResult.colour, correctionResult.scheme);
+		finalColour = correctionResult.colour;
+		finalScheme = correctionResult.scheme;
 		current.info[windowId].corrected = correctionResult.corrected;
+	}
+
+	if (supportsThemeAPI()) {
+		applyTheme(windowId, finalColour, finalScheme);
+	} else {
+		setTabThemeColour(tab, finalColour);
+	}
+}
+
+/**
+ * Applies theme colour to the tab (theme API not supported).
+ *
+ * @param {tabs.Tab} tab - The tab to apply the theme color to.
+ * @param {colour} colour - The colour to apply.
+ */
+function setTabThemeColour(tab, colour) {
+	try {
+		browser.tabs.sendMessage(tab.id, {
+			header: "SET_THEME_COLOUR",
+			colour: colour.dim(pref.tabbar).toRGBA(),
+		});
+	} catch (error) {
+		console.warn("Could not apply theme colour:", error);
 	}
 }
 
@@ -431,6 +461,6 @@ function applyTheme(windowId, colour, colourScheme) {
 	browser.tabs.onActivated.addListener(update);
 	browser.tabs.onAttached.addListener(update);
 	browser.windows.onFocusChanged.addListener(update);
-	browser.browserSettings.overrideContentColorScheme.onChange.addListener(update);
+	browser.browserSettings?.overrideContentColorScheme?.onChange?.addListener(update);
 	browser.runtime.onMessage.addListener(handleMessage);
 })();

@@ -3,7 +3,7 @@
 import preference from "../preference.js";
 import { recommendedAddonPageColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
-import { localise } from "../utility.js";
+import { localise, supportsThemeAPI } from "../utility.js";
 
 const pref = new preference();
 
@@ -31,7 +31,7 @@ async function updatePopup() {
 	if (pref.valid()) {
 		updateSliders();
 		await updateInfoDisplay();
-		await updatePopupColour();
+		if (supportsThemeAPI()) await updatePopupColour();
 		loadingWrapper.classList.toggle("hidden", true);
 		settingsWrapper.classList.toggle("hidden", false);
 	} else {
@@ -176,6 +176,28 @@ async function updatePopupColour() {
 }
 
 /**
+ * Check browser support and hide theme builder options if theme API isn't supported
+ */
+function checkBrowserSupport() {
+	if (!supportsThemeAPI()) {
+		document.querySelectorAll(".section").forEach((section) => {
+			const sectionTitle = section.querySelector('.section-title[data-text="tabBar"]');
+			if (!sectionTitle) {
+				section.style.display = "none";
+			}
+		});
+		document.querySelectorAll('.section-title[data-text="tabBar"]').forEach((tabBarTitle) => {
+			const section = tabBarTitle.closest(".section");
+			if (section) {
+				section.querySelectorAll(".slider:not(:first-child)").forEach((slider) => {
+					slider.style.display = "none";
+				});
+			}
+		});
+	}
+}
+
+/**
  * Triggers colour update.
  */
 async function applySettings() {
@@ -184,8 +206,10 @@ async function applySettings() {
 }
 
 browser.storage.onChanged.addListener(updatePopup);
-browser.theme.onUpdated.addListener(updatePopup);
 document.addEventListener("pageshow", updatePopup);
+if (supportsThemeAPI()) browser.theme.onUpdated.addListener(updatePopup);
+
+checkBrowserSupport();
 updatePopup();
 
 document.addEventListener("DOMContentLoaded", () => localise(document));

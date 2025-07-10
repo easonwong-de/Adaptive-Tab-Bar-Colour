@@ -30,9 +30,13 @@ export function getSystemScheme() {
  * @returns {Promise<"light" | "dark">} The current colour scheme, either `light` or `dark`.
  */
 export async function getCurrentScheme() {
-	const webAppearanceSetting = await browser.browserSettings.overrideContentColorScheme.get({});
-	const webAppearance = webAppearanceSetting.value;
-	return webAppearance === "light" || webAppearance === "dark" ? webAppearance : getSystemScheme();
+	try {
+		const webAppearanceSetting = await browser.browserSettings?.overrideContentColorScheme?.get({});
+		const webAppearance = webAppearanceSetting?.value;
+		return webAppearance === "light" || webAppearance === "dark" ? webAppearance : getSystemScheme();
+	} catch {
+		return getSystemScheme();
+	}
 }
 
 /**
@@ -70,4 +74,19 @@ export function msg(handle) {
 	} else {
 		return localisedMessage;
 	}
+}
+
+/** Browser capability detection */
+let _supportsThemeAPI = null;
+
+/**
+ * Checks if the browser supports the theme API.
+ *
+ * @returns {boolean} True if the browser supports the theme API, false otherwise.
+ */
+export function supportsThemeAPI() {
+	if (_supportsThemeAPI === null) {
+		_supportsThemeAPI = typeof browser.theme !== "undefined" && typeof browser.theme.update === "function";
+	}
+	return _supportsThemeAPI;
 }
