@@ -1,6 +1,6 @@
 "use strict";
 
-import { supportsThemeAPI } from "./utility";
+import { supportsThemeAPI } from "./utility.js";
 
 /** The version of ATBC */
 export const addonVersion = [3, 0];
