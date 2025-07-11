@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { localise, msg, supportsThemeAPI } from "../utility.js";
+import { localise, msg } from "../utility.js";
 import {
 	setupCheckbox,
 	setCheckboxValue,
@@ -25,7 +25,6 @@ import {
 const pref = new preference();
 
 const settingsWrapper = document.querySelector("#settings-wrapper");
-const loadingWrapper = document.querySelector("#loading-wrapper");
 const policyList = document.querySelector("#policy-list");
 
 const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
@@ -251,6 +250,7 @@ document.querySelector("#reset-advanced").onclick = async () => {
 		"allowDarkLight",
 		"dynamic",
 		"noThemeColour",
+		"compatibilityMode",
 		"homeBackground_light",
 		"homeBackground_dark",
 		"fallbackColour_light",
@@ -275,8 +275,10 @@ async function updateOptionsPage() {
 async function updateUI() {
 	updateCheckboxes();
 	updateSliders();
+	updateCompatibilityMode();
 	updateFixedPolicySection();
 	await updateSiteList();
+	await updateAllowDarkLightText();
 }
 
 function updateCheckboxes() {
@@ -285,6 +287,16 @@ function updateCheckboxes() {
 
 function updateSliders() {
 	sliders.forEach((slider) => setSliderValue(slider, pref[slider.dataset.pref]));
+}
+
+/**
+ * Update options page's UI related to compatibility mode.
+ */
+function updateCompatibilityMode() {
+	document
+		.querySelectorAll(`.slider:not([data-pref="tabbar"])`)
+		.forEach((slider) => slider.classList.toggle("disabled", pref.compatibilityMode));
+	document.querySelector(`#compatibility-mode`).classList.toggle("disabled", pref.compatibilityMode);
 }
 
 function updateFixedPolicySection() {
@@ -364,32 +376,6 @@ async function updateAllowDarkLightText(nthTry = 0) {
 }
 
 /**
- * Check browser support and hide theme builder options if theme API isn't supported
- */
-function checkBrowserSupport() {
-	if (!supportsThemeAPI()) {
-		document.querySelectorAll("#tab-1 .section").forEach((section) => {
-			const sectionTitle = section.querySelector('.section-title[data-text="tabBar"]');
-			if (!sectionTitle) {
-				section.style.display = "none";
-			}
-		});
-		document.querySelectorAll('#tab-1 .section-title[data-text="tabBar"]').forEach((tabBarTitle) => {
-			const section = tabBarTitle.closest(".section");
-			if (section) {
-				section.querySelectorAll(".slider:not(:first-child)").forEach((slider) => {
-					slider.style.display = "none";
-					const sliderTitle = slider.nextElementSibling;
-					if (sliderTitle && sliderTitle.classList.contains("slider-title")) {
-						sliderTitle.style.display = "none";
-					}
-				});
-			}
-		});
-	}
-}
-
-/**
  * Saves the preference to browser storage and triggers colour update.
  *
  * Maximum frequency is 4 Hz.
@@ -417,11 +403,10 @@ const applySettings = (() => {
 	};
 })();
 
-browser.storage.onChanged.addListener(updateOptionsPage);
 document.addEventListener("pageshow", updateOptionsPage);
-if (supportsThemeAPI()) browser.theme.onUpdated.addListener(updateOptionsPage);
+browser.storage.onChanged.addListener(updateOptionsPage);
+browser.theme?.onUpdated?.addListener(updateOptionsPage);
 
-checkBrowserSupport();
 updateOptionsPage();
 
 document.addEventListener("DOMContentLoaded", () => localise(document));

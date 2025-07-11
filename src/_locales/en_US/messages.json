@@ -151,6 +151,14 @@
 		"message": "Some websites provide a theme color themselves. Turn on this option to ignore these colors."
 	},
 
+	"compatibilityMode": {
+		"message": "Compatibility mode"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "Instead of the theme API, use the HTML “theme-color” property to change the tab bar color. This works with certain browsers. This option is automatically enabled when theme API is not available."
+	},
+
 	"minimumContrast": {
 		"message": "Minimum contrast"
 	},

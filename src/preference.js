@@ -6,8 +6,10 @@ import {
 	default_homeBackground_dark,
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
+	default_compatibilityMode,
 } from "./default_values.js";
 import colour from "./colour.js";
+import { supportsThemeAPI } from "./utility.js";
 
 export default class preference {
 	/** The content of the preference */
@@ -30,6 +32,7 @@ export default class preference {
 		allowDarkLight: true,
 		dynamic: true,
 		noThemeColour: true,
+		compatibilityMode: default_compatibilityMode,
 		homeBackground_light: default_homeBackground_light,
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
@@ -58,6 +61,7 @@ export default class preference {
 		allowDarkLight: true,
 		dynamic: true,
 		noThemeColour: true,
+		compatibilityMode: default_compatibilityMode,
 		homeBackground_light: default_homeBackground_light,
 		homeBackground_dark: default_homeBackground_dark,
 		fallbackColour_light: default_fallbackColour_light,
@@ -261,6 +265,10 @@ export default class preference {
 		["minContrast_light", "minContrast_dark"].forEach((key) => {
 			this.#content[key] = this.#validateNumericPref(this.#content[key], { min: 0, max: 210, step: 15 });
 		});
+		// Auto-enable compatibility mode if theme API is not supported
+		if (!supportsThemeAPI()) {
+			this.#content.compatibilityMode = true;
+		}
 		// Updates the pref version
 		this.#content.version = addonVersion;
 	}
@@ -456,6 +464,14 @@ export default class preference {
 
 	set noThemeColour(value) {
 		this.#content.noThemeColour = value;
+	}
+
+	get compatibilityMode() {
+		return this.#content.compatibilityMode;
+	}
+
+	set compatibilityMode(value) {
+		this.#content.compatibilityMode = value;
 	}
 
 	get tabbar() {

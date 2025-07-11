@@ -1,5 +1,7 @@
 "use strict";
 
+import { supportsThemeAPI } from "./utility";
+
 /** The version of ATBC */
 export const addonVersion = [3, 0];
 
@@ -11,6 +13,9 @@ export const default_homeBackground_dark = "#2b2a33";
 export const default_fallbackColour_light = "#ffffff";
 /** Default dark fallback colour */
 export const default_fallbackColour_dark = "#2b2a33";
+
+/** Default compatibility mode setting */
+export const default_compatibilityMode = !supportsThemeAPI();
 
 /**
  * Colours for about:pages.

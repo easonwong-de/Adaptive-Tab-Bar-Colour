@@ -26,7 +26,7 @@
 import preference from "./preference.js";
 import colour from "./colour.js";
 import { aboutPageColour, restrictedSiteColour } from "./default_values.js";
-import { onSchemeChanged, getCurrentScheme, getSystemScheme, supportsThemeAPI } from "./utility.js";
+import { onSchemeChanged, getCurrentScheme, getSystemScheme } from "./utility.js";
 
 /** Preference */
 const pref = new preference();
@@ -325,10 +325,10 @@ function setFrameColour(tab, colour) {
 		current.info[windowId].corrected = correctionResult.corrected;
 	}
 
-	if (supportsThemeAPI()) {
-		applyTheme(windowId, finalColour, finalScheme);
-	} else {
+	if (pref.compatibilityMode) {
 		setTabThemeColour(tab, finalColour);
+	} else {
+		applyTheme(windowId, finalColour, finalScheme);
 	}
 }
 
@@ -364,7 +364,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				button_background_active: colour.dim(-1.5 * pref.tabSelected).toRGBA(),
 				frame: colour.dim(-1.5 * pref.tabbar).toRGBA(),
 				frame_inactive: colour.dim(-1.5 * pref.tabbar).toRGBA(),
-				ntp_background: colourCode.HOME[current.scheme].dim(0).toRGBA(),
+				ntp_background: colourCode.HOME[current.scheme].toRGBA(),
 				popup: colour.dim(-1.5 * pref.popup).toRGBA(),
 				popup_border: colour.dim(-1.5 * (pref.popup + pref.popupBorder)).toRGBA(),
 				sidebar: colour.dim(-1.5 * pref.sidebar).toRGBA(),
@@ -414,7 +414,7 @@ function applyTheme(windowId, colour, colourScheme) {
 				button_background_active: colour.dim(pref.tabSelected).toRGBA(),
 				frame: colour.dim(pref.tabbar).toRGBA(),
 				frame_inactive: colour.dim(pref.tabbar).toRGBA(),
-				ntp_background: colourCode.HOME[current.scheme].dim(0).toRGBA(),
+				ntp_background: colourCode.HOME[current.scheme].toRGBA(),
 				popup: colour.dim(pref.popup).toRGBA(),
 				popup_border: colour.dim(pref.popup + pref.popupBorder).toRGBA(),
 				sidebar: colour.dim(pref.sidebar).toRGBA(),

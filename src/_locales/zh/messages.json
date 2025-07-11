@@ -151,6 +151,14 @@
 		"message": "有些網站會提供一個主題色。啟用此選項，這些顏色將被自動忽略。"
 	},
 
+	"compatibilityMode": {
+		"message": "相容模式"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "使用 HTML「theme-color」屬性而非 theme API 來更改標籤列顏色。這適用於特定瀏覽器。當 theme API 不可用時，此選項會自動啟用。"
+	},
+
 	"minimumContrast": {
 		"message": "最小對比度設定"
 	},

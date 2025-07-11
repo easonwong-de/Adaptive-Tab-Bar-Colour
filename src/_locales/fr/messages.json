@@ -151,6 +151,14 @@
 		"message": "Certains sites web proposent eux-mêmes une couleur de thème. Activez cette option pour ignorer ces couleurs."
 	},
 
+	"compatibilityMode": {
+		"message": "Mode de compatibilité"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "Au lieu de la theme API, utilise la propriété HTML « theme-color » pour changer la couleur de la barre d'onglets. Cela fonctionne avec certains navigateurs. Cette option est automatiquement activée lorsque la theme API n'est pas disponible."
+	},
+
 	"minimumContrast": {
 		"message": "Contraste minimum"
 	},

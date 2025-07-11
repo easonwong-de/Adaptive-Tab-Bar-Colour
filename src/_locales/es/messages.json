@@ -151,6 +151,14 @@
     	"message": "Algunos sitios web proporcionan su propio color de tema. Activa esta opción para ignorar estos colores."
 	},
 
+	"compatibilityMode": {
+		"message": "Modo de compatibilidad"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "En lugar de la theme API, utiliza la propiedad HTML «theme-color» para cambiar el color de la barra de pestañas. Esto funciona con ciertos navegadores. Esta opción se activa automáticamente cuando la theme API no está disponible."
+	},
+
 	"minimumContrast": {
 		"message": "Contraste mínimo"
 	},

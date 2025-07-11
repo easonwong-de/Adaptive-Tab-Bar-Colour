@@ -3,7 +3,7 @@
 import preference from "../preference.js";
 import { recommendedAddonPageColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
-import { localise, supportsThemeAPI } from "../utility.js";
+import { localise } from "../utility.js";
 
 const pref = new preference();
 
@@ -31,7 +31,8 @@ async function updatePopup() {
 	if (pref.valid()) {
 		updateSliders();
 		await updateInfoDisplay();
-		if (supportsThemeAPI()) await updatePopupColour();
+		if (pref.compatibilityMode) await updatePopupColour();
+		updateCompatibilityMode();
 		loadingWrapper.classList.toggle("hidden", true);
 		settingsWrapper.classList.toggle("hidden", false);
 	} else {
@@ -176,25 +177,12 @@ async function updatePopupColour() {
 }
 
 /**
- * Check browser support and hide theme builder options if theme API isn't supported
+ * Update popup's UI related to compatibility mode.
  */
-function checkBrowserSupport() {
-	if (!supportsThemeAPI()) {
-		document.querySelectorAll(".section").forEach((section) => {
-			const sectionTitle = section.querySelector('.section-title[data-text="tabBar"]');
-			if (!sectionTitle) {
-				section.style.display = "none";
-			}
-		});
-		document.querySelectorAll('.section-title[data-text="tabBar"]').forEach((tabBarTitle) => {
-			const section = tabBarTitle.closest(".section");
-			if (section) {
-				section.querySelectorAll(".slider:not(:first-child)").forEach((slider) => {
-					slider.style.display = "none";
-				});
-			}
-		});
-	}
+function updateCompatibilityMode() {
+	document
+		.querySelectorAll(`.slider:not([data-pref="tabbar"])`)
+		.forEach((slider) => slider.classList.toggle("disabled", pref.compatibilityMode));
 }
 
 /**
@@ -205,11 +193,9 @@ async function applySettings() {
 	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
 }
 
-browser.storage.onChanged.addListener(updatePopup);
 document.addEventListener("pageshow", updatePopup);
-if (supportsThemeAPI()) browser.theme.onUpdated.addListener(updatePopup);
-
-checkBrowserSupport();
+browser.storage.onChanged.addListener(updatePopup);
+browser.theme?.onUpdated?.addListener(updatePopup);
 updatePopup();
 
 document.addEventListener("DOMContentLoaded", () => localise(document));

@@ -19,6 +19,7 @@ html {
 	--transparent-4: hsla(0, 0%, 0%, 30%);
 	--transparent-5: hsla(0, 0%, 0%, 35%);
 	font-family: sans-serif;
+	font-size: 14px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,4 +81,12 @@ svg {
 	stroke-width: 2px;
 	vertical-align: middle;
 	width: 1em;
+}
+
+.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	* {
+		pointer-events: none;
+	}
 }
