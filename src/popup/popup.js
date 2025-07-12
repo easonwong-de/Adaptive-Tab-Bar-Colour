@@ -3,7 +3,7 @@
 import preference from "../preference.js";
 import { recommendedAddonPageColour } from "../default_values.js";
 import { setSliderValue, setupSlider } from "../elements.js";
-import { localise } from "../utility.js";
+import { localise, supportsThemeAPI } from "../utility.js";
 
 const pref = new preference();
 
@@ -31,7 +31,7 @@ async function updatePopup() {
 	if (pref.valid()) {
 		updateSliders();
 		await updateInfoDisplay();
-		if (!pref.compatibilityMode) await updatePopupColour();
+		if (supportsThemeAPI()) await updatePopupColour();
 		updateCompatibilityMode();
 		loadingWrapper.classList.toggle("hidden", true);
 		settingsWrapper.classList.toggle("hidden", false);
