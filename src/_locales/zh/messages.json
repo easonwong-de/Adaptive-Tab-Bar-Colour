@@ -156,7 +156,7 @@
 	},
 
 	"compatibilityModeTooltip": {
-		"message": "使用 HTML「theme-color」屬性而非 theme API 來更改標籤列顏色。這適用於特定瀏覽器。當 theme API 不可用時，此選項會自動啟用。"
+		"message": "使用 HTML「theme-color」屬性而非 theme API 來更改標籤列顏色。這僅在特定瀏覽器中有限度地運作。"
 	},
 
 	"minimumContrast": {

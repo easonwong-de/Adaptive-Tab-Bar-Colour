@@ -156,7 +156,7 @@
 	},
 
 	"compatibilityModeTooltip": {
-		"message": "En lugar de la theme API, utiliza la propiedad HTML «theme-color» para cambiar el color de la barra de pestañas. Esto funciona con ciertos navegadores. Esta opción se activa automáticamente cuando la theme API no está disponible."
+		"message": "En lugar de la theme API, utiliza la propiedad HTML «theme-color» para cambiar el color de la barra de pestañas. Esto solo funciona con ciertos navegadores de forma limitada."
 	},
 
 	"minimumContrast": {

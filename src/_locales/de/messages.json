@@ -156,7 +156,7 @@
 	},
 
 	"compatibilityModeTooltip": {
-		"message": "Anstelle der Theme-API wird die HTML „theme-color“ Eigenschaft verwendet, um die Tableistenfarbe zu ändern. Dies funktioniert mit bestimmten Browsern. Diese Option wird automatisch aktiviert, wenn die Theme-API nicht verfügbar ist."
+		"message": "Anstelle der Theme-API wird die HTML „theme-color“ Eigenschaft verwendet, um die Tableistenfarbe zu ändern. Dies funktioniert nur bei bestimmten Browsern in begrenztem Umfang."
 	},
 
 	"minimumContrast": {

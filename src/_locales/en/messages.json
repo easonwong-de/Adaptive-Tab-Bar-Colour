@@ -156,7 +156,7 @@
 	},
 
 	"compatibilityModeTooltip": {
-		"message": "Instead of the theme API, use the HTML “theme-color” property to change the tab bar colour. This works with certain browsers. This option is automatically enabled when theme API is not available."
+		"message": "Instead of the theme API, use the HTML “theme-color” property to change the tab bar colour. This only works with certain browsers to a limited extent."
 	},
 
 	"minimumContrast": {

@@ -156,7 +156,7 @@
 	},
 
 	"compatibilityModeTooltip": {
-		"message": "使用 HTML「theme-color」属性而非 theme API 来更改标签栏颜色。这适用于特定浏览器。当 theme API 不可用时，此选项会自动启用。"
+		"message": "使用 HTML「theme-color」属性而非 theme API 来更改标签栏颜色。这仅在特定浏览器中有限度地工作。"
 	},
 
 	"minimumContrast": {

@@ -156,7 +156,7 @@
 	},
 
 	"compatibilityModeTooltip": {
-		"message": "Au lieu de la theme API, utilise la propriété HTML « theme-color » pour changer la couleur de la barre d'onglets. Cela fonctionne avec certains navigateurs. Cette option est automatiquement activée lorsque la theme API n'est pas disponible."
+		"message": "Au lieu de la theme API, utilise la propriété HTML « theme-color » pour changer la couleur de la barre d'onglets. Cela ne fonctionne qu'avec certains navigateurs de manière limitée."
 	},
 
 	"minimumContrast": {
