@@ -34,7 +34,6 @@ async function updatePopup() {
 		if (!pref.compatibilityMode) await updatePopupColour();
 		updateCompatibilityMode();
 		loadingWrapper.classList.toggle("hidden", true);
-		settingsWrapper.classList.toggle("hidden", false);
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}

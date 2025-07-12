@@ -90,3 +90,7 @@ svg {
 	vertical-align: middle;
 	width: 1em;
 }
+
+button {
+	font-size: inherit;
+}
