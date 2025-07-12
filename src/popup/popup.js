@@ -31,7 +31,7 @@ async function updatePopup() {
 	if (pref.valid()) {
 		updateSliders();
 		await updateInfoDisplay();
-		if (pref.compatibilityMode) await updatePopupColour();
+		if (!pref.compatibilityMode) await updatePopupColour();
 		updateCompatibilityMode();
 		loadingWrapper.classList.toggle("hidden", true);
 		settingsWrapper.classList.toggle("hidden", false);

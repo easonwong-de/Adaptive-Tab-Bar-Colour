@@ -409,8 +409,9 @@ function sendMessageOnLoad(nthTry = 0) {
 		browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });
 	} catch (error) {
 		if (nthTry > 3) {
-			console.error(error);
+			console.error("Could not connect to ATBC background.");
 		} else {
+			console.warn("Failed to connect to ATBC background.");
 			setTimeout(() => sendMessageOnLoad(++nthTry), 50);
 		}
 	}

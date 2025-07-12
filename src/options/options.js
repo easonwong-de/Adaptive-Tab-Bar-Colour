@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { localise, msg } from "../utility.js";
+import { localise, i18n, supportsThemeAPI } from "../utility.js";
 import {
 	setupCheckbox,
 	setCheckboxValue,
@@ -184,7 +184,7 @@ async function setupColourPolicySection(policySection, id, policy) {
 		const addon = await browser.management.get(policy.header);
 		policyHeader.textContent = addon.name;
 	} catch (error) {
-		policyHeader.textContent = msg("addonNotFound");
+		policyHeader.textContent = i18n("addonNotFound");
 	}
 }
 
@@ -194,7 +194,7 @@ document.querySelector("#export-pref").onclick = () => {
 	const url = URL.createObjectURL(blob);
 	exportPref.href = url;
 	exportPref.click();
-	alert(msg("settingsAreExported"));
+	alert(i18n("settingsAreExported"));
 };
 
 const importPref = document.querySelector("#import-pref-link");
@@ -207,17 +207,17 @@ importPref.addEventListener("change", async () => {
 		if (await pref.JSONToPref(prefJSON)) {
 			await applySettings();
 			await updateUI();
-			alert(msg("settingsAreImported"));
+			alert(i18n("settingsAreImported"));
 		} else {
-			alert(msg("importFailed"));
+			alert(i18n("importFailed"));
 		}
 	};
-	reader.onerror = () => alert(msg("importFailed"));
+	reader.onerror = () => alert(i18n("importFailed"));
 	reader.readAsText(file);
 });
 
 document.querySelector("#reset-theme-builder").onclick = async () => {
-	if (!confirm(msg("confirmResetThemeBuilder"))) return;
+	if (!confirm(i18n("confirmResetThemeBuilder"))) return;
 	[
 		"tabbar",
 		"tabbarBorder",
@@ -238,14 +238,14 @@ document.querySelector("#reset-theme-builder").onclick = async () => {
 };
 
 document.querySelector("#reset-site-list").onclick = async () => {
-	if (!confirm(msg("confirmResetSiteList"))) return;
+	if (!confirm(i18n("confirmResetSiteList"))) return;
 	pref.reset("siteList");
 	await applySettings();
 	await updateUI();
 };
 
 document.querySelector("#reset-advanced").onclick = async () => {
-	if (!confirm(msg("confirmResetAdvanced"))) return;
+	if (!confirm(i18n("confirmResetAdvanced"))) return;
 	[
 		"allowDarkLight",
 		"dynamic",
@@ -265,11 +265,17 @@ document.querySelector("#reset-advanced").onclick = async () => {
 async function updateOptionsPage() {
 	await pref.load();
 	if (pref.valid()) {
-		if (!document.hasFocus()) await updateUI();
-		await updateAllowDarkLightText();
+		document.hasFocus() ? await updateUINoInput() : await updateUI();
 	} else {
 		browser.runtime.sendMessage({ header: "INIT_REQUEST" });
 	}
+}
+
+async function updateUINoInput() {
+	updateCheckboxes();
+	updateSliders();
+	updateCompatibilityMode();
+	await updateAllowDarkLightText();
 }
 
 async function updateUI() {
@@ -294,9 +300,13 @@ function updateSliders() {
  */
 function updateCompatibilityMode() {
 	document
-		.querySelectorAll(`.slider:not([data-pref="tabbar"])`)
+		.querySelectorAll(`#tab-1 .slider:not([data-pref="tabbar"])`)
 		.forEach((slider) => slider.classList.toggle("disabled", pref.compatibilityMode));
-	document.querySelector(`#compatibility-mode`).classList.toggle("disabled", pref.compatibilityMode);
+	document
+		.querySelector("#allow-dark-light")
+		.closest(".section")
+		.classList.toggle("disabled", pref.compatibilityMode);
+	document.querySelector(`#compatibility-mode`).classList.toggle("disabled", !supportsThemeAPI());
 }
 
 function updateFixedPolicySection() {
@@ -357,21 +367,24 @@ async function updateSiteList() {
  * @param {number} nthTry
  */
 async function updateAllowDarkLightText(nthTry = 0) {
-	if (nthTry > 10) return;
 	try {
 		const allowDarkLightTitle = document.querySelector("#allow-dark-light-title");
 		const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
 		const scheme = await browser.runtime.sendMessage({ header: "SCHEME_REQUEST" });
 		if (scheme === "light") {
-			allowDarkLightTitle.textContent = msg("allowDarkTabBar");
-			allowDarkLightCheckboxCaption.textContent = msg("allowDarkTabBarTooltip");
+			allowDarkLightTitle.textContent = i18n("allowDarkTabBar");
+			allowDarkLightCheckboxCaption.textContent = i18n("allowDarkTabBarTooltip");
 		} else {
-			allowDarkLightTitle.textContent = msg("allowLightTabBar");
-			allowDarkLightCheckboxCaption.textContent = msg("allowLightTabBarTooltip");
+			allowDarkLightTitle.textContent = i18n("allowLightTabBar");
+			allowDarkLightCheckboxCaption.textContent = i18n("allowLightTabBarTooltip");
 		}
 	} catch (error) {
-		console.error(error);
-		setTimeout(async () => await updateAllowDarkLightText(++nthTry), 50);
+		if (nthTry > 5) {
+			console.error("Could not attain browser colour scheme.");
+		} else {
+			console.warn("Failed to attain browser colour scheme.");
+			setTimeout(async () => await updateAllowDarkLightText(++nthTry), 50);
+		}
 	}
 }
 

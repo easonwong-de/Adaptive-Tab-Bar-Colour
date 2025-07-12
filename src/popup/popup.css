@@ -47,7 +47,7 @@ hr {
 }
 
 .section-group-title {
-	background-image: linear-gradient(to top, transparent, var(--background-colour) 16px);
+	background-image: linear-gradient(to top, transparent, var(--background-colour, var(--colour-0)) 16px);
 	font-weight: 600;
 	padding: 8px 4px 16px;
 	position: sticky;

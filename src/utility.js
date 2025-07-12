@@ -48,13 +48,13 @@ export async function getCurrentScheme() {
  */
 export function localise(webDocument) {
 	webDocument.querySelectorAll("[data-text]").forEach((element) => {
-		element.textContent = msg(element.dataset.text);
+		element.textContent = i18n(element.dataset.text);
 	});
 	webDocument.querySelectorAll("[data-title]").forEach((element) => {
-		element.title = msg(element.dataset.title);
+		element.title = i18n(element.dataset.title);
 	});
 	webDocument.querySelectorAll("[data-placeholder]").forEach((element) => {
-		element.placeholder = msg(element.dataset.placeholder);
+		element.placeholder = i18n(element.dataset.placeholder);
 	});
 }
 
@@ -65,7 +65,7 @@ export function localise(webDocument) {
  * If the handle is not found, returns `i18n <${handle}>`.
  * If the localisation value is `__EMPTY__`, returns an empty string.
  */
-export function msg(handle) {
+export function i18n(handle) {
 	const localisedMessage = browser.i18n.getMessage(handle);
 	if (!localisedMessage) {
 		return `i18n <${handle}>`;

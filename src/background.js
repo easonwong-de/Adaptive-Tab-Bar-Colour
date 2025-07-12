@@ -305,7 +305,7 @@ function setFrameColour(tab, colour) {
 		} else {
 			const correctionResult = colourCode[colour][current.reversedScheme].contrastCorrection(
 				current.scheme,
-				pref.allowDarkLight,
+				pref.compatibilityMode ? false : pref.allowDarkLight,
 				pref.minContrast_light,
 				pref.minContrast_dark
 			);
@@ -316,7 +316,7 @@ function setFrameColour(tab, colour) {
 	} else {
 		const correctionResult = colour.contrastCorrection(
 			current.scheme,
-			pref.allowDarkLight,
+			pref.compatibilityMode ? false : pref.allowDarkLight,
 			pref.minContrast_light,
 			pref.minContrast_dark
 		);
@@ -338,14 +338,14 @@ function setFrameColour(tab, colour) {
  * @param {tabs.Tab} tab - The tab to apply the theme color to.
  * @param {colour} colour - The colour to apply.
  */
-function setTabThemeColour(tab, colour) {
+async function setTabThemeColour(tab, colour) {
 	try {
-		browser.tabs.sendMessage(tab.id, {
+		await browser.tabs.sendMessage(tab.id, {
 			header: "SET_THEME_COLOUR",
 			colour: colour.dim(pref.tabbar).toRGBA(),
 		});
 	} catch (error) {
-		console.warn("Could not apply theme colour:", error);
+		console.warn("Could not apply theme colour to tab:", tab.url);
 	}
 }
 
