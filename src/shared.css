@@ -70,6 +70,14 @@ html {
 	display: none !important;
 }
 
+.disabled {
+	opacity: 0.5;
+	pointer-events: none;
+	* {
+		pointer-events: none;
+	}
+}
+
 svg {
 	align-self: center;
 	fill: none;
@@ -81,12 +89,4 @@ svg {
 	stroke-width: 2px;
 	vertical-align: middle;
 	width: 1em;
-}
-
-.disabled {
-	opacity: 0.5;
-	pointer-events: none;
-	* {
-		pointer-events: none;
-	}
 }

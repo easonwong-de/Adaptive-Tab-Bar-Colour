@@ -299,14 +299,27 @@ function updateSliders() {
  * Update options page's UI related to compatibility mode.
  */
 function updateCompatibilityMode() {
+	document.querySelectorAll(`#tab-1 .section`).forEach((section) => {
+		const tabbarSlider = section.querySelector(`.slider[data-pref="tabbar"]`);
+		if (tabbarSlider) {
+			section
+				.querySelector(`.slider[data-pref="tabbarBorder"]`)
+				.classList.toggle("disabled", pref.compatibilityMode);
+			section
+				.querySelector(`.slider[data-pref="tabbarBorder"] + .slider-title`)
+				.classList.toggle("disabled", pref.compatibilityMode);
+		} else {
+			section.classList.toggle("disabled", pref.compatibilityMode);
+		}
+	});
 	document
-		.querySelectorAll(`#tab-1 .slider:not([data-pref="tabbar"])`)
-		.forEach((slider) => slider.classList.toggle("disabled", pref.compatibilityMode));
+		.querySelector("#tab-3 .list")
+		.classList.toggle("disabled", pref.compatibilityMode);
 	document
 		.querySelector("#allow-dark-light")
 		.closest(".section")
 		.classList.toggle("disabled", pref.compatibilityMode);
-	document.querySelector(`#compatibility-mode`).classList.toggle("disabled", !supportsThemeAPI());
+	document.querySelector(`#compatibility-mode`).closest(".section").classList.toggle("disabled", !supportsThemeAPI());
 }
 
 function updateFixedPolicySection() {

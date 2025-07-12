@@ -180,9 +180,18 @@ async function updatePopupColour() {
  * Update popup's UI related to compatibility mode.
  */
 function updateCompatibilityMode() {
-	document
-		.querySelectorAll(`.slider:not([data-pref="tabbar"])`)
-		.forEach((slider) => slider.classList.toggle("disabled", pref.compatibilityMode));
+	document.querySelectorAll(`.section-group .section`).forEach((section) => {
+		const tabbarSlider = section.querySelector(`.slider[data-pref="tabbar"]`);
+		if (tabbarSlider) {
+			section
+				.querySelector(`.slider[data-pref="tabbarBorder"]`)
+				.classList.toggle("disabled", pref.compatibilityMode);
+		} else {
+			Array.from(section.children).forEach((child) => {
+				child.classList.toggle("disabled", pref.compatibilityMode);
+			});
+		}
+	});
 }
 
 /**

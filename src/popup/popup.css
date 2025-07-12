@@ -53,6 +53,7 @@ hr {
 	position: sticky;
 	text-align: center;
 	top: 0;
+	z-index: 100;
 }
 
 .section-group {
