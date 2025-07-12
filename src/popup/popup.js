@@ -171,9 +171,11 @@ function setInfoDisplay({ reason = "ERROR_OCCURRED", additionalInfo = null, info
  * Updates popup's text and background colour.
  */
 async function updatePopupColour() {
-	const theme = await browser.theme.getCurrent();
-	document.documentElement.style.setProperty("--background-colour", theme.colors.popup);
-	document.documentElement.style.setProperty("--text-colour", theme.colors.popup_text);
+	const theme = await browser.theme?.getCurrent();
+	if (theme?.colors?.popup && theme?.colors?.popup_text) {
+		document.documentElement.style.setProperty("--background-colour", theme.colors.popup);
+		document.documentElement.style.setProperty("--text-colour", theme.colors.popup_text);
+	}
 }
 
 /**
