@@ -3,7 +3,7 @@
 import { supportsThemeAPI } from "./utility.js";
 
 /** The version of ATBC */
-export const addonVersion = [3, 0];
+export const addonVersion = [3, 1];
 
 /** Default light homepage colour */
 export const default_homeBackground_light = "#ffffff";

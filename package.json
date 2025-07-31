@@ -1,6 +1,6 @@
 {
 	"name": "adaptive-tab-bar-colour",
-	"version": "3.0",
+	"version": "3.1",
 	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
 	"type": "module",
 	"scripts": {
