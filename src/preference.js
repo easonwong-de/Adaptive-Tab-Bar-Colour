@@ -134,8 +134,10 @@ export default class preference {
 		const oldContent = Object.assign({}, this.#content);
 		this.#content = {};
 		for (const key in this.#defaultContent) {
-			this.#content[key] = oldContent[key] ?? this.#defaultContent[key];
-			if (typeof this.#content[key] !== typeof this.#defaultContent[key]) this.reset(key);
+			this.#content[key] =
+				typeof oldContent[key] === typeof this.#defaultContent[key]
+					? oldContent[key]
+					: this.#defaultContent[key];
 		}
 		// Updating from before v2.2
 		if (this.#content.version < [2, 2]) {
