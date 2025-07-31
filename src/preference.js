@@ -122,9 +122,9 @@ export default class preference {
 	 */
 	async normalise() {
 		if (
-			(!this.#content.last_version && !this.#content.version) ||
-			(this.#content.last_version && this.#content.last_version < [2, 0]) ||
-			(this.#content.version && JSON.stringify(this.#content.version) === "[2,2,1]")
+			!this.#content.version ||
+			this.#content.version < [2, 0] ||
+			JSON.stringify(this.#content.version) === "[2,2,1]"
 		) {
 			this.reset();
 			await this.save();
