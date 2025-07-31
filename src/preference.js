@@ -42,7 +42,7 @@ export default class preference {
 	};
 
 	/** Default content of the preference */
-	#default_content = {
+	#defaultContent = {
 		tabbar: 0,
 		tabbarBorder: 0,
 		tabSelected: 10,
@@ -70,27 +70,6 @@ export default class preference {
 		version: addonVersion,
 	};
 
-	/** Current pref keys and their legacy version */
-	#legacyKey = {
-		allowDarkLight: "force",
-		tabbar: "tabbar_color",
-		tabSelected: "tab_selected_color",
-		toolbar: "toolbar_color",
-		toolbarBorder: "separator_opacity",
-		toolbarField: "toolbar_field_color",
-		toolbarFieldOnFocus: "toolbar_field_focus_color",
-		sidebar: "sidebar_color",
-		sidebarBorder: "sidebar_border_color",
-		popup: "popup_color",
-		popupBorder: "popup_border_color",
-		homeBackground_light: "light_color",
-		homeBackground_dark: "dark_color",
-		fallbackColour_light: "light_fallback_color",
-		fallbackColour_dark: "dark_fallback_color",
-		siteList: "reservedColor_cs",
-		version: "last_version",
-	};
-
 	/**
 	 * Loads the preferences from the browser storage to the instance.
 	 */
@@ -102,7 +81,6 @@ export default class preference {
 	 * Stores the preferences from the instance to the browser storage.
 	 */
 	async save() {
-		await browser.storage.local.clear();
 		await browser.storage.local.set(this.#content);
 	}
 
@@ -112,9 +90,9 @@ export default class preference {
 	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
 	 */
 	valid() {
-		if (Object.keys(this.#content).length !== Object.keys(this.#default_content).length) return false;
-		for (const key in this.#default_content) {
-			if (typeof this.#content[key] !== typeof this.#default_content[key]) return false;
+		if (Object.keys(this.#content).length !== Object.keys(this.#defaultContent).length) return false;
+		for (const key in this.#defaultContent) {
+			if (typeof this.#content[key] !== typeof this.#defaultContent[key]) return false;
 		}
 		return true;
 	}
@@ -127,12 +105,12 @@ export default class preference {
 	 * @param {string | null} key The key of the preference to reset.
 	 */
 	reset(key = null) {
-		if (key in this.#default_content) {
-			this.#content[key] = this.#default_content[key];
+		if (key in this.#defaultContent) {
+			this.#content[key] = this.#defaultContent[key];
 		} else {
 			this.#content = {};
-			for (const key in this.#default_content) {
-				this.#content[key] = this.#default_content[key];
+			for (const key in this.#defaultContent) {
+				this.#content[key] = this.#defaultContent[key];
 			}
 		}
 	}
@@ -140,17 +118,12 @@ export default class preference {
 	/**
 	 * Normalises the preferences content to a consistent format.
 	 *
-	 * The function adjusts fields as necessary, filling in any missing values to maintain a complete preference structure.
-	 *
-	 * If the existing preferences don't have a version number, date back before v1.7, or has the version number of 2.2.1, the default pref will overwrite the old pref.
-	 *
-	 * Once executed, the preferences in the instance are normalised.
+	 * If the existing preferences don't have a version number, date back before v2.0, or has the version number of 2.2.1, the default pref will overwrite the old pref.
 	 */
 	async normalise() {
-		// If there's no version number, if last version was before v1.7, or if it was v2.2.1, resets the preference
 		if (
 			(!this.#content.last_version && !this.#content.version) ||
-			(this.#content.last_version && this.#content.last_version < [1, 7]) ||
+			(this.#content.last_version && this.#content.last_version < [2, 0]) ||
 			(this.#content.version && JSON.stringify(this.#content.version) === "[2,2,1]")
 		) {
 			this.reset();
@@ -160,33 +133,9 @@ export default class preference {
 		// Transfers the stored pref into the instance
 		const oldContent = Object.assign({}, this.#content);
 		this.#content = {};
-		for (const key in this.#default_content) {
-			this.#content[key] = oldContent[key] ?? oldContent[this.#legacyKey[key]] ?? this.#default_content[key];
-			if (typeof this.#content[key] !== typeof this.#default_content[key]) {
-				this.reset(key);
-			}
-		}
-		// Updating from before v1.7.5
-		// Converts from legacy format to query selector format
-		if (this.#content.version < [1, 7, 5]) {
-			// Clears possible empty policies
-			delete this.#content.siteList[undefined];
-			for (const site in this.#content.siteList) {
-				const legacyPolicy = this.#content.siteList[site];
-				if (typeof legacyPolicy !== "string") {
-					continue;
-				} else if (legacyPolicy.startsWith("TAG_")) {
-					this.#content.siteList[site] = legacyPolicy.replace("TAG_", "QS_");
-				} else if (legacyPolicy.startsWith("CLASS_")) {
-					this.#content.siteList[site] = legacyPolicy.replace("CLASS_", "QS_.");
-				} else if (legacyPolicy.startsWith("ID_")) {
-					this.#content.siteList[site] = legacyPolicy.replace("ID_", "QS_#");
-				} else if (legacyPolicy.startsWith("NAME_")) {
-					this.#content.siteList[site] = `${legacyPolicy.replace("NAME_", "QS_[name='")}']`;
-				} else if (legacyPolicy === "") {
-					delete this.#content.siteList[site];
-				}
-			}
+		for (const key in this.#defaultContent) {
+			this.#content[key] = oldContent[key] ?? this.#defaultContent[key];
+			if (typeof this.#content[key] !== typeof this.#defaultContent[key]) this.reset(key);
 		}
 		// Updating from before v2.2
 		if (this.#content.version < [2, 2]) {
