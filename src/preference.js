@@ -130,7 +130,6 @@ export default class preference {
 			await this.save();
 			return;
 		}
-		// Transfers the stored pref into the instance
 		const oldContent = Object.assign({}, this.#content);
 		this.#content = {};
 		for (const key in this.#defaultContent) {
@@ -379,10 +378,9 @@ export default class preference {
 	 * Validates and adjusts a numeric preference based on given constraints.
 	 *
 	 * @param {number} num The number to validate.
-	 * @param {object} options The constraints for validation.
-	 * @param {number} options.min The minimum allowed value.
-	 * @param {number} options.max The maximum allowed value.
-	 * @param {number} options.step The step size for rounding.
+	 * @param {number} min The minimum allowed value.
+	 * @param {number} max The maximum allowed value.
+	 * @param {number} step The step size for rounding.
 	 * @returns {number} The validated and adjusted number.
 	 */
 	#validateNumericPref(num, { min, max, step }) {
