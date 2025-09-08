@@ -1,0 +1,401 @@
+{
+	"extensionName": {
+		"message": "Adaptive Tab Bar Color"
+	},
+
+	"extensionDescription": {
+		"message": "Меняет цвет темы Firefox в соответствии с внешним видом сайта."
+	},
+
+	"__OPTIONS PAGE__": {
+		"message": "===================="
+	},
+
+	"reinstallTip": {
+		"message": "Данные настроек могут быть повреждены. Если проблема сохраняется, переустановите дополнение. Приносим извинения за неудобства."
+	},
+
+	"loading": {
+		"message": "Загрузка…"
+	},
+
+	"themeBuilder": {
+		"message": "Конструктор темы"
+	},
+
+	"siteList": {
+		"message": "Список сайтов"
+	},
+
+	"advanced": {
+		"message": "Дополнительно"
+	},
+
+	"tabBar": {
+		"message": "Панель вкладок"
+	},
+
+	"background": {
+		"message": "Фон"
+	},
+
+	"selectedTab": {
+		"message": "Выбранная вкладка"
+	},
+
+	"toolbar": {
+		"message": "Панель инструментов"
+	},
+
+	"border": {
+		"message": "Граница"
+	},
+
+	"URLBar": {
+		"message": "Адресная строка"
+	},
+
+	"backgroundOnFocus": {
+		"message": "Фон при фокусе"
+	},
+
+	"sidebar": {
+		"message": "Боковая панель"
+	},
+
+	"popUp": {
+		"message": "Всплывающее окно"
+	},
+
+	"thisPolicyWillBeIgnored": {
+		"message": "Эта политика будет проигнорирована"
+	},
+
+	"URLDomainOrRegex": {
+		"message": "URL / regex / маска / домен"
+	},
+
+	"addonNotFound": {
+		"message": "Дополнение не найдено"
+	},
+
+	"specifyAColour": {
+		"message": "указать цвет"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "использовать / игнорировать цвет темы"
+	},
+
+	"pickColourFromElement": {
+		"message": "выбрать цвет из элемента"
+	},
+
+	"anyCSSColour": {
+		"message": "Любой формат"
+	},
+
+	"use": {
+		"message": "Использовать"
+	},
+
+	"ignore": {
+		"message": "Игнорировать"
+	},
+
+	"querySelector": {
+		"message": "CSS-селектор"
+	},
+
+	"delete": {
+		"message": "Удалить"
+	},
+
+	"reset": {
+		"message": "Сбросить"
+	},
+
+	"addANewRule": {
+		"message": "Добавить новое правило"
+	},
+
+	"allowLightTabBar": {
+		"message": "Разрешить светлую панель вкладок"
+	},
+
+	"allowLightTabBarTooltip": {
+		"message": "Разрешить панели вкладок использовать светлый цвет (тёмный текст на светлой панели)."
+	},
+
+	"allowDarkTabBar": {
+		"message": "Разрешить тёмную панель вкладок"
+	},
+
+	"allowDarkTabBarTooltip": {
+		"message": "Разрешить панели вкладок использовать тёмный цвет (светлый текст на тёмной панели)."
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Динамическое обновление цвета"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Обновлять цвет панели вкладок во время навигации внутри страницы."
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Игнорировать цвет темы сайта"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Некоторые сайты задают свой цвет темы. Включите этот параметр, чтобы игнорировать такие цвета."
+	},
+
+	"compatibilityMode": {
+		"message": "Режим совместимости"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "Вместо API темы использовать свойство HTML «theme-color» для изменения цвета панели вкладок. Работает только в некоторых браузерах и с ограничениями."
+	},
+
+	"minimumContrast": {
+		"message": "Минимальный контраст"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Задайте минимальное соотношение контраста между панелью вкладок и текстом. Цвет панели будет скорректирован автоматически, если условие не выполнено."
+	},
+
+	"inLightMode": {
+		"message": "В светлом режиме"
+	},
+
+	"inDarkMode": {
+		"message": "В тёмном режиме"
+	},
+
+	"homepageColourLight": {
+		"message": "Цвет домашней страницы: светлый"
+	},
+
+	"homepageColourDark": {
+		"message": "Цвет домашней страницы: тёмный"
+	},
+
+	"fallbackColourLight": {
+		"message": "Резервный цвет: светлый"
+	},
+
+	"fallbackColourDark": {
+		"message": "Резервный цвет: тёмный"
+	},
+
+	"exportSettings": {
+		"message": "Экспорт настроек"
+	},
+
+	"settingsAreExported": {
+		"message": "Настройки экспортированы в папку загрузок."
+	},
+
+	"importSettings": {
+		"message": "Импорт настроек"
+	},
+
+	"settingsAreImported": {
+		"message": "Настройки импортированы."
+	},
+
+	"importFailed": {
+		"message": "Не удалось импортировать настройки. Попробуйте ещё раз."
+	},
+
+	"resetThemeBuilder": {
+		"message": "Сброс конструктора темы"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "Вы уверены, что хотите сбросить конструктор темы?"
+	},
+
+	"resetSiteList": {
+		"message": "Сброс списка сайтов"
+	},
+
+	"confirmResetSiteList": {
+		"message": "Вы уверены, что хотите сбросить список сайтов?"
+	},
+
+	"resetAdvanced": {
+		"message": "Сброс расширенных настроек"
+	},
+
+	"confirmResetAdvanced": {
+		"message": "Вы уверены, что хотите сбросить расширенные настройки?"
+	},
+
+	"reportAnIssue": {
+		"message": "Сообщить о проблеме / предложить идею / перевести дополнение"
+	},
+
+	"__POPUP__": {
+		"message": "===================="
+	},
+
+	"moreSettings": {
+		"message": "Больше настроек…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Открыть страницу настроек"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Использование цвета для PDF-просмотрщика"
+	},
+
+	"colourForJSONViewer": {
+		"message": "Использование цвета для JSON-просмотрщика"
+	},
+
+	"pageIsProtected": {
+		"message": "Эта страница защищена браузером"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Использование цвета для просмотра текста"
+	},
+
+	"errorOccured": {
+		"message": "Произошла ошибка, используется резервный цвет"
+	},
+
+	"colourForHomePage": {
+		"message": "Цвет панели вкладок для домашней страницы можно настроить в параметрах"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Используется указанный цвет для страниц, связанных с "
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Использовать цвет по умолчанию"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Использовать цвет по умолчанию"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Рекомендуемый цвет для страниц, связанных с "
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " доступен"
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Использовать рекомендуемый цвет"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Использовать рекомендуемый цвет"
+	},
+
+	"specifyColourForAddon": {
+		"message": "Нажмите «Указать цвет», чтобы открыть настройки и задать цвет панели вкладок для страниц, связанных с "
+	},
+
+	"specifyColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Указать цвет"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Открыть настройки и указать цвет для страниц, связанных с дополнением"
+	},
+
+	"themeColourIsUnignored": {
+		"message": "Цвет темы, заданный сайтом, используется (по умолчанию он игнорировался)"
+	},
+
+	"themeColourNotFound": {
+		"message": "Цвет темы не найден, цвет выбран со страницы"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "Цвет темы, заданный сайтом, игнорируется"
+	},
+
+	"useThemeColourButton": {
+		"message": "Использовать цвет темы"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Использовать цвет темы, заданный сайтом"
+	},
+
+	"colourIsPickedFrom": {
+		"message": "Цвет выбран из HTML-элемента, соответствующего "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"cannotFindElement": {
+		"message": "Не удалось найти HTML-элемент, соответствующий "
+	},
+
+	"cannotFindElementEnd": {
+		"message": ", цвет выбран со страницы вместо него"
+	},
+
+	"errorOccuredLocatingElement": {
+		"message": "Произошла ошибка при поиске HTML-элемента, соответствующего "
+	},
+
+	"errorOccuredLocatingElementEnd": {
+		"message": ", цвет выбран со страницы вместо него"
+	},
+
+	"colourIsSpecified": {
+		"message": "Цвет для этого сайта задан в настройках"
+	},
+
+	"usingImageViewer": {
+		"message": "Использование цвета для просмотрщика изображений"
+	},
+
+	"usingThemeColour": {
+		"message": "Используется цвет темы, заданный сайтом"
+	},
+
+	"ignoreThemeColourButton": {
+		"message": "Игнорировать цвет темы"
+	},
+
+	"ignoreThemeColourTitle": {
+		"message": "Игнорировать цвет темы, заданный сайтом"
+	},
+
+	"usingFallbackColour": {
+		"message": "Цвет недоступен, используется резервный"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "Цвет выбран со страницы"
+	},
+
+	"colourIsAdjusted": {
+		"message": "Исходный цвет скорректирован для обеспечения минимального контраста"
+	}
+}
