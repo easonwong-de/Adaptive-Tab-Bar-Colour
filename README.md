@@ -24,24 +24,32 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 
 ## Works Well With:
 
-<ol>
-	<li><a href="https://addons.mozilla.org/firefox/addon/darkreader/">Dark Reader</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/stylish/">Stylish</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/">Dark Mode Website Switcher</a></li>
-</ol>
+- [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
+- [Stylus](https://addons.mozilla.org/firefox/addon/styl-us/)
+- [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
 
 <br>
 
 ## Incompatible With:
 
-<ol>
-	<li>Firefox versions older than <a href="https://www.mozilla.org/firefox/112.0/releasenotes/">112.0</a> (released in April 2023)</li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/">Adaptive Theme Creator</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/">Chameleon Dynamic Theme</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/vivaldifox/">VivaldiFox</a></li>
-	<li><a href="https://addons.mozilla.org/firefox/addon/envify/">Envify</a></li>
-	<li>and any other add-on that changes the Firefox theme</li>
-</ol>
+- Firefox versions older than [112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) (released in April 2023)
+- [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
+- [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
+- [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
+- [Envify](https://addons.mozilla.org/firefox/addon/envify/)
+- and any other add-on that changes the Firefox theme
+
+<br>
+
+## If You Want to Remove the Shadow Beneath the Toolbar:
+
+To remove the thin shadow cast by the web content onto the browser toolbar, go to Settings (`about:preferences`) and turn off `Show sidebar` under the `Browser Layout` section. Alternatively, you can use a CSS theme. For more information, see [GitHub issue #155](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/155).
+
+<br>
+
+## If You Want to Turn On Smooth Colour Transition:
+
+Due to technical limitations, smooth tab bar colour transition is not natively supported. However, you can use a CSS theme to achieve this effect. For more information, see [GitHub issue #43](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/43).
 
 <br>
 
@@ -61,4 +69,4 @@ Firefox’s titlebar buttons may revert to the Windows style. To prevent this, o
 
 ## Safety Reminder:
 
-Beware of malicious web UIs: Please distinguish between the browser’s UI and the web UI, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Thanks to <a href="https://www.reddit.com/user/KazaHesto/">u/KazaHesto</a>)
+Beware of malicious web UIs: Please distinguish between the browser’s UI and the web UI. For more information, see <a href="https://textslashplain.com/2017/01/14/the-line-of-death/">The Line of Death</a>. (Thanks to [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))

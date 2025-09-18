@@ -5,7 +5,7 @@
 **和此套件運作無間的有：**
 
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
-- [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
+- [Stylus](https://addons.mozilla.org/firefox/addon/styl-us/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
 
 **和此套件不相容的有：**
@@ -17,6 +17,14 @@
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - 以及任何改變 Firefox 佈景主題的擴充套件
 
+**若閣下想移除工具列下方的陰影：**
+
+要移除網頁內容在瀏覽器工具列下方投射的細微陰影，請前往設定 (`about:preferences`) 並在「瀏覽器版面」部分關閉「顯示側邊欄」。另外，閣下亦可使用 CSS 主題。如需更多資訊，請參閱 [GitHub issue #155](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/155)。
+
+**若閣下想開啟平滑顏色過渡：**
+
+由於技術限制，標籤列的平滑顏色過渡無法原生支援。然而，閣下可以使用 CSS 主題來達到此效果。如需更多資訊，請參閱 [GitHub issue #43](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/43)。
+
 **若閣下使用 CSS Theme：**
 
 一個 CSS theme 若採用默認的顏色變數，則可以與 變色標題列 相容（例如，`--lwt-accent-color` 須用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 變色標題列 相容的 CSS theme。
@@ -27,6 +35,6 @@ Firefox 的標題列按鈕或會重設為 Windows 風格。為免此發生，請
 
 **安全提示：**
 
-小心懷有惡意的網頁畫面：請注意區別瀏覽器介面和網頁畫面。請參考 [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/)。（感謝 [u/KazaHesto](https://www.reddit.com/user/KazaHesto/)）
+小心懷有惡意的網頁畫面：請注意區別瀏覽器介面和網頁畫面。如需更多資訊，請參閱 [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/)。（感謝 [u/KazaHesto](https://www.reddit.com/user/KazaHesto/)）
 
 閣下可移步 GitHub 為此專案加星標：[https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour)

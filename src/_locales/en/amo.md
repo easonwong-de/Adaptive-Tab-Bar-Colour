@@ -5,7 +5,7 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 **Works Well With:**
 
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
-- [Stylish](https://addons.mozilla.org/firefox/addon/stylish/)
+- [Stylus](https://addons.mozilla.org/firefox/addon/styl-us/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
 
 **Incompatible With:**
@@ -17,6 +17,14 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - and any other add-on that changes the Firefox theme
 
+**If You Want to Remove the Shadow Beneath the Toolbar:**
+
+To remove the thin shadow cast by the web content onto the browser toolbar, go to Settings (`about:preferences`) and turn off `Show sidebar` under the `Browser Layout` section. Alternatively, you can use a CSS theme. For more information, see [GitHub issue #155](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/155).
+
+**If You Want to Turn On Smooth Colour Transition:**
+
+Due to technical limitations, smooth tab bar colour transition is not natively supported. However, you can use a CSS theme to achieve this effect. For more information, see [GitHub issue #43](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/43).
+
 **If You’re Using a CSS Theme:**
 
 A CSS theme can work with ATBC (Adaptive Tab Bar Colour) when system colour variables are used (e.g. `--lwt-accent-color` for tab bar colour). [This](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) is an example of an ATBC-compatible CSS theme.
@@ -27,6 +35,6 @@ Firefox’s titlebar buttons may revert to the Windows style. To prevent this, o
 
 **Safety Reminder:**
 
-Beware of malicious web UIs: Please distinguish between the browser’s UI and the web UI. See [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Thanks to [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
+Beware of malicious web UIs: Please distinguish between the browser’s UI and the web UI. For more information, see [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Thanks to [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
 
 Feel free to star this project on GitHub: [https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour)
