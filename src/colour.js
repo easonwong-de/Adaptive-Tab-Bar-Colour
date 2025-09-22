@@ -50,6 +50,8 @@ export default class colour {
 		return this;
 	}
 
+	#canvasContext = document.createElement("canvas").getContext("2d");
+
 	/**
 	 * Parses the given initialiser to set the colour value.
 	 *
@@ -62,9 +64,8 @@ export default class colour {
 		if (acceptCode && colourCodes.includes(initialiser)) {
 			this.#code = initialiser;
 		} else if (typeof initialiser === "string") {
-			const ctx = document.createElement("canvas").getContext("2d");
-			ctx.fillStyle = initialiser;
-			const parsedColour = ctx.fillStyle;
+			this.#canvasContext.fillStyle = initialiser;
+			const parsedColour = this.#canvasContext.fillStyle;
 			if (parsedColour.startsWith("#")) {
 				this.rgba(
 					parseInt(parsedColour.slice(1, 3), 16),
