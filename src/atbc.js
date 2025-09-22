@@ -295,6 +295,8 @@ function overlayColour(colourTop, colourBottom) {
 	}
 }
 
+const canvasContext = document.createElement("canvas").getContext("2d");
+
 /**
  * Parses a CSS color string and returns its RGBA components.
  *
@@ -303,9 +305,8 @@ function overlayColour(colourTop, colourBottom) {
  */
 function parseColour(colour) {
 	if (typeof colour !== "string") return { r: 0, g: 0, b: 0, a: 0 };
-	const ctx = document.createElement("canvas").getContext("2d");
-	ctx.fillStyle = colour;
-	const parsedColour = ctx.fillStyle;
+	canvasContext.fillStyle = colour;
+	const parsedColour = canvasContext.fillStyle;
 	if (parsedColour.startsWith("#")) {
 		return {
 			r: parseInt(parsedColour.slice(1, 3), 16),
