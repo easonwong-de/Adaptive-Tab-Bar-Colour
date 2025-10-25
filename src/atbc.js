@@ -42,7 +42,10 @@ const findAndSendColour = (() => {
 	const limitMs = 250;
 	const action = async () => {
 		if (document.visibilityState === "visible" && findColour())
-			browser.runtime.sendMessage({ header: "UPDATE_COLOUR", response: response });
+			browser.runtime.sendMessage({
+				header: "UPDATE_COLOUR",
+				response: response,
+			});
 	};
 	return async () => {
 		const now = Date.now();
@@ -51,10 +54,13 @@ const findAndSendColour = (() => {
 			lastCall = now;
 			await action();
 		} else {
-			timeout = setTimeout(async () => {
-				lastCall = Date.now();
-				await action();
-			}, limitMs - (now - lastCall));
+			timeout = setTimeout(
+				async () => {
+					lastCall = Date.now();
+					await action();
+				},
+				limitMs - (now - lastCall),
+			);
 		}
 	};
 })();
@@ -88,8 +94,12 @@ function findColour() {
 function findColour_policy() {
 	if (
 		!conf.policy ||
-		(!conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === true) ||
-		(conf.noThemeColour && conf.policy.type === "THEME_COLOUR" && conf.policy.value === false)
+		(!conf.noThemeColour &&
+			conf.policy.type === "THEME_COLOUR" &&
+			conf.policy.value === true) ||
+		(conf.noThemeColour &&
+			conf.policy.type === "THEME_COLOUR" &&
+			conf.policy.value === false)
 	) {
 		return false;
 	} else if (conf.policy.type === "COLOUR") {
@@ -178,7 +188,8 @@ function findColour_noPolicy() {
 		response.reason = "IMAGE_VIEWER";
 		response.colour = "IMAGEVIEWER";
 	} else if (
-		document.getElementsByTagName("link")[0]?.href === "resource://content-accessible/plaintext.css" &&
+		document.getElementsByTagName("link")[0]?.href ===
+			"resource://content-accessible/plaintext.css" &&
 		getColourFromElement(document.body).a !== 1
 	) {
 		// Firefox seems to have blocked content script when viewing plain text online
@@ -201,10 +212,14 @@ function findColour_noPolicy() {
  * @returns Returns `false` if no legal `theme-color` can be found.
  */
 function findColour_theme() {
-	const colourScheme = window.matchMedia("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
+	const colourScheme = window.matchMedia("(prefers-color-scheme: dark)")
+		?.matches
+		? "dark"
+		: "light";
 	const metaThemeColour =
-		document.querySelector(`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`) ??
-		document.querySelector(`meta[name="theme-color"]`);
+		document.querySelector(
+			`meta[name="theme-color"][media="(prefers-color-scheme: ${colourScheme})"]`,
+		) ?? document.querySelector(`meta[name="theme-color"]`);
 	if (metaThemeColour) {
 		response.colour = parseColour(metaThemeColour.content);
 	} else {
@@ -229,9 +244,15 @@ function findColour_webpage() {
 	response.colour = { r: 0, g: 0, b: 0, a: 0 };
 	// Selects all the elements 3 pixels below the middle point of the top edge of the viewport
 	// It's a shame that `elementsFromPoint()` doesn't work with elements with `pointer-events: none`
-	for (const element of document.elementsFromPoint(window.innerWidth / 2, 3)) {
+	for (const element of document.elementsFromPoint(
+		window.innerWidth / 2,
+		3,
+	)) {
 		// Only if the element is wide (90 % of screen) and thick (20 pixels) enough will it be included in the calculation
-		if (element.offsetWidth / window.innerWidth >= 0.9 && element.offsetHeight >= 20) {
+		if (
+			element.offsetWidth / window.innerWidth >= 0.9 &&
+			element.offsetHeight >= 20
+		) {
 			let elementColour = getColourFromElement(element);
 			if (elementColour.a === 0) continue;
 			response.colour = overlayColour(response.colour, elementColour);
@@ -287,9 +308,18 @@ function overlayColour(colourTop, colourBottom) {
 		return { r: 236, g: 236, b: 236, a: 0 };
 	} else {
 		return {
-			r: ((1 - colourTop.a) * colourBottom.a * colourBottom.r + colourTop.a * colourTop.r) / a,
-			g: ((1 - colourTop.a) * colourBottom.a * colourBottom.g + colourTop.a * colourTop.g) / a,
-			b: ((1 - colourTop.a) * colourBottom.a * colourBottom.b + colourTop.a * colourTop.b) / a,
+			r:
+				((1 - colourTop.a) * colourBottom.a * colourBottom.r +
+					colourTop.a * colourTop.r) /
+				a,
+			g:
+				((1 - colourTop.a) * colourBottom.a * colourBottom.g +
+					colourTop.a * colourTop.g) /
+				a,
+			b:
+				((1 - colourTop.a) * colourBottom.a * colourBottom.b +
+					colourTop.a * colourTop.b) /
+				a,
 			a: a,
 		};
 	}
@@ -346,7 +376,9 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
  */
 function setThemeColourMeta(colour) {
 	if (!conf.noThemeColour) return;
-	const existingMetaTag = document.querySelectorAll(`meta[name="theme-color"]`);
+	const existingMetaTag = document.querySelectorAll(
+		`meta[name="theme-color"]`,
+	);
 	if (existingMetaTag.length === 0) {
 		const metaTag = document.createElement("meta");
 		metaTag.name = "theme-color";
@@ -365,16 +397,23 @@ function setDynamicUpdate() {
 		document.removeEventListener(event, findAndSendColour);
 		if (conf.dynamic) document.addEventListener(event, findAndSendColour);
 	});
-	["transitionend", "transitioncancel", "animationend", "animationcancel"].forEach((transition) => {
+	[
+		"transitionend",
+		"transitioncancel",
+		"animationend",
+		"animationcancel",
+	].forEach((transition) => {
 		document.removeEventListener(transition, findAndSendColour_focus);
-		if (conf.dynamic) document.addEventListener(transition, findAndSendColour_focus);
+		if (conf.dynamic)
+			document.addEventListener(transition, findAndSendColour_focus);
 	});
 }
 
 // Detects `meta[name=theme-color]` changes
 const onThemeColourChange = new MutationObserver(findAndSendColour);
 const themeColourMetaTag = document.querySelector("meta[name=theme-color]");
-if (themeColourMetaTag) onThemeColourChange.observe(themeColourMetaTag, { attributes: true });
+if (themeColourMetaTag)
+	onThemeColourChange.observe(themeColourMetaTag, { attributes: true });
 
 // Detects Dark Reader
 const onDarkReaderChange = new MutationObserver(findAndSendColour);
@@ -386,16 +425,24 @@ onDarkReaderChange.observe(document.documentElement, {
 // Detects style injections & `meta[name=theme-color]` being added or altered
 const onStyleInjection = new MutationObserver((mutations) => {
 	mutations.forEach((mutation) => {
-		if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeName === "STYLE") {
+		if (
+			mutation.addedNodes.length > 0 &&
+			mutation.addedNodes[0].nodeName === "STYLE"
+		) {
 			findAndSendColour();
-		} else if (mutation.removedNodes.length > 0 && mutation.removedNodes[0].nodeName === "STYLE") {
+		} else if (
+			mutation.removedNodes.length > 0 &&
+			mutation.removedNodes[0].nodeName === "STYLE"
+		) {
 			findAndSendColour();
 		} else if (
 			mutation.addedNodes.length > 0 &&
 			mutation.addedNodes[0].nodeName === "META" &&
 			mutation.addedNodes[0].name === "theme-color"
 		) {
-			onThemeColourChange.observe(mutation.addedNodes[0], { attributes: true });
+			onThemeColourChange.observe(mutation.addedNodes[0], {
+				attributes: true,
+			});
 		}
 	});
 });

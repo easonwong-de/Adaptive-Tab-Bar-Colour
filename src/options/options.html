@@ -1,15 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<meta charset="UTF-8" />
 		<link href="./options.css" rel="stylesheet" type="text/css" />
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#23222a">
+		<meta
+			name="theme-color"
+			media="(prefers-color-scheme: light)"
+			content="#ffffff"
+		/>
+		<meta
+			name="theme-color"
+			media="(prefers-color-scheme: dark)"
+			content="#23222a"
+		/>
 	</head>
 
 	<body>
 		<div id="template">
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+			>
 				<defs>
 					<g id="svg-bin">
 						<path
@@ -81,22 +92,40 @@
 					<input
 						type="text"
 						class="policy-header-input"
-						data-placeholder="URLDomainOrRegex"
-						data-title="URLDomainOrRegex"
+						data-placeholder="urlDomainOrRegex"
+						data-title="urlDomainOrRegex"
 					/>
-					<div class="policy-header-warning" data-title="thisPolicyWillBeIgnored">
+					<div
+						class="policy-header-warning"
+						data-title="thisPolicyWillBeIgnored"
+					>
 						<svg viewBox="0 0 24 24">
 							<use xlink:href="#svg-warning" />
 						</svg>
 					</div>
 				</div>
 				<select class="COLOUR">
-					<option value="COLOUR" data-text="specifyAColour" selected></option>
-					<option value="THEME_COLOUR" data-text="useIgnoreThemeColour"></option>
-					<option value="QUERY_SELECTOR" data-text="pickColourFromElement"></option>
+					<option
+						value="COLOUR"
+						data-text="specifyAColour"
+						selected
+					></option>
+					<option
+						value="THEME_COLOUR"
+						data-text="useIgnoreThemeColour"
+					></option>
+					<option
+						value="QUERY_SELECTOR"
+						data-text="pickColourFromElement"
+					></option>
 				</select>
 				<div class="colour-input-wrapper">
-					<input type="text" class="colour-input" data-placeholder="anyCSSColour" data-title="anyCSSColour" />
+					<input
+						type="text"
+						class="colour-input"
+						data-placeholder="anyCSSColour"
+						data-title="anyCSSColour"
+					/>
 					<label class="colour-picker-display"></label>
 					<input type="color" />
 				</div>
@@ -107,7 +136,12 @@
 					<label class="toggle-switch" data-text="ignore"></label>
 				</div>
 				<div class="qs-input-wrapper">
-					<input type="text" class="qs-input" data-placeholder="querySelector" data-title="querySelector" />
+					<input
+						type="text"
+						class="qs-input"
+						data-placeholder="querySelector"
+						data-title="querySelector"
+					/>
 				</div>
 				<button data-title="delete">
 					<svg viewBox="0 0 24 24">
@@ -118,19 +152,50 @@
 		</div>
 		<div id="settings-wrapper" class="tab-switch-1">
 			<div class="tab-switch-wrapper toggle-switch-wrapper">
-				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-1" checked />
-				<label for="tab-switch-1" class="toggle-switch" data-text="themeBuilder"></label>
-				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-2" />
-				<label for="tab-switch-2" class="toggle-switch" data-text="siteList"></label>
-				<input class="toggle-switch" type="radio" name="tab-switch" id="tab-switch-3" />
-				<label for="tab-switch-3" class="toggle-switch" data-text="advanced"></label>
+				<input
+					class="toggle-switch"
+					type="radio"
+					name="tab-switch"
+					id="tab-switch-1"
+					checked
+				/>
+				<label
+					for="tab-switch-1"
+					class="toggle-switch"
+					data-text="themeBuilder"
+				></label>
+				<input
+					class="toggle-switch"
+					type="radio"
+					name="tab-switch"
+					id="tab-switch-2"
+				/>
+				<label
+					for="tab-switch-2"
+					class="toggle-switch"
+					data-text="siteList"
+				></label>
+				<input
+					class="toggle-switch"
+					type="radio"
+					name="tab-switch"
+					id="tab-switch-3"
+				/>
+				<label
+					for="tab-switch-3"
+					class="toggle-switch"
+					data-text="advanced"
+				></label>
 			</div>
 			<hr />
 			<div>
 				<div id="tab-1" class="tab grid-two-columns">
 					<div class="column">
 						<div class="section">
-							<div class="section-title" data-text="selectedTab"></div>
+							<div
+								class="section-title"
+								data-text="selectedTab"
+							></div>
 							<div
 								class="slider"
 								data-pref="tabSelected"
@@ -151,7 +216,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider-title"
+								data-text="background"
+							></div>
 							<div
 								class="slider"
 								data-pref="tabSelectedBorder"
@@ -196,7 +264,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider-title"
+								data-text="background"
+							></div>
 							<div
 								class="slider"
 								data-pref="tabbarBorder"
@@ -251,7 +322,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider-title"
+								data-text="background"
+							></div>
 							<div
 								class="slider"
 								data-pref="popupBorder"
@@ -277,7 +351,7 @@
 					</div>
 					<div class="column">
 						<div class="section">
-							<div class="section-title" data-text="URLBar"></div>
+							<div class="section-title" data-text="urlBar"></div>
 							<div
 								class="slider"
 								data-pref="toolbarField"
@@ -298,7 +372,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider-title"
+								data-text="background"
+							></div>
 							<div
 								class="slider"
 								data-pref="toolbarFieldOnFocus"
@@ -319,7 +396,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="backgroundOnFocus"></div>
+							<div
+								class="slider-title"
+								data-text="backgroundOnFocus"
+							></div>
 							<div
 								class="slider"
 								data-pref="toolbarFieldBorder"
@@ -343,7 +423,10 @@
 							<div class="slider-title" data-text="border"></div>
 						</div>
 						<div class="section">
-							<div class="section-title" data-text="toolbar"></div>
+							<div
+								class="section-title"
+								data-text="toolbar"
+							></div>
 							<div
 								class="slider"
 								data-pref="toolbar"
@@ -364,7 +447,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider-title"
+								data-text="background"
+							></div>
 							<div
 								class="slider"
 								data-pref="toolbarBorder"
@@ -388,7 +474,10 @@
 							<div class="slider-title" data-text="border"></div>
 						</div>
 						<div class="section">
-							<div class="section-title" data-text="sidebar"></div>
+							<div
+								class="section-title"
+								data-text="sidebar"
+							></div>
 							<div
 								class="slider"
 								data-pref="sidebar"
@@ -409,7 +498,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="background"></div>
+							<div
+								class="slider-title"
+								data-text="background"
+							></div>
 							<div
 								class="slider"
 								data-pref="sidebarBorder"
@@ -441,9 +533,17 @@
 				<div id="tab-3" class="tab grid-two-columns">
 					<div class="column">
 						<div class="section">
-							<div id="allow-dark-light-title" class="section-title" data-text="allowLightTabBar"></div>
+							<div
+								id="allow-dark-light-title"
+								class="section-title"
+								data-text="allowLightTabBar"
+							></div>
 							<div class="checkbox-wrapper">
-								<input type="checkbox" data-pref="allowDarkLight" id="allow-dark-light" />
+								<input
+									type="checkbox"
+									data-pref="allowDarkLight"
+									id="allow-dark-light"
+								/>
 								<label
 									id="allow-dark-light-caption"
 									for="allow-dark-light"
@@ -453,16 +553,34 @@
 							</div>
 						</div>
 						<div class="section">
-							<div class="section-title" data-text="dynamicColourUpdate"></div>
+							<div
+								class="section-title"
+								data-text="dynamicColourUpdate"
+							></div>
 							<div class="checkbox-wrapper">
-								<input id="dynamic" type="checkbox" data-pref="dynamic" />
-								<label for="dynamic" class="section-text" data-text="dynamicModeTooltip"></label>
+								<input
+									id="dynamic"
+									type="checkbox"
+									data-pref="dynamic"
+								/>
+								<label
+									for="dynamic"
+									class="section-text"
+									data-text="dynamicModeTooltip"
+								></label>
 							</div>
 						</div>
 						<div class="section">
-							<div class="section-title" data-text="ignoreDesignatedThemeColour"></div>
+							<div
+								class="section-title"
+								data-text="ignoreDesignatedThemeColour"
+							></div>
 							<div class="checkbox-wrapper">
-								<input id="no-theme-color" type="checkbox" data-pref="noThemeColour" />
+								<input
+									id="no-theme-color"
+									type="checkbox"
+									data-pref="noThemeColour"
+								/>
 								<label
 									for="no-theme-color"
 									class="section-text"
@@ -471,9 +589,16 @@
 							</div>
 						</div>
 						<div class="section">
-							<div class="section-title" data-text="compatibilityMode"></div>
+							<div
+								class="section-title"
+								data-text="compatibilityMode"
+							></div>
 							<div class="checkbox-wrapper">
-								<input id="compatibility-mode" type="checkbox" data-pref="compatibilityMode" />
+								<input
+									id="compatibility-mode"
+									type="checkbox"
+									data-pref="compatibilityMode"
+								/>
 								<label
 									for="compatibility-mode"
 									class="section-text"
@@ -483,9 +608,15 @@
 						</div>
 						<div class="list">
 							<div class="section fixed-policy">
-								<div class="policy-header" data-text="homepageColourLight"></div>
+								<div
+									class="policy-header"
+									data-text="homepageColourLight"
+								></div>
 								<div></div>
-								<div class="colour-input-wrapper" data-pref="homeBackground_light">
+								<div
+									class="colour-input-wrapper"
+									data-pref="homeBackground_light"
+								>
 									<input
 										type="text"
 										class="colour-input"
@@ -493,14 +624,27 @@
 										data-placeholder="anyCSSColour"
 										data-title="anyCSSColour"
 									/>
-									<label class="colour-picker-display" for="home-bg-light"></label>
-									<input type="color" value="#ffffff" id="home-bg-light" />
+									<label
+										class="colour-picker-display"
+										for="home-bg-light"
+									></label>
+									<input
+										type="color"
+										value="#ffffff"
+										id="home-bg-light"
+									/>
 								</div>
 							</div>
 							<div class="section fixed-policy">
-								<div class="policy-header" data-text="homepageColourDark"></div>
+								<div
+									class="policy-header"
+									data-text="homepageColourDark"
+								></div>
 								<div></div>
-								<div class="colour-input-wrapper" data-pref="homeBackground_dark">
+								<div
+									class="colour-input-wrapper"
+									data-pref="homeBackground_dark"
+								>
 									<input
 										type="text"
 										class="colour-input"
@@ -508,14 +652,27 @@
 										data-placeholder="anyCSSColour"
 										data-title="anyCSSColour"
 									/>
-									<label class="colour-picker-display" for="home-bg-dark"></label>
-									<input type="color" value="#2b2a33" id="home-bg-dark" />
+									<label
+										class="colour-picker-display"
+										for="home-bg-dark"
+									></label>
+									<input
+										type="color"
+										value="#2b2a33"
+										id="home-bg-dark"
+									/>
 								</div>
 							</div>
 							<div class="section fixed-policy">
-								<div class="policy-header" data-text="fallbackColourLight"></div>
+								<div
+									class="policy-header"
+									data-text="fallbackColourLight"
+								></div>
 								<div></div>
-								<div class="colour-input-wrapper" data-pref="fallbackColour_light">
+								<div
+									class="colour-input-wrapper"
+									data-pref="fallbackColour_light"
+								>
 									<input
 										type="text"
 										class="colour-input"
@@ -523,14 +680,27 @@
 										data-placeholder="anyCSSColour"
 										data-title="anyCSSColour"
 									/>
-									<label class="colour-picker-display" for="fallback-cl-light"></label>
-									<input type="color" value="#ffffff" id="fallback-cl-light" />
+									<label
+										class="colour-picker-display"
+										for="fallback-cl-light"
+									></label>
+									<input
+										type="color"
+										value="#ffffff"
+										id="fallback-cl-light"
+									/>
 								</div>
 							</div>
 							<div class="section fixed-policy">
-								<div class="policy-header" data-text="fallbackColourDark"></div>
+								<div
+									class="policy-header"
+									data-text="fallbackColourDark"
+								></div>
 								<div></div>
-								<div class="colour-input-wrapper" data-pref="fallbackColour_dark">
+								<div
+									class="colour-input-wrapper"
+									data-pref="fallbackColour_dark"
+								>
 									<input
 										type="text"
 										class="colour-input"
@@ -538,16 +708,29 @@
 										data-placeholder="anyCSSColour"
 										data-title="anyCSSColour"
 									/>
-									<label class="colour-picker-display" for="fallback-cl-dark"></label>
-									<input type="color" value="#2b2a33" id="fallback-cl-dark" />
+									<label
+										class="colour-picker-display"
+										for="fallback-cl-dark"
+									></label>
+									<input
+										type="color"
+										value="#2b2a33"
+										id="fallback-cl-dark"
+									/>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="column">
 						<div class="section">
-							<div class="section-title" data-text="minimumContrast"></div>
-							<div class="section-text" data-text="minimumContrastTooltip"></div>
+							<div
+								class="section-title"
+								data-text="minimumContrast"
+							></div>
+							<div
+								class="section-text"
+								data-text="minimumContrastTooltip"
+							></div>
 							<div
 								class="slider"
 								data-pref="minContrast_light"
@@ -569,7 +752,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="inLightMode"></div>
+							<div
+								class="slider-title"
+								data-text="inLightMode"
+							></div>
 							<div
 								class="slider"
 								data-pref="minContrast_dark"
@@ -591,7 +777,10 @@
 									</svg>
 								</button>
 							</div>
-							<div class="slider-title" data-text="inDarkMode"></div>
+							<div
+								class="slider-title"
+								data-text="inDarkMode"
+							></div>
 						</div>
 						<div class="section">
 							<button id="export-pref" class="text-button">
@@ -599,16 +788,28 @@
 									<use xlink:href="#svg-download" />
 								</svg>
 								<span data-text="exportSettings"></span>
-								<a id="export-pref-link" class="hidden" download="atbc_pref.json"></a>
+								<a
+									id="export-pref-link"
+									class="hidden"
+									download="atbc_pref.json"
+								></a>
 							</button>
 							<label for="import-pref-link" class="text-button">
 								<svg viewBox="0 0 24 24">
 									<use xlink:href="#svg-upload" />
 								</svg>
 								<span data-text="importSettings"></span>
-								<input id="import-pref-link" class="hidden" type="file" accept=".json" />
+								<input
+									id="import-pref-link"
+									class="hidden"
+									type="file"
+									accept=".json"
+								/>
 							</label>
-							<button id="reset-theme-builder" class="text-button">
+							<button
+								id="reset-theme-builder"
+								class="text-button"
+							>
 								<svg viewBox="0 0 24 24">
 									<use xlink:href="#svg-reset" />
 								</svg>
@@ -639,22 +840,39 @@
 					></a>
 				</div>
 				<div id="sponsor">
-					<form action="https://www.paypal.com/donate" method="post" target="_blank">
-						<input type="hidden" name="hosted_button_id" value="T5GL8WC7SVLLC" />
+					<form
+						action="https://www.paypal.com/donate"
+						method="post"
+						target="_blank"
+					>
+						<input
+							type="hidden"
+							name="hosted_button_id"
+							value="T5GL8WC7SVLLC"
+						/>
 						<input
 							type="image"
 							src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
 							name="submit"
 							title="PayPal - The safer, easier way to pay online!"
 							alt="Donate with PayPal button"
-							style="height: 30px !important; width: auto !important"
+							style="
+								height: 30px !important;
+								width: auto !important;
+							"
 						/>
 					</form>
-					<a href="https://www.buymeacoffee.com/easonwong" target="_blank">
+					<a
+						href="https://www.buymeacoffee.com/easonwong"
+						target="_blank"
+					>
 						<img
 							src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
 							alt="Buy Me A Coffee"
-							style="height: 30px !important; width: auto !important"
+							style="
+								height: 30px !important;
+								width: auto !important;
+							"
 						/>
 					</a>
 				</div>

@@ -7,7 +7,7 @@ import {
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
 	default_compatibilityMode,
-} from "./default_values.js";
+} from "./defaultValues.js";
 import colour from "./colour.js";
 import { supportsThemeAPI } from "./utility.js";
 
@@ -90,9 +90,14 @@ export default class preference {
 	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
 	 */
 	valid() {
-		if (Object.keys(this.#content).length !== Object.keys(this.#defaultContent).length) return false;
+		if (
+			Object.keys(this.#content).length !==
+			Object.keys(this.#defaultContent).length
+		)
+			return false;
 		for (const key in this.#defaultContent) {
-			if (typeof this.#content[key] !== typeof this.#defaultContent[key]) return false;
+			if (typeof this.#content[key] !== typeof this.#defaultContent[key])
+				return false;
 		}
 		return true;
 	}
@@ -193,7 +198,8 @@ export default class preference {
 		// Updating from before v2.4
 		if (this.#content.version < [2, 4]) {
 			browser.theme.reset();
-			if (this.#content.minContrast_light === 165) this.#content.minContrast_light = 90;
+			if (this.#content.minContrast_light === 165)
+				this.#content.minContrast_light = 90;
 		}
 		[
 			"tabbar",
@@ -210,10 +216,18 @@ export default class preference {
 			"popup",
 			"popupBorder",
 		].forEach((key) => {
-			this.#content[key] = this.#validateNumericPref(this.#content[key], { min: -50, max: 50, step: 5 });
+			this.#content[key] = this.#validateNumericPref(this.#content[key], {
+				min: -50,
+				max: 50,
+				step: 5,
+			});
 		});
 		["minContrast_light", "minContrast_dark"].forEach((key) => {
-			this.#content[key] = this.#validateNumericPref(this.#content[key], { min: 0, max: 210, step: 15 });
+			this.#content[key] = this.#validateNumericPref(this.#content[key], {
+				min: 0,
+				max: 210,
+				step: 15,
+			});
 		});
 		// Auto-enable compatibility mode if theme API is not supported
 		if (!supportsThemeAPI()) {
@@ -241,7 +255,8 @@ export default class preference {
 	async JSONToPref(JSONString) {
 		try {
 			const parsedJSON = JSON.parse(JSONString);
-			if (typeof parsedJSON !== "object" || parsedJSON === null) return false;
+			if (typeof parsedJSON !== "object" || parsedJSON === null)
+				return false;
 			this.#content = parsedJSON;
 			await this.normalise();
 			return true;
@@ -316,13 +331,20 @@ export default class preference {
 		let result = 0;
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
-			if (!policy || policy.header === "" || policy.headerType !== "URL") continue;
-			if (id > result && (policy.header === url || policy.header === `${url}/`)) {
+			if (!policy || policy.header === "" || policy.headerType !== "URL")
+				continue;
+			if (
+				id > result &&
+				(policy.header === url || policy.header === `${url}/`)
+			) {
 				result = +id;
 				continue;
 			}
 			try {
-				if (id > result && new RegExp(`^${policy.header}$`, "i").test(url)) {
+				if (
+					id > result &&
+					new RegExp(`^${policy.header}$`, "i").test(url)
+				) {
 					result = +id;
 					continue;
 				}
@@ -336,8 +358,14 @@ export default class preference {
 						.replace(/\?/g, ".")
 						.replace(/::WILDCARD_MATCH_ALL::/g, ".*")
 						.replace(/^([a-z]+:\/\/)/i, "$1")
-						.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
-					if (id > result && new RegExp(`^${wildcardPattern}/?$`, "i").test(url)) {
+						.replace(
+							/^((?![a-z]+:\/\/).)/i,
+							"(?:[a-z]+:\\/\\/)?$1",
+						);
+					if (
+						id > result &&
+						new RegExp(`^${wildcardPattern}/?$`, "i").test(url)
+					) {
 						result = +id;
 						continue;
 					}
@@ -387,7 +415,11 @@ export default class preference {
 		if (-1 < num && num < 1) num = Math.round(num * 100);
 		num = Math.max(min, Math.min(max, num));
 		const remainder = (num - min) % step;
-		if (remainder !== 0) num = remainder >= step / 2 ? num + (step - remainder) : num - remainder;
+		if (remainder !== 0)
+			num =
+				remainder >= step / 2
+					? num + (step - remainder)
+					: num - remainder;
 		return Math.round(num);
 	}
 

@@ -1,130 +1,14 @@
 {
-	"extensionName": {
-		"message": "Adaptive Tab Bar Colour"
-	},
-
-	"extensionDescription": {
-		"message": "Cambia el color del tema de Firefox para que coincida con la apariencia del sitio web."
-	},
-
-	"__OPTIONS PAGE__": {
-		"message": "===================="
-	},
-
-	"reinstallTip": {
-		"message": "Los datos de preferencias podrían estar corruptos. Si el problema persiste, por favor reinstala la extensión. ¡Disculpa las molestias!"
-	},
-
-	"loading": {
-		"message": "Cargando…"
-	},
-
-	"themeBuilder": {
-		"message": "Creador de temas"
-	},
-
-	"siteList": {
-		"message": "Lista de sitios"
-	},
-
-	"advanced": {
-		"message": "Avanzado"
-	},
-
-	"tabBar": {
-		"message": "Barra de pestañas"
-	},
-
-	"background": {
-		"message": "Fondo"
-	},
-
-	"selectedTab": {
-		"message": "Pestaña seleccionada"
-	},
-
-	"toolbar": {
-		"message": "Barra de herramientas"
-	},
-
-	"border": {
-		"message": "Borde"
-	},
-
-	"URLBar": {
-		"message": "Barra de direcciones"
-	},
-
-	"backgroundOnFocus": {
-		"message": "Fondo en foco"
-	},
-
-	"sidebar": {
-		"message": "Barra lateral"
-	},
-
-	"popUp": {
-		"message": "Ventana emergente"
-	},
-
-	"thisPolicyWillBeIgnored": {
-		"message": "Esta política será ignorada."
-	},
-
-	"URLDomainOrRegex": {
-		"message": "URL / regex / wildcard / dominio"
+	"addANewRule": {
+		"message": "Agregar una nueva regla"
 	},
 
 	"addonNotFound": {
 		"message": "Extensión no encontrada"
 	},
 
-	"specifyAColour": {
-		"message": "especificar un color"
-	},
-
-	"useIgnoreThemeColour": {
-		"message": "usar / ignorar el color del tema"
-	},
-
-	"pickColourFromElement": {
-		"message": "usar el color del elemento"
-	},
-
-	"anyCSSColour": {
-		"message": "Cualquier formato"
-	},
-
-	"use": {
-		"message": "Usar"
-	},
-
-	"ignore": {
-		"message": "Ignorar"
-	},
-
-	"querySelector": {
-		"message": "Selector de consulta"
-	},
-
-	"delete": {
-		"message": "Eliminar"
-	},
-
-	"reset": {
-		"message": "Restablecer"
-	},
-
-	"addANewRule": {
-		"message": "Agregar una nueva regla"
-	},
-
-	"allowLightTabBar": {
-		"message": "Permitir barra de pestañas clara"
-	},
-
-	"allowLightTabBarTooltip": {
-		"message": "Permitir que la barra de pestañas use un color brillante (texto oscuro en la barra de pestañas clara)."
+	"advanced": {
+		"message": "Avanzado"
 	},
 
 	"allowDarkTabBar": {
@@ -135,220 +19,28 @@
 		"message": "Permitir que la barra de pestañas use un color oscuro (texto claro en la barra de pestañas oscura)."
 	},
 
-	"dynamicColourUpdate": {
-		"message": "Actualización dinámica de color"
+	"allowLightTabBar": {
+		"message": "Permitir barra de pestañas clara"
 	},
 
-	"dynamicModeTooltip": {
-		"message": "Sigue actualizando el color de la barra de pestañas mientras navegas dentro de una página web."
+	"allowLightTabBarTooltip": {
+		"message": "Permitir que la barra de pestañas use un color brillante (texto oscuro en la barra de pestañas clara)."
 	},
 
-	"ignoreDesignatedThemeColour": {
-		"message": "Ignorar el color del tema del sitio web"
+	"anyCSSColour": {
+		"message": "Cualquier formato"
 	},
 
-	"ignoreDesignatedThemeColourTooltip": {
-    	"message": "Algunos sitios web proporcionan su propio color de tema. Activa esta opción para ignorar estos colores."
+	"background": {
+		"message": "Fondo"
 	},
 
-	"compatibilityMode": {
-		"message": "Modo de compatibilidad"
+	"backgroundOnFocus": {
+		"message": "Fondo en foco"
 	},
 
-	"compatibilityModeTooltip": {
-		"message": "En lugar de la theme API, utiliza la propiedad HTML «theme-color» para cambiar el color de la barra de pestañas. Esto solo funciona con ciertos navegadores de forma limitada."
-	},
-
-	"minimumContrast": {
-		"message": "Contraste mínimo"
-	},
-
-	"minimumContrastTooltip": {
-		"message": "Establece la relación de contraste mínima entre la barra de pestañas y el texto. El color de la barra de pestañas se ajusta automáticamente si no se cumple la relación."
-	},
-
-	"inLightMode": {
-		"message": "En modo claro"
-	},
-
-	"inDarkMode": {
-		"message": "En modo oscuro"
-	},
-
-	"homepageColourLight": {
-		"message": "Color de la página de inicio: claro"
-	},
-
-	"homepageColourDark": {
-		"message": "Color de la página de inicio: oscuro"
-	},
-
-	"fallbackColourLight": {
-		"message": "Color de respaldo: claro"
-	},
-
-	"fallbackColourDark": {
-		"message": "Color de respaldo: oscuro"
-	},
-
-	"exportSettings": {
-		"message": "Exportar configuración"
-	},
-
-	"settingsAreExported": {
-		"message": "Las configuraciones han sido exportadas a tu carpeta de descargas."
-	},
-
-	"importSettings": {
-		"message": "Importar configuraciones"
-	},
-
-	"settingsAreImported": {
-		"message": "Las configuraciones han sido importadas."
-	},
-
-	"importFailed": {
-		"message": "Error al importar configuraciones. Por favor, inténtalo de nuevo."
-	},
-
-	"resetThemeBuilder": {
-		"message": "Restablecer el creador de temas"
-	},
-
-	"confirmResetThemeBuilder": {
-		"message": "¿Estás seguro de que quieres restablecer el creador de temas?"
-	},
-
-	"resetSiteList": {
-		"message": "Restablecer la lista de sitios"
-	},
-
-	"confirmResetSiteList": {
-		"message": "¿Estás seguro de que quieres restablecer la lista de sitios?"
-	},
-
-	"resetAdvanced": {
-		"message": "Restablecer la configuración avanzada"
-	},
-
-	"confirmResetAdvanced": {
-		"message": "¿Estás seguro de que quieres restablecer la configuración avanzada?"
-	},
-
-	"reportAnIssue": {
-		"message": "Reportar un problema / enviar una sugerencia / traducir esta extensión"
-	},
-
-	"__POPUP__": {
-		"message": "===================="
-	},
-
-	"moreSettings": {
-		"message": "Más opciones…"
-	},
-
-	"moreSettingsTooltip": {
-		"message": "Abrir página de opciones"
-	},
-
-	"colourForPDFViewer": {
-		"message": "Se está usando color para el lector de PDF"
-	},
-
-	"colourForJSONViewer": {
-		"message": "Se está usando color para el lector de JSON"
-	},
-
-	"pageIsProtected": {
-		"message": "Esta página está protegida por el navegador"
-	},
-
-	"colourForPlainTextViewer": {
-		"message": "Se está usando color para el visor de texto plano"
-	},
-
-	"errorOccured": {
-		"message": "Ocurrió un error, se está usando color de respaldo"
-	},
-
-	"colourForHomePage": {
-		"message": "El color de la barra de pestañas para la página de inicio se puede configurar en la página de opciones"
-	},
-
-	"useDefaultColourForAddon": {
-		"message": "Se está usando color especificado para páginas relacionadas con "
-	},
-
-	"useDefaultColourForAddonEnd": {
-		"message": "__EMPTY__"
-	},
-
-	"useDefaultColourForAddonButton": {
-		"message": "Usar color predeterminado"
-	},
-
-	"useDefaultColourForAddonTitle": {
-		"message": "Usar color predeterminado"
-	},
-
-	"useRecommendedColourForAddon": {
-		"message": "Color recomendado para páginas relacionadas con "
-	},
-
-	"useRecommendedColourForAddonEnd": {
-		"message": " está disponible"
-	},
-
-	"useRecommendedColourForAddonButton": {
-		"message": "Usar color recomendado"
-	},
-
-	"useRecommendedColourForAddonTitle": {
-		"message": "Usar el color recomendado"
-	},
-
-	"specifyColourForAddon": {
-		"message": "Haz clic en “Especificar un color” para abrir la página de opciones y especificar el color de la barra de pestañas para páginas relacionadas con "
-	},
-
-	"specifyColourForAddonEnd": {
-		"message": "__EMPTY__"
-	},
-
-	"specifyColourForAddonButton": {
-		"message": "Especificar un color"
-	},
-
-	"specifyColourForAddonTitle": {
-		"message": "Abrir la página de opciones y especificar un color para las páginas relacionadas con la extensión"
-	},
-
-	"themeColourIsUnignored": {
-		"message": "Se está utilizando el color del tema definido por el sitio web, en lugar de ser ignorado por defecto"
-	},
-
-	"themeColourNotFound": {
-		"message": "No se encuentra el color del tema, el color se toma de la página web"
-	},
-
-	"themeColourIsIgnored": {
-		"message": "El color del tema definido por el sitio web es ignorado"
-	},
-
-	"useThemeColourButton": {
-		"message": "Usar color del tema"
-	},
-
-	"useThemeColourTitle": {
-		"message": "Usar el color del tema definido por el sitio web"
-	},
-
-	"colourIsPickedFrom": {
-		"message": "El color se toma de un elemento HTML que coincide con "
-	},
-
-	"colourIsPickedFromEnd": {
-		"message": "__EMPTY__"
+	"border": {
+		"message": "Borde"
 	},
 
 	"cannotFindElement": {
@@ -359,6 +51,77 @@
 		"message": ", el color se toma de la página web en su lugar"
 	},
 
+	"colourForHomePage": {
+		"message": "El color de la barra de pestañas para la página de inicio se puede configurar en la página de opciones"
+	},
+
+	"colourForJSONViewer": {
+		"message": "Se está usando color para el lector de JSON"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Se está usando color para el lector de PDF"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Se está usando color para el visor de texto plano"
+	},
+
+	"colourIsAdjusted": {
+		"message": "El color original ha sido ajustado para asegurar un contraste mínimo"
+	},
+	"colourIsPickedFrom": {
+		"message": "El color se toma de un elemento HTML que coincide con "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"colourIsSpecified": {
+		"message": "El color para este sitio está especificado en la configuración"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "El color se ha tomado con éxito de la página web"
+	},
+
+	"compatibilityMode": {
+		"message": "Modo de compatibilidad"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "En lugar de la theme API, utiliza la propiedad HTML «theme-color» para cambiar el color de la barra de pestañas. Esto solo funciona con ciertos navegadores de forma limitada."
+	},
+
+	"confirmResetAdvanced": {
+		"message": "¿Estás seguro de que quieres restablecer la configuración avanzada?"
+	},
+
+	"confirmResetSiteList": {
+		"message": "¿Estás seguro de que quieres restablecer la lista de sitios?"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "¿Estás seguro de que quieres restablecer el creador de temas?"
+	},
+
+	"delete": {
+		"message": "Eliminar"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Actualización dinámica de color"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Sigue actualizando el color de la barra de pestañas mientras navegas dentro de una página web."
+	},
+
+	"errorOccured": {
+		"message": "Ocurrió un error, se está usando color de respaldo"
+	},
+
 	"errorOccuredLocatingElement": {
 		"message": "Ocurrió un error al buscar el elemento HTML que coincide con "
 	},
@@ -367,16 +130,44 @@
 		"message": ", el color se toma de la página web en su lugar"
 	},
 
-	"colourIsSpecified": {
-		"message": "El color para este sitio está especificado en la configuración"
+	"exportSettings": {
+		"message": "Exportar configuración"
 	},
 
-	"usingImageViewer": {
-		"message": "Se está usando color para el visor de imágenes"
+	"extensionDescription": {
+		"message": "Cambia el color del tema de Firefox para que coincida con la apariencia del sitio web."
 	},
 
-	"usingThemeColour": {
-		"message": "Se está usando el color del tema definido por el sitio web"
+	"extensionName": {
+		"message": "Adaptive Tab Bar Colour"
+	},
+
+	"fallbackColourDark": {
+		"message": "Color de respaldo: oscuro"
+	},
+
+	"fallbackColourLight": {
+		"message": "Color de respaldo: claro"
+	},
+
+	"homepageColourDark": {
+		"message": "Color de la página de inicio: oscuro"
+	},
+
+	"homepageColourLight": {
+		"message": "Color de la página de inicio: claro"
+	},
+
+	"ignore": {
+		"message": "Ignorar"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignorar el color del tema del sitio web"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Algunos sitios web proporcionan su propio color de tema. Activa esta opción para ignorar estos colores."
 	},
 
 	"ignoreThemeColourButton": {
@@ -387,15 +178,215 @@
 		"message": "Ignorar el color del tema definido por el sitio web"
 	},
 
+	"importFailed": {
+		"message": "Error al importar configuraciones. Por favor, inténtalo de nuevo."
+	},
+
+	"importSettings": {
+		"message": "Importar configuraciones"
+	},
+
+	"inDarkMode": {
+		"message": "En modo oscuro"
+	},
+
+	"inLightMode": {
+		"message": "En modo claro"
+	},
+
+	"loading": {
+		"message": "Cargando…"
+	},
+
+	"minimumContrast": {
+		"message": "Contraste mínimo"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Establece la relación de contraste mínima entre la barra de pestañas y el texto. El color de la barra de pestañas se ajusta automáticamente si no se cumple la relación."
+	},
+
+	"moreSettings": {
+		"message": "Más opciones…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Abrir página de opciones"
+	},
+
+	"pageIsProtected": {
+		"message": "Esta página está protegida por el navegador"
+	},
+
+	"pickColourFromElement": {
+		"message": "usar el color del elemento"
+	},
+
+	"popUp": {
+		"message": "Ventana emergente"
+	},
+
+	"querySelector": {
+		"message": "Selector de consulta"
+	},
+
+	"reinstallTip": {
+		"message": "Los datos de preferencias podrían estar corruptos. Si el problema persiste, por favor reinstala la extensión. ¡Disculpa las molestias!"
+	},
+
+	"reportAnIssue": {
+		"message": "Reportar un problema / enviar una sugerencia / traducir esta extensión"
+	},
+
+	"reset": {
+		"message": "Restablecer"
+	},
+
+	"resetAdvanced": {
+		"message": "Restablecer la configuración avanzada"
+	},
+
+	"resetSiteList": {
+		"message": "Restablecer la lista de sitios"
+	},
+
+	"resetThemeBuilder": {
+		"message": "Restablecer el creador de temas"
+	},
+
+	"selectedTab": {
+		"message": "Pestaña seleccionada"
+	},
+
+	"settingsAreExported": {
+		"message": "Las configuraciones han sido exportadas a tu carpeta de descargas."
+	},
+
+	"settingsAreImported": {
+		"message": "Las configuraciones han sido importadas."
+	},
+
+	"sidebar": {
+		"message": "Barra lateral"
+	},
+
+	"siteList": {
+		"message": "Lista de sitios"
+	},
+
+	"specifyAColour": {
+		"message": "especificar un color"
+	},
+
+	"specifyColourForAddon": {
+		"message": "Haz clic en “Especificar un color” para abrir la página de opciones y especificar el color de la barra de pestañas para páginas relacionadas con "
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Especificar un color"
+	},
+
+	"specifyColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Abrir la página de opciones y especificar un color para las páginas relacionadas con la extensión"
+	},
+
+	"tabBar": {
+		"message": "Barra de pestañas"
+	},
+
+	"themeBuilder": {
+		"message": "Creador de temas"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "El color del tema definido por el sitio web es ignorado"
+	},
+
+	"themeColourIsUnignored": {
+		"message": "Se está utilizando el color del tema definido por el sitio web, en lugar de ser ignorado por defecto"
+	},
+
+	"themeColourNotFound": {
+		"message": "No se encuentra el color del tema, el color se toma de la página web"
+	},
+
+	"thisPolicyWillBeIgnored": {
+		"message": "Esta política será ignorada."
+	},
+
+	"toolbar": {
+		"message": "Barra de herramientas"
+	},
+
+	"urlBar": {
+		"message": "Barra de direcciones"
+	},
+
+	"urlDomainOrRegex": {
+		"message": "URL / regex / wildcard / dominio"
+	},
+
+	"use": {
+		"message": "Usar"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Se está usando color especificado para páginas relacionadas con "
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Usar color predeterminado"
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Usar color predeterminado"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "usar / ignorar el color del tema"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Color recomendado para páginas relacionadas con "
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Usar color recomendado"
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " está disponible"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Usar el color recomendado"
+	},
+
+	"useThemeColourButton": {
+		"message": "Usar color del tema"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Usar el color del tema definido por el sitio web"
+	},
+
 	"usingFallbackColour": {
 		"message": "No hay color disponible, se está usando color de respaldo"
 	},
 
-	"colourPickedFromWebpage": {
-		"message": "El color se ha tomado con éxito de la página web"
+	"usingImageViewer": {
+		"message": "Se está usando color para el visor de imágenes"
 	},
 
-	"colourIsAdjusted": {
-		"message": "El color original ha sido ajustado para asegurar un contraste mínimo"
+	"usingThemeColour": {
+		"message": "Se está usando el color del tema definido por el sitio web"
 	}
 }

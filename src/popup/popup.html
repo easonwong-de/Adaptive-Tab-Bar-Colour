@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<meta charset="UTF-8" />
@@ -7,7 +7,10 @@
 
 	<body class="dark">
 		<div id="template">
-			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+			>
 				<defs>
 					<g id="svg-sun">
 						<path
@@ -44,8 +47,8 @@
 		<div id="loading-wrapper">
 			<div id="loading" data-text="loading">Loading…</div>
 			<p id="reinstall-tip" data-text="reinstallTip">
-				Preference data may be corrupted. If the issue persists, please reinstall the add-on. We apologise for
-				the inconvenience.
+				Preference data may be corrupted. If the issue persists, please
+				reinstall the add-on. We apologise for the inconvenience.
 			</p>
 		</div>
 		<div id="settings-wrapper">
@@ -211,7 +214,14 @@
 				</div>
 				<div class="section">
 					<div class="section-title" data-text="tabBar"></div>
-					<div class="slider" data-pref="tabbar" data-min="-50" data-max="50" data-step="5" data-value="0">
+					<div
+						class="slider"
+						data-pref="tabbar"
+						data-min="-50"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
 						<div class="slider-title" data-text="background"></div>
 						<button>
 							<svg viewBox="0 0 24 24">
@@ -259,7 +269,14 @@
 				</div>
 				<div class="section">
 					<div class="section-title" data-text="popUp"></div>
-					<div class="slider" data-pref="popup" data-min="-50" data-max="50" data-step="5" data-value="0">
+					<div
+						class="slider"
+						data-pref="popup"
+						data-min="-50"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
 						<div class="slider-title" data-text="background"></div>
 						<button>
 							<svg viewBox="0 0 24 24">
@@ -296,7 +313,7 @@
 					</div>
 				</div>
 				<div class="section">
-					<div class="section-title" data-text="URLBar"></div>
+					<div class="section-title" data-text="urlBar"></div>
 					<div
 						class="slider"
 						data-pref="toolbarField"
@@ -326,7 +343,10 @@
 						data-step="5"
 						data-value="0"
 					>
-						<div class="slider-title" data-text="backgroundOnFocus"></div>
+						<div
+							class="slider-title"
+							data-text="backgroundOnFocus"
+						></div>
 						<button>
 							<svg viewBox="0 0 24 24">
 								<use xlink:href="#svg-sunset" />
@@ -363,7 +383,14 @@
 				</div>
 				<div class="section">
 					<div class="section-title" data-text="toolbar"></div>
-					<div class="slider" data-pref="toolbar" data-min="-50" data-max="50" data-step="5" data-value="0">
+					<div
+						class="slider"
+						data-pref="toolbar"
+						data-min="-50"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
 						<div class="slider-title" data-text="background"></div>
 						<button>
 							<svg viewBox="0 0 24 24">
@@ -401,7 +428,14 @@
 				</div>
 				<div class="section">
 					<div class="section-title" data-text="sidebar"></div>
-					<div class="slider" data-pref="sidebar" data-min="-50" data-max="50" data-step="5" data-value="0">
+					<div
+						class="slider"
+						data-pref="sidebar"
+						data-min="-50"
+						data-max="50"
+						data-step="5"
+						data-value="0"
+					>
 						<div class="slider-title" data-text="background"></div>
 						<button>
 							<svg viewBox="0 0 24 24">
@@ -438,7 +472,11 @@
 					</div>
 				</div>
 			</div>
-			<button id="custom-popup" data-text="moreSettings" data-title="moreSettingsTooltip"></button>
+			<button
+				id="custom-popup"
+				data-text="moreSettings"
+				data-title="moreSettingsTooltip"
+			></button>
 		</div>
 		<script defer type="module" src="./popup.js"></script>
 	</body>

@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { recommendedAddonPageColour } from "../default_values.js";
+import { recommendedAddonPageColour } from "../defaultValues.js";
 import { setSliderValue, setupSlider } from "../elements.js";
 import { localise, supportsThemeAPI } from "../utility.js";
 
@@ -20,7 +20,7 @@ sliders.forEach((slider) =>
 	setupSlider(slider, async (key, value) => {
 		pref[key] = value;
 		await applySettings();
-	})
+	}),
 );
 
 /**
@@ -51,7 +51,11 @@ async function updateInfoDisplay(nthTry = 0) {
 		return;
 	}
 	try {
-		const activeTabs = await browser.tabs.query({ active: true, status: "complete", currentWindow: true });
+		const activeTabs = await browser.tabs.query({
+			active: true,
+			status: "complete",
+			currentWindow: true,
+		});
 		if (activeTabs.length === 0) {
 			setInfoDisplay({ reason: "PROTECTED_PAGE" });
 			colourCorrectionInfo.classList.toggle("hidden", true);
@@ -59,7 +63,10 @@ async function updateInfoDisplay(nthTry = 0) {
 		}
 		const tab = activeTabs[0];
 		const windowId = tab.windowId;
-		const info = await browser.runtime.sendMessage({ header: "INFO_REQUEST", windowId: windowId });
+		const info = await browser.runtime.sendMessage({
+			header: "INFO_REQUEST",
+			windowId: windowId,
+		});
 		if (!info) return setTimeout(() => updateInfoDisplay(++nthTry), 50);
 		const actions = {
 			THEME_UNIGNORED: { value: false },
@@ -78,7 +85,11 @@ async function updateInfoDisplay(nthTry = 0) {
 					const header = new URL(tab.url).hostname;
 					const policyId = pref.getURLPolicyId(tab.url);
 					const policy = pref.getPolicy(policyId);
-					if (policyId && policy?.header === header && policy?.type === "THEME_COLOUR") {
+					if (
+						policyId &&
+						policy?.header === header &&
+						policy?.type === "THEME_COLOUR"
+					) {
 						pref.setPolicy(policyId, {
 							headerType: "URL",
 							header: header,
@@ -119,13 +130,18 @@ async function getAddonPageInfo(addonId) {
 		return {
 			reason: "ADDON_RECOM",
 			additionalInfo: addonName,
-			infoAction: async () => await specifyColourForAddon(addonId, recommendedAddonPageColour[addonId]),
+			infoAction: async () =>
+				await specifyColourForAddon(
+					addonId,
+					recommendedAddonPageColour[addonId],
+				),
 		};
 	} else {
 		return {
 			reason: "ADDON_DEFAULT",
 			additionalInfo: addonName,
-			infoAction: async () => await specifyColourForAddon(addonId, "#333333", true),
+			infoAction: async () =>
+				await specifyColourForAddon(addonId, "#333333", true),
 		};
 	}
 }
@@ -135,7 +151,11 @@ async function getAddonPageInfo(addonId) {
  * @param {string} colourHex
  * @param {boolean} openOptionsPage
  */
-async function specifyColourForAddon(addonId, colourHex, openOptionsPage = false) {
+async function specifyColourForAddon(
+	addonId,
+	colourHex,
+	openOptionsPage = false,
+) {
 	if (colourHex) {
 		pref.addPolicy({
 			headerType: "ADDON_ID",
@@ -158,10 +178,18 @@ async function specifyColourForAddon(addonId, colourHex, openOptionsPage = false
  * @param {string | null} options.additionalInfo Additional information to display on the panel.
  * @param {function | null} options.infoAction The function called by the `.info-action` button being clicked.
  */
-function setInfoDisplay({ reason = "ERROR_OCCURRED", additionalInfo = null, infoAction = null }) {
+function setInfoDisplay({
+	reason = "ERROR_OCCURRED",
+	additionalInfo = null,
+	infoAction = null,
+}) {
 	infoDisplay.className = reason;
-	const additionalInfoDisplay = infoDisplay.querySelector(`[name='${reason}'] .additional-info`);
-	const infoActionButton = infoDisplay.querySelector(`[name='${reason}'] .info-action`);
+	const additionalInfoDisplay = infoDisplay.querySelector(
+		`[name='${reason}'] .additional-info`,
+	);
+	const infoActionButton = infoDisplay.querySelector(
+		`[name='${reason}'] .info-action`,
+	);
 	if (additionalInfo) additionalInfoDisplay.textContent = additionalInfo;
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
@@ -172,8 +200,14 @@ function setInfoDisplay({ reason = "ERROR_OCCURRED", additionalInfo = null, info
 async function updatePopupColour() {
 	const theme = await browser.theme?.getCurrent();
 	if (theme?.colors?.popup && theme?.colors?.popup_text) {
-		document.documentElement.style.setProperty("--background-colour", theme.colors.popup);
-		document.documentElement.style.setProperty("--text-colour", theme.colors.popup_text);
+		document.documentElement.style.setProperty(
+			"--background-colour",
+			theme.colors.popup,
+		);
+		document.documentElement.style.setProperty(
+			"--text-colour",
+			theme.colors.popup_text,
+		);
 	}
 }
 
@@ -182,7 +216,9 @@ async function updatePopupColour() {
  */
 function updateCompatibilityMode() {
 	document.querySelectorAll(`.section-group .section`).forEach((section) => {
-		const tabbarSlider = section.querySelector(`.slider[data-pref="tabbar"]`);
+		const tabbarSlider = section.querySelector(
+			`.slider[data-pref="tabbar"]`,
+		);
 		if (tabbarSlider) {
 			section
 				.querySelector(`.slider[data-pref="tabbarBorder"]`)

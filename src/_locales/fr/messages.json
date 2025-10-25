@@ -1,130 +1,14 @@
 {
-	"extensionName": {
-		"message": "Adaptive Tab Bar Colour"
-	},
-
-	"extensionDescription": {
-		"message": "Change la couleur du thème de Firefox pour correspondre à l'apparence de sites."
-	},
-
-	"__OPTIONS PAGE__": {
-		"message": "===================="
-	},
-
-	"reinstallTip": {
-		"message": "Les données de préférences pourraient être corrompues. Si le problème persiste, veuillez réinstaller le module complémentaire. Veuillez nous excuser pour la gêne occasionnée !"
-	},
-
-	"loading": {
-		"message": "Chargement…"
-	},
-
-	"themeBuilder": {
-		"message": "Constructeur de thème"
-	},
-
-	"siteList": {
-		"message": "Liste de sites"
-	},
-
-	"advanced": {
-		"message": "Avancé"
-	},
-
-	"tabBar": {
-		"message": "Barre d'onglets"
-	},
-
-	"background": {
-		"message": "Arrière-plan"
-	},
-
-	"selectedTab": {
-		"message": "Onglet sélectionné"
-	},
-
-	"toolbar": {
-		"message": "Barre d'outils"
-	},
-
-	"border": {
-		"message": "Bordure"
-	},
-
-	"URLBar": {
-		"message": "Barre d'URL"
-	},
-
-	"backgroundOnFocus": {
-		"message": "Arrière-plan au focus"
-	},
-
-	"sidebar": {
-		"message": "Barre latérale"
-	},
-
-	"popUp": {
-		"message": "Pop-up"
-	},
-
-	"thisPolicyWillBeIgnored": {
-		"message": "Cette politique sera ignorée"
-	},
-
-	"URLDomainOrRegex": {
-		"message": "URL / regex / wildcard / domaine"
+	"addANewRule": {
+		"message": "Ajouter une nouvelle règle"
 	},
 
 	"addonNotFound": {
 		"message": "Extension non trouvée"
 	},
 
-	"specifyAColour": {
-		"message": "spécifier une couleur"
-	},
-
-	"useIgnoreThemeColour": {
-		"message": "utiliser / ignorer la couleur du thème"
-	},
-
-	"pickColourFromElement": {
-		"message": "sélectionner la couleur de l'élément"
-	},
-
-	"anyCSSColour": {
-		"message": "Tout format"
-	},
-
-	"use": {
-		"message": "Utiliser"
-	},
-
-	"ignore": {
-		"message": "Ignorer"
-	},
-
-	"querySelector": {
-		"message": "Sélecteur de requête"
-	},
-
-	"delete": {
-		"message": "Supprimer"
-	},
-
-	"reset": {
-		"message": "Réinitialiser"
-	},
-
-	"addANewRule": {
-		"message": "Ajouter une nouvelle règle"
-	},
-
-	"allowLightTabBar": {
-		"message": "Autoriser la barre d'onglets claire"
-	},
-
-	"allowLightTabBarTooltip": {
-		"message": "Autorise la barre d'onglets à utiliser des couleurs claires (texte sombre sur la barre d'onglets claire)."
+	"advanced": {
+		"message": "Avancé"
 	},
 
 	"allowDarkTabBar": {
@@ -135,220 +19,28 @@
 		"message": "Autoriser la barre d'onglets à utiliser des couleurs sombres (texte clair sur la barre d'onglets sombre)."
 	},
 
-	"dynamicColourUpdate": {
-		"message": "Mise à jour dynamique des couleurs"
+	"allowLightTabBar": {
+		"message": "Autoriser la barre d'onglets claire"
 	},
 
-	"dynamicModeTooltip": {
-		"message": "Met à jour continuellement la couleur de la barre d'onglets lors de la navigation sur une page Web."
+	"allowLightTabBarTooltip": {
+		"message": "Autorise la barre d'onglets à utiliser des couleurs claires (texte sombre sur la barre d'onglets claire)."
 	},
 
-	"ignoreDesignatedThemeColour": {
-		"message": "Ignorer la couleur du thème des sites Web"
+	"anyCSSColour": {
+		"message": "Tout format"
 	},
 
-	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Certains sites web proposent eux-mêmes une couleur de thème. Activez cette option pour ignorer ces couleurs."
+	"background": {
+		"message": "Arrière-plan"
 	},
 
-	"compatibilityMode": {
-		"message": "Mode de compatibilité"
+	"backgroundOnFocus": {
+		"message": "Arrière-plan au focus"
 	},
 
-	"compatibilityModeTooltip": {
-		"message": "Au lieu de la theme API, utilise la propriété HTML « theme-color » pour changer la couleur de la barre d'onglets. Cela ne fonctionne qu'avec certains navigateurs de manière limitée."
-	},
-
-	"minimumContrast": {
-		"message": "Contraste minimum"
-	},
-
-	"minimumContrastTooltip": {
-		"message": "Défini le ratio de contraste minimal entre la barre d'onglets et le texte. La couleur de la barre d'onglets s'ajuste automatiquement si le ratio n'est pas respecté."
-	},
-
-	"inLightMode": {
-		"message": "En mode clair"
-	},
-
-	"inDarkMode": {
-		"message": "En mode sombre"
-	},
-
-	"homepageColourLight": {
-		"message": "Couleur de la page d'accueil : claire"
-	},
-
-	"homepageColourDark": {
-		"message": "Couleur de la page d'accueil : sombre"
-	},
-
-	"fallbackColourLight": {
-		"message": "Couleur de repli : claire"
-	},
-
-	"fallbackColourDark": {
-		"message": "Couleur de repli : sombre"
-	},
-
-	"exportSettings": {
-		"message": "Exporter les paramètres"
-	},
-
-	"settingsAreExported": {
-		"message": "Les paramètres ont été exportés vers votre dossier de téléchargement"
-	},
-
-	"importSettings": {
-		"message": "Importer les paramètres"
-	},
-
-	"settingsAreImported": {
-		"message": "Les paramètres ont été importés."
-	},
-
-	"importFailed": {
-		"message": "Échec de l'importation des paramètres. Veuillez réessayer."
-	},
-
-	"resetThemeBuilder": {
-		"message": "Réinitialiser le constructeur de thème"
-	},
-
-	"confirmResetThemeBuilder": {
-		"message": "Êtes-vous sûr de vouloir réinitialiser le constructeur de thèmes ?"
-	},
-
-	"resetSiteList": {
-		"message": "Réinitialiser la liste des sites"
-	},
-
-	"confirmResetSiteList": {
-		"message": "Êtes-vous sûr de vouloir réinitialiser la liste des sites ?"
-	},
-
-	"resetAdvanced": {
-		"message": "Réinitialiser les paramètres avancés"
-	},
-
-	"confirmResetAdvanced": {
-		"message": "Êtes-vous sûr de vouloir réinitialiser les paramètres avancés ?"
-	},
-
-	"reportAnIssue": {
-		"message": "Signaler un problème / soumettre une suggestion / traduire cette extension"
-	},
-
-	"__POPUP__": {
-		"message": "===================="
-	},
-
-	"moreSettings": {
-		"message": "Plus de paramètres…"
-	},
-
-	"moreSettingsTooltip": {
-		"message": "Ouvrir la page d'options"
-	},
-
-	"colourForPDFViewer": {
-		"message": "Utilisation de la couleur pour la visionneuse PDF"
-	},
-
-	"colourForJSONViewer": {
-		"message": "Utilisation de la couleur pour la visionneuse JSON"
-	},
-
-	"pageIsProtected": {
-		"message": "Cette page est protégée par le navigateur"
-	},
-
-	"colourForPlainTextViewer": {
-		"message": "Utilisation de la couleur pour la visionneuse de texte brut"
-	},
-
-	"errorOccured": {
-		"message": "Une erreur s'est produite, utilisation de la couleur de repli"
-	},
-
-	"colourForHomePage": {
-		"message": "La couleur de la barre d'onglets de la page d'accueil peut être configurée dans les paramètres"
-	},
-
-	"useDefaultColourForAddon": {
-		"message": "Utilisation de la couleur spécifiée pour les pages liées à "
-	},
-
-	"useDefaultColourForAddonEnd": {
-		"message": "__EMPTY__"
-	},
-
-	"useDefaultColourForAddonButton": {
-		"message": "Utiliser la couleur par défaut"
-	},
-
-	"useDefaultColourForAddonTitle": {
-		"message": "Utiliser la couleur par défaut"
-	},
-
-	"useRecommendedColourForAddon": {
-		"message": "Couleur recommandée pour les pages liées à "
-	},
-
-	"useRecommendedColourForAddonEnd": {
-		"message": " est disponible"
-	},
-
-	"useRecommendedColourForAddonButton": {
-		"message": "Utiliser la couleur recommandée"
-	},
-
-	"useRecommendedColourForAddonTitle": {
-		"message": "Utilisez la couleur recommandée"
-	},
-
-	"specifyColourForAddon": {
-		"message": "Cliquez sur “Spécifier une couleur” pour ouvrir les paramètres et spécifier la couleur de la barre d’onglets pour les pages liées à "
-	},
-
-	"specifyColourForAddonEnd": {
-		"message": "__EMPTY__"
-	},
-
-	"specifyColourForAddonButton": {
-		"message": "Spécifier une couleur"
-	},
-
-	"specifyColourForAddonTitle": {
-		"message": "Ouvrez les paramètres et spécifiez une couleur pour les pages liées à l'extension"
-	},
-
-	"themeColourIsUnignored": {
-		"message": "La couleur du thème définie par le site web est utilisée, au lieu d'être ignorée par défaut"
-	},
-
-	"themeColourNotFound": {
-		"message": "La couleur du thème n'est pas trouvée, la couleur est choisie à partir de la page web"
-	},
-
-	"themeColourIsIgnored": {
-		"message": "La couleur du thème définie par le site web est ignorée"
-	},
-
-	"useThemeColourButton": {
-		"message": "Utiliser la couleur du thème"
-	},
-
-	"useThemeColourTitle": {
-		"message": "Utiliser la couleur du thème définie par le site web"
-	},
-
-	"colourIsPickedFrom": {
-		"message": "La couleur est choisie à partir d'un élément HTML correspondant "
-	},
-
-	"colourIsPickedFromEnd": {
-		"message": "__EMPTY__"
+	"border": {
+		"message": "Bordure"
 	},
 
 	"cannotFindElement": {
@@ -359,6 +51,77 @@
 		"message": ", la couleur est choisie à partir de la page web à la place"
 	},
 
+	"colourForHomePage": {
+		"message": "La couleur de la barre d'onglets de la page d'accueil peut être configurée dans les paramètres"
+	},
+
+	"colourForJSONViewer": {
+		"message": "Utilisation de la couleur pour la visionneuse JSON"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Utilisation de la couleur pour la visionneuse PDF"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Utilisation de la couleur pour la visionneuse de texte brut"
+	},
+
+	"colourIsAdjusted": {
+		"message": "La couleur d'origine a été ajustée pour garantir un minimum de contraste"
+	},
+	"colourIsPickedFrom": {
+		"message": "La couleur est choisie à partir d'un élément HTML correspondant "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"colourIsSpecified": {
+		"message": "La couleur de ce site est spécifiée dans les paramètres"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "La couleur est choisie à partir de la page web"
+	},
+
+	"compatibilityMode": {
+		"message": "Mode de compatibilité"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "Au lieu de la theme API, utilise la propriété HTML « theme-color » pour changer la couleur de la barre d'onglets. Cela ne fonctionne qu'avec certains navigateurs de manière limitée."
+	},
+
+	"confirmResetAdvanced": {
+		"message": "Êtes-vous sûr de vouloir réinitialiser les paramètres avancés ?"
+	},
+
+	"confirmResetSiteList": {
+		"message": "Êtes-vous sûr de vouloir réinitialiser la liste des sites ?"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "Êtes-vous sûr de vouloir réinitialiser le constructeur de thèmes ?"
+	},
+
+	"delete": {
+		"message": "Supprimer"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Mise à jour dynamique des couleurs"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Met à jour continuellement la couleur de la barre d'onglets lors de la navigation sur une page Web."
+	},
+
+	"errorOccured": {
+		"message": "Une erreur s'est produite, utilisation de la couleur de repli"
+	},
+
 	"errorOccuredLocatingElement": {
 		"message": "Une erreur s'est produite lors de la recherche de l'élément HTML correspondant "
 	},
@@ -367,16 +130,44 @@
 		"message": ", la couleur est choisie à partir de la page web à la place"
 	},
 
-	"colourIsSpecified": {
-		"message": "La couleur de ce site est spécifiée dans les paramètres"
+	"exportSettings": {
+		"message": "Exporter les paramètres"
 	},
 
-	"usingImageViewer": {
-		"message": "Utilisation de la couleur pour la visionneuse d'images"
+	"extensionDescription": {
+		"message": "Change la couleur du thème de Firefox pour correspondre à l'apparence de sites."
 	},
 
-	"usingThemeColour": {
-		"message": "Utilisation de la couleur du thème définie par le site web"
+	"extensionName": {
+		"message": "Adaptive Tab Bar Colour"
+	},
+
+	"fallbackColourDark": {
+		"message": "Couleur de repli : sombre"
+	},
+
+	"fallbackColourLight": {
+		"message": "Couleur de repli : claire"
+	},
+
+	"homepageColourDark": {
+		"message": "Couleur de la page d'accueil : sombre"
+	},
+
+	"homepageColourLight": {
+		"message": "Couleur de la page d'accueil : claire"
+	},
+
+	"ignore": {
+		"message": "Ignorer"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignorer la couleur du thème des sites Web"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Certains sites web proposent eux-mêmes une couleur de thème. Activez cette option pour ignorer ces couleurs."
 	},
 
 	"ignoreThemeColourButton": {
@@ -387,15 +178,215 @@
 		"message": "Ignorer la couleur du thème définie par le site web"
 	},
 
+	"importFailed": {
+		"message": "Échec de l'importation des paramètres. Veuillez réessayer."
+	},
+
+	"importSettings": {
+		"message": "Importer les paramètres"
+	},
+
+	"inDarkMode": {
+		"message": "En mode sombre"
+	},
+
+	"inLightMode": {
+		"message": "En mode clair"
+	},
+
+	"loading": {
+		"message": "Chargement…"
+	},
+
+	"minimumContrast": {
+		"message": "Contraste minimum"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Défini le ratio de contraste minimal entre la barre d'onglets et le texte. La couleur de la barre d'onglets s'ajuste automatiquement si le ratio n'est pas respecté."
+	},
+
+	"moreSettings": {
+		"message": "Plus de paramètres…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Ouvrir la page d'options"
+	},
+
+	"pageIsProtected": {
+		"message": "Cette page est protégée par le navigateur"
+	},
+
+	"pickColourFromElement": {
+		"message": "sélectionner la couleur de l'élément"
+	},
+
+	"popUp": {
+		"message": "Pop-up"
+	},
+
+	"querySelector": {
+		"message": "Sélecteur de requête"
+	},
+
+	"reinstallTip": {
+		"message": "Les données de préférences pourraient être corrompues. Si le problème persiste, veuillez réinstaller le module complémentaire. Veuillez nous excuser pour la gêne occasionnée !"
+	},
+
+	"reportAnIssue": {
+		"message": "Signaler un problème / soumettre une suggestion / traduire cette extension"
+	},
+
+	"reset": {
+		"message": "Réinitialiser"
+	},
+
+	"resetAdvanced": {
+		"message": "Réinitialiser les paramètres avancés"
+	},
+
+	"resetSiteList": {
+		"message": "Réinitialiser la liste des sites"
+	},
+
+	"resetThemeBuilder": {
+		"message": "Réinitialiser le constructeur de thème"
+	},
+
+	"selectedTab": {
+		"message": "Onglet sélectionné"
+	},
+
+	"settingsAreExported": {
+		"message": "Les paramètres ont été exportés vers votre dossier de téléchargement"
+	},
+
+	"settingsAreImported": {
+		"message": "Les paramètres ont été importés."
+	},
+
+	"sidebar": {
+		"message": "Barre latérale"
+	},
+
+	"siteList": {
+		"message": "Liste de sites"
+	},
+
+	"specifyAColour": {
+		"message": "spécifier une couleur"
+	},
+
+	"specifyColourForAddon": {
+		"message": "Cliquez sur “Spécifier une couleur” pour ouvrir les paramètres et spécifier la couleur de la barre d’onglets pour les pages liées à "
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Spécifier une couleur"
+	},
+
+	"specifyColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Ouvrez les paramètres et spécifiez une couleur pour les pages liées à l'extension"
+	},
+
+	"tabBar": {
+		"message": "Barre d'onglets"
+	},
+
+	"themeBuilder": {
+		"message": "Constructeur de thème"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "La couleur du thème définie par le site web est ignorée"
+	},
+
+	"themeColourIsUnignored": {
+		"message": "La couleur du thème définie par le site web est utilisée, au lieu d'être ignorée par défaut"
+	},
+
+	"themeColourNotFound": {
+		"message": "La couleur du thème n'est pas trouvée, la couleur est choisie à partir de la page web"
+	},
+
+	"thisPolicyWillBeIgnored": {
+		"message": "Cette politique sera ignorée"
+	},
+
+	"toolbar": {
+		"message": "Barre d'outils"
+	},
+
+	"urlBar": {
+		"message": "Barre d'URL"
+	},
+
+	"urlDomainOrRegex": {
+		"message": "URL / regex / wildcard / domaine"
+	},
+
+	"use": {
+		"message": "Utiliser"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Utilisation de la couleur spécifiée pour les pages liées à "
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Utiliser la couleur par défaut"
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Utiliser la couleur par défaut"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "utiliser / ignorer la couleur du thème"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Couleur recommandée pour les pages liées à "
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Utiliser la couleur recommandée"
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " est disponible"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Utilisez la couleur recommandée"
+	},
+
+	"useThemeColourButton": {
+		"message": "Utiliser la couleur du thème"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Utiliser la couleur du thème définie par le site web"
+	},
+
 	"usingFallbackColour": {
 		"message": "Aucune couleur n'est disponible, utilisation de la couleur de repli"
 	},
 
-	"colourPickedFromWebpage": {
-		"message": "La couleur est choisie à partir de la page web"
+	"usingImageViewer": {
+		"message": "Utilisation de la couleur pour la visionneuse d'images"
 	},
 
-	"colourIsAdjusted": {
-		"message": "La couleur d'origine a été ajustée pour garantir un minimum de contraste"
+	"usingThemeColour": {
+		"message": "Utilisation de la couleur du thème définie par le site web"
 	}
 }

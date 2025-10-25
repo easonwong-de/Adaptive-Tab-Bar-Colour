@@ -18,8 +18,8 @@ html {
 	--transparent-3: hsla(0, 0%, 0%, 25%);
 	--transparent-4: hsla(0, 0%, 0%, 30%);
 	--transparent-5: hsla(0, 0%, 0%, 35%);
-	font-family: sans-serif;
 	font-size: 14px;
+	font-family: sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -47,13 +47,13 @@ html {
 }
 
 #reinstall-tip {
-	animation-delay: 5s;
+	opacity: 0;
 	animation-duration: 0s;
+	animation-delay: 5s;
 	animation-fill-mode: forwards;
 	animation-name: appear;
-	opacity: 0;
-	overflow-wrap: break-word;
 	white-space: normal;
+	overflow-wrap: break-word;
 }
 
 @keyframes appear {
@@ -80,15 +80,15 @@ html {
 
 svg {
 	align-self: center;
+	vertical-align: middle;
 	fill: none;
-	height: 1em;
-	margin: 0;
 	stroke: currentColor;
 	stroke-linecap: round;
 	stroke-linejoin: round;
 	stroke-width: 2px;
-	vertical-align: middle;
+	margin: 0;
 	width: 1em;
+	height: 1em;
 }
 
 button {

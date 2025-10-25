@@ -1,49 +1,9 @@
 {
-	"name": "__MSG_extensionName__",
-	"description": "__MSG_extensionDescription__",
-	"version": "3.2",
 	"author": "Eason Wong",
-	"homepage_url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
-	"default_locale": "en",
-	"browser_specific_settings": {
-		"gecko": {
-			"id": "ATBC@EasonWong",
-			"strict_min_version": "112.0",
-			"data_collection_permissions": {
-				"required": [
-					"none"
-				]
-			}
-		}
-	},
-	"permissions": [
-		"tabs",
-		"theme",
-		"storage",
-		"browserSettings",
-		"management"
-	],
 	"background": {
-		"scripts": [
-			"background.js"
-		],
+		"scripts": ["background.js"],
 		"type": "module",
 		"persistent": true
-	},
-	"content_scripts": [
-		{
-			"matches": [
-				"<all_urls>"
-			],
-			"js": [
-				"atbc.js"
-			]
-		}
-	],
-	"options_ui": {
-		"page": "options/options.html",
-		"open_in_tab": false,
-		"browser_style": true
 	},
 	"browser_action": {
 		"default_popup": "popup/popup.html",
@@ -57,6 +17,24 @@
 			"128": "images/ATBC_128.png"
 		}
 	},
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "ATBC@EasonWong",
+			"strict_min_version": "112.0",
+			"data_collection_permissions": {
+				"required": ["none"]
+			}
+		}
+	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["atbc.js"]
+		}
+	],
+	"default_locale": "en",
+	"description": "__MSG_extensionDescription__",
+	"homepage_url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"icons": {
 		"16": "images/ATBC_16.png",
 		"32": "images/ATBC_32.png",
@@ -64,5 +42,19 @@
 		"96": "images/ATBC_96.png",
 		"128": "images/ATBC_128.png"
 	},
-	"manifest_version": 2
+	"manifest_version": 2,
+	"name": "__MSG_extensionName__",
+	"options_ui": {
+		"page": "options/options.html",
+		"open_in_tab": false,
+		"browser_style": true
+	},
+	"permissions": [
+		"tabs",
+		"theme",
+		"storage",
+		"browserSettings",
+		"management"
+	],
+	"version": "3.2"
 }

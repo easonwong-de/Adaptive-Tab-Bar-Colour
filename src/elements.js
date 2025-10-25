@@ -55,12 +55,19 @@ export function setupSlider(slider, onChange) {
  */
 export function setSliderValue(slider, value) {
 	const sliderBody = slider.querySelector(".slider-body");
-	const percentage = (value - +slider.dataset.min) / (+slider.dataset.max - +slider.dataset.min);
+	const percentage =
+		(value - +slider.dataset.min) /
+		(+slider.dataset.max - +slider.dataset.min);
 	const scale = slider.dataset.scale;
 	slider.dataset.value = value;
 	sliderBody.textContent =
-		scale && value !== 0 ? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}` : value;
-	sliderBody.style.setProperty("--slider-position", `${100 * (1 - percentage)}%`);
+		scale && value !== 0
+			? `${value.toString().slice(0, -scale)}.${value.toString().slice(-scale)}`
+			: value;
+	sliderBody.style.setProperty(
+		"--slider-position",
+		`${100 * (1 - percentage)}%`,
+	);
 }
 
 /**
@@ -70,11 +77,21 @@ export function setSliderValue(slider, value) {
  * @param {string} initialValue - The initial value to set.
  * @param {(value: string) => void} onChange - Callback invoked when the input value changes.
  */
-export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, onChange) {
-	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
+export function setupPolicyHeaderInput(
+	policyHeaderInputWrapper,
+	initialValue,
+	onChange,
+) {
+	const policyHeaderInput = policyHeaderInputWrapper.querySelector(
+		".policy-header-input",
+	);
 	policyHeaderInput.value = initialValue;
-	policyHeaderInput.addEventListener("focus", () => policyHeaderInput.select());
-	policyHeaderInput.addEventListener("input", () => onChange(policyHeaderInput.value.trim()));
+	policyHeaderInput.addEventListener("focus", () =>
+		policyHeaderInput.select(),
+	);
+	policyHeaderInput.addEventListener("input", () =>
+		onChange(policyHeaderInput.value.trim()),
+	);
 	policyHeaderInput.addEventListener("keydown", (event) => {
 		if (event.key === "Enter") policyHeaderInput.blur();
 	});
@@ -87,7 +104,9 @@ export function setupPolicyHeaderInput(policyHeaderInputWrapper, initialValue, o
  * @param {string} value - The value to set.
  */
 export function setPolicyHeaderInputValue(policyHeaderInputWrapper, value) {
-	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
+	const policyHeaderInput = policyHeaderInputWrapper.querySelector(
+		".policy-header-input",
+	);
 	policyHeaderInput.value = value;
 }
 
@@ -98,7 +117,9 @@ export function setPolicyHeaderInputValue(policyHeaderInputWrapper, value) {
  * @returns {string} The current value of the input.
  */
 export function getPolicyHeaderInputValue(policyHeaderInputWrapper) {
-	const policyHeaderInput = policyHeaderInputWrapper.querySelector(".policy-header-input");
+	const policyHeaderInput = policyHeaderInputWrapper.querySelector(
+		".policy-header-input",
+	);
 	return policyHeaderInput.value;
 }
 
@@ -111,8 +132,12 @@ export function getPolicyHeaderInputValue(policyHeaderInputWrapper) {
  */
 export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 	const colourInput = colourInputWrapper.querySelector(".colour-input");
-	const colourPicker = colourInputWrapper.querySelector(".colour-picker-display");
-	const colourPickerInput = colourInputWrapper.querySelector("input[type='color']");
+	const colourPicker = colourInputWrapper.querySelector(
+		".colour-picker-display",
+	);
+	const colourPickerInput = colourInputWrapper.querySelector(
+		"input[type='color']",
+	);
 	colourInput.value = initialColour;
 	colourPicker.style.backgroundColor = initialColour;
 	colourPickerInput.value = initialColour;
@@ -149,8 +174,12 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
  */
 export function setColourInputValue(colourInputWrapper, value) {
 	const colourInput = colourInputWrapper.querySelector(".colour-input");
-	const colourPicker = colourInputWrapper.querySelector("input[type='color']");
-	const colourPickerDisplay = colourInputWrapper.querySelector(".colour-picker-display");
+	const colourPicker = colourInputWrapper.querySelector(
+		"input[type='color']",
+	);
+	const colourPickerDisplay = colourInputWrapper.querySelector(
+		".colour-picker-display",
+	);
 	colourInput.value = value;
 	colourPicker.value = value;
 	colourPickerDisplay.style.backgroundColor = value;
@@ -163,7 +192,9 @@ export function setColourInputValue(colourInputWrapper, value) {
  * @returns {string} The current colour value (hex).
  */
 export function getColourInputValue(colourInputWrapper) {
-	const colourPicker = colourInputWrapper.querySelector("input[type='color']");
+	const colourPicker = colourInputWrapper.querySelector(
+		"input[type='color']",
+	);
 	return colourPicker.value;
 }
 
@@ -174,9 +205,17 @@ export function getColourInputValue(colourInputWrapper) {
  * @param {boolean} initialSelection - Whether to use the theme colour initially.
  * @param {(useTheme: boolean) => void} onChange - Callback invoked when the selection changes.
  */
-export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelection, onChange) {
-	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
-	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(2)");
+export function setupThemeColourSwitch(
+	themeColourSwitchWrapper,
+	initialSelection,
+	onChange,
+) {
+	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector(
+		"input[type='radio']:nth-of-type(1)",
+	);
+	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector(
+		"input[type='radio']:nth-of-type(2)",
+	);
 	if (initialSelection === false) ignoreThemeColourRadioButton.checked = true;
 	useThemeColourRadioButton.addEventListener("change", () => {
 		if (useThemeColourRadioButton.checked) onChange(true);
@@ -193,8 +232,12 @@ export function setupThemeColourSwitch(themeColourSwitchWrapper, initialSelectio
  * @param {boolean} value - Whether to use the theme colour.
  */
 export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
-	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
-	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(2)");
+	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector(
+		"input[type='radio']:nth-of-type(1)",
+	);
+	const ignoreThemeColourRadioButton = themeColourSwitchWrapper.querySelector(
+		"input[type='radio']:nth-of-type(2)",
+	);
 	useThemeColourRadioButton.checked = value;
 	ignoreThemeColourRadioButton.checked = !value;
 }
@@ -206,7 +249,9 @@ export function setThemeColourSwitchValue(themeColourSwitchWrapper, value) {
  * @returns {boolean} True if the theme colour is selected, false otherwise.
  */
 export function getThemeColourSwitchValue(themeColourSwitchWrapper) {
-	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector("input[type='radio']:nth-of-type(1)");
+	const useThemeColourRadioButton = themeColourSwitchWrapper.querySelector(
+		"input[type='radio']:nth-of-type(1)",
+	);
 	return useThemeColourRadioButton.checked;
 }
 
@@ -217,11 +262,20 @@ export function getThemeColourSwitchValue(themeColourSwitchWrapper) {
  * @param {string} initialQuerySelector - The initial query selector value.
  * @param {(value: string) => void} onChange - Callback invoked when the input value changes.
  */
-export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQuerySelector, onChange) {
-	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
+export function setupQuerySelectorInput(
+	QuerySelectorInputWrapper,
+	initialQuerySelector,
+	onChange,
+) {
+	const QuerySelectorInput =
+		QuerySelectorInputWrapper.querySelector("input[type='text']");
 	QuerySelectorInput.value = initialQuerySelector;
-	QuerySelectorInput.addEventListener("focus", () => QuerySelectorInput.select());
-	QuerySelectorInput.addEventListener("input", () => onChange(QuerySelectorInput.value.trim()));
+	QuerySelectorInput.addEventListener("focus", () =>
+		QuerySelectorInput.select(),
+	);
+	QuerySelectorInput.addEventListener("input", () =>
+		onChange(QuerySelectorInput.value.trim()),
+	);
 	QuerySelectorInput.addEventListener("keydown", (event) => {
 		if (event.key === "Enter") QuerySelectorInput.blur();
 	});
@@ -234,7 +288,8 @@ export function setupQuerySelectorInput(QuerySelectorInputWrapper, initialQueryS
  * @param {string} value - The value to set.
  */
 export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
-	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
+	const QuerySelectorInput =
+		QuerySelectorInputWrapper.querySelector("input[type='text']");
 	QuerySelectorInput.value = value;
 }
 
@@ -245,7 +300,8 @@ export function setQuerySelectorInputValue(QuerySelectorInputWrapper, value) {
  * @returns {string} The current value of the input.
  */
 export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
-	const QuerySelectorInput = QuerySelectorInputWrapper.querySelector("input[type='text']");
+	const QuerySelectorInput =
+		QuerySelectorInputWrapper.querySelector("input[type='text']");
 	return QuerySelectorInput.value;
 }
 
@@ -257,8 +313,10 @@ export function getQuerySelectorInputValue(QuerySelectorInputWrapper) {
  */
 export function setColourPolicySectionId(policySection, id) {
 	policySection.dataset.id = id;
-	policySection.querySelector(".colour-picker-display").htmlFor = `colour-picker-display-${id}`;
-	policySection.querySelector("input[type='color']").id = `colour-picker-display-${id}`;
+	policySection.querySelector(".colour-picker-display").htmlFor =
+		`colour-picker-display-${id}`;
+	policySection.querySelector("input[type='color']").id =
+		`colour-picker-display-${id}`;
 }
 
 /**
@@ -269,12 +327,20 @@ export function setColourPolicySectionId(policySection, id) {
  */
 export function setFlexiblePolicySectionId(policySection, id) {
 	policySection.dataset.id = id;
-	policySection.querySelector(".colour-picker-display").htmlFor = `colour-picker-display-${id}`;
-	policySection.querySelector("input[type='color']").id = `colour-picker-display-${id}`;
-	policySection.querySelector("input.toggle-switch:nth-of-type(1)").name = `theme-colour-${id}`;
-	policySection.querySelector("input.toggle-switch:nth-of-type(1)").id = `use-theme-colour-${id}`;
-	policySection.querySelector("label.toggle-switch:nth-of-type(1)").htmlFor = `use-theme-colour-${id}`;
-	policySection.querySelector("input.toggle-switch:nth-of-type(2)").name = `theme-colour-${id}`;
-	policySection.querySelector("input.toggle-switch:nth-of-type(2)").id = `ignore-theme-colour-${id}`;
-	policySection.querySelector("label.toggle-switch:nth-of-type(2)").htmlFor = `ignore-theme-colour-${id}`;
+	policySection.querySelector(".colour-picker-display").htmlFor =
+		`colour-picker-display-${id}`;
+	policySection.querySelector("input[type='color']").id =
+		`colour-picker-display-${id}`;
+	policySection.querySelector("input.toggle-switch:nth-of-type(1)").name =
+		`theme-colour-${id}`;
+	policySection.querySelector("input.toggle-switch:nth-of-type(1)").id =
+		`use-theme-colour-${id}`;
+	policySection.querySelector("label.toggle-switch:nth-of-type(1)").htmlFor =
+		`use-theme-colour-${id}`;
+	policySection.querySelector("input.toggle-switch:nth-of-type(2)").name =
+		`theme-colour-${id}`;
+	policySection.querySelector("input.toggle-switch:nth-of-type(2)").id =
+		`ignore-theme-colour-${id}`;
+	policySection.querySelector("label.toggle-switch:nth-of-type(2)").htmlFor =
+		`ignore-theme-colour-${id}`;
 }

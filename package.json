@@ -8,8 +8,9 @@
 		"start:firefox": "web-ext run -s=./src -f=firefox --devtools",
 		"start:android": "web-ext run -s=./src -t=firefox-android",
 		"lint": "web-ext lint -s=./src",
+		"prettier": "npx prettier \"src/**\" --write",
 		"sync-version": "node sync-version.js",
-		"build": "npm run sync-version && web-ext build -s=./src -a=dist -o"
+		"build": "npm run prettier && npm run sync-version && web-ext build -s=./src -a=dist -o"
 	},
 	"repository": {
 		"type": "git",
@@ -21,8 +22,11 @@
 		"url": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues",
 		"email": "me@easonwong.de"
 	},
-	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour#readme",
+	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"devDependencies": {
-		"web-ext": "^8.7.1"
+		"prettier": "^3.6.2",
+		"prettier-plugin-css-order": "^2.1.2",
+		"prettier-plugin-sort-json": "^4.1.1",
+		"web-ext": "^9.1.0"
 	}
 }

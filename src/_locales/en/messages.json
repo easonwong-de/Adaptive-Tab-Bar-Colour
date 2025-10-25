@@ -1,130 +1,14 @@
 {
-	"extensionName": {
-		"message": "Adaptive Tab Bar Colour"
-	},
-
-	"extensionDescription": {
-		"message": "Changes the colour of Firefox theme to match the website’s appearance."
-	},
-
-	"__OPTIONS PAGE__": {
-		"message": "===================="
-	},
-
-	"reinstallTip": {
-		"message": "Preference data may be corrupted. If the issue persists, please reinstall the add-on. We apologize for the inconvenience."
-	},
-
-	"loading": {
-		"message": "Loading…"
-	},
-
-	"themeBuilder": {
-		"message": "Theme builder"
-	},
-
-	"siteList": {
-		"message": "Site list"
-	},
-
-	"advanced": {
-		"message": "Advanced"
-	},
-
-	"tabBar": {
-		"message": "Tab bar"
-	},
-
-	"background": {
-		"message": "Background"
-	},
-
-	"selectedTab": {
-		"message": "Selected tab"
-	},
-
-	"toolbar": {
-		"message": "Toolbar"
-	},
-
-	"border": {
-		"message": "Border"
-	},
-
-	"URLBar": {
-		"message": "URL bar"
-	},
-
-	"backgroundOnFocus": {
-		"message": "Background on focus"
-	},
-
-	"sidebar": {
-		"message": "Sidebar"
-	},
-
-	"popUp": {
-		"message": "Pop-up"
-	},
-
-	"thisPolicyWillBeIgnored": {
-		"message": "This policy will be ignored"
-	},
-
-	"URLDomainOrRegex": {
-		"message": "URL / regex / wildcard / domain"
+	"addANewRule": {
+		"message": "Add a new rule"
 	},
 
 	"addonNotFound": {
 		"message": "Add-on not found"
 	},
 
-	"specifyAColour": {
-		"message": "specify a colour"
-	},
-
-	"useIgnoreThemeColour": {
-		"message": "use / ignore theme colour"
-	},
-
-	"pickColourFromElement": {
-		"message": "pick colour from element"
-	},
-
-	"anyCSSColour": {
-		"message": "Any format"
-	},
-
-	"use": {
-		"message": "Use"
-	},
-
-	"ignore": {
-		"message": "Ignore"
-	},
-
-	"querySelector": {
-		"message": "Query selector"
-	},
-
-	"delete": {
-		"message": "Delete"
-	},
-
-	"reset": {
-		"message": "Reset"
-	},
-
-	"addANewRule": {
-		"message": "Add a new rule"
-	},
-
-	"allowLightTabBar": {
-		"message": "Allow light tab bar"
-	},
-
-	"allowLightTabBarTooltip": {
-		"message": "Allow tab bar to use bright colour (dark text on light tab bar)."
+	"advanced": {
+		"message": "Advanced"
 	},
 
 	"allowDarkTabBar": {
@@ -135,220 +19,28 @@
 		"message": "Allow tab bar to use dark colour (light text on dark tab bar)."
 	},
 
-	"dynamicColourUpdate": {
-		"message": "Dynamic colour update"
+	"allowLightTabBar": {
+		"message": "Allow light tab bar"
 	},
 
-	"dynamicModeTooltip": {
-		"message": "Keeps updating tab bar colour while browsing within a web page."
+	"allowLightTabBarTooltip": {
+		"message": "Allow tab bar to use bright colour (dark text on light tab bar)."
 	},
 
-	"ignoreDesignatedThemeColour": {
-		"message": "Ignore website’s theme colour"
+	"anyCSSColour": {
+		"message": "Any format"
 	},
 
-	"ignoreDesignatedThemeColourTooltip": {
-		"message": "Some websites provide a theme colour themselves. Turn on this option to ignore these colours."
+	"background": {
+		"message": "Background"
 	},
 
-	"compatibilityMode": {
-		"message": "Compatibility mode"
+	"backgroundOnFocus": {
+		"message": "Background on focus"
 	},
 
-	"compatibilityModeTooltip": {
-		"message": "Instead of the theme API, use the HTML “theme-color” property to change the tab bar colour. This only works with certain browsers to a limited extent."
-	},
-
-	"minimumContrast": {
-		"message": "Minimum contrast"
-	},
-
-	"minimumContrastTooltip": {
-		"message": "Set the minimum contrast ratio between the tab bar and text. The tab bar colour adjusts automatically if the ratio is unmet."
-	},
-
-	"inLightMode": {
-		"message": "In light mode"
-	},
-
-	"inDarkMode": {
-		"message": "In dark mode"
-	},
-
-	"homepageColourLight": {
-		"message": "Home page colour: light"
-	},
-
-	"homepageColourDark": {
-		"message": "Home page colour: dark"
-	},
-
-	"fallbackColourLight": {
-		"message": "Fallback colour: light"
-	},
-
-	"fallbackColourDark": {
-		"message": "Fallback colour: dark"
-	},
-
-	"exportSettings": {
-		"message": "Export settings"
-	},
-
-	"settingsAreExported": {
-		"message": "Settings have been exported to your download folder."
-	},
-
-	"importSettings": {
-		"message": "Import settings"
-	},
-
-	"settingsAreImported": {
-		"message": "Settings have been imported."
-	},
-
-	"importFailed": {
-		"message": "Failed to import settings. Please try again."
-	},
-
-	"resetThemeBuilder": {
-		"message": "Reset theme builder"
-	},
-
-	"confirmResetThemeBuilder": {
-		"message": "Are you sure you want to reset the theme builder?"
-	},
-
-	"resetSiteList": {
-		"message": "Reset site list"
-	},
-
-	"confirmResetSiteList": {
-		"message": "Are you sure you want to reset the site list?"
-	},
-
-	"resetAdvanced": {
-		"message": "Reset advanced settings"
-	},
-
-	"confirmResetAdvanced": {
-		"message": "Are you sure you want to reset the advanced settings?"
-	},
-
-	"reportAnIssue": {
-		"message": "Report an issue / submit a suggestion / translate this add-on"
-	},
-
-	"__POPUP__": {
-		"message": "===================="
-	},
-
-	"moreSettings": {
-		"message": "More settings…"
-	},
-
-	"moreSettingsTooltip": {
-		"message": "Open option page"
-	},
-
-	"colourForPDFViewer": {
-		"message": "Using colour for PDF viewer"
-	},
-
-	"colourForJSONViewer": {
-		"message": "Using colour for JSON viewer"
-	},
-
-	"pageIsProtected": {
-		"message": "This page is protected by browser"
-	},
-
-	"colourForPlainTextViewer": {
-		"message": "Using colour for plain text viewer"
-	},
-
-	"errorOccured": {
-		"message": "An error occurred, using fallback colour"
-	},
-
-	"colourForHomePage": {
-		"message": "Tab bar colour for home page can be configured in settings"
-	},
-
-	"useDefaultColourForAddon": {
-		"message": "Using specified colour for pages related to "
-	},
-
-	"useDefaultColourForAddonEnd": {
-		"message": "__EMPTY__"
-	},
-
-	"useDefaultColourForAddonButton": {
-		"message": "Use default colour"
-	},
-
-	"useDefaultColourForAddonTitle": {
-		"message": "Use default colour"
-	},
-
-	"useRecommendedColourForAddon": {
-		"message": "Recommended colour for pages related to "
-	},
-
-	"useRecommendedColourForAddonEnd": {
-		"message": " is available"
-	},
-
-	"useRecommendedColourForAddonButton": {
-		"message": "Use recommended colour"
-	},
-
-	"useRecommendedColourForAddonTitle": {
-		"message": "Use the recommended colour"
-	},
-
-	"specifyColourForAddon": {
-		"message": "Click “Specify a color” to open settings and specify tab bar colour for pages related to "
-	},
-
-	"specifyColourForAddonEnd": {
-		"message": "__EMPTY__"
-	},
-
-	"specifyColourForAddonButton": {
-		"message": "Specify a colour"
-	},
-
-	"specifyColourForAddonTitle": {
-		"message": "Open settings and specify a colour to pages related to the add-on"
-	},
-
-	"themeColourIsUnignored": {
-		"message": "Theme colour defined by the website is used, instead of being ignored by default"
-	},
-
-	"themeColourNotFound": {
-		"message": "Theme colour is not found, colour is picked from the web page"
-	},
-
-	"themeColourIsIgnored": {
-		"message": "Theme colour defined by the website is ignored"
-	},
-
-	"useThemeColourButton": {
-		"message": "Use theme colour"
-	},
-
-	"useThemeColourTitle": {
-		"message": "Use theme colour defined by the website"
-	},
-
-	"colourIsPickedFrom": {
-		"message": "Colour is picked from an HTML element matching "
-	},
-
-	"colourIsPickedFromEnd": {
-		"message": "__EMPTY__"
+	"border": {
+		"message": "Border"
 	},
 
 	"cannotFindElement": {
@@ -359,6 +51,77 @@
 		"message": ", colour is picked from the web page instead"
 	},
 
+	"colourForHomePage": {
+		"message": "Tab bar colour for home page can be configured in settings"
+	},
+
+	"colourForJSONViewer": {
+		"message": "Using colour for JSON viewer"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Using colour for PDF viewer"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Using colour for plain text viewer"
+	},
+
+	"colourIsAdjusted": {
+		"message": "The original colour has been adjusted to ensure minimum contrast"
+	},
+	"colourIsPickedFrom": {
+		"message": "Colour is picked from an HTML element matching "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"colourIsSpecified": {
+		"message": "Colour for this site is specified in the settings"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "Colour is picked from the web page"
+	},
+
+	"compatibilityMode": {
+		"message": "Compatibility mode"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "Instead of the theme API, use the HTML “theme-color” property to change the tab bar colour. This only works with certain browsers to a limited extent."
+	},
+
+	"confirmResetAdvanced": {
+		"message": "Are you sure you want to reset the advanced settings?"
+	},
+
+	"confirmResetSiteList": {
+		"message": "Are you sure you want to reset the site list?"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "Are you sure you want to reset the theme builder?"
+	},
+
+	"delete": {
+		"message": "Delete"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Dynamic colour update"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Keeps updating tab bar colour while browsing within a web page."
+	},
+
+	"errorOccured": {
+		"message": "An error occurred, using fallback colour"
+	},
+
 	"errorOccuredLocatingElement": {
 		"message": "An error occurred while looking for the HTML element matching "
 	},
@@ -367,16 +130,44 @@
 		"message": ", colour is picked from the web page instead"
 	},
 
-	"colourIsSpecified": {
-		"message": "Colour for this site is specified in the settings"
+	"exportSettings": {
+		"message": "Export settings"
 	},
 
-	"usingImageViewer": {
-		"message": "Using colour for image viewer"
+	"extensionDescription": {
+		"message": "Changes the colour of Firefox theme to match the website’s appearance."
 	},
 
-	"usingThemeColour": {
-		"message": "Using theme colour defined by the website"
+	"extensionName": {
+		"message": "Adaptive Tab Bar Colour"
+	},
+
+	"fallbackColourDark": {
+		"message": "Fallback colour: dark"
+	},
+
+	"fallbackColourLight": {
+		"message": "Fallback colour: light"
+	},
+
+	"homepageColourDark": {
+		"message": "Home page colour: dark"
+	},
+
+	"homepageColourLight": {
+		"message": "Home page colour: light"
+	},
+
+	"ignore": {
+		"message": "Ignore"
+	},
+
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignore website’s theme colour"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Some websites provide a theme colour themselves. Turn on this option to ignore these colours."
 	},
 
 	"ignoreThemeColourButton": {
@@ -387,15 +178,215 @@
 		"message": "Ignore theme colour defined by the website"
 	},
 
+	"importFailed": {
+		"message": "Failed to import settings. Please try again."
+	},
+
+	"importSettings": {
+		"message": "Import settings"
+	},
+
+	"inDarkMode": {
+		"message": "In dark mode"
+	},
+
+	"inLightMode": {
+		"message": "In light mode"
+	},
+
+	"loading": {
+		"message": "Loading…"
+	},
+
+	"minimumContrast": {
+		"message": "Minimum contrast"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Set the minimum contrast ratio between the tab bar and text. The tab bar colour adjusts automatically if the ratio is unmet."
+	},
+
+	"moreSettings": {
+		"message": "More settings…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Open option page"
+	},
+
+	"pageIsProtected": {
+		"message": "This page is protected by browser"
+	},
+
+	"pickColourFromElement": {
+		"message": "pick colour from element"
+	},
+
+	"popUp": {
+		"message": "Pop-up"
+	},
+
+	"querySelector": {
+		"message": "Query selector"
+	},
+
+	"reinstallTip": {
+		"message": "Preference data may be corrupted. If the issue persists, please reinstall the add-on. We apologize for the inconvenience."
+	},
+
+	"reportAnIssue": {
+		"message": "Report an issue / submit a suggestion / translate this add-on"
+	},
+
+	"reset": {
+		"message": "Reset"
+	},
+
+	"resetAdvanced": {
+		"message": "Reset advanced settings"
+	},
+
+	"resetSiteList": {
+		"message": "Reset site list"
+	},
+
+	"resetThemeBuilder": {
+		"message": "Reset theme builder"
+	},
+
+	"selectedTab": {
+		"message": "Selected tab"
+	},
+
+	"settingsAreExported": {
+		"message": "Settings have been exported to your download folder."
+	},
+
+	"settingsAreImported": {
+		"message": "Settings have been imported."
+	},
+
+	"sidebar": {
+		"message": "Sidebar"
+	},
+
+	"siteList": {
+		"message": "Site list"
+	},
+
+	"specifyAColour": {
+		"message": "specify a colour"
+	},
+
+	"specifyColourForAddon": {
+		"message": "Click “Specify a color” to open settings and specify tab bar colour for pages related to "
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Specify a colour"
+	},
+
+	"specifyColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Open settings and specify a colour to pages related to the add-on"
+	},
+
+	"tabBar": {
+		"message": "Tab bar"
+	},
+
+	"themeBuilder": {
+		"message": "Theme builder"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "Theme colour defined by the website is ignored"
+	},
+
+	"themeColourIsUnignored": {
+		"message": "Theme colour defined by the website is used, instead of being ignored by default"
+	},
+
+	"themeColourNotFound": {
+		"message": "Theme colour is not found, colour is picked from the web page"
+	},
+
+	"thisPolicyWillBeIgnored": {
+		"message": "This policy will be ignored"
+	},
+
+	"toolbar": {
+		"message": "Toolbar"
+	},
+
+	"urlBar": {
+		"message": "URL bar"
+	},
+
+	"urlDomainOrRegex": {
+		"message": "URL / regex / wildcard / domain"
+	},
+
+	"use": {
+		"message": "Use"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Using specified colour for pages related to "
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Use default colour"
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Use default colour"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "use / ignore theme colour"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Recommended colour for pages related to "
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Use recommended colour"
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " is available"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Use the recommended colour"
+	},
+
+	"useThemeColourButton": {
+		"message": "Use theme colour"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Use theme colour defined by the website"
+	},
+
 	"usingFallbackColour": {
 		"message": "No colour is available, using fallback colour"
 	},
 
-	"colourPickedFromWebpage": {
-		"message": "Colour is picked from the web page"
+	"usingImageViewer": {
+		"message": "Using colour for image viewer"
 	},
 
-	"colourIsAdjusted": {
-		"message": "The original colour has been adjusted to ensure minimum contrast"
+	"usingThemeColour": {
+		"message": "Using theme colour defined by the website"
 	}
 }

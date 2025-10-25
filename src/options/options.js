@@ -29,7 +29,10 @@ const policyList = document.querySelector("#policy-list");
 
 const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
 tabSwitches.forEach((tabSwitch) => {
-	tabSwitch.addEventListener("change", () => (settingsWrapper.className = tabSwitch.id));
+	tabSwitch.addEventListener(
+		"change",
+		() => (settingsWrapper.className = tabSwitch.id),
+	);
 });
 
 const checkboxes = document.querySelectorAll("[type='checkbox']");
@@ -37,7 +40,7 @@ checkboxes.forEach((checkbox) =>
 	setupCheckbox(checkbox, async (key, value) => {
 		pref[key] = value;
 		await applySettings();
-	})
+	}),
 );
 
 const sliders = document.querySelectorAll(".slider");
@@ -45,12 +48,14 @@ sliders.forEach((slider) =>
 	setupSlider(slider, async (key, value) => {
 		pref[key] = value;
 		await applySettings();
-	})
+	}),
 );
 
 const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
 fixedPolicies.forEach((fixedPolicySection) => {
-	const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
+	const colourInputWrapper = fixedPolicySection.querySelector(
+		".colour-input-wrapper",
+	);
 	const key = colourInputWrapper.dataset.pref;
 	setupColourInput(colourInputWrapper, pref[key], async (colour) => {
 		pref[key] = colour;
@@ -77,12 +82,16 @@ document.querySelector("#add-new-rule").onclick = async () => {
  */
 function createPolicySection(id, policy) {
 	if (policy.headerType === "URL") {
-		const templateFlexiblePolicySection = document.querySelector("#template .policy.flexible-policy");
+		const templateFlexiblePolicySection = document.querySelector(
+			"#template .policy.flexible-policy",
+		);
 		const policySection = templateFlexiblePolicySection.cloneNode(true);
 		setupFlexiblePolicySection(policySection, id, policy);
 		return policySection;
 	} else if (policy.headerType === "ADDON_ID") {
-		const templateColourPolicySection = document.querySelector("#template .policy.colour-policy");
+		const templateColourPolicySection = document.querySelector(
+			"#template .policy.colour-policy",
+		);
 		const policySection = templateColourPolicySection.cloneNode(true);
 		setupColourPolicySection(policySection, id, policy);
 		return policySection;
@@ -103,23 +112,34 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 		pref.siteList[id].type = select.className = select.value;
 		switch (select.value) {
 			case "COLOUR":
-				pref.siteList[id].value = getColourInputValue(colourInputWrapper);
+				pref.siteList[id].value =
+					getColourInputValue(colourInputWrapper);
 				break;
 			case "THEME_COLOUR":
-				pref.siteList[id].value = getThemeColourSwitchValue(themeColourSwitch);
+				pref.siteList[id].value =
+					getThemeColourSwitchValue(themeColourSwitch);
 				break;
 			case "QUERY_SELECTOR":
-				pref.siteList[id].value = getQuerySelectorInputValue(querySelectorInputWrapper);
+				pref.siteList[id].value = getQuerySelectorInputValue(
+					querySelectorInputWrapper,
+				);
 				break;
 			default:
 				break;
 		}
 		await applySettings();
 	});
-	const policyHeaderInputWrapper = policySection.querySelector(".policy-header-input-wrapper");
-	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
-	const themeColourSwitch = policySection.querySelector(".theme-colour-switch");
-	const querySelectorInputWrapper = policySection.querySelector(".qs-input-wrapper");
+	const policyHeaderInputWrapper = policySection.querySelector(
+		".policy-header-input-wrapper",
+	);
+	const colourInputWrapper = policySection.querySelector(
+		".colour-input-wrapper",
+	);
+	const themeColourSwitch = policySection.querySelector(
+		".theme-colour-switch",
+	);
+	const querySelectorInputWrapper =
+		policySection.querySelector(".qs-input-wrapper");
 	const deleteButton = policySection.querySelector("button");
 	let initialColour = "#000000";
 	let initialUseThemeColour = true;
@@ -137,23 +157,35 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 		default:
 			break;
 	}
-	setupPolicyHeaderInput(policyHeaderInputWrapper, policy.header, async (newHeader) => {
-		policySection.classList.toggle("warning", newHeader === "");
-		pref.siteList[id].header = newHeader;
-		await applySettings();
-	});
+	setupPolicyHeaderInput(
+		policyHeaderInputWrapper,
+		policy.header,
+		async (newHeader) => {
+			policySection.classList.toggle("warning", newHeader === "");
+			pref.siteList[id].header = newHeader;
+			await applySettings();
+		},
+	);
 	setupColourInput(colourInputWrapper, initialColour, async (newColour) => {
 		pref.siteList[id].value = newColour;
 		await applySettings();
 	});
-	setupThemeColourSwitch(themeColourSwitch, initialUseThemeColour, async (newUseThemeColour) => {
-		pref.siteList[id].value = newUseThemeColour;
-		await applySettings();
-	});
-	setupQuerySelectorInput(querySelectorInputWrapper, initialQuerySelector, async (newQuerySelector) => {
-		pref.siteList[id].value = newQuerySelector;
-		await applySettings();
-	});
+	setupThemeColourSwitch(
+		themeColourSwitch,
+		initialUseThemeColour,
+		async (newUseThemeColour) => {
+			pref.siteList[id].value = newUseThemeColour;
+			await applySettings();
+		},
+	);
+	setupQuerySelectorInput(
+		querySelectorInputWrapper,
+		initialQuerySelector,
+		async (newQuerySelector) => {
+			pref.siteList[id].value = newQuerySelector;
+			await applySettings();
+		},
+	);
 	deleteButton.onclick = async () => {
 		pref.removePolicy(policySection.dataset.id);
 		policySection.remove();
@@ -169,7 +201,9 @@ function setupFlexiblePolicySection(policySection, id, policy) {
 async function setupColourPolicySection(policySection, id, policy) {
 	setColourPolicySectionId(policySection, id);
 	const policyHeader = policySection.querySelector(".policy-header");
-	const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+	const colourInputWrapper = policySection.querySelector(
+		".colour-input-wrapper",
+	);
 	const deleteButton = policySection.querySelector("button");
 	setupColourInput(colourInputWrapper, policy.value, async (newColour) => {
 		pref.siteList[id].value = newColour;
@@ -288,11 +322,15 @@ async function updateUI() {
 }
 
 function updateCheckboxes() {
-	checkboxes.forEach((checkbox) => setCheckboxValue(checkbox, pref[checkbox.dataset.pref]));
+	checkboxes.forEach((checkbox) =>
+		setCheckboxValue(checkbox, pref[checkbox.dataset.pref]),
+	);
 }
 
 function updateSliders() {
-	sliders.forEach((slider) => setSliderValue(slider, pref[slider.dataset.pref]));
+	sliders.forEach((slider) =>
+		setSliderValue(slider, pref[slider.dataset.pref]),
+	);
 }
 
 /**
@@ -300,13 +338,17 @@ function updateSliders() {
  */
 function updateCompatibilityMode() {
 	document.querySelectorAll(`#tab-1 .section`).forEach((section) => {
-		const tabbarSlider = section.querySelector(`.slider[data-pref="tabbar"]`);
+		const tabbarSlider = section.querySelector(
+			`.slider[data-pref="tabbar"]`,
+		);
 		if (tabbarSlider) {
 			section
 				.querySelector(`.slider[data-pref="tabbarBorder"]`)
 				.classList.toggle("disabled", pref.compatibilityMode);
 			section
-				.querySelector(`.slider[data-pref="tabbarBorder"] + .slider-title`)
+				.querySelector(
+					`.slider[data-pref="tabbarBorder"] + .slider-title`,
+				)
 				.classList.toggle("disabled", pref.compatibilityMode);
 		} else {
 			section.classList.toggle("disabled", pref.compatibilityMode);
@@ -319,12 +361,17 @@ function updateCompatibilityMode() {
 		.querySelector("#allow-dark-light")
 		.closest(".section")
 		.classList.toggle("disabled", pref.compatibilityMode);
-	document.querySelector(`#compatibility-mode`).closest(".section").classList.toggle("disabled", !supportsThemeAPI());
+	document
+		.querySelector(`#compatibility-mode`)
+		.closest(".section")
+		.classList.toggle("disabled", !supportsThemeAPI());
 }
 
 function updateFixedPolicySection() {
 	fixedPolicies.forEach((fixedPolicySection) => {
-		const colourInputWrapper = fixedPolicySection.querySelector(".colour-input-wrapper");
+		const colourInputWrapper = fixedPolicySection.querySelector(
+			".colour-input-wrapper",
+		);
 		const key = colourInputWrapper.dataset.pref;
 		setColourInputValue(colourInputWrapper, pref[key]);
 	});
@@ -333,19 +380,31 @@ function updateFixedPolicySection() {
 async function updateSiteList() {
 	for (const id in pref.siteList) {
 		const policy = pref.siteList[id];
-		const policySection = policyList.querySelector(`.policy[data-id='${id}']`);
+		const policySection = policyList.querySelector(
+			`.policy[data-id='${id}']`,
+		);
 		if (policy && !policySection) {
 			policyList.appendChild(createPolicySection(id, policy));
 		} else if (!policy && policySection) {
 			policySection.remove();
 		} else if (!policy && !policySection) {
 			continue;
-		} else if (policy.headerType === "URL" && policySection.classList.contains("flexible-policy")) {
+		} else if (
+			policy.headerType === "URL" &&
+			policySection.classList.contains("flexible-policy")
+		) {
 			const select = policySection.querySelector("select");
-			const policyHeaderInputWrapper = policySection.querySelector(".policy-header-input-wrapper");
-			const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
-			const themeColourSwitch = policySection.querySelector(".theme-colour-switch");
-			const querySelectorInputWrapper = policySection.querySelector(".qs-input-wrapper");
+			const policyHeaderInputWrapper = policySection.querySelector(
+				".policy-header-input-wrapper",
+			);
+			const colourInputWrapper = policySection.querySelector(
+				".colour-input-wrapper",
+			);
+			const themeColourSwitch = policySection.querySelector(
+				".theme-colour-switch",
+			);
+			const querySelectorInputWrapper =
+				policySection.querySelector(".qs-input-wrapper");
 			select.className = select.value = policy.type;
 			policySection.classList.toggle("warning", policy.header === "");
 			setPolicyHeaderInputValue(policyHeaderInputWrapper, policy.header);
@@ -357,13 +416,21 @@ async function updateSiteList() {
 					setThemeColourSwitchValue(themeColourSwitch, policy.value);
 					break;
 				case "QUERY_SELECTOR":
-					setQuerySelectorInputValue(querySelectorInputWrapper, policy.value);
+					setQuerySelectorInputValue(
+						querySelectorInputWrapper,
+						policy.value,
+					);
 					break;
 				default:
 					break;
 			}
-		} else if (policy.headerType === "ADDON_ID" && policySection.classList.contains("colour-policy")) {
-			const colourInputWrapper = policySection.querySelector(".colour-input-wrapper");
+		} else if (
+			policy.headerType === "ADDON_ID" &&
+			policySection.classList.contains("colour-policy")
+		) {
+			const colourInputWrapper = policySection.querySelector(
+				".colour-input-wrapper",
+			);
 			setColourInputValue(colourInputWrapper, policy.value);
 		} else {
 			policySection.replaceWith(createPolicySection(id, policy));
@@ -381,22 +448,35 @@ async function updateSiteList() {
  */
 async function updateAllowDarkLightText(nthTry = 0) {
 	try {
-		const allowDarkLightTitle = document.querySelector("#allow-dark-light-title");
-		const allowDarkLightCheckboxCaption = document.querySelector("#allow-dark-light-caption");
-		const scheme = await browser.runtime.sendMessage({ header: "SCHEME_REQUEST" });
+		const allowDarkLightTitle = document.querySelector(
+			"#allow-dark-light-title",
+		);
+		const allowDarkLightCheckboxCaption = document.querySelector(
+			"#allow-dark-light-caption",
+		);
+		const scheme = await browser.runtime.sendMessage({
+			header: "SCHEME_REQUEST",
+		});
 		if (scheme === "light") {
 			allowDarkLightTitle.textContent = i18n("allowDarkTabBar");
-			allowDarkLightCheckboxCaption.textContent = i18n("allowDarkTabBarTooltip");
+			allowDarkLightCheckboxCaption.textContent = i18n(
+				"allowDarkTabBarTooltip",
+			);
 		} else {
 			allowDarkLightTitle.textContent = i18n("allowLightTabBar");
-			allowDarkLightCheckboxCaption.textContent = i18n("allowLightTabBarTooltip");
+			allowDarkLightCheckboxCaption.textContent = i18n(
+				"allowLightTabBarTooltip",
+			);
 		}
 	} catch (error) {
 		if (nthTry > 5) {
 			console.error("Could not attain browser colour scheme.");
 		} else {
 			console.warn("Failed to attain browser colour scheme.");
-			setTimeout(async () => await updateAllowDarkLightText(++nthTry), 50);
+			setTimeout(
+				async () => await updateAllowDarkLightText(++nthTry),
+				50,
+			);
 		}
 	}
 }
@@ -421,10 +501,13 @@ const applySettings = (() => {
 			lastCall = now;
 			await action();
 		} else {
-			timeout = setTimeout(async () => {
-				lastCall = Date.now();
-				await action();
-			}, limitMs - (now - lastCall));
+			timeout = setTimeout(
+				async () => {
+					lastCall = Date.now();
+					await action();
+				},
+				limitMs - (now - lastCall),
+			);
 		}
 	};
 })();

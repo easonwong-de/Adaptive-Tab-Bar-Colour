@@ -1,23 +1,23 @@
-@import "../shared.css";
+@import "../global.css";
 
 body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background-color: var(--colour-0);
-	color: var(--text-colour-normal);
 	margin: 0;
+	background-color: var(--colour-0);
 	padding: 0;
+	color: var(--text-colour-normal);
 }
 
 #settings-wrapper {
 	display: flex;
+	flex: 1 1 auto;
 	flex-direction: column;
 	gap: 1rem;
 	padding-block: 1rem;
-	flex: 1 1 auto;
-	max-width: 800px;
 	width: 100%;
+	max-width: 800px;
 }
 
 #footer {
@@ -38,14 +38,14 @@ body {
 
 .grid-one-column {
 	display: grid;
-	gap: 1rem;
 	grid-template-columns: 1fr;
+	gap: 1rem;
 }
 
 .grid-two-columns {
 	display: grid;
-	gap: 1rem;
 	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
 
 	@media screen and (max-width: 450px) {
 		& {
@@ -61,13 +61,13 @@ body {
 }
 
 .section {
-	align-items: center;
-	background-color: var(--colour-1);
-	border-radius: 8px;
 	display: flex;
 	flex: 0 0 auto;
 	flex-direction: column;
+	align-items: center;
 	gap: 0.5rem;
+	border-radius: 8px;
+	background-color: var(--colour-1);
 	padding: 1.25rem;
 }
 
@@ -80,13 +80,13 @@ body {
 }
 
 .section-subtitle {
-	align-items: center;
 	display: flex;
-	font-size: inherit;
-	font-weight: inherit;
-	line-height: normal;
+	align-items: center;
 	margin-block: 0.25rem;
 	padding: 0;
+	font-weight: inherit;
+	font-size: inherit;
+	line-height: normal;
 }
 
 /* Elements */
@@ -108,25 +108,25 @@ a {
 }
 
 hr {
-	background-color: var(--colour-3);
-	border-width: 0;
-	height: 1px;
 	margin: 0;
+	border-width: 0;
+	background-color: var(--colour-3);
 	width: 100%;
+	height: 1px;
 }
 
 button {
+	display: flex;
+	justify-content: center;
 	align-items: center;
-	background-color: var(--colour-2);
 	border: none;
 	border-radius: 4px;
-	color: var(--text-colour-normal);
-	display: flex;
-	height: 2rem;
-	justify-content: center;
+	background-color: var(--colour-2);
 	padding: 0;
-	text-align: center;
 	width: 2rem;
+	height: 2rem;
+	color: var(--text-colour-normal);
+	text-align: center;
 
 	&:hover {
 		background-color: var(--colour-3);
@@ -137,20 +137,20 @@ button {
 }
 
 .text-button {
+	display: flex;
+	justify-content: start;
 	align-items: center;
-	background-color: var(--colour-2);
+	gap: 0.5rem;
+	box-sizing: border-box;
 	border: none;
 	border-radius: 4px;
-	box-sizing: border-box;
-	color: var(--text-colour-normal);
-	display: flex;
-	font-size: inherit;
-	gap: 0.5rem;
-	height: 2rem;
-	justify-content: start;
+	background-color: var(--colour-2);
 	padding: 0 0.5rem;
-	text-align: start;
 	width: 100%;
+	height: 2rem;
+	color: var(--text-colour-normal);
+	font-size: inherit;
+	text-align: start;
 
 	&:hover {
 		background-color: var(--colour-3);
@@ -161,15 +161,15 @@ button {
 }
 
 select {
-	background-color: var(--colour-2);
+	display: flex;
+	vertical-align: middle;
 	border: none;
 	border-radius: 4px;
-	color: var(--text-colour-normal);
-	display: flex;
-	height: 2rem;
+	background-color: var(--colour-2);
 	padding-inline: 0.5rem 0;
-	vertical-align: middle;
 	width: max-content;
+	height: 2rem;
+	color: var(--text-colour-normal);
 
 	&:hover {
 		background-color: var(--colour-3);
@@ -184,28 +184,28 @@ input[type="color"] {
 }
 
 input[type="text"] {
-	background-color: var(--colour-2);
-	border: none;
-	border-radius: 4px;
-	box-sizing: border-box;
-	color: inherit;
 	display: inline-block;
-	font-family: monospace;
-	height: 2rem;
-	line-height: 100%;
+	vertical-align: middle;
+	box-sizing: border-box;
 	outline: none;
 	outline-offset: -1px;
+	border: none;
+	border-radius: 4px;
+	background-color: var(--colour-2);
 	padding-inline: 0.5rem;
-	vertical-align: middle;
 	width: 100%;
+	height: 2rem;
+	color: inherit;
+	line-height: 100%;
+	font-family: monospace;
 
 	&:hover {
 		background-color: var(--colour-3);
 	}
 
 	&:focus-visible {
-		background-color: transparent;
 		outline: solid 1px var(--colour-3);
+		background-color: transparent;
 	}
 }
 
@@ -214,8 +214,8 @@ input[type="checkbox"] {
 }
 
 input[type="radio"] {
-	accent-color: var(--accent-colour);
 	margin: 0;
+	accent-color: var(--accent-colour);
 }
 
 /* Slider */
@@ -234,23 +234,28 @@ input[type="radio"] {
 }
 
 .slider-body {
-	align-items: center;
-	background-color: var(--colour-2);
-	background-image: linear-gradient(to right, var(--transparent-0), var(--transparent-0) 50%, var(--colour-2) 50%);
-	background-position-x: var(--slider-position, 100%);
-	background-size: 200% 100%;
-	border-radius: 4px;
 	display: flex;
-	height: 2rem;
 	justify-content: center;
+	align-items: center;
+	transition: background-position-x 0.1s ease-in;
+	border-radius: 4px;
+	background-image: linear-gradient(
+		to right,
+		var(--transparent-0),
+		var(--transparent-0) 50%,
+		var(--colour-2) 50%
+	);
+	background-size: 200% 100%;
+	background-color: var(--colour-2);
+	background-position-x: var(--slider-position, 100%);
+	width: 10rem;
+	height: 2rem;
 	line-height: 2rem;
 	text-align: center;
-	transition: background-position-x 0.1s ease-in;
-	width: 10rem;
 
 	&.percentage::after {
-		content: "%";
 		margin-inline-start: 0.5rem;
+		content: "%";
 	}
 }
 
@@ -270,14 +275,14 @@ input[type="radio"] {
 }
 
 .colour-picker-display {
-	border-radius: 50%;
-	cursor: pointer;
-	height: 1rem;
-	left: 0.5rem;
-	outline: solid 1px var(--colour-5);
 	position: absolute;
 	top: 0.5rem;
+	left: 0.5rem;
+	cursor: pointer;
+	outline: solid 1px var(--colour-5);
+	border-radius: 50%;
 	width: 1rem;
+	height: 1rem;
 }
 
 input[type="text"].colour-input {
@@ -287,19 +292,19 @@ input[type="text"].colour-input {
 /* Toggle switch */
 
 .toggle-switch-wrapper {
-	background-color: var(--colour-2);
-	border-radius: 4px;
 	display: grid;
 	grid-auto-columns: minmax(0, 1fr);
 	grid-auto-flow: column;
+	border-radius: 4px;
+	background-color: var(--colour-2);
+	width: 100%;
 	height: 2rem;
 	overflow: hidden;
-	width: 100%;
 
 	label.toggle-switch {
-		align-items: center;
 		display: flex;
 		justify-content: center;
+		align-items: center;
 
 		&:hover {
 			background-color: var(--colour-3);
@@ -332,8 +337,8 @@ input[type="text"].colour-input {
 	}
 
 	label.toggle-switch {
-		font-weight: 600;
 		padding: 0.5rem 2rem;
+		font-weight: 600;
 
 		&:hover {
 			background-color: var(--colour-2);
@@ -362,10 +367,10 @@ p#reinstall-tip {
 }
 
 #add-new-rule {
-	background-color: var(--colour-1);
 	border-radius: 6px;
-	height: 3rem;
+	background-color: var(--colour-1);
 	width: 100%;
+	height: 3rem;
 
 	&:hover {
 		background-color: var(--colour-2);
@@ -394,10 +399,10 @@ p#reinstall-tip {
 	flex-direction: column;
 
 	.section {
-		border-radius: 0;
 		display: grid;
-		gap: 0.5rem;
 		grid-template-columns: auto max-content 10rem max-content;
+		gap: 0.5rem;
+		border-radius: 0;
 		padding: 0.5rem;
 
 		&:nth-of-type(even) {
@@ -406,13 +411,13 @@ p#reinstall-tip {
 	}
 
 	:is(.section:first-of-type) {
-		border-top-left-radius: 6px;
 		border-top-right-radius: 6px;
+		border-top-left-radius: 6px;
 	}
 
 	:is(.section:last-of-type) {
-		border-bottom-left-radius: 6px;
 		border-bottom-right-radius: 6px;
+		border-bottom-left-radius: 6px;
 	}
 }
 
@@ -434,18 +439,18 @@ p#reinstall-tip {
 }
 
 .policy-header-input-wrapper {
-	align-items: center;
 	display: flex;
 	position: relative;
+	align-items: center;
 }
 
 .policy-header-warning {
 	display: none;
-	height: 1rem;
 	position: absolute;
-	right: 0.5rem;
 	top: 0.25rem;
+	right: 0.5rem;
 	width: 1rem;
+	height: 1rem;
 }
 
 .policy.warning {
@@ -453,8 +458,8 @@ p#reinstall-tip {
 		padding-inline-end: 2rem;
 	}
 	.policy-header-warning {
-		cursor: help;
 		display: block;
+		cursor: help;
 	}
 }
 

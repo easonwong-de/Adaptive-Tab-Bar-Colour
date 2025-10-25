@@ -71,14 +71,20 @@ export default class colour {
 					parseInt(parsedColour.slice(1, 3), 16),
 					parseInt(parsedColour.slice(3, 5), 16),
 					parseInt(parsedColour.slice(5, 7), 16),
-					1
+					1,
 				);
 			} else {
 				this.rgba(...parsedColour.match(/[.?\d]+/g).map(Number));
 			}
 		} else if (initialiser instanceof colour) {
 			if (initialiser.code) this.#code = initialiser.code;
-			else this.rgba(initialiser.r, initialiser.g, initialiser.b, initialiser.a);
+			else
+				this.rgba(
+					initialiser.r,
+					initialiser.g,
+					initialiser.b,
+					initialiser.a,
+				);
 		} else if (
 			typeof initialiser === "object" &&
 			"r" in initialiser &&
@@ -86,7 +92,12 @@ export default class colour {
 			"b" in initialiser &&
 			"a" in initialiser
 		) {
-			this.rgba(initialiser.r, initialiser.g, initialiser.b, initialiser.a);
+			this.rgba(
+				initialiser.r,
+				initialiser.g,
+				initialiser.b,
+				initialiser.a,
+			);
 		} else {
 			throw new Error("The input value can't be parsed");
 		}
@@ -114,12 +125,17 @@ export default class colour {
 				cent * 255 + (1 - cent) * this.#r,
 				cent * 255 + (1 - cent) * this.#g,
 				cent * 255 + (1 - cent) * this.#b,
-				this.#a
+				this.#a,
 			);
 		} else if (cent === 0) {
 			return new colour().rgba(this.#r, this.#g, this.#b, this.#a);
 		} else if (cent < 0) {
-			return new colour().rgba((cent + 1) * this.#r, (cent + 1) * this.#g, (cent + 1) * this.#b, this.#a);
+			return new colour().rgba(
+				(cent + 1) * this.#r,
+				(cent + 1) * this.#g,
+				(cent + 1) * this.#b,
+				this.#a,
+			);
 		} else if (cent < -1) {
 			return new colour().rgba(0, 0, 0, this.#a);
 		}
@@ -143,18 +159,24 @@ export default class colour {
 		minContrast_lightX10,
 		minContrast_darkX10,
 		contrastColour_light = new colour().rgba(0, 0, 0, 1),
-		contrastColour_dark = new colour().rgba(255, 255, 255, 1)
+		contrastColour_dark = new colour().rgba(255, 255, 255, 1),
 	) {
 		this.#noCode();
 		const contrastRatio_light = this.#contrastRatio(contrastColour_light);
 		const contrastRatio_dark = this.#contrastRatio(contrastColour_dark);
-		const eligibility_light = contrastRatio_light > minContrast_lightX10 / 10;
+		const eligibility_light =
+			contrastRatio_light > minContrast_lightX10 / 10;
 		const eligibility_dark = contrastRatio_dark > minContrast_darkX10 / 10;
-		if (eligibility_light && (preferredScheme === "light" || (preferredScheme === "dark" && allowDarkLight))) {
+		if (
+			eligibility_light &&
+			(preferredScheme === "light" ||
+				(preferredScheme === "dark" && allowDarkLight))
+		) {
 			return { colour: this, scheme: "light", corrected: false };
 		} else if (
 			eligibility_dark &&
-			(preferredScheme === "dark" || (preferredScheme === "light" && allowDarkLight))
+			(preferredScheme === "dark" ||
+				(preferredScheme === "light" && allowDarkLight))
 		) {
 			return { colour: this, scheme: "dark", corrected: false };
 		} else if (preferredScheme === "light") {
@@ -165,7 +187,8 @@ export default class colour {
 				(255 - this.#relativeLuminanceX255());
 			return { colour: this.dim(dim), scheme: "light", corrected: true };
 		} else if (preferredScheme === "dark") {
-			const dim = (100 * (10 * contrastRatio_dark)) / minContrast_darkX10 - 100;
+			const dim =
+				(100 * (10 * contrastRatio_dark)) / minContrast_darkX10 - 100;
 			return { colour: this.dim(dim), scheme: "dark", corrected: true };
 		}
 	}
@@ -305,7 +328,8 @@ export default class colour {
 	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	#noCode() {
-		if (this.#code) throw new Error("The colour is defined by a colour code");
+		if (this.#code)
+			throw new Error("The colour is defined by a colour code");
 	}
 
 	/**
