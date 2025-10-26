@@ -29,7 +29,18 @@ export default class colour {
 	#g = 0;
 	#b = 0;
 	#a = 0;
-	#code;
+	#code = undefined;
+	#acceptCode = true;
+
+	/**
+	 * Prevent colour codes from being parsed.
+	 *
+	 * @returns {colour} This instance.
+	 */
+	disableCode() {
+		this.#acceptCode = false;
+		return this;
+	}
 
 	/**
 	 * Assigns RGBA values to the colour instance.
@@ -50,22 +61,22 @@ export default class colour {
 		return this;
 	}
 
-	#canvasContext = document.createElement("canvas").getContext("2d");
-
 	/**
 	 * Parses the given initialiser to set the colour value.
 	 *
 	 * @param {string|object|colour} initialiser - The value to parse. Can be a colour code string, a CSS colour string, an instance of the `colour` class, or an RGBA object.
-	 * @param {boolean} [acceptCode=true] - Whether to accept predefined colour codes.
 	 * @returns {this} Returns the current instance for chaining.
 	 * @throws {Error} Throws an error if the input value can't be parsed.
 	 */
-	parse(initialiser, acceptCode = true) {
-		if (acceptCode && colourCodes.includes(initialiser)) {
+	parse(initialiser) {
+		if (this.#acceptCode && colourCodes.includes(initialiser)) {
 			this.#code = initialiser;
 		} else if (typeof initialiser === "string") {
-			this.#canvasContext.fillStyle = initialiser;
-			const parsedColour = this.#canvasContext.fillStyle;
+			const canvas = document.createElement("canvas");
+			const canvasContext = canvas.getContext();
+			canvasContext.fillStyle = initialiser;
+			const parsedColour = canvasContext.fillStyle;
+			canvas.remove();
 			if (parsedColour.startsWith("#")) {
 				this.rgba(
 					parseInt(parsedColour.slice(1, 3), 16),
@@ -142,39 +153,60 @@ export default class colour {
 	}
 
 	/**
+	 * Mixes the colour with another colour on top.
+	 *
+	 * @param {colour} colour - The colour on top.
+	 * @returns {colour} A new colour as the result of the mix.
+	 */
+	mix(colour) {
+		const a = (1 - colour.a) * this.#a + colour.a;
+		if (a === 0) {
+			// Firefox renders transparent background in rgb(236, 236, 236)
+			return new colour().rgba(236, 236, 236, 0);
+		} else {
+			return new colour().rgba(
+				((1 - colour.a) * this.#a * this.#r + colour.a * colour.r) / a,
+				((1 - colour.a) * this.#a * this.#g + colour.a * colour.g) / a,
+				((1 - colour.a) * this.#a * this.#b + colour.a * colour.b) / a,
+				a,
+			);
+		}
+	}
+
+	/**
 	 * Creates a colour instance that meets the minimum contrast ratio against a specified colour.
 	 *
 	 * @param {"light"|"dark"} preferredScheme - The preferred colour scheme.
 	 * @param {boolean} allowDarkLight - Whether to allow a result in the opposite of the preferred colour scheme.
-	 * @param {number} minContrast_lightX10 - The minimum contrast ratio required for light scheme eligibility (times 10).
-	 * @param {number} minContrast_darkX10 - The minimum contrast ratio required for dark scheme eligibility (times 10).
-	 * @param {colour} [contrastColour_light] - The colour to correct against in light mode, defaulting to black.
-	 * @param {colour} [contrastColour_dark] - The colour to correct against in dark mode, defaulting to white.
+	 * @param {number} minContrastLightX10 - The minimum contrast ratio required for light scheme eligibility (times 10).
+	 * @param {number} minContrastDarkX10 - The minimum contrast ratio required for dark scheme eligibility (times 10).
+	 * @param {colour} contrastColourLight - The colour to correct against in light mode, defaulting to black.
+	 * @param {colour} contrastColourDark - The colour to correct against in dark mode, defaulting to white.
 	 * @returns {{ colour: colour, scheme: "light"|"dark", corrected: boolean }} The corrected colour, the scheme, and whether the colour was adjusted.
 	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	contrastCorrection(
 		preferredScheme,
 		allowDarkLight,
-		minContrast_lightX10,
-		minContrast_darkX10,
-		contrastColour_light = new colour().rgba(0, 0, 0, 1),
-		contrastColour_dark = new colour().rgba(255, 255, 255, 1),
+		minContrastLightX10,
+		minContrastDarkX10,
+		contrastColourLight = new colour().rgba(0, 0, 0, 1),
+		contrastColourDark = new colour().rgba(255, 255, 255, 1),
 	) {
 		this.#noCode();
-		const contrastRatio_light = this.#contrastRatio(contrastColour_light);
-		const contrastRatio_dark = this.#contrastRatio(contrastColour_dark);
-		const eligibility_light =
-			contrastRatio_light > minContrast_lightX10 / 10;
-		const eligibility_dark = contrastRatio_dark > minContrast_darkX10 / 10;
+		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
+		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
+		const eligibilityLight =
+			contrastRatioLight > minContrastLightX10 / 10;
+		const eligibilityDark = contrastRatioDark > minContrastDarkX10 / 10;
 		if (
-			eligibility_light &&
+			eligibilityLight &&
 			(preferredScheme === "light" ||
 				(preferredScheme === "dark" && allowDarkLight))
 		) {
 			return { colour: this, scheme: "light", corrected: false };
 		} else if (
-			eligibility_dark &&
+			eligibilityDark &&
 			(preferredScheme === "dark" ||
 				(preferredScheme === "light" && allowDarkLight))
 		) {
@@ -182,13 +214,13 @@ export default class colour {
 		} else if (preferredScheme === "light") {
 			const dim =
 				(100 *
-					((minContrast_lightX10 / (10 * contrastRatio_light) - 1) *
-						(this.#relativeLuminanceX255() + 12.75))) /
-				(255 - this.#relativeLuminanceX255());
+					((minContrastLightX10 / (10 * contrastRatioLight) - 1) *
+						(this.#luminanceX255() + 12.75))) /
+				(255 - this.#luminanceX255());
 			return { colour: this.dim(dim), scheme: "light", corrected: true };
 		} else if (preferredScheme === "dark") {
 			const dim =
-				(100 * (10 * contrastRatio_dark)) / minContrast_darkX10 - 100;
+				(100 * (10 * contrastRatioDark)) / minContrastDarkX10 - 100;
 			return { colour: this.dim(dim), scheme: "dark", corrected: true };
 		}
 	}
@@ -197,14 +229,15 @@ export default class colour {
 	 * Calculates the contrast ratio between this colour and another colour.
 	 *
 	 * Contrast ratio over 4.5 is considered adequate.
+	 * 
 	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
 	 * @private
 	 * @param {colour} colour - The colour to compare against.
 	 * @returns {number} The contrast ratio between the two colours (1.05 to 21).
 	 */
 	#contrastRatio(colour) {
-		const luminance1X255 = this.#relativeLuminanceX255();
-		const luminance2X255 = colour.#relativeLuminanceX255();
+		const luminance1X255 = this.#luminanceX255();
+		const luminance2X255 = colour.#luminanceX255();
 		return luminance1X255 > luminance2X255
 			? (luminance1X255 + 12.75) / (luminance2X255 + 12.75)
 			: (luminance2X255 + 12.75) / (luminance1X255 + 12.75);
@@ -217,22 +250,22 @@ export default class colour {
 	 * @private
 	 * @returns {number} The relative luminance of the colour (0-255).
 	 */
-	#relativeLuminanceX255() {
+	#luminanceX255() {
 		return (
-			0.2126 * this.#linearChannelLuminance(this.#r) +
-			0.7152 * this.#linearChannelLuminance(this.#g) +
-			0.0722 * this.#linearChannelLuminance(this.#b)
+			0.2126 * this.#channelLuminance(this.#r) +
+			0.7152 * this.#channelLuminance(this.#g) +
+			0.0722 * this.#channelLuminance(this.#b)
 		);
 	}
 
 	/**
-	 * Converts an sRGB channel value to linear luminance.
+	 * Converts an sRGB channel value to channel luminance (times 255).
 	 *
 	 * @private
 	 * @param {number} value - The value of a sRGB channel (0-255).
-	 * @returns {number} The linear luminance approximation.
+	 * @returns {number} The linear approximation of the channel's luminance.
 	 */
-	#linearChannelLuminance(value) {
+	#channelLuminance(value) {
 		if (value < 0) {
 			return 0;
 		} else if (value < 32) {
@@ -258,7 +291,9 @@ export default class colour {
 
 	/**
 	 * Returns the colour as a string.
+	 *
 	 * If the colour is defined by a code, returns the code.
+	 *
 	 * Otherwise, returns an RGBA string.
 	 *
 	 * @returns {string} The colour code or the CSS representation of the colour.
@@ -393,7 +428,6 @@ export default class colour {
 	 * @throws {Error} If the colour is defined by a colour code or value is invalid.
 	 */
 	get a() {
-		this.#noCode();
 		this.#noCode();
 		return this.#a;
 	}
