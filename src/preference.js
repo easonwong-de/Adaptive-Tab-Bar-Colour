@@ -7,7 +7,7 @@ import {
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
 	default_compatibilityMode,
-} from "./defaultValues.js";
+} from "./constants.js";
 import colour from "./colour.js";
 import { supportsThemeAPI } from "./utility.js";
 

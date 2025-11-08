@@ -25,7 +25,7 @@
 
 import preference from "./preference.js";
 import colour from "./colour.js";
-import { aboutPageColour, restrictedSiteColour } from "./defaultValues.js";
+import { aboutPageColour, restrictedSiteColour } from "./constants.js";
 import {
 	onSchemeChanged,
 	getCurrentScheme,
