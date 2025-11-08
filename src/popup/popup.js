@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { recommendedAddonPageColour } from "../defaultValues.js";
+import { recommendedAddonPageColour } from "../constants.js";
 import { setSliderValue, setupSlider } from "../elements.js";
 import { localise, supportsThemeAPI } from "../utility.js";
 
