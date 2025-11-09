@@ -143,7 +143,7 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 	colourPickerInput.value = initialColour;
 	colourInput.addEventListener("focus", () => colourInput.select());
 	colourInput.addEventListener("blur", () => {
-		const hex = new colour().parse(colourInput.value, false).toHex();
+		const hex = new colour(colourInput.value, false).toHex();
 		colourInput.value = hex;
 		colourPicker.style.backgroundColor = hex;
 		colourPickerInput.value = hex;
@@ -153,7 +153,7 @@ export function setupColourInput(colourInputWrapper, initialColour, onChange) {
 		if (event.key === "Enter") colourInput.blur();
 	});
 	colourInput.addEventListener("input", () => {
-		const hex = new colour().parse(colourInput.value, false).toHex();
+		const hex = new colour(colourInput.value, false).toHex();
 		colourPicker.style.backgroundColor = hex;
 		colourPickerInput.value = hex;
 		onChange(hex);

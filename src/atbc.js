@@ -1,38 +1,19 @@
-var query = null;
+import { doc } from "prettier";
 
-const sendColour = (() => {
-	let timeout,
-		lastCall = 0;
-	const limitMs = 250;
-	const action = async () =>
-		document.visibilityState === "visible" &&
-		browser.runtime.sendMessage({
-			header: "UPDATE_COLOUR",
-			response: getColour(),
-		});
-	return async () => {
-		const now = Date.now();
-		clearTimeout(timeout);
-		const delay = limitMs - (now - lastCall);
-		if (delay <= 0) ((lastCall = now), await action());
-		else
-			timeout = setTimeout(
-				async () => ((lastCall = Date.now()), await action()),
-				delay,
-			);
-	};
-})();
+const conf = {
+	active: false,
+	dynamic: false,
+	query: null,
+};
 
-function sendColourRequiresFocus() {
-	if (document.hasFocus()) sendColour();
-}
-
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((message, _, sendResponse) => {
 	switch (message.header) {
 		case "GET_COLOUR":
-			message.dynamic ? enableDynamic() : disableDynamic();
-			query = message.query;
-			sendResponse(getColour());
+			conf.active = message.active;
+			conf.dynamic = message.dynamic;
+			conf.query = message.query;
+			conf.active && conf.dynamic ? enableDynamic() : disableDynamic();
+			if (conf.active) sendResponse(getColour());
 			break;
 		case "SET_THEME_COLOUR":
 			setThemeColour(message.colour);
@@ -45,29 +26,9 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 function getColour() {
 	return {
 		theme: getThemeColour(),
-		header: getHeaderColour(),
+		page: getPageColour(),
 		query: getQueryColour(),
 	};
-}
-
-function setThemeColour(colour) {
-	const metaThemeColourLight =
-		document.querySelector(
-			`meta[name="theme-color"][media="(prefers-color-scheme: light)"]`,
-		) ?? document.querySelector(`meta[name="theme-color"]`);
-	const metaThemeColourDark =
-		document.querySelector(
-			`meta[name="theme-color"][media="(prefers-color-scheme: dark)"]`,
-		) ?? document.querySelector(`meta[name="theme-color"]`);
-	if (metaThemeColourLight && metaThemeColourDark) {
-		metaThemeColourLight.content = colour;
-		metaThemeColourDark.content = colour;
-	} else {
-		const metaTag = document.createElement("meta");
-		metaTag.name = "theme-color";
-		metaTag.content = colour;
-		document.head.appendChild(metaTag);
-	}
 }
 
 function getThemeColour() {
@@ -85,15 +46,20 @@ function getThemeColour() {
 	};
 }
 
-function getHeaderColour() {
+function getPageColour() {
 	return document
 		.elementsFromPoint(window.innerWidth / 2, 3)
+		.filter(
+			(element) =>
+				element.offsetWidth >= window.innerWidth * 0.9 &&
+				element.offsetHeight >= 20,
+		)
 		.map((element) => getElementColour(element))
 		.filter((colour) => colour !== undefined);
 }
 
 function getQueryColour(query) {
-	return query ? getElementColour(querySelector(query)) : undefined;
+	return conf.query ? getElementColour(querySelector(query)) : undefined;
 }
 
 function getElementColour(element) {
@@ -107,16 +73,14 @@ function getElementColour(element) {
 	}
 }
 
-const originalThemeColour = getThemeColour();
-
 const darkReaderObserver = new MutationObserver(sendColour);
-const metaTagObserver = new MutationObserver(sendColour);
-const newMetaTagObserver = new MutationObserver((mutationList) =>
+const metaThemeColourObserver = new MutationObserver(sendColour);
+const metaTagObserver = new MutationObserver((mutationList) =>
 	mutationList.forEach((mutation) => {
 		mutation.addedNodes.forEach((node) => {
 			if (node.nodeName === "META" && node.name === "theme-color") {
 				sendColour();
-				metaTagObserver.observe(node, {
+				metaThemeColourObserver.observe(node, {
 					attributes: true,
 				});
 			}
@@ -154,9 +118,9 @@ function enableDynamic() {
 	document
 		.querySelectorAll("meta[name=theme-color]")
 		.forEach((metaTag) =>
-			metaTagObserver.observe(metaTag, { attributes: true }),
+			metaThemeColourObserver.observe(metaTag, { attributes: true }),
 		);
-	newMetaTagObserver.observe(document.head, { childList: true });
+	metaTagObserver.observe(document.head, { childList: true });
 	styleTagObserver.observe(document.documentElement, { childList: true });
 	styleTagObserver.observe(document.head, { childList: true });
 }
@@ -174,21 +138,53 @@ function disableDynamic() {
 		document.removeEventListener(transitionEvent, sendColourRequiresFocus),
 	);
 	darkReaderObserver.disconnect();
+	metaThemeColourObserver.disconnect();
 	metaTagObserver.disconnect();
-	newMetaTagObserver.disconnect();
 	styleTagObserver.disconnect();
 }
 
-(function sendMessageOnLoad(attempt = 0) {
+function setThemeColour(colour) {
+	const metaThemeColourList = document.querySelectorAll(
+		`meta[name="theme-color"]`,
+	);
+	const newMetaThemeColour = document.createElement("meta");
+	newMetaThemeColour.name = "theme-color";
+	newMetaThemeColour.content = colour;
+	document.head.appendChild(newMetaThemeColour);
+	metaThemeColourList.forEach((metaThemeColour) => metaThemeColour.remove());
+}
+
+let dispatchTimeout;
+let lastSentAt = 0;
+const throttleIntervalMs = 250;
+
+async function sendColour() {
+	clearTimeout(dispatchTimeout);
+	const remaining = throttleIntervalMs + lastSentAt - Date.now();
+	const dispatch = async () => {
+		if (document.visibilityState !== "visible") return;
+		lastSentAt = Date.now();
+		await browser.runtime.sendMessage({
+			header: "UPDATE_COLOUR",
+			colour: getColour(),
+		});
+	};
+	remaining <= 0
+		? await dispatch()
+		: (dispatchTimeout = setTimeout(dispatch, remaining));
+}
+
+async function sendColourRequiresFocus() {
+	if (document.hasFocus()) await sendColour();
+}
+
+(async function sendMessageOnLoad(attempt = 0) {
 	try {
-		browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });
+		await browser.runtime.sendMessage({ header: "SCRIPT_READY" });
 	} catch {
-		const maxAttempts = 3;
-		if (attempt >= maxAttempts) {
-			console.error("Could not connect to ATBC background.");
-		} else {
-			console.warn("Failed to connect to ATBC background.");
-		}
+		attempt >= 3
+			? console.error("Could not connect to ATBC background.")
+			: console.warn("Failed to connect to ATBC background.");
 		setTimeout(() => sendMessageOnLoad(++attempt), 50);
 	}
 })();

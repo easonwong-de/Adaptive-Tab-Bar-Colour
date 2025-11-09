@@ -30,46 +30,15 @@ export default class colour {
 	#b = 0;
 	#a = 0;
 	#code = undefined;
-	#acceptCode = true;
-
-	/**
-	 * Prevent colour codes from being parsed.
-	 *
-	 * @returns {colour} This instance.
-	 */
-	disableCode() {
-		this.#acceptCode = false;
-		return this;
-	}
-
-	/**
-	 * Assigns RGBA values to the colour instance.
-	 *
-	 * @param {number} r - Red channel (0-255).
-	 * @param {number} g - Green channel (0-255).
-	 * @param {number} b - Blue channel (0-255).
-	 * @param {number} a - Alpha channel (0-1).
-	 * @returns {colour} The colour instance with the assigned RGBA values.
-	 * @throws {Error} If the colour is defined by a colour code.
-	 */
-	rgba(r, g, b, a) {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
-		this.#code = undefined;
-		return this;
-	}
 
 	/**
 	 * Parses the given initialiser to set the colour value.
 	 *
-	 * @param {string|object|colour} initialiser - The value to parse. Can be a colour code string, a CSS colour string, an instance of the `colour` class, or an RGBA object.
-	 * @returns {this} Returns the current instance for chaining.
-	 * @throws {Error} Throws an error if the input value can't be parsed.
+	 * @param {string|object|colour|undefined} initialiser - A colour code, a CSS colour, or an instance of `colour`.
+	 * @param {boolean} [acceptCode=true] - Set if the instance is allowed to contain a colour code.
 	 */
-	parse(initialiser) {
-		if (this.#acceptCode && colourCodes.includes(initialiser)) {
+	constructor(initialiser, acceptCode = true) {
+		if (acceptCode && colourCodes.includes(initialiser)) {
 			this.#code = initialiser;
 		} else if (typeof initialiser === "string") {
 			const canvas = document.createElement("canvas");
@@ -96,22 +65,25 @@ export default class colour {
 					initialiser.b,
 					initialiser.a,
 				);
-		} else if (
-			typeof initialiser === "object" &&
-			"r" in initialiser &&
-			"g" in initialiser &&
-			"b" in initialiser &&
-			"a" in initialiser
-		) {
-			this.rgba(
-				initialiser.r,
-				initialiser.g,
-				initialiser.b,
-				initialiser.a,
-			);
-		} else {
-			throw new Error("The input value can't be parsed");
 		}
+	}
+
+	/**
+	 * Assigns RGBA values to the colour instance.
+	 *
+	 * @param {number} r - Red channel (0-255).
+	 * @param {number} g - Green channel (0-255).
+	 * @param {number} b - Blue channel (0-255).
+	 * @param {number} a - Alpha channel (0-1).
+	 * @returns {colour} The colour instance with the assigned RGBA values.
+	 * @throws {Error} If the colour is defined by a colour code.
+	 */
+	rgba(r, g, b, a) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.a = a;
+		this.#code = undefined;
 		return this;
 	}
 
@@ -153,24 +125,19 @@ export default class colour {
 	}
 
 	/**
-	 * Mixes the colour with another colour on top.
+	 * Mixes the colour with another colour underneath.
 	 *
-	 * @param {colour} colour - The colour on top.
+	 * @param {colour} colour - The colour underneath.
 	 * @returns {colour} A new colour as the result of the mix.
 	 */
 	mix(colour) {
-		const a = (1 - colour.a) * this.#a + colour.a;
-		if (a === 0) {
-			// Firefox renders transparent background in rgb(236, 236, 236)
-			return new colour().rgba(236, 236, 236, 0);
-		} else {
-			return new colour().rgba(
-				((1 - colour.a) * this.#a * this.#r + colour.a * colour.r) / a,
-				((1 - colour.a) * this.#a * this.#g + colour.a * colour.g) / a,
-				((1 - colour.a) * this.#a * this.#b + colour.a * colour.b) / a,
-				a,
-			);
-		}
+		const a = this.#a + colour.a * (1 - this.#a);
+		return new colour().rgba(
+			(this.#a * this.#r + colour.a * (1 - this.#a) * colour.r) / a,
+			(this.#a * this.#g + colour.a * (1 - this.#a) * colour.g) / a,
+			(this.#a * this.#b + colour.a * (1 - this.#a) * colour.b) / a,
+			a,
+		);
 	}
 
 	/**
@@ -196,8 +163,7 @@ export default class colour {
 		this.#noCode();
 		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
 		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
-		const eligibilityLight =
-			contrastRatioLight > minContrastLightX10 / 10;
+		const eligibilityLight = contrastRatioLight > minContrastLightX10 / 10;
 		const eligibilityDark = contrastRatioDark > minContrastDarkX10 / 10;
 		if (
 			eligibilityLight &&
@@ -229,7 +195,7 @@ export default class colour {
 	 * Calculates the contrast ratio between this colour and another colour.
 	 *
 	 * Contrast ratio over 4.5 is considered adequate.
-	 * 
+	 *
 	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
 	 * @private
 	 * @param {colour} colour - The colour to compare against.
