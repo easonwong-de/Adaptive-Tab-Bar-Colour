@@ -182,14 +182,14 @@ export default class preference {
 						headerType: "ADDON_ID",
 						header: site.replace("Add-on ID: ", ""),
 						type: "COLOUR",
-						value: new colour().parse(legacyPolicy).toHex(),
+						value: new colour(legacyPolicy).toHex(),
 					};
 				} else {
 					newSiteList[id++] = {
 						headerType: "URL",
 						header: site,
 						type: "COLOUR",
-						value: new colour().parse(legacyPolicy).toHex(),
+						value: new colour(legacyPolicy).toHex(),
 					};
 				}
 			}
