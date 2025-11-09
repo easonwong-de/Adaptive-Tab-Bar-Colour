@@ -70,24 +70,22 @@ export default class preference {
 		version: addonVersion,
 	};
 
-	/**
-	 * Loads the preferences from the browser storage to the instance.
-	 */
+	/** Loads the preferences from the browser storage to the instance. */
 	async load() {
 		this.#content = await browser.storage.local.get();
 	}
 
-	/**
-	 * Stores the preferences from the instance to the browser storage.
-	 */
+	/** Stores the preferences from the instance to the browser storage. */
 	async save() {
 		await browser.storage.local.set(this.#content);
 	}
 
 	/**
-	 * Validates that each property in the `#prefContent` object has the expected data type.
+	 * Validates that each property in the `#prefContent` object has the
+	 * expected data type.
 	 *
-	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
+	 * @returns {boolean} Returns `true` if all properties have the correct data
+	 *   types, otherwise `false`.
 	 */
 	valid() {
 		if (
@@ -123,7 +121,9 @@ export default class preference {
 	/**
 	 * Normalises the preferences content to a consistent format.
 	 *
-	 * If the existing preferences don't have a version number, date back before v2.0, or has the version number of 2.2.1, the default pref will overwrite the old pref.
+	 * If the existing preferences don't have a version number, date back before
+	 * v2.0, or has the version number of 2.2.1, the default pref will overwrite
+	 * the old pref.
 	 */
 	async normalise() {
 		if (
@@ -247,10 +247,12 @@ export default class preference {
 	}
 
 	/**
-	 * Loads pref from a JSON string and normalises it. Returns `false` if the JSON string is invalid.
+	 * Loads pref from a JSON string and normalises it. Returns `false` if the
+	 * JSON string is invalid.
 	 *
 	 * @param {string} JSONString The JSON string to load pref from.
-	 * @returns `true` if the JSON string is converted to the pref, otherwise `false`.
+	 * @returns `true` if the JSON string is converted to the pref, otherwise
+	 *   `false`.
 	 */
 	async JSONToPref(JSONString) {
 		try {
@@ -311,21 +313,24 @@ export default class preference {
 	}
 
 	/**
-	 * Finds the ID of the most recently created policy from the site list that matches the given URL.
+	 * Finds the ID of the most recently created policy from the site list that
+	 * matches the given URL.
 	 *
 	 * Policy header supports:
 	 *
 	 * - Full URL with or w/o trailing slash
 	 * - Regex
 	 * - Wildcard
+	 *
 	 *   - `**` matches strings of any length
 	 *   - `*` matches any characters except `/`, `.`, and `:`
 	 *   - `?` matches any single character
 	 *   - Scheme (e.g. `https://`) is optional
-	 * - hostname
+	 * - Hostname
 	 *
 	 * @param {string} url - The site URL to match against the policy headers.
-	 * @returns {number} The ID of the most specific matching policy, or 0 if no match is found.
+	 * @returns {number} The ID of the most specific matching policy, or 0 if no
+	 *   match is found.
 	 */
 	getURLPolicyId(url) {
 		let result = 0;
@@ -384,10 +389,12 @@ export default class preference {
 	/**
 	 * Retrieves the policy ID that matches the given add-on ID.
 	 *
-	 * If multiple policies for the same add-on ID are present, return the ID of the most recently created one.
+	 * If multiple policies for the same add-on ID are present, return the ID of
+	 * the most recently created one.
 	 *
 	 * @param {string} addonId - The add-on ID to match against the policy list.
-	 * @returns {number} The ID of the matching policy, or 0 if no match is found.
+	 * @returns {number} The ID of the matching policy, or 0 if no match is
+	 *   found.
 	 */
 	getAddonPolicyId(addonId) {
 		let result = 0;

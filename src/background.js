@@ -92,7 +92,7 @@ const colourCode = Object.freeze({
 const current = {
 	/** `light` or `dark` */
 	scheme: "light",
-	/** windowId: { colour?, reason, additionalInfo?, corrected? } */
+	/** WindowId: { colour?, reason, additionalInfo?, corrected? } */
 	info: {},
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
@@ -103,9 +103,7 @@ const current = {
 	},
 };
 
-/**
- * Triggers colour change in all windows.
- */
+/** Triggers colour change in all windows. */
 async function update() {
 	if (!pref.valid()) await initialise();
 	const activeTabs = await browser.tabs.query({
@@ -116,9 +114,7 @@ async function update() {
 	activeTabs.forEach(updateTab);
 }
 
-/**
- * Initialises `pref` and `current`.
- */
+/** Initialises `pref` and `current`. */
 async function initialise() {
 	await pref.load();
 	await pref.normalise();
@@ -126,9 +122,7 @@ async function initialise() {
 	await update();
 }
 
-/**
- * Updates `pref` and triggers colour change in all windows.
- */
+/** Updates `pref` and triggers colour change in all windows. */
 async function prefUpdate() {
 	await pref.load();
 	await update();
@@ -137,7 +131,8 @@ async function prefUpdate() {
 /**
  * Handles incoming messages based on their `header`.
  *
- * @param {object} message - The message object containing the `header` and any additional data.
+ * @param {object} message - The message object containing the `header` and any
+ *   additional data.
  * @param {runtime.MessageSender} sender - The message sender.
  */
 async function handleMessage(message, sender) {
@@ -182,10 +177,16 @@ async function updateTab(tab) {
 /**
  * Determines the appropriate colour for a tab.
  *
- * Tries to get the colour from the content script, falling back to policy or protected page colour if needed.
+ * Tries to get the colour from the content script, falling back to policy or
+ * protected page colour if needed.
  *
  * @param {tabs.Tab} tab - The tab to extract the colour from.
- * @returns {Promise<{colour: colour, additionalInfo?: string|undefined, reason: string}>} An object containing the colour, reason, and optional additional info.
+ * @returns {Promise<{
+ * 	colour: colour;
+ * 	additionalInfo?: string | undefined;
+ * 	reason: string;
+ * }>}
+ *   An object containing the colour, reason, and optional additional info.
  */
 async function getTabColour(tab) {
 	const policy = pref.getPolicy(pref.getURLPolicyId(tab.url));
@@ -299,9 +300,7 @@ async function getProtectedPageColour(tab) {
 	}
 }
 
-/**
- * @param {string} pathname
- */
+/** @param {string} pathname */
 function getAboutPageColour(pathname) {
 	if (aboutPageColour[pathname]?.[current.scheme]) {
 		return {
@@ -325,9 +324,7 @@ function getAboutPageColour(pathname) {
 	}
 }
 
-/**
- * @param {string} hostname
- */
+/** @param {string} hostname */
 function getRestrictedSiteColour(hostname) {
 	if (restrictedSiteColour[hostname]?.[current.scheme]) {
 		return {
@@ -351,9 +348,7 @@ function getRestrictedSiteColour(hostname) {
 	}
 }
 
-/**
- * @param {string} url
- */
+/** @param {string} url */
 async function getAddonPageColour(url) {
 	const uuid = url.split(/\/|\?/)[2];
 	const addonList = await browser.management.getAll();
@@ -390,7 +385,8 @@ async function getAddonPageColour(url) {
 /**
  * Applies given colour to the browser frame of a tab.
  *
- * Colour will be adjusted until the contrast ratio is adequate, and it will be stored in `current.info`.
+ * Colour will be adjusted until the contrast ratio is adequate, and it will be
+ * stored in `current.info`.
  *
  * @param {tabs.Tab} tab - The tab in a window, whose frame is being changed.
  * @param {colour} colour - The colour to apply to the frame.

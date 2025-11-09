@@ -21,9 +21,16 @@ const conf = {
 /**
  * Information to be sent to the background / popup.
  *
- * `reason` determines the content shown in the popup infobox & text in the button.
+ * `reason` determines the content shown in the popup infobox & text in the
+ * button.
  *
- * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`, `IMAGE_VIEWER`, `PDF_VIEWER`, `JSON_VIEWER`, `ERROR_OCCURRED`, `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON` (only for `popup.js`, in which case, `additionalInfo` stores the window's ID), `ADDON_SPECIFIED`, `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`, `THEME_IGNORED`, `THEME_USED`, `QS_USED`, `QS_FAILED`, `QS_ERROR`, `COLOUR_SPECIFIED`.
+ * `reason` can be: `PROTECTED_PAGE`, `HOME_PAGE`, `TEXT_VIEWER`,
+ * `IMAGE_VIEWER`, `PDF_VIEWER`, `JSON_VIEWER`, `ERROR_OCCURRED`,
+ * `FALLBACK_COLOUR`, `COLOUR_PICKED`, `ADDON` (only for `popup.js`, in which
+ * case, `additionalInfo` stores the window's ID), `ADDON_SPECIFIED`,
+ * `ADDON_RECOM`, `ADDON_DEFAULT`, `THEME_UNIGNORED`, `THEME_MISSING`,
+ * `THEME_IGNORED`, `THEME_USED`, `QS_USED`, `QS_FAILED`, `QS_ERROR`,
+ * `COLOUR_SPECIFIED`.
  */
 const response = {
 	reason: null,
@@ -74,9 +81,7 @@ function findAndSendColour_focus() {
 	if (document.hasFocus()) findAndSendColour();
 }
 
-/**
- * Finds colour.
- */
+/** Finds colour. */
 function findColour() {
 	if (document.fullscreenElement) return false;
 	response.reason = null;
@@ -89,7 +94,8 @@ function findColour() {
 /**
  * Sets `response.colour` with the help of the custom rule.
  *
- * @returns True if a meta `theme-color` or a custom for the web page can be found.
+ * @returns True if a meta `theme-color` or a custom for the web page can be
+ *   found.
  */
 function findColour_policy() {
 	if (
@@ -113,9 +119,7 @@ function findColour_policy() {
 	}
 }
 
-/**
- * Handles COLOUR policy.
- */
+/** Handles COLOUR policy. */
 function findColour_policy_colour() {
 	response.reason = "COLOUR_SPECIFIED";
 	response.additionalInfo = null;
@@ -123,9 +127,7 @@ function findColour_policy_colour() {
 	return response.colour?.a === 1;
 }
 
-/**
- * Handles THEME_COLOUR policy.
- */
+/** Handles THEME_COLOUR policy. */
 function findColour_policy_themeColour() {
 	if (conf.noThemeColour && conf.policy.value === true) {
 		if (findColour_theme()) {
@@ -147,9 +149,7 @@ function findColour_policy_themeColour() {
 	return false;
 }
 
-/**
- * Handles QUERY_SELECTOR policy.
- */
+/** Handles QUERY_SELECTOR policy. */
 function findColour_policy_querySelector() {
 	const querySelector = conf.policy.value;
 	if (querySelector === "") {
@@ -176,7 +176,8 @@ function findColour_policy_querySelector() {
 }
 
 /**
- * Detects image viewer and text viewer, otherwise looks for meta `theme-color` / computed colour.
+ * Detects image viewer and text viewer, otherwise looks for meta `theme-color`
+ * / computed colour.
  */
 function findColour_noPolicy() {
 	if (
@@ -280,7 +281,8 @@ function findColour_webpage() {
 /**
  * Gets the computed background color of an element as an RGBA object.
  *
- * @param {HTMLElement} element - The element to extract the background color from.
+ * @param {HTMLElement} element - The element to extract the background color
+ *   from.
  * @returns The RGBA color object, or transparent if unavailable.
  */
 function getColourFromElement(element) {
@@ -330,7 +332,8 @@ const canvasContext = document.createElement("canvas").getContext("2d");
 /**
  * Parses a CSS color string and returns its RGBA components.
  *
- * @param {string} colour - The CSS color string to parse (e.g., "#RRGGBB", "rgb(...)", "rgba(...)", or named colors).
+ * @param {string} colour - The CSS color string to parse (e.g., "#RRGGBB",
+ *   "rgb(...)", "rgba(...)", or named colors).
  * @returns An RGBA object.
  */
 function parseColour(colour) {
@@ -389,9 +392,7 @@ function setThemeColourMeta(colour) {
 	}
 }
 
-/**
- * Sets up / turns off dynamic update.
- */
+/** Sets up / turns off dynamic update. */
 function setDynamicUpdate() {
 	["click", "resize", "scroll", "visibilitychange"].forEach((event) => {
 		document.removeEventListener(event, findAndSendColour);
@@ -449,9 +450,7 @@ const onStyleInjection = new MutationObserver((mutations) => {
 onStyleInjection.observe(document.documentElement, { childList: true });
 onStyleInjection.observe(document.head, { childList: true });
 
-/**
- * Sends colour to background as soon as the page loads
- */
+/** Sends colour to background as soon as the page loads */
 function sendMessageOnLoad(nthTry = 0) {
 	try {
 		browser.runtime.sendMessage({ header: "SCRIPT_LOADED" });

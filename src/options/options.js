@@ -333,9 +333,7 @@ function updateSliders() {
 	);
 }
 
-/**
- * Update options page's UI related to compatibility mode.
- */
+/** Update options page's UI related to compatibility mode. */
 function updateCompatibilityMode() {
 	document.querySelectorAll(`#tab-1 .section`).forEach((section) => {
 		const tabbarSlider = section.querySelector(
@@ -443,9 +441,7 @@ async function updateSiteList() {
 	});
 }
 
-/**
- * @param {number} nthTry
- */
+/** @param {number} nthTry */
 async function updateAllowDarkLightText(nthTry = 0) {
 	try {
 		const allowDarkLightTitle = document.querySelector(

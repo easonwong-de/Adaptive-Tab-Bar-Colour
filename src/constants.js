@@ -17,9 +17,7 @@ export const default_fallbackColour_dark = "#2b2a33";
 /** Default compatibility mode setting */
 export const default_compatibilityMode = !supportsThemeAPI();
 
-/**
- * Colours for about:pages.
- */
+/** Colours for about:pages. */
 export const aboutPageColour = Object.freeze({
 	checkerboard: { light: "DEFAULT", dark: undefined },
 	deleteprofile: { light: "DEFAULT", dark: "#2b2a33" },
@@ -38,9 +36,7 @@ export const aboutPageColour = Object.freeze({
 	"sync-log": { light: "#ececec", dark: "#282828" },
 });
 
-/**
- * Colours for restricted sites.
- */
+/** Colours for restricted sites. */
 export const restrictedSiteColour = Object.freeze({
 	"accounts-static.cdn.mozilla.net": { light: "DEFAULT", dark: "DEFAULT" },
 	"accounts.firefox.com": { light: "#fafafd", dark: undefined },
