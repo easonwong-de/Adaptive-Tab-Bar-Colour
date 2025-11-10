@@ -7,7 +7,7 @@ import {
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
 	default_compatibilityMode,
-} from "./defaultValues.js";
+} from "./constants.js";
 import colour from "./colour.js";
 import { supportsThemeAPI } from "./utility.js";
 
@@ -70,24 +70,22 @@ export default class preference {
 		version: addonVersion,
 	};
 
-	/**
-	 * Loads the preferences from the browser storage to the instance.
-	 */
+	/** Loads the preferences from the browser storage to the instance. */
 	async load() {
 		this.#content = await browser.storage.local.get();
 	}
 
-	/**
-	 * Stores the preferences from the instance to the browser storage.
-	 */
+	/** Stores the preferences from the instance to the browser storage. */
 	async save() {
 		await browser.storage.local.set(this.#content);
 	}
 
 	/**
-	 * Validates that each property in the `#prefContent` object has the expected data type.
+	 * Validates that each property in the `#prefContent` object has the
+	 * expected data type.
 	 *
-	 * @returns {boolean} Returns `true` if all properties have the correct data types, otherwise `false`.
+	 * @returns {boolean} Returns `true` if all properties have the correct data
+	 *   types, otherwise `false`.
 	 */
 	valid() {
 		if (
@@ -123,7 +121,9 @@ export default class preference {
 	/**
 	 * Normalises the preferences content to a consistent format.
 	 *
-	 * If the existing preferences don't have a version number, date back before v2.0, or has the version number of 2.2.1, the default pref will overwrite the old pref.
+	 * If the existing preferences don't have a version number, date back before
+	 * v2.0, or has the version number of 2.2.1, the default pref will overwrite
+	 * the old pref.
 	 */
 	async normalise() {
 		if (
@@ -247,10 +247,12 @@ export default class preference {
 	}
 
 	/**
-	 * Loads pref from a JSON string and normalises it. Returns `false` if the JSON string is invalid.
+	 * Loads pref from a JSON string and normalises it. Returns `false` if the
+	 * JSON string is invalid.
 	 *
 	 * @param {string} JSONString The JSON string to load pref from.
-	 * @returns `true` if the JSON string is converted to the pref, otherwise `false`.
+	 * @returns `true` if the JSON string is converted to the pref, otherwise
+	 *   `false`.
 	 */
 	async JSONToPref(JSONString) {
 		try {
@@ -298,23 +300,27 @@ export default class preference {
 	}
 
 	/**
-	 * Finds the most recently created policy from the site list that matches the given input.
+	 * Finds the most recently created policy from the site list that matches
+	 * the given input.
 	 *
 	 * For URL header types, policy header supports:
 	 *
 	 * - Full URL with or w/o trailing slash
 	 * - Regex
 	 * - Wildcard
+	 *
 	 *   - `**` matches strings of any length
 	 *   - `*` matches any characters except `/`, `.`, and `:`
 	 *   - `?` matches any single character
 	 *   - Scheme (e.g. `https://`) is optional
-	 * - hostname
+	 * - Hostname
 	 *
 	 * For addon ID header types, performs exact string matching.
 	 *
-	 * @param {string} input - The site URL or addon ID to match against the policy headers.
-	 * @returns {{id: number, policy: object|undefined}} An object containing the policy ID (0 if not found) and the policy.
+	 * @param {string} input - The site URL or addon ID to match against the
+	 *   policy headers.
+	 * @returns {{ id: number; policy: object | undefined }} An object
+	 *   containing the policy ID (0 if not found) and the policy.
 	 */
 	getPolicy(input) {
 		let id = 0;

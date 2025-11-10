@@ -25,7 +25,7 @@
 
 import preference from "./preference.js";
 import colour from "./colour.js";
-import { aboutPageColour, mozillaPageColour } from "./defaultValues.js";
+import { aboutPageColour, mozillaPageColour } from "./constants.js";
 import {
 	onSchemeChanged,
 	getCurrentScheme,
@@ -109,9 +109,7 @@ const cache = {
 	},
 };
 
-/**
- * Triggers colour change in all windows.
- */
+/** Triggers colour change in all windows. */
 async function update() {
 	if (!pref.valid()) await initialise();
 	await cache.clear();
@@ -122,9 +120,7 @@ async function update() {
 	activeTabs.forEach(updateTab);
 }
 
-/**
- * Initialises `pref` and `current`.
- */
+/** Initialises `pref` and `current`. */
 async function initialise() {
 	await pref.load();
 	await pref.normalise();
@@ -135,9 +131,11 @@ async function initialise() {
 /**
  * Handles incoming messages based on their `header`.
  *
- * @param {object} message - The message object containing the `header` and any additional data.
+ * @param {object} message - The message object containing the `header` and any
+ *   additional data.
  * @param {runtime.MessageSender} sender - The message sender.
- * @returns {Promise<boolean|string|object>} Response data or true for acknowledgment.
+ * @returns {Promise<boolean | string | object>} Response data or true for
+ *   acknowledgment.
  */
 async function handleMessage(message, sender) {
 	const tab = sender.tab;
@@ -172,7 +170,8 @@ async function handleMessage(message, sender) {
 }
 
 /**
- * Stores tab's policy to cache, updates the colour for a tab. And caches the meta info.
+ * Stores tab's policy to cache, updates the colour for a tab. And caches the
+ * meta info.
  *
  * @param {tabs.Tab} tab - The tab.
  */
@@ -188,10 +187,12 @@ async function updateTab(tab) {
 /**
  * Determines the appropriate colour for a tab.
  *
- * Tries to get the colour from the content script, falling back to policy or protected page colour if needed.
+ * Tries to get the colour from the content script, falling back to policy or
+ * protected page colour if needed.
  *
  * @param {tabs.Tab} tab - The tab to extract the colour from.
- * @returns {Promise<{colour: colour, info?: string, reason: string}>} An object containing the colour, reason, and optional additional info.
+ * @returns {Promise<{ colour: colour; info?: string; reason: string }>} An
+ *   object containing the colour, reason, and optional additional info.
  */
 async function getTabColour(tab) {
 	const policy = cache.policy[tab.windowId];
@@ -219,11 +220,13 @@ async function getTabColour(tab) {
  * Parses a tab message to determine the appropriate colour based on policy.
  *
  * @param {object} policy - The policy object containing type and value.
- * @param {object} message - The message object containing theme, page, and query data.
+ * @param {object} message - The message object containing theme, page, and
+ *   query data.
  * @param {object} message.theme - Theme colour data.
  * @param {Array} message.page - Array of page colour data.
  * @param {object} message.query - Query selector colour data.
- * @returns {{colour: colour, reason: string}} The colour information based on the policy.
+ * @returns {{ colour: colour; reason: string }} The colour information based on
+ *   the policy.
  */
 function parseTabMessage(policy, { theme, page, query }) {
 	const getPageColour = () => {
@@ -275,7 +278,8 @@ function parseTabMessage(policy, { theme, page, query }) {
  * Determines the colour for a protected page.
  *
  * @param {tabs.Tab} tab - The tab.
- * @returns {Promise<{colour: colour, reason: string, info?: string}>} The colour information for the protected page.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>} The
+ *   colour information for the protected page.
  */
 async function getProtectedPageColour(tab) {
 	const url = new URL(tab.url);
@@ -362,7 +366,8 @@ async function getProtectedPageColour(tab) {
  * Gets the colour for an about page based on its pathname.
  *
  * @param {string} pathname - The pathname of the about page.
- * @returns {{colour: colour, reason: string}} The colour information for the about page.
+ * @returns {{ colour: colour; reason: string }} The colour information for the
+ *   about page.
  */
 function getAboutPageColour(pathname) {
 	if (aboutPageColour[pathname]?.[cache.scheme]) {
@@ -387,7 +392,8 @@ function getAboutPageColour(pathname) {
  * Gets the colour for a Mozilla page based on its hostname.
  *
  * @param {string} hostname - The hostname of the Mozilla page.
- * @returns {{colour: colour, reason: string}} The colour information for the Mozilla page.
+ * @returns {{ colour: colour; reason: string }} The colour information for the
+ *   Mozilla page.
  */
 function getMozillaPageColour(hostname) {
 	if (mozillaPageColour[hostname]?.[cache.scheme]) {
@@ -414,7 +420,8 @@ function getMozillaPageColour(hostname) {
  * Gets the colour for an addon page based on its URL.
  *
  * @param {string} url - The URL of the addon page.
- * @returns {Promise<{colour: colour, reason: string, info?: string}>} The colour information for the addon page.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>} The
+ *   colour information for the addon page.
  */
 async function getAddonPageColour(url) {
 	const addonId = await getAddonId(url);
@@ -436,7 +443,8 @@ async function getAddonPageColour(url) {
 /**
  * Applies given colour to the browser frame of a tab.
  *
- * Colour will be adjusted until the contrast ratio is adequate, and it will be stored in `current.info`.
+ * Colour will be adjusted until the contrast ratio is adequate, and it will be
+ * stored in `current.info`.
  *
  * @param {tabs.Tab} tab - The tab in a window, whose frame is being changed.
  * @param {colour} colour - The colour to apply to the frame.

@@ -21,7 +21,9 @@ const colourCodes = [
 /**
  * Represents a colour with RGBA channels or a predefined colour code.
  *
- * Provides methods for parsing, manipulating, and converting colours, as well as calculating contrast and luminance for accessibility.
+ * Provides methods for parsing, manipulating, and converting colours, as well
+ * as calculating contrast and luminance for accessibility.
+ *
  * @class
  */
 export default class colour {
@@ -34,8 +36,10 @@ export default class colour {
 	/**
 	 * Parses the given initialiser to set the colour value.
 	 *
-	 * @param {string|object|colour|undefined} initialiser - A colour code, a CSS colour, or an instance of `colour`.
-	 * @param {boolean} [acceptCode=true] - Set if the instance is allowed to contain a colour code.
+	 * @param {string | object | colour | undefined} initialiser - A colour
+	 *   code, a CSS colour, or an instance of `colour`.
+	 * @param {boolean} [acceptCode=true] - Set if the instance is allowed to
+	 *   contain a colour code. Default is `true`
 	 */
 	constructor(initialiser, acceptCode = true) {
 		if (acceptCode && colourCodes.includes(initialiser)) {
@@ -102,13 +106,16 @@ export default class colour {
 	}
 
 	/**
-	 * Returns a new colour instance with its brightness adjusted by the specified percentage.
+	 * Returns a new colour instance with its brightness adjusted by the
+	 * specified percentage.
 	 *
 	 * @param {number} percentage - The dimming factor as a percentage.
+	 *
 	 *   - 0 returns the original colour.
 	 *   - Positive values move the colour towards white (100 is white).
 	 *   - Negative values move the colour towards black (-100 is black).
 	 *   - Values beyond the range of -100 to 100 make the colour black or white.
+	 *
 	 * @returns {colour} A new colour instance with adjusted brightness.
 	 * @throws {Error} If the colour is defined by a colour code.
 	 */
@@ -156,15 +163,26 @@ export default class colour {
 	}
 
 	/**
-	 * Creates a colour instance that meets the minimum contrast ratio against a specified colour.
+	 * Creates a colour instance that meets the minimum contrast ratio against a
+	 * specified colour.
 	 *
-	 * @param {"light"|"dark"} preferredScheme - The preferred colour scheme.
-	 * @param {boolean} allowDarkLight - Whether to allow a result in the opposite of the preferred colour scheme.
-	 * @param {number} minContrastLightX10 - The minimum contrast ratio required for light scheme eligibility (times 10).
-	 * @param {number} minContrastDarkX10 - The minimum contrast ratio required for dark scheme eligibility (times 10).
-	 * @param {colour} contrastColourLight - The colour to correct against in light mode, defaulting to black.
-	 * @param {colour} contrastColourDark - The colour to correct against in dark mode, defaulting to white.
-	 * @returns {{ colour: colour, scheme: "light"|"dark", corrected: boolean }} The corrected colour, the scheme, and whether the colour was adjusted.
+	 * @param {"light" | "dark"} preferredScheme - The preferred colour scheme.
+	 * @param {boolean} allowDarkLight - Whether to allow a result in the
+	 *   opposite of the preferred colour scheme.
+	 * @param {number} minContrastLightX10 - The minimum contrast ratio required
+	 *   for light scheme eligibility (times 10).
+	 * @param {number} minContrastDarkX10 - The minimum contrast ratio required
+	 *   for dark scheme eligibility (times 10).
+	 * @param {colour} contrastColourLight - The colour to correct against in
+	 *   light mode, defaulting to black.
+	 * @param {colour} contrastColourDark - The colour to correct against in
+	 *   dark mode, defaulting to white.
+	 * @returns {{
+	 * 	colour: colour;
+	 * 	scheme: "light" | "dark";
+	 * 	corrected: boolean;
+	 * }}
+	 *   The corrected colour, the scheme, and whether the colour was adjusted.
 	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	contrastCorrection(
@@ -211,10 +229,12 @@ export default class colour {
 	 *
 	 * Contrast ratio over 4.5 is considered adequate.
 	 *
-	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
 	 * @private
 	 * @param {colour} colour - The colour to compare against.
-	 * @returns {number} The contrast ratio between the two colours (1.05 to 21).
+	 * @returns {number} The contrast ratio between the two colours (1.05 to
+	 *   21).
+	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
+	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
 	 */
 	#contrastRatio(colour) {
 		const luminance1X255 = this.#luminanceX255();
@@ -227,9 +247,9 @@ export default class colour {
 	/**
 	 * Calculates the relative luminance of the colour (times 255).
 	 *
-	 * @see https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
 	 * @private
 	 * @returns {number} The relative luminance of the colour (0-255).
+	 * @see https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
 	 */
 	#luminanceX255() {
 		return (
@@ -277,7 +297,8 @@ export default class colour {
 	 *
 	 * Otherwise, returns an RGBA string.
 	 *
-	 * @returns {string} The colour code or the CSS representation of the colour.
+	 * @returns {string} The colour code or the CSS representation of the
+	 *   colour.
 	 */
 	toString() {
 		if (this.#code) return this.#code;
@@ -361,7 +382,8 @@ export default class colour {
 	 * Gets or sets the red channel value.
 	 *
 	 * @type {number}
-	 * @throws {Error} If the colour is defined by a colour code or value is invalid.
+	 * @throws {Error} If the colour is defined by a colour code or value is
+	 *   invalid.
 	 */
 	get r() {
 		this.#noCode();
@@ -379,7 +401,8 @@ export default class colour {
 	 * Gets or sets the green channel value.
 	 *
 	 * @type {number}
-	 * @throws {Error} If the colour is defined by a colour code or value is invalid.
+	 * @throws {Error} If the colour is defined by a colour code or value is
+	 *   invalid.
 	 */
 	get g() {
 		this.#noCode();
@@ -397,7 +420,8 @@ export default class colour {
 	 * Gets or sets the blue channel value.
 	 *
 	 * @type {number}
-	 * @throws {Error} If the colour is defined by a colour code or value is invalid.
+	 * @throws {Error} If the colour is defined by a colour code or value is
+	 *   invalid.
 	 */
 	get b() {
 		this.#noCode();
@@ -415,7 +439,8 @@ export default class colour {
 	 * Gets or sets the alpha channel value.
 	 *
 	 * @type {number}
-	 * @throws {Error} If the colour is defined by a colour code or value is invalid.
+	 * @throws {Error} If the colour is defined by a colour code or value is
+	 *   invalid.
 	 */
 	get a() {
 		this.#noCode();
@@ -432,7 +457,7 @@ export default class colour {
 	/**
 	 * Gets or sets the colour code.
 	 *
-	 * @type {string|undefined}
+	 * @type {string | undefined}
 	 * @throws {Error} If the value is not a valid colour code.
 	 */
 	get code() {

@@ -3,7 +3,7 @@
 /* This script synchronizes the version number across project files.
 It reads the version from package.json and updates:
 	1. src/manifest.json: version
-	2. src/defaultValues.js: addonVersion */
+	2. src/constants.js: addonVersion */
 
 import { readFileSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
@@ -21,16 +21,16 @@ writeFileSync(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
 
 console.log("✓ Updated manifest.json");
 
-const defaultValuesPath = join(__dirname, "src", "defaultValues.js");
-let defaultValuesContent = readFileSync(defaultValuesPath, "utf8");
+const constantsPath = join(__dirname, "src", "constants.js");
+let constantsContent = readFileSync(constantsPath, "utf8");
 const addonVersionOld = /export const addonVersion = \[[\d, ]+\];/;
 const addonVersionNew = `export const addonVersion = [${version.split(".").map(Number).join(", ")}];`;
 
-if (addonVersionOld.test(defaultValuesContent)) {
-	writeFileSync(defaultValuesPath, defaultValuesContent.replace(addonVersionOld, addonVersionNew));
-	console.log("✓ Updated defaultValues.js");
+if (addonVersionOld.test(constantsContent)) {
+	writeFileSync(constantsPath, constantsContent.replace(addonVersionOld, addonVersionNew));
+	console.log("✓ Updated constants.js");
 } else {
-	console.error("⚠ Could not find addonVersion in defaultValues.js");
+	console.error("⚠ Could not find addonVersion in constants.js");
 }
 
 console.log("Version sync complete.");

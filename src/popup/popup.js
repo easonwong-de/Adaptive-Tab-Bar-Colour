@@ -1,7 +1,7 @@
 "use strict";
 
 import preference from "../preference.js";
-import { recommendedAddonPageColour } from "../defaultValues.js";
+import { recommendedAddonPageColour } from "../constants.js";
 import { setSliderValue, setupSlider } from "../elements.js";
 import { localise, supportsThemeAPI } from "../utility.js";
 
@@ -23,9 +23,7 @@ sliders.forEach((slider) =>
 	}),
 );
 
-/**
- * Updates infobox's content and popup's text and background colour.
- */
+/** Updates infobox's content and popup's text and background colour. */
 async function updatePopup() {
 	await pref.load();
 	if (pref.valid()) {
@@ -114,9 +112,7 @@ async function updateInfoDisplay(nthTry = 0) {
 	}
 }
 
-/**
- * @param {string} addonId
- */
+/** @param {string} addonId */
 async function getAddonPageInfo(addonId) {
 	const addonName = (await browser.management.get(addonId)).name;
 	if (pref.getPolicy(addonId).policy) {
@@ -173,9 +169,12 @@ async function specifyColourForAddon(
  * Changes the content shown in info display panel.
  *
  * @param {Object} options Options to configure the info display panel.
- * @param {string} options.reason Determines which page to show on the panel by setting the class name of the info display.
- * @param {string | null} options.info Additional information to display on the panel.
- * @param {function | null} options.infoAction The function called by the `.info-action` button being clicked.
+ * @param {string} options.reason Determines which page to show on the panel by
+ *   setting the class name of the info display.
+ * @param {string | null} options.info Additional information to display on the
+ *   panel.
+ * @param {function | null} options.infoAction The function called by the
+ *   `.info-action` button being clicked.
  */
 function setInfoDisplay({
 	reason = "ERROR_OCCURRED",
@@ -193,9 +192,7 @@ function setInfoDisplay({
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
 
-/**
- * Updates popup's text and background colour.
- */
+/** Updates popup's text and background colour. */
 async function updatePopupColour() {
 	const theme = await browser.theme?.getCurrent();
 	if (theme?.colors?.popup && theme?.colors?.popup_text) {
@@ -210,9 +207,7 @@ async function updatePopupColour() {
 	}
 }
 
-/**
- * Update popup's UI related to compatibility mode.
- */
+/** Update popup's UI related to compatibility mode. */
 function updateCompatibilityMode() {
 	document.querySelectorAll(`.section-group .section`).forEach((section) => {
 		const tabbarSlider = section.querySelector(
@@ -230,9 +225,7 @@ function updateCompatibilityMode() {
 	});
 }
 
-/**
- * Triggers colour update.
- */
+/** Triggers colour update. */
 async function applySettings() {
 	await pref.save();
 	await browser.runtime.sendMessage({ header: "PREF_CHANGED" });
