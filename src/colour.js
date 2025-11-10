@@ -88,6 +88,20 @@ export default class colour {
 	}
 
 	/**
+	 * Applies an opacity factor to the current alpha channel.
+	 *
+	 * @param {number} opacity - The opacity factor to apply (0-1).
+	 * @returns {colour} The current colour instance for chaining.
+	 */
+	applyOpacity(opacity) {
+		this.#noCode();
+		const parsedOpacity = parseFloat(opacity);
+		if (!isNaN(parsedOpacity))
+			this.#a *= Math.max(0, Math.min(1, parsedOpacity));
+		return this;
+	}
+
+	/**
 	 * Returns a new colour instance with its brightness adjusted by the specified percentage.
 	 *
 	 * @param {number} percentage - The dimming factor as a percentage.
@@ -111,7 +125,7 @@ export default class colour {
 				this.#a,
 			);
 		} else if (cent === 0) {
-			return new colour().rgba(this.#r, this.#g, this.#b, this.#a);
+			return new colour(this);
 		} else if (cent < 0) {
 			return new colour().rgba(
 				(cent + 1) * this.#r,
@@ -131,6 +145,7 @@ export default class colour {
 	 * @returns {colour} A new colour as the result of the mix.
 	 */
 	mix(colour) {
+		this.#noCode();
 		const a = this.#a + colour.a * (1 - this.#a);
 		return new colour().rgba(
 			(this.#a * this.#r + colour.a * (1 - this.#a) * colour.r) / a,
@@ -320,6 +335,15 @@ export default class colour {
 			.toString(16)
 			.padStart(2, "0");
 		return `#${hexR}${hexG}${hexB}${hexA}`;
+	}
+
+	/**
+	 * Checks if the colour is opaque.
+	 *
+	 * @returns {boolean} True if the colour is opaque, false otherwise.
+	 */
+	isOpaque() {
+		return this.#code || this.#a === 1;
 	}
 
 	/**

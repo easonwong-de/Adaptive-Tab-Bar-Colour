@@ -1,5 +1,3 @@
-import { doc } from "prettier";
-
 const conf = {
 	active: false,
 	dynamic: false,
@@ -59,7 +57,13 @@ function getPageColour() {
 }
 
 function getQueryColour(query) {
-	return conf.query ? getElementColour(querySelector(query)) : undefined;
+	try {
+		return conf.query
+			? getElementColour(document.querySelector(query))
+			: undefined;
+	} catch (error) {
+		return undefined;
+	}
 }
 
 function getElementColour(element) {

@@ -63,52 +63,51 @@ async function updateInfoDisplay(nthTry = 0) {
 		}
 		const tab = activeTabs[0];
 		const windowId = tab.windowId;
-		const info = await browser.runtime.sendMessage({
-			header: "INFO_REQUEST",
+		const meta = await browser.runtime.sendMessage({
+			header: "META_REQUEST",
 			windowId: windowId,
 		});
-		if (!info) return setTimeout(() => updateInfoDisplay(++nthTry), 50);
+		if (!meta) return setTimeout(() => updateInfoDisplay(++nthTry), 50);
 		const actions = {
 			THEME_UNIGNORED: { value: false },
 			THEME_USED: { value: false },
 			THEME_IGNORED: { value: true },
 		};
-		colourCorrectionInfo.classList.toggle("hidden", !info.corrected);
-		if (info.reason === "ADDON") {
-			const addonInfo = await getAddonPageInfo(info.additionalInfo);
+		colourCorrectionInfo.classList.toggle("hidden", !meta.corrected);
+		if (meta.reason === "ADDON") {
+			const addonInfo = await getAddonPageInfo(meta.info);
 			setInfoDisplay(addonInfo);
-		} else if (info.reason in actions) {
+		} else if (meta.reason in actions) {
 			setInfoDisplay({
-				reason: info.reason,
-				additionalInfo: null,
+				reason: meta.reason,
+				info: null,
 				infoAction: async () => {
 					const header = new URL(tab.url).hostname;
-					const policyId = pref.getURLPolicyId(tab.url);
-					const policy = pref.getPolicy(policyId);
+					const { id, policy } = pref.getPolicy(tab.url);
 					if (
-						policyId &&
+						id &&
 						policy?.header === header &&
 						policy?.type === "THEME_COLOUR"
 					) {
-						pref.setPolicy(policyId, {
+						pref.setPolicy(id, {
 							headerType: "URL",
 							header: header,
 							type: "THEME_COLOUR",
-							...actions[info.reason],
+							...actions[meta.reason],
 						});
 					} else {
 						pref.addPolicy({
 							headerType: "URL",
 							header: header,
 							type: "THEME_COLOUR",
-							...actions[info.reason],
+							...actions[meta.reason],
 						});
 					}
 					await applySettings();
 				},
 			});
 		} else {
-			setInfoDisplay(info);
+			setInfoDisplay(meta);
 		}
 	} catch (error) {
 		setTimeout(() => updateInfoDisplay(++nthTry), 50);
@@ -120,16 +119,16 @@ async function updateInfoDisplay(nthTry = 0) {
  */
 async function getAddonPageInfo(addonId) {
 	const addonName = (await browser.management.get(addonId)).name;
-	if (pref.getPolicy(pref.getAddonPolicyId(addonId))) {
+	if (pref.getPolicy(addonId).policy) {
 		return {
 			reason: "ADDON_SPECIFIED",
-			additionalInfo: addonName,
+			info: addonName,
 			infoAction: async () => await specifyColourForAddon(addonId, null),
 		};
 	} else if (addonId in recommendedAddonPageColour) {
 		return {
 			reason: "ADDON_RECOM",
-			additionalInfo: addonName,
+			info: addonName,
 			infoAction: async () =>
 				await specifyColourForAddon(
 					addonId,
@@ -139,7 +138,7 @@ async function getAddonPageInfo(addonId) {
 	} else {
 		return {
 			reason: "ADDON_DEFAULT",
-			additionalInfo: addonName,
+			info: addonName,
 			infoAction: async () =>
 				await specifyColourForAddon(addonId, "#333333", true),
 		};
@@ -164,7 +163,7 @@ async function specifyColourForAddon(
 			value: colourHex,
 		});
 	} else {
-		pref.removePolicy(pref.getAddonPolicyId(addonId));
+		pref.removePolicy(pref.getPolicy(addonId).id);
 	}
 	await applySettings();
 	if (openOptionsPage) browser.runtime.openOptionsPage();
@@ -175,12 +174,12 @@ async function specifyColourForAddon(
  *
  * @param {Object} options Options to configure the info display panel.
  * @param {string} options.reason Determines which page to show on the panel by setting the class name of the info display.
- * @param {string | null} options.additionalInfo Additional information to display on the panel.
+ * @param {string | null} options.info Additional information to display on the panel.
  * @param {function | null} options.infoAction The function called by the `.info-action` button being clicked.
  */
 function setInfoDisplay({
 	reason = "ERROR_OCCURRED",
-	additionalInfo = null,
+	info = null,
 	infoAction = null,
 }) {
 	infoDisplay.className = reason;
@@ -190,7 +189,7 @@ function setInfoDisplay({
 	const infoActionButton = infoDisplay.querySelector(
 		`[name='${reason}'] .info-action`,
 	);
-	if (additionalInfo) additionalInfoDisplay.textContent = additionalInfo;
+	if (info) additionalInfoDisplay.textContent = info;
 	if (infoAction) infoActionButton.onclick = infoAction;
 }
 

@@ -266,19 +266,6 @@ export default class preference {
 	}
 
 	/**
-	 * Returns the policy for a policy ID from the site list.
-	 *
-	 * Newly added policies have higher priority.
-	 *
-	 * Returns `undefined` if nothing matches.
-	 *
-	 * @param {number} id - Policy ID.
-	 */
-	getPolicy(id) {
-		return this.#content.siteList[id];
-	}
-
-	/**
 	 * Adds a policy to the site list.
 	 *
 	 * @param {object} policy - The policy to add.
@@ -311,9 +298,9 @@ export default class preference {
 	}
 
 	/**
-	 * Finds the ID of the most recently created policy from the site list that matches the given URL.
+	 * Finds the most recently created policy from the site list that matches the given input.
 	 *
-	 * Policy header supports:
+	 * For URL header types, policy header supports:
 	 *
 	 * - Full URL with or w/o trailing slash
 	 * - Regex
@@ -324,82 +311,73 @@ export default class preference {
 	 *   - Scheme (e.g. `https://`) is optional
 	 * - hostname
 	 *
-	 * @param {string} url - The site URL to match against the policy headers.
-	 * @returns {number} The ID of the most specific matching policy, or 0 if no match is found.
+	 * For addon ID header types, performs exact string matching.
+	 *
+	 * @param {string} input - The site URL or addon ID to match against the policy headers.
+	 * @returns {{id: number, policy: object|undefined}} An object containing the policy ID (0 if not found) and the policy.
 	 */
-	getURLPolicyId(url) {
-		let result = 0;
-		for (const id in this.#content.siteList) {
-			const policy = this.#content.siteList[id];
-			if (!policy || policy.header === "" || policy.headerType !== "URL")
+	getPolicy(input) {
+		let id = 0;
+		let policy;
+		for (const tempId in this.#content.siteList) {
+			policy = this.#content.siteList[tempId];
+			if (!policy || policy?.header === "") {
 				continue;
-			if (
-				id > result &&
-				(policy.header === url || policy.header === `${url}/`)
+			} else if (
+				policy.headerType === "ADDON_ID" &&
+				policy.header === input
 			) {
-				result = +id;
+				id = +tempId;
+				break;
+			} else if (
+				policy.headerType === "URL" &&
+				(policy.header === input ||
+					policy.header === `${input}/` ||
+					this.#testRegex(input, policy.header) ||
+					this.#testWildcard(input, policy.header) ||
+					this.#testHostname(input, policy.header))
+			) {
+				id = +tempId;
 				continue;
 			}
-			try {
-				if (
-					id > result &&
-					new RegExp(`^${policy.header}$`, "i").test(url)
-				) {
-					result = +id;
-					continue;
-				}
-			} catch (error) {}
-			if (policy.header.includes("*") || policy.header.includes("?")) {
-				try {
-					const wildcardPattern = policy.header
-						.replace(/[.+^${}()|[\]\\]/g, "\\$&")
-						.replace(/\*\*/g, "::WILDCARD_MATCH_ALL::")
-						.replace(/\*/g, "[^/.:]*")
-						.replace(/\?/g, ".")
-						.replace(/::WILDCARD_MATCH_ALL::/g, ".*")
-						.replace(/^([a-z]+:\/\/)/i, "$1")
-						.replace(
-							/^((?![a-z]+:\/\/).)/i,
-							"(?:[a-z]+:\\/\\/)?$1",
-						);
-					if (
-						id > result &&
-						new RegExp(`^${wildcardPattern}/?$`, "i").test(url)
-					) {
-						result = +id;
-						continue;
-					}
-				} catch (error) {}
-			}
-			try {
-				if (id > result && policy.header === new URL(url).hostname) {
-					result = +id;
-					continue;
-				}
-			} catch (error) {}
 		}
-		return result;
+		return { id, policy };
 	}
 
-	/**
-	 * Retrieves the policy ID that matches the given add-on ID.
-	 *
-	 * If multiple policies for the same add-on ID are present, return the ID of the most recently created one.
-	 *
-	 * @param {string} addonId - The add-on ID to match against the policy list.
-	 * @returns {number} The ID of the matching policy, or 0 if no match is found.
-	 */
-	getAddonPolicyId(addonId) {
-		let result = 0;
-		for (const id in this.#content.siteList) {
-			const policy = this.#content.siteList[id];
-			if (!policy || policy?.headerType !== "ADDON_ID") continue;
-			if (id > result && policy.header === addonId) {
-				result = +id;
-				continue;
-			}
+	#testRegex(url, regex) {
+		try {
+			return new RegExp(`^${regex}$`, "i").test(url);
+		} catch (error) {
+			return false;
 		}
-		return result;
+	}
+
+	#testWildcard(url, wildcard) {
+		if (wildcard.includes("*") && wildcard.includes("?")) {
+			try {
+				const wildcardPattern = wildcard
+					.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+					.replace(/\*\*/g, "::WILDCARD_MATCH_ALL::")
+					.replace(/\*/g, "[^/.:]*")
+					.replace(/\?/g, ".")
+					.replace(/::WILDCARD_MATCH_ALL::/g, ".*")
+					.replace(/^([a-z]+:\/\/)/i, "$1")
+					.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
+				return new RegExp(`^${wildcardPattern}/?$`, "i").test(url);
+			} catch (error) {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	#testHostname(url, hostname) {
+		try {
+			return hostname === new URL(url).hostname;
+		} catch (error) {
+			return false;
+		}
 	}
 
 	/**

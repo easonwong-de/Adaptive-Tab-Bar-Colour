@@ -41,7 +41,7 @@ export const aboutPageColour = Object.freeze({
 /**
  * Colours for restricted sites.
  */
-export const restrictedSiteColour = Object.freeze({
+export const mozillaPageColour = Object.freeze({
 	"accounts-static.cdn.mozilla.net": { light: "DEFAULT", dark: "DEFAULT" },
 	"accounts.firefox.com": { light: "#fafafd", dark: undefined },
 	"addons.cdn.mozilla.net": { light: "DEFAULT", dark: "DEFAULT" },
