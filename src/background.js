@@ -199,7 +199,7 @@ async function updateTab(tab) {
  * protected page colour if the content script is unavailable.
  *
  * @param {tabs.Tab} tab - The tab to extract colour from.
- * @returns {Promise<{ colour: colour; info?: string; reason: string }>} Object
+ * @returns {Promise<{ colour: colour; reason: string info?: string; }>} Object
  *   containing the determined colour, reason code, and optional info.
  */
 async function getTabMeta(tab) {
@@ -236,7 +236,7 @@ async function getTabMeta(tab) {
  * @param {object} colour.theme - Theme colour data.
  * @param {Array} colour.page - Array of page element colour data.
  * @param {object} colour.query - Query selector colour result.
- * @returns {Promise<{ colour: colour; info?: string; reason: string }>} Object
+ * @returns {Promise<{ colour: colour; reason: string info?: string; }>} Object
  *   containing the determined colour, reason code, and optional info.
  */
 function parseTabMeta(policy, { theme, page, query }) {
@@ -279,13 +279,13 @@ function parseTabMeta(policy, { theme, page, query }) {
 			return queryColour.isOpaque()
 				? {
 						colour: queryColour,
-						info: policy.value || "🕳️",
 						reason: "QS_USED",
+						info: policy.value || "🕳️",
 					}
 				: {
 						colour: parsePageColour(),
-						info: policy.value || "🕳️",
 						reason: "QS_FAILED",
+						info: policy.value || "🕳️",
 					};
 		}
 		default:
