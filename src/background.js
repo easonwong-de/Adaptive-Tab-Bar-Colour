@@ -1,26 +1,24 @@
 "use strict";
 
 /*
- * Definitions of some concepts
- *
  * System colour scheme:
  * The colour scheme of the operating system, usually light or dark.
  *
  * Browser colour scheme:
  * The "website appearance" settings of Firefox, which can be light, dark, or auto.
  *
- * current.scheme:
- * Derived from System and Browser colour scheme and decides whether the light theme or dark theme is preferred.
+ * `cashe.scheme`:
+ * Derived from system and browser colour scheme and decides whether the light theme or dark theme is preferred.
  *
- * pref.allowDarkLight:
+ * `pref.allowDarkLight`:
  * A setting that decides if a light theme is allowed to be used when current.scheme is dark, or vice versa.
  *
- * theme-color / meta theme colour:
+ * meta tag theme:
  * A colour defined with a meta tag by some websites, usually static.
- * It is often more related to the branding than the appearance of the website.
+ * It is often more related to the branding than the actual appearance of the website.
  *
  * Theme:
- * An object that defines the appearance of the Firefox chrome.
+ * An object that defines the colour of the Firefox UI.
  */
 
 import preference from "./preference.js";
@@ -109,7 +107,11 @@ const cache = {
 	},
 };
 
-/** Triggers colour change in all windows. */
+/**
+ * Triggers colour change in all windows.
+ *
+ * Clears the cache and updates all active and loaded tabs.
+ */
 async function update() {
 	if (!pref.valid()) await initialise();
 	await cache.clear();
@@ -120,7 +122,11 @@ async function update() {
 	activeTabs.forEach(updateTab);
 }
 
-/** Initialises `pref` and `current`. */
+/**
+ * Initialises preferences and cache.
+ *
+ * Loads, normalises, and saves preferences, then triggers an update.
+ */
 async function initialise() {
 	await pref.load();
 	await pref.normalise();
@@ -129,13 +135,13 @@ async function initialise() {
 }
 
 /**
- * Handles incoming messages based on their `header`.
+ * Handles incoming messages based on their header.
  *
- * @param {object} message - The message object containing the `header` and any
- *   additional data.
- * @param {runtime.MessageSender} sender - The message sender.
- * @returns {Promise<boolean | string | object>} Response data or true for
- *   acknowledgment.
+ * @param {object} message - The message object containing the header and data.
+ * @param {string} message.header - The message type header.
+ * @param {runtime.MessageSender} sender - The message sender information.
+ * @returns {Promise<boolean | string | object>} Response data, scheme string,
+ *   meta object, or `true` for acknowledgement.
  */
 async function handleMessage(message, sender) {
 	const tab = sender.tab;
@@ -152,12 +158,12 @@ async function handleMessage(message, sender) {
 			updateTab(tab);
 			break;
 		case "UPDATE_COLOUR":
-			const tabInfo = parseTabMessage(
+			const tabMeta = parseTabMeta(
 				cache.policy[tab.windowId],
 				message.colour,
 			);
-			cache.meta[tab.windowId] = tabInfo;
-			setFrameColour(tab, tabInfo.colour);
+			cache.meta[tab.windowId] = tabMeta;
+			setFrameColour(tab, tabMeta.colour);
 			break;
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
@@ -170,31 +176,33 @@ async function handleMessage(message, sender) {
 }
 
 /**
- * Stores tab's policy to cache, updates the colour for a tab. And caches the
- * meta info.
+ * Updates the colour for a tab and caches policy and meta information.
  *
- * @param {tabs.Tab} tab - The tab.
+ * Retrieves the policy for the tab's URL, caches it, gets tab metadata, and
+ * applies the appropriate frame colour.
+ *
+ * @param {tabs.Tab} tab - The tab to update.
  */
 async function updateTab(tab) {
 	const windowId = tab.windowId;
 	const policy = pref.getPolicy(tab.url).policy;
 	cache.policy[windowId] = policy;
-	const tabColour = await getTabColour(tab);
-	cache.meta[windowId] = tabColour;
-	setFrameColour(tab, tabColour.colour);
+	const tabMeta = await getTabMeta(tab);
+	cache.meta[windowId] = tabMeta;
+	setFrameColour(tab, tabMeta.colour);
 }
 
 /**
  * Determines the appropriate colour for a tab.
  *
- * Tries to get the colour from the content script, falling back to policy or
- * protected page colour if needed.
+ * Attempts to get colour from content script based on policy, falling back to
+ * protected page colour if the content script is unavailable.
  *
- * @param {tabs.Tab} tab - The tab to extract the colour from.
- * @returns {Promise<{ colour: colour; info?: string; reason: string }>} An
- *   object containing the colour, reason, and optional additional info.
+ * @param {tabs.Tab} tab - The tab to extract colour from.
+ * @returns {Promise<{ colour: colour; info?: string; reason: string }>} Object
+ *   containing the determined colour, reason code, and optional info.
  */
-async function getTabColour(tab) {
+async function getTabMeta(tab) {
 	const policy = cache.policy[tab.windowId];
 	if (policy?.headerType === "URL" && policy?.type === "COLOUR") {
 		return {
@@ -203,15 +211,19 @@ async function getTabColour(tab) {
 		};
 	} else {
 		try {
-			const tabResponse = await browser.tabs.sendMessage(tab.id, {
+			const tabColour = await browser.tabs.sendMessage(tab.id, {
 				header: "GET_COLOUR",
 				active: policy?.type !== "COLOUR",
 				dynamic: pref.dynamic,
-				query: policy?.type === "QUERY_SELECTOR" ? policy.value : null,
+				query:
+					policy?.type === "QUERY_SELECTOR"
+						? policy.value
+						: undefined,
 			});
-			return parseTabMessage(policy, tabResponse);
+			return parseTabMeta(policy, tabColour);
 		} catch (error) {
-			return await getProtectedPageColour(tab);
+			console.warn("Failed to connect to", tab.url);
+			return await getProtectedPageMeta(tab);
 		}
 	}
 }
@@ -220,34 +232,33 @@ async function getTabColour(tab) {
  * Parses a tab message to determine the appropriate colour based on policy.
  *
  * @param {object} policy - The policy object containing type and value.
- * @param {object} message - The message object containing theme, page, and
- *   query data.
- * @param {object} message.theme - Theme colour data.
- * @param {Array} message.page - Array of page colour data.
- * @param {object} message.query - Query selector colour data.
- * @returns {{ colour: colour; reason: string }} The colour information based on
- *   the policy.
+ * @param {object} colour - The object containing tab colour data.
+ * @param {object} colour.theme - Theme colour data.
+ * @param {Array} colour.page - Array of page element colour data.
+ * @param {object} colour.query - Query selector colour result.
+ * @returns {Promise<{ colour: colour; info?: string; reason: string }>} Object
+ *   containing the determined colour, reason code, and optional info.
  */
-function parseTabMessage(policy, { theme, page, query }) {
-	const getPageColour = () => {
+function parseTabMeta(policy, { theme, page, query }) {
+	const parseThemeColour = () => new colour(theme[cache.scheme], false);
+	const parsePageColour = () => {
 		let pageColour = new colour();
-		for (const pageItem of page) {
+		for (const element of page) {
+			const opacity = parseFloat(element.opacity);
+			if (isNaN(opacity)) continue;
 			pageColour = pageColour.mix(
-				new colour(pageItem.colour, false).applyOpacity(
-					pageItem.opacity,
-				),
+				new colour(element.colour, false).opacity(opacity),
 			);
 			if (pageColour.isOpaque()) break;
 		}
 		return pageColour.isOpaque()
 			? pageColour
-			: pageColour.mix(new colour("FALLBACK"));
+			: pageColour.mix(colourCode.FALLBACK[cache.scheme]);
 	};
-	const getThemeColour = () => new colour(theme[cache.scheme], false);
-	const getQueryColour = () => new colour(query.colour);
+	const parseQueryColour = () => new colour(query?.colour);
 	switch (policy?.type) {
 		case "THEME_COLOUR": {
-			const themeColour = getThemeColour();
+			const themeColour = parseThemeColour();
 			if (policy.value && themeColour.isOpaque()) {
 				return {
 					colour: themeColour,
@@ -255,7 +266,7 @@ function parseTabMessage(policy, { theme, page, query }) {
 				};
 			}
 			return {
-				colour: getPageColour(),
+				colour: parsePageColour(),
 				reason: policy.value
 					? "THEME_MISSING"
 					: themeColour.isOpaque()
@@ -264,24 +275,35 @@ function parseTabMessage(policy, { theme, page, query }) {
 			};
 		}
 		case "QUERY_SELECTOR": {
-			const queryColour = getQueryColour();
+			const queryColour = parseQueryColour();
 			return queryColour.isOpaque()
-				? { colour: queryColour, reason: "QS_USED" }
-				: { colour: getPageColour(), reason: "QS_FAILED" };
+				? {
+						colour: queryColour,
+						info: policy.value || "🕳️",
+						reason: "QS_USED",
+					}
+				: {
+						colour: parsePageColour(),
+						info: policy.value || "🕳️",
+						reason: "QS_FAILED",
+					};
 		}
 		default:
-			return { colour: getPageColour(), reason: "COLOUR_PICKED" };
+			return { colour: parsePageColour(), reason: "COLOUR_PICKED" };
 	}
 }
 
 /**
- * Determines the colour for a protected page.
+ * Determines the colour for a protected page based on URL patterns.
  *
- * @param {tabs.Tab} tab - The tab.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>} The
- *   colour information for the protected page.
+ * Handles special pages like about: pages, extensions, Mozilla sites, and
+ * various file types that cannot run content scripts.
+ *
+ * @param {tabs.Tab} tab - The tab to determine colour for.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Object
+ *   containing the appropriate colour, reason code, and optional info.
  */
-async function getProtectedPageColour(tab) {
+async function getProtectedPageMeta(tab) {
 	const url = new URL(tab.url);
 	if (
 		["about:firefoxview", "about:home", "about:newtab"].some((href) =>
@@ -294,13 +316,13 @@ async function getProtectedPageColour(tab) {
 		tab.title.startsWith("about:") &&
 		tab.title.endsWith("profile")
 	) {
-		return getAboutPageColour(tab.title.slice(6));
+		return getAboutPageMeta(tab.title.slice(6));
 	} else if (url.protocol === "about:") {
-		return getAboutPageColour(url.pathname);
+		return getAboutPageMeta(url.pathname);
 	} else if (url.protocol === "moz-extension:") {
-		return await getAddonPageColour(url.href);
+		return await getAddonPageMeta(url.href);
 	} else if (url.hostname in mozillaPageColour) {
-		return getMozillaPageColour(url.hostname);
+		return getMozillaPageMeta(url.hostname);
 	} else if (url.protocol === "view-source:") {
 		return {
 			colour: new colour("PLAINTEXT"),
@@ -363,13 +385,13 @@ async function getProtectedPageColour(tab) {
 }
 
 /**
- * Gets the colour for an about page based on its pathname.
+ * Gets the colour for an about: page based on its pathname.
  *
- * @param {string} pathname - The pathname of the about page.
- * @returns {{ colour: colour; reason: string }} The colour information for the
- *   about page.
+ * @param {string} pathname - The pathname of the about page (e.g., 'config').
+ * @returns {{ colour: colour; reason: string }} Object containing the
+ *   appropriate colour and reason code for the about page.
  */
-function getAboutPageColour(pathname) {
+function getAboutPageMeta(pathname) {
 	if (aboutPageColour[pathname]?.[cache.scheme]) {
 		return {
 			colour: new colour(aboutPageColour[pathname][cache.scheme]),
@@ -389,13 +411,13 @@ function getAboutPageColour(pathname) {
 }
 
 /**
- * Gets the colour for a Mozilla page based on its hostname.
+ * Gets the colour for a Mozilla domain page based on its hostname.
  *
  * @param {string} hostname - The hostname of the Mozilla page.
- * @returns {{ colour: colour; reason: string }} The colour information for the
- *   Mozilla page.
+ * @returns {{ colour: colour; reason: string }} Object containing the
+ *   appropriate colour and reason code for the Mozilla page.
  */
-function getMozillaPageColour(hostname) {
+function getMozillaPageMeta(hostname) {
 	if (mozillaPageColour[hostname]?.[cache.scheme]) {
 		return {
 			colour: new colour(mozillaPageColour[hostname][cache.scheme]),
@@ -417,13 +439,15 @@ function getMozillaPageColour(hostname) {
 }
 
 /**
- * Gets the colour for an addon page based on its URL.
+ * Gets the colour for an extension page based on its URL.
  *
- * @param {string} url - The URL of the addon page.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>} The
- *   colour information for the addon page.
+ * Attempts to identify the extension and apply any configured policy colour.
+ *
+ * @param {string} url - The moz-extension:// URL of the extension page.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Object
+ *   containing the colour, reason code, and optional extension ID.
  */
-async function getAddonPageColour(url) {
+async function getAddonPageMeta(url) {
 	const addonId = await getAddonId(url);
 	if (!addonId) return { colour: new colour("ADDON"), reason: "ADDON" };
 	const policy = pref.getPolicy(addonId).policy;
@@ -441,12 +465,12 @@ async function getAddonPageColour(url) {
 }
 
 /**
- * Applies given colour to the browser frame of a tab.
+ * Applies the given colour to the browser frame of a tab's window.
  *
- * Colour will be adjusted until the contrast ratio is adequate, and it will be
- * stored in `current.info`.
+ * Handles colour code resolution, contrast correction, and applies the theme
+ * using either compatibility mode or full theme API based on preferences.
  *
- * @param {tabs.Tab} tab - The tab in a window, whose frame is being changed.
+ * @param {tabs.Tab} tab - The active tab whose window frame is being changed.
  * @param {colour} colour - The colour to apply to the frame.
  */
 function setFrameColour(tab, colour) {
@@ -497,16 +521,18 @@ function setFrameColour(tab, colour) {
 }
 
 /**
- * Applies theme colour to the tab (theme API not supported).
+ * Applies theme colour to a tab using content script (compatibility mode).
  *
- * @param {tabs.Tab} tab - The tab to apply the theme color to.
- * @param {colour} colour - The colour to apply.
+ * Used when the theme API is not supported or compatibility mode is enabled.
+ *
+ * @param {tabs.Tab} tab - The tab to apply the theme colour to.
+ * @param {colour} colour - The colour to apply with brightness adjustment.
  */
 async function setTabThemeColour(tab, colour) {
 	try {
 		await browser.tabs.sendMessage(tab.id, {
 			header: "SET_THEME_COLOUR",
-			colour: colour.dim(pref.tabbar).toRGBA(),
+			colour: colour.brightness(pref.tabbar).toRGBA(),
 		});
 	} catch (error) {
 		console.warn("Could not apply theme colour to tab:", tab.url);
@@ -514,11 +540,14 @@ async function setTabThemeColour(tab, colour) {
 }
 
 /**
- * Constructs a theme and applies it to a given window.
+ * Constructs and applies a complete browser theme to a window.
  *
- * @param {number} windowId - The ID of the window.
- * @param {colour} colour - Colour of the frame.
- * @param {string} colourScheme - `light` or `dark`.
+ * Creates theme object with adaptive colours based on preferences and applies
+ * it using the WebExtensions theme API.
+ *
+ * @param {number} windowId - The ID of the target window.
+ * @param {colour} colour - The base colour for theme generation.
+ * @param {"light" | "dark"} colourScheme - The colour scheme to apply.
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {
@@ -526,42 +555,54 @@ function applyTheme(windowId, colour, colourScheme) {
 			colors: {
 				// adaptive
 				button_background_active: colour
-					.dim(-1.5 * pref.tabSelected)
+					.brightness(-1.5 * pref.tabSelected)
 					.toRGBA(),
-				frame: colour.dim(-1.5 * pref.tabbar).toRGBA(),
-				frame_inactive: colour.dim(-1.5 * pref.tabbar).toRGBA(),
+				frame: colour.brightness(-1.5 * pref.tabbar).toRGBA(),
+				frame_inactive: colour.brightness(-1.5 * pref.tabbar).toRGBA(),
 				ntp_background: colourCode.HOME[cache.scheme].toRGBA(),
-				popup: colour.dim(-1.5 * pref.popup).toRGBA(),
+				popup: colour.brightness(-1.5 * pref.popup).toRGBA(),
 				popup_border: colour
-					.dim(-1.5 * (pref.popup + pref.popupBorder))
+					.brightness(-1.5 * (pref.popup + pref.popupBorder))
 					.toRGBA(),
-				sidebar: colour.dim(-1.5 * pref.sidebar).toRGBA(),
+				sidebar: colour.brightness(-1.5 * pref.sidebar).toRGBA(),
 				sidebar_border: colour
-					.dim(-1.5 * (pref.sidebar + pref.sidebarBorder))
+					.brightness(-1.5 * (pref.sidebar + pref.sidebarBorder))
 					.toRGBA(),
 				tab_line: colour
-					.dim(-1.5 * (pref.tabSelectedBorder + pref.tabSelected))
+					.brightness(
+						-1.5 * (pref.tabSelectedBorder + pref.tabSelected),
+					)
 					.toRGBA(),
-				tab_selected: colour.dim(-1.5 * pref.tabSelected).toRGBA(),
-				toolbar: colour.dim(-1.5 * pref.toolbar).toRGBA(),
+				tab_selected: colour
+					.brightness(-1.5 * pref.tabSelected)
+					.toRGBA(),
+				toolbar: colour.brightness(-1.5 * pref.toolbar).toRGBA(),
 				toolbar_bottom_separator:
 					pref.toolbarBorder === 0
 						? "transparent"
 						: colour
-								.dim(-1.5 * (pref.toolbarBorder + pref.toolbar))
+								.brightness(
+									-1.5 * (pref.toolbarBorder + pref.toolbar),
+								)
 								.toRGBA(),
-				toolbar_field: colour.dim(-1.5 * pref.toolbarField).toRGBA(),
+				toolbar_field: colour
+					.brightness(-1.5 * pref.toolbarField)
+					.toRGBA(),
 				toolbar_field_border: colour
-					.dim(-1.5 * (pref.toolbarFieldBorder + pref.toolbarField))
+					.brightness(
+						-1.5 * (pref.toolbarFieldBorder + pref.toolbarField),
+					)
 					.toRGBA(),
 				toolbar_field_focus: colour
-					.dim(-1.5 * pref.toolbarFieldOnFocus)
+					.brightness(-1.5 * pref.toolbarFieldOnFocus)
 					.toRGBA(),
 				toolbar_top_separator:
 					pref.tabbarBorder === 0
 						? "transparent"
 						: colour
-								.dim(-1.5 * (pref.tabbarBorder + pref.tabbar))
+								.brightness(
+									-1.5 * (pref.tabbarBorder + pref.tabbar),
+								)
 								.toRGBA(),
 				// static
 				icons: "rgb(0, 0, 0)",
@@ -591,40 +632,44 @@ function applyTheme(windowId, colour, colourScheme) {
 		const theme = {
 			colors: {
 				// adaptive
-				button_background_active: colour.dim(pref.tabSelected).toRGBA(),
-				frame: colour.dim(pref.tabbar).toRGBA(),
-				frame_inactive: colour.dim(pref.tabbar).toRGBA(),
-				ntp_background: colourCode.HOME[cache.scheme].toRGBA(),
-				popup: colour.dim(pref.popup).toRGBA(),
-				popup_border: colour
-					.dim(pref.popup + pref.popupBorder)
+				button_background_active: colour
+					.brightness(pref.tabSelected)
 					.toRGBA(),
-				sidebar: colour.dim(pref.sidebar).toRGBA(),
+				frame: colour.brightness(pref.tabbar).toRGBA(),
+				frame_inactive: colour.brightness(pref.tabbar).toRGBA(),
+				ntp_background: colourCode.HOME[cache.scheme].toRGBA(),
+				popup: colour.brightness(pref.popup).toRGBA(),
+				popup_border: colour
+					.brightness(pref.popup + pref.popupBorder)
+					.toRGBA(),
+				sidebar: colour.brightness(pref.sidebar).toRGBA(),
 				sidebar_border: colour
-					.dim(pref.sidebar + pref.sidebarBorder)
+					.brightness(pref.sidebar + pref.sidebarBorder)
 					.toRGBA(),
 				tab_line: colour
-					.dim(pref.tabSelectedBorder + pref.tabSelected)
+					.brightness(pref.tabSelectedBorder + pref.tabSelected)
 					.toRGBA(),
-				tab_selected: colour.dim(pref.tabSelected).toRGBA(),
-				toolbar: colour.dim(pref.toolbar).toRGBA(),
+				tab_selected: colour.brightness(pref.tabSelected).toRGBA(),
+				toolbar: colour.brightness(pref.toolbar).toRGBA(),
 				toolbar_bottom_separator:
 					pref.toolbarBorder === 0
 						? "transparent"
 						: colour
-								.dim(pref.toolbarBorder + pref.toolbar)
+								.brightness(pref.toolbarBorder + pref.toolbar)
 								.toRGBA(),
-				toolbar_field: colour.dim(pref.toolbarField).toRGBA(),
+				toolbar_field: colour.brightness(pref.toolbarField).toRGBA(),
 				toolbar_field_border: colour
-					.dim(pref.toolbarFieldBorder + pref.toolbarField)
+					.brightness(pref.toolbarFieldBorder + pref.toolbarField)
 					.toRGBA(),
 				toolbar_field_focus: colour
-					.dim(pref.toolbarFieldOnFocus)
+					.brightness(pref.toolbarFieldOnFocus)
 					.toRGBA(),
 				toolbar_top_separator:
 					pref.tabbarBorder === 0
 						? "transparent"
-						: colour.dim(pref.tabbarBorder + pref.tabbar).toRGBA(),
+						: colour
+								.brightness(pref.tabbarBorder + pref.tabbar)
+								.toRGBA(),
 				// static
 				icons: "rgb(255, 255, 255)",
 				ntp_text: "rgb(255, 255, 255)",

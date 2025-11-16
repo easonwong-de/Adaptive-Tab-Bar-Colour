@@ -70,22 +70,24 @@ export default class preference {
 		version: addonVersion,
 	};
 
-	/** Loads the preferences from the browser storage to the instance. */
+	/** Loads preferences from browser storage into this instance. */
 	async load() {
 		this.#content = await browser.storage.local.get();
 	}
 
-	/** Stores the preferences from the instance to the browser storage. */
+	/** Saves preferences from this instance to browser storage. */
 	async save() {
 		await browser.storage.local.set(this.#content);
 	}
 
 	/**
-	 * Validates that each property in the `#prefContent` object has the
-	 * expected data type.
+	 * Validates that preferences content has the correct structure and types.
 	 *
-	 * @returns {boolean} Returns `true` if all properties have the correct data
-	 *   types, otherwise `false`.
+	 * Checks that all properties exist and have the expected data types
+	 * compared to the default content.
+	 *
+	 * @returns {boolean} `true` if all properties have correct types, `false`
+	 *   otherwise.
 	 */
 	valid() {
 		if (
@@ -101,13 +103,15 @@ export default class preference {
 	}
 
 	/**
-	 * Resets a single preference if a valid key is specified.
+	 * Resets preferences to default values.
 	 *
-	 * Resets all preferences if the key is not specified or invalid.
+	 * If a valid key is provided, resets only that preference. Otherwise,
+	 * resets all preferences to their default values.
 	 *
-	 * @param {string | null} key The key of the preference to reset.
+	 * @param {string | undefined} [key=undefined] - The preference key to
+	 *   reset, or `undefined` to reset all preferences. Default is `undefined`
 	 */
-	reset(key = null) {
+	reset(key = undefined) {
 		if (key in this.#defaultContent) {
 			this.#content[key] = this.#defaultContent[key];
 		} else {
@@ -119,11 +123,10 @@ export default class preference {
 	}
 
 	/**
-	 * Normalises the preferences content to a consistent format.
+	 * Normalises preferences content to ensure compatibility and consistency.
 	 *
-	 * If the existing preferences don't have a version number, date back before
-	 * v2.0, or has the version number of 2.2.1, the default pref will overwrite
-	 * the old pref.
+	 * Handles version migrations, validates numeric preferences, and ensures
+	 * compatibility mode is enabled when theme API is not supported.
 	 */
 	async normalise() {
 		if (
@@ -238,21 +241,20 @@ export default class preference {
 	}
 
 	/**
-	 * Converts the pref to a JSON string.
+	 * Converts preferences to a JSON string.
 	 *
-	 * @returns The JSON string of the pref.
+	 * @returns {string} The JSON string representation of the preferences.
 	 */
 	prefToJSON() {
 		return JSON.stringify(this.#content);
 	}
 
 	/**
-	 * Loads pref from a JSON string and normalises it. Returns `false` if the
-	 * JSON string is invalid.
+	 * Loads preferences from a JSON string and normalises them.
 	 *
-	 * @param {string} JSONString The JSON string to load pref from.
-	 * @returns `true` if the JSON string is converted to the pref, otherwise
-	 *   `false`.
+	 * @param {string} JSONString - The JSON string to parse and load.
+	 * @returns {Promise<boolean>} `true` if successfully parsed and loaded,
+	 *   `false` if the JSON string is invalid.
 	 */
 	async JSONToPref(JSONString) {
 		try {
@@ -270,8 +272,8 @@ export default class preference {
 	/**
 	 * Adds a policy to the site list.
 	 *
-	 * @param {object} policy - The policy to add.
-	 * @returns The ID of the policy.
+	 * @param {object} policy - The policy object to add.
+	 * @returns {number} The assigned ID of the added policy.
 	 */
 	addPolicy(policy) {
 		let id = 1;
@@ -281,75 +283,77 @@ export default class preference {
 	}
 
 	/**
-	 * Sets a certain policy to a given ID.
+	 * Sets a policy at the specified ID.
 	 *
-	 * @param {number} id - The ID of the policy.
-	 * @param {object} policy - The new policy.
+	 * @param {number} id - The ID where to set the policy.
+	 * @param {object} policy - The policy object to set.
 	 */
 	setPolicy(id, policy) {
 		this.#content.siteList[id] = policy;
 	}
 
 	/**
-	 * Removes a policy from the site list by setting the policy to `null`.
+	 * Removes a policy from the site list by setting it to `null`.
 	 *
-	 * @param {number} id - The ID of a policy.
+	 * @param {number} id - The ID of the policy to remove.
 	 */
 	removePolicy(id) {
 		this.#content.siteList[id] = null;
 	}
 
 	/**
-	 * Finds the most recently created policy from the site list that matches
-	 * the given input.
+	 * Finds the most recently created policy that matches the given input.
 	 *
-	 * For URL header types, policy header supports:
+	 * For URL header types, supports:
 	 *
-	 * - Full URL with or w/o trailing slash
-	 * - Regex
-	 * - Wildcard
+	 * - Full URL with or without trailing slash
+	 * - Regular expressions
+	 * - Wildcard patterns:
 	 *
-	 *   - `**` matches strings of any length
+	 *   - `**` matches any string of any length
 	 *   - `*` matches any characters except `/`, `.`, and `:`
 	 *   - `?` matches any single character
-	 *   - Scheme (e.g. `https://`) is optional
-	 * - Hostname
+	 *   - Scheme (e.g., `https://`) is optional
+	 * - Hostname matching
 	 *
-	 * For addon ID header types, performs exact string matching.
+	 * For add-on ID header types, performs exact string matching.
 	 *
-	 * @param {string} input - The site URL or addon ID to match against the
-	 *   policy headers.
-	 * @returns {{ id: number; policy: object | undefined }} An object
-	 *   containing the policy ID (0 if not found) and the policy.
+	 * @param {string} input - The site URL or add-on ID to match.
+	 * @returns {{ id: number; policy: object | undefined }} Object containing
+	 *   the matched policy ID (0 if not found) and the policy object.
 	 */
 	getPolicy(input) {
-		let id = 0;
-		let policy;
-		for (const tempId in this.#content.siteList) {
-			policy = this.#content.siteList[tempId];
-			if (!policy || policy?.header === "") {
-				continue;
-			} else if (
-				policy.headerType === "ADDON_ID" &&
-				policy.header === input
-			) {
-				id = +tempId;
-				break;
-			} else if (
-				policy.headerType === "URL" &&
-				(policy.header === input ||
-					policy.header === `${input}/` ||
-					this.#testRegex(input, policy.header) ||
-					this.#testWildcard(input, policy.header) ||
-					this.#testHostname(input, policy.header))
-			) {
-				id = +tempId;
-				continue;
+		let matchedId = 0;
+		let matchedPolicy;
+		for (const id in this.#content.siteList) {
+			const policy = this.#content.siteList[id];
+			if (!policy || policy?.header === "") continue;
+			const isMatch =
+				policy.headerType === "ADDON_ID"
+					? policy.header === input
+					: policy.headerType === "URL" &&
+						(policy.header === input ||
+							policy.header === `${input}/` ||
+							this.#testRegex(input, policy.header) ||
+							this.#testWildcard(input, policy.header) ||
+							this.#testHostname(input, policy.header));
+			if (isMatch) {
+				matchedId = +id;
+				matchedPolicy = policy;
 			}
 		}
-		return { id, policy };
+		return { id: matchedId, policy: matchedPolicy };
 	}
 
+	/**
+	 * Tests if a URL matches a regular expression pattern.
+	 *
+	 * @private
+	 * @param {string} url - The URL to test.
+	 * @param {string} regex - The regular expression pattern.
+	 * @returns {boolean} `true` if the URL matches the pattern, `false`
+	 *   otherwise.
+	 */
 	#testRegex(url, regex) {
 		try {
 			return new RegExp(`^${regex}$`, "i").test(url);
@@ -358,8 +362,21 @@ export default class preference {
 		}
 	}
 
+	/**
+	 * Tests if a URL matches a wildcard pattern.
+	 *
+	 * Converts wildcard patterns to regular expressions and tests the URL.
+	 * Supports `**` (match all), `*` (match except `/.:`) and `?` (single
+	 * char).
+	 *
+	 * @private
+	 * @param {string} url - The URL to test.
+	 * @param {string} wildcard - The wildcard pattern.
+	 * @returns {boolean} `true` if the URL matches the pattern, `false`
+	 *   otherwise.
+	 */
 	#testWildcard(url, wildcard) {
-		if (wildcard.includes("*") && wildcard.includes("?")) {
+		if (wildcard.includes("*") || wildcard.includes("?")) {
 			try {
 				const wildcardPattern = wildcard
 					.replace(/[.+^${}()|[\]\\]/g, "\\$&")
@@ -378,6 +395,15 @@ export default class preference {
 		}
 	}
 
+	/**
+	 * Tests if a URL matches a specific hostname.
+	 *
+	 * @private
+	 * @param {string} url - The URL to test.
+	 * @param {string} hostname - The hostname to match.
+	 * @returns {boolean} `true` if the URL's hostname matches, `false`
+	 *   otherwise.
+	 */
 	#testHostname(url, hostname) {
 		try {
 			return hostname === new URL(url).hostname;
@@ -387,12 +413,17 @@ export default class preference {
 	}
 
 	/**
-	 * Validates and adjusts a numeric preference based on given constraints.
+	 * Validates and adjusts a numeric preference within constraints.
 	 *
-	 * @param {number} num The number to validate.
-	 * @param {number} min The minimum allowed value.
-	 * @param {number} max The maximum allowed value.
-	 * @param {number} step The step size for rounding.
+	 * Handles percentage conversion, applies min/max bounds, and rounds to the
+	 * nearest step value.
+	 *
+	 * @private
+	 * @param {number} num - The number to validate.
+	 * @param {object} constraints - The validation constraints.
+	 * @param {number} constraints.min - The minimum allowed value.
+	 * @param {number} constraints.max - The maximum allowed value.
+	 * @param {number} constraints.step - The step size for rounding.
 	 * @returns {number} The validated and adjusted number.
 	 */
 	#validateNumericPref(num, { min, max, step }) {
@@ -407,202 +438,452 @@ export default class preference {
 		return Math.round(num);
 	}
 
+	/**
+	 * Gets whether dark/light scheme switching is allowed.
+	 *
+	 * @returns {boolean} `true` if scheme switching is allowed.
+	 */
 	get allowDarkLight() {
 		return this.#content.allowDarkLight;
 	}
 
+	/**
+	 * Sets whether dark/light scheme switching is allowed.
+	 *
+	 * @param {boolean} value - Whether to allow scheme switching.
+	 */
 	set allowDarkLight(value) {
 		this.#content.allowDarkLight = value;
 	}
 
+	/**
+	 * Gets whether dynamic colour extraction is enabled.
+	 *
+	 * @returns {boolean} `true` if dynamic colour extraction is enabled.
+	 */
 	get dynamic() {
 		return this.#content.dynamic;
 	}
 
+	/**
+	 * Sets whether dynamic colour extraction is enabled.
+	 *
+	 * @param {boolean} value - Whether to enable dynamic colour extraction.
+	 */
 	set dynamic(value) {
 		this.#content.dynamic = value;
 	}
 
+	/**
+	 * Gets whether theme colour should be ignored by default.
+	 *
+	 * @returns {boolean} `true` if theme colours are ignored by default.
+	 */
 	get noThemeColour() {
 		return this.#content.noThemeColour;
 	}
 
+	/**
+	 * Sets whether theme colour should be ignored by default.
+	 *
+	 * @param {boolean} value - Whether to ignore theme colours by default.
+	 */
 	set noThemeColour(value) {
 		this.#content.noThemeColour = value;
 	}
 
+	/**
+	 * Gets whether compatibility mode is enabled.
+	 *
+	 * @returns {boolean} `true` if compatibility mode is enabled.
+	 */
 	get compatibilityMode() {
 		return this.#content.compatibilityMode;
 	}
 
+	/**
+	 * Sets whether compatibility mode is enabled.
+	 *
+	 * @param {boolean} value - Whether to enable compatibility mode.
+	 */
 	set compatibilityMode(value) {
 		this.#content.compatibilityMode = value;
 	}
 
+	/**
+	 * Gets the tab bar brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get tabbar() {
 		return this.#content.tabbar;
 	}
 
+	/**
+	 * Sets the tab bar brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set tabbar(value) {
 		this.#content.tabbar = value;
 	}
 
+	/**
+	 * Gets the tab bar border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get tabbarBorder() {
 		return this.#content.tabbarBorder;
 	}
 
+	/**
+	 * Sets the tab bar border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set tabbarBorder(value) {
 		this.#content.tabbarBorder = value;
 	}
 
+	/**
+	 * Gets the selected tab brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get tabSelected() {
 		return this.#content.tabSelected;
 	}
 
+	/**
+	 * Sets the selected tab brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set tabSelected(value) {
 		this.#content.tabSelected = value;
 	}
 
+	/**
+	 * Gets the selected tab border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get tabSelectedBorder() {
 		return this.#content.tabSelectedBorder;
 	}
 
+	/**
+	 * Sets the selected tab border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set tabSelectedBorder(value) {
 		this.#content.tabSelectedBorder = value;
 	}
 
+	/**
+	 * Gets the toolbar brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get toolbar() {
 		return this.#content.toolbar;
 	}
 
+	/**
+	 * Sets the toolbar brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set toolbar(value) {
 		this.#content.toolbar = value;
 	}
 
+	/**
+	 * Gets the toolbar border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get toolbarBorder() {
 		return this.#content.toolbarBorder;
 	}
 
+	/**
+	 * Sets the toolbar border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set toolbarBorder(value) {
 		this.#content.toolbarBorder = value;
 	}
 
+	/**
+	 * Gets the toolbar field brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get toolbarField() {
 		return this.#content.toolbarField;
 	}
 
+	/**
+	 * Sets the toolbar field brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set toolbarField(value) {
 		this.#content.toolbarField = value;
 	}
 
+	/**
+	 * Gets the toolbar field border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get toolbarFieldBorder() {
 		return this.#content.toolbarFieldBorder;
 	}
 
+	/**
+	 * Sets the toolbar field border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set toolbarFieldBorder(value) {
 		this.#content.toolbarFieldBorder = value;
 	}
 
+	/**
+	 * Gets the toolbar field on focus brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get toolbarFieldOnFocus() {
 		return this.#content.toolbarFieldOnFocus;
 	}
 
+	/**
+	 * Sets the toolbar field on focus brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set toolbarFieldOnFocus(value) {
 		this.#content.toolbarFieldOnFocus = value;
 	}
 
+	/**
+	 * Gets the sidebar brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get sidebar() {
 		return this.#content.sidebar;
 	}
 
+	/**
+	 * Sets the sidebar brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set sidebar(value) {
 		this.#content.sidebar = value;
 	}
 
+	/**
+	 * Gets the sidebar border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get sidebarBorder() {
 		return this.#content.sidebarBorder;
 	}
 
+	/**
+	 * Sets the sidebar border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set sidebarBorder(value) {
 		this.#content.sidebarBorder = value;
 	}
 
+	/**
+	 * Gets the popup brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get popup() {
 		return this.#content.popup;
 	}
 
+	/**
+	 * Sets the popup brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set popup(value) {
 		this.#content.popup = value;
 	}
 
+	/**
+	 * Gets the popup border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
 	get popupBorder() {
 		return this.#content.popupBorder;
 	}
 
+	/**
+	 * Sets the popup border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
 	set popupBorder(value) {
 		this.#content.popupBorder = value;
 	}
 
+	/**
+	 * Gets the minimum contrast ratio for light theme (times 10).
+	 *
+	 * @returns {number} The minimum contrast ratio (0-210).
+	 */
 	get minContrast_light() {
 		return this.#content.minContrast_light;
 	}
 
+	/**
+	 * Sets the minimum contrast ratio for light theme (times 10).
+	 *
+	 * @param {number} value - The minimum contrast ratio (0-210).
+	 */
 	set minContrast_light(value) {
 		this.#content.minContrast_light = value;
 	}
 
+	/**
+	 * Gets the minimum contrast ratio for dark theme (times 10).
+	 *
+	 * @returns {number} The minimum contrast ratio (0-210).
+	 */
 	get minContrast_dark() {
 		return this.#content.minContrast_dark;
 	}
 
+	/**
+	 * Sets the minimum contrast ratio for dark theme (times 10).
+	 *
+	 * @param {number} value - The minimum contrast ratio (0-210).
+	 */
 	set minContrast_dark(value) {
 		this.#content.minContrast_dark = value;
 	}
 
+	/**
+	 * Gets the home background colour for light theme.
+	 *
+	 * @returns {string} The background colour as a hex string.
+	 */
 	get homeBackground_light() {
 		return this.#content.homeBackground_light;
 	}
 
+	/**
+	 * Sets the home background colour for light theme.
+	 *
+	 * @param {string} value - The background colour as a hex string.
+	 */
 	set homeBackground_light(value) {
 		this.#content.homeBackground_light = value;
 	}
 
+	/**
+	 * Gets the home background colour for dark theme.
+	 *
+	 * @returns {string} The background colour as a hex string.
+	 */
 	get homeBackground_dark() {
 		return this.#content.homeBackground_dark;
 	}
 
+	/**
+	 * Sets the home background colour for dark theme.
+	 *
+	 * @param {string} value - The background colour as a hex string.
+	 */
 	set homeBackground_dark(value) {
 		this.#content.homeBackground_dark = value;
 	}
 
+	/**
+	 * Gets the fallback colour for light theme.
+	 *
+	 * @returns {string} The fallback colour as a hex string.
+	 */
 	get fallbackColour_light() {
 		return this.#content.fallbackColour_light;
 	}
 
+	/**
+	 * Sets the fallback colour for light theme.
+	 *
+	 * @param {string} value - The fallback colour as a hex string.
+	 */
 	set fallbackColour_light(value) {
 		this.#content.fallbackColour_light = value;
 	}
 
+	/**
+	 * Gets the fallback colour for dark theme.
+	 *
+	 * @returns {string} The fallback colour as a hex string.
+	 */
 	get fallbackColour_dark() {
 		return this.#content.fallbackColour_dark;
 	}
 
+	/**
+	 * Sets the fallback colour for dark theme.
+	 *
+	 * @param {string} value - The fallback colour as a hex string.
+	 */
 	set fallbackColour_dark(value) {
 		this.#content.fallbackColour_dark = value;
 	}
 
+	/**
+	 * Gets the site-specific policies list.
+	 *
+	 * @returns {object} The site list containing ID-keyed policy objects.
+	 */
 	get siteList() {
 		return this.#content.siteList;
 	}
 
+	/**
+	 * Sets the site-specific policies list.
+	 *
+	 * @param {object} value - The site list containing ID-keyed policy objects.
+	 */
 	set siteList(value) {
 		this.#content.siteList = value;
 	}
 
+	/**
+	 * Gets the preferences version number.
+	 *
+	 * @returns {number[]} The version as an array of numbers.
+	 */
 	get version() {
 		return this.#content.version;
 	}
 
+	/**
+	 * Sets the preferences version number.
+	 *
+	 * @param {number[]} value - The version as an array of numbers.
+	 */
 	set version(value) {
 		this.#content.version = value;
 	}
