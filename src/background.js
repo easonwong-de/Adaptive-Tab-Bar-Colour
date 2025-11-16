@@ -158,7 +158,7 @@ async function handleMessage(message, sender) {
 			updateTab(tab);
 			break;
 		case "UPDATE_COLOUR":
-			const tabMeta = parseTabMeta(
+			const tabMeta = parseTabColour(
 				cache.policy[tab.windowId],
 				message.colour,
 			);
@@ -220,7 +220,7 @@ async function getTabMeta(tab) {
 						? policy.value
 						: undefined,
 			});
-			return parseTabMeta(policy, tabColour);
+			return parseTabColour(policy, tabColour);
 		} catch (error) {
 			console.warn("Failed to connect to", tab.url);
 			return await getProtectedPageMeta(tab);
@@ -239,7 +239,7 @@ async function getTabMeta(tab) {
  * @returns {Promise<{ colour: colour; reason: string info?: string; }>} Object
  *   containing the determined colour, reason code, and optional info.
  */
-function parseTabMeta(policy, { theme, page, query }) {
+function parseTabColour(policy, { theme, page, query }) {
 	const parseThemeColour = () => new colour(theme[cache.scheme], false);
 	const parsePageColour = () => {
 		let pageColour = new colour();
