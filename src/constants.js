@@ -68,3 +68,32 @@ export const recommendedAddonPageColour = Object.freeze({
 	"{aecec67f-0d10-4fa7-b7c7-609a2db280cf}": "#262626", // Violentmonkey
 	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": "#1c1b1f", // Clear Browsing Data
 });
+
+/** Default content of the preference */
+export const defaultPreference = Object.freeze({
+	tabbar: 0,
+	tabbarBorder: 0,
+	tabSelected: 10,
+	tabSelectedBorder: 0,
+	toolbar: 0,
+	toolbarBorder: 0,
+	toolbarField: 5,
+	toolbarFieldBorder: 5,
+	toolbarFieldOnFocus: 5,
+	sidebar: 5,
+	sidebarBorder: 5,
+	popup: 5,
+	popupBorder: 5,
+	minContrast_light: 90,
+	minContrast_dark: 45,
+	allowDarkLight: true,
+	dynamic: true,
+	noThemeColour: true,
+	compatibilityMode: default_compatibilityMode,
+	homeBackground_light: default_homeBackground_light,
+	homeBackground_dark: default_homeBackground_dark,
+	fallbackColour_light: default_fallbackColour_light,
+	fallbackColour_dark: default_fallbackColour_dark,
+	siteList: {},
+	version: addonVersion,
+});

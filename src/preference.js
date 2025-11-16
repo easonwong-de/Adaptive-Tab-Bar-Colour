@@ -7,6 +7,7 @@ import {
 	default_fallbackColour_light,
 	default_fallbackColour_dark,
 	default_compatibilityMode,
+	defaultPreference,
 } from "./constants.js";
 import colour from "./colour.js";
 import { supportsThemeAPI } from "./utility.js";
@@ -14,35 +15,6 @@ import { supportsThemeAPI } from "./utility.js";
 export default class preference {
 	/** The content of the preference */
 	#content = {
-		tabbar: 0,
-		tabbarBorder: 0,
-		tabSelected: 10,
-		tabSelectedBorder: 0,
-		toolbar: 0,
-		toolbarBorder: 0,
-		toolbarField: 5,
-		toolbarFieldBorder: 5,
-		toolbarFieldOnFocus: 5,
-		sidebar: 5,
-		sidebarBorder: 5,
-		popup: 5,
-		popupBorder: 5,
-		minContrast_light: 90,
-		minContrast_dark: 45,
-		allowDarkLight: true,
-		dynamic: true,
-		noThemeColour: true,
-		compatibilityMode: default_compatibilityMode,
-		homeBackground_light: default_homeBackground_light,
-		homeBackground_dark: default_homeBackground_dark,
-		fallbackColour_light: default_fallbackColour_light,
-		fallbackColour_dark: default_fallbackColour_dark,
-		siteList: {},
-		version: addonVersion,
-	};
-
-	/** Default content of the preference */
-	#defaultContent = {
 		tabbar: 0,
 		tabbarBorder: 0,
 		tabSelected: 10,
@@ -92,11 +64,11 @@ export default class preference {
 	valid() {
 		if (
 			Object.keys(this.#content).length !==
-			Object.keys(this.#defaultContent).length
+			Object.keys(defaultPreference).length
 		)
 			return false;
-		for (const key in this.#defaultContent) {
-			if (typeof this.#content[key] !== typeof this.#defaultContent[key])
+		for (const key in defaultPreference) {
+			if (typeof this.#content[key] !== typeof defaultPreference[key])
 				return false;
 		}
 		return true;
@@ -112,12 +84,12 @@ export default class preference {
 	 *   reset, or `undefined` to reset all preferences. Default is `undefined`
 	 */
 	reset(key = undefined) {
-		if (key in this.#defaultContent) {
-			this.#content[key] = this.#defaultContent[key];
+		if (key in defaultPreference) {
+			this.#content[key] = defaultPreference[key];
 		} else {
 			this.#content = {};
-			for (const key in this.#defaultContent) {
-				this.#content[key] = this.#defaultContent[key];
+			for (const key in defaultPreference) {
+				this.#content[key] = defaultPreference[key];
 			}
 		}
 	}
@@ -140,11 +112,11 @@ export default class preference {
 		}
 		const oldContent = Object.assign({}, this.#content);
 		this.#content = {};
-		for (const key in this.#defaultContent) {
+		for (const key in defaultPreference) {
 			this.#content[key] =
-				typeof oldContent[key] === typeof this.#defaultContent[key]
+				typeof oldContent[key] === typeof defaultPreference[key]
 					? oldContent[key]
-					: this.#defaultContent[key];
+					: defaultPreference[key];
 		}
 		// Updating from before v2.2
 		if (this.#content.version < [2, 2]) {
