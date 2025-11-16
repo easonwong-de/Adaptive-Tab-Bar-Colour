@@ -5,7 +5,7 @@ const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 /**
  * Registers a listener function that triggers when the colour scheme changes.
  *
- * @param {Function} listener The function to be called when a scheme change
+ * @param {Function} listener - The function to be called when a scheme change
  *   event occurs.
  */
 export function onSchemeChanged(listener) {
@@ -58,7 +58,7 @@ export async function getCurrentScheme() {
  * attributes, retrieves the localised text using the `msg` function, and
  * assigns it to the element's `textContent`, `title`, or `placeholder`.
  *
- * @param {Document} webDocument The document to localise.
+ * @param {Document} webDocument - The document to localise.
  */
 export function localise(webDocument) {
 	webDocument.querySelectorAll("[data-text]").forEach((element) => {
@@ -75,7 +75,7 @@ export function localise(webDocument) {
 /**
  * Inquires localised messages.
  *
- * @param {string} handle A handle in _locales. If the handle is not found,
+ * @param {string} handle - A handle in _locales. If the handle is not found,
  *   returns `i18n <${handle}>`. If the localisation value is `__EMPTY__`,
  *   returns an empty string.
  */
@@ -106,4 +106,37 @@ export function supportsThemeAPI() {
 			typeof browser.theme.update === "function";
 	}
 	return _supportsThemeAPI;
+}
+
+/**
+ * Retrieves the addon ID from a given URL by matching the UUID with registered
+ * extensions.
+ *
+ * @param {string} url - The URL containing the UUID to match against extension
+ *   host permissions.
+ * @returns {Promise<string | undefined>} The addon ID if found, `undefined`
+ *   otherwise.
+ */
+export async function getAddonId(url) {
+	const uuid = url.split(/\/|\?/)[2];
+	const addonList = await browser.management.getAll();
+	let addonId;
+	for (const addon of addonList) {
+		if (addon.type !== "extension" || !addon.hostPermissions) {
+			continue;
+		} else if (addonId) {
+			break;
+		} else {
+			for (const host of addon.hostPermissions) {
+				if (
+					host.startsWith("moz-extension:") &&
+					uuid === host.split(/\/|\?/)[2]
+				) {
+					addonId = addon.id;
+					break;
+				}
+			}
+		}
+	}
+	return addonId;
 }
