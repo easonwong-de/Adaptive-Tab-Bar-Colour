@@ -1,12 +1,16 @@
-html {
+:root {
 	--accent-colour: #0060df;
 	--colour-0: hsl(0, 0%, 100%);
-	--colour-1: hsl(240, 10%, 95%);
-	--colour-1-5: hsl(240, 13%, 97.5%);
-	--colour-2: hsl(240, 10%, 90%);
-	--colour-3: hsl(240, 10%, 85%);
-	--colour-4: hsl(240, 10%, 80%);
-	--colour-5: hsl(240, 10%, 75%);
+	--colour-1: hsl(0, 0%, 97.5%);
+	--colour-2: hsl(240, 10%, 95%);
+	--colour-3: hsl(240, 13%, 92.5%);
+	--colour-4: hsl(240, 10%, 90%);
+	--colour-5: hsl(240, 10%, 87.5%);
+	--colour-6: hsl(240, 10%, 85%);
+	--colour-7: hsl(240, 10%, 82.5%);
+	--colour-8: hsl(240, 10%, 80%);
+	--colour-9: hsl(240, 10%, 77.5%);
+	--colour-10: hsl(240, 10%, 75%);
 	--link-colour-active: #054096;
 	--link-colour-hover: #0250bb;
 	--link-colour-normal: #0060df;
@@ -18,20 +22,22 @@ html {
 	--transparent-3: hsla(0, 0%, 0%, 25%);
 	--transparent-4: hsla(0, 0%, 0%, 30%);
 	--transparent-5: hsla(0, 0%, 0%, 35%);
-	font-size: 14px;
-	font-family: sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
-	html {
+	:root {
 		--accent-colour: #00ddff;
 		--colour-0: hsl(248, 11%, 15%);
-		--colour-1: hsl(248, 11%, 20%);
-		--colour-1-5: hsl(248, 11%, 17.5%);
-		--colour-2: hsl(248, 11%, 25%);
-		--colour-3: hsl(248, 11%, 30%);
-		--colour-4: hsl(248, 11%, 35%);
-		--colour-5: hsl(248, 11%, 40%);
+		--colour-1: hsl(248, 11%, 17.5%);
+		--colour-2: hsl(248, 11%, 20%);
+		--colour-3: hsl(248, 11%, 22.5%);
+		--colour-4: hsl(248, 11%, 25%);
+		--colour-5: hsl(248, 11%, 27.5%);
+		--colour-6: hsl(248, 11%, 30%);
+		--colour-7: hsl(248, 11%, 32.5%);
+		--colour-8: hsl(248, 11%, 35%);
+		--colour-9: hsl(248, 11%, 37.5%);
+		--colour-10: hsl(248, 11%, 40%);
 		--link-colour-active: #aaf2ff;
 		--link-colour-hover: #80ebff;
 		--link-colour-normal: #00ddff;
@@ -42,18 +48,67 @@ html {
 		--transparent-2: hsla(0, 0%, 100%, 20%);
 		--transparent-3: hsla(0, 0%, 100%, 25%);
 		--transparent-4: hsla(0, 0%, 100%, 30%);
-		--transparent-5: hsla(0, 0%, 100%, 0.35);
+		--transparent-5: hsla(0, 0%, 100%, 35%);
 	}
+}
+
+body {
+	font-size: 14px;
+	line-height: 1.5;
+	font-family:
+		"SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial",
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font: inherit;
+	text-wrap: balance;
+	overflow-wrap: break-word;
+}
+
+p {
+	font: inherit;
+	text-wrap: pretty;
+	overflow-wrap: break-word;
 }
 
 #reinstall-tip {
 	opacity: 0;
-	animation-duration: 0s;
+	animation-duration: 0.5s;
 	animation-delay: 5s;
 	animation-fill-mode: forwards;
 	animation-name: appear;
 	white-space: normal;
-	overflow-wrap: break-word;
 }
 
 @keyframes appear {
@@ -66,13 +121,15 @@ html {
 }
 
 #template,
-.hidden {
+.hidden,
+[hidden] {
 	display: none !important;
 }
 
 .disabled {
 	opacity: 0.5;
 	pointer-events: none;
+
 	* {
 		pointer-events: none;
 	}
@@ -91,6 +148,26 @@ svg {
 	height: 1em;
 }
 
-button {
-	font-size: inherit;
+a {
+	&:link,
+	&:visited {
+		color: var(--link-colour-normal);
+		text-decoration: none;
+	}
+	&:hover {
+		color: var(--link-colour-hover);
+		text-decoration: underline;
+	}
+	&:active {
+		color: var(--link-colour-active);
+		text-decoration: underline;
+	}
+}
+
+hr {
+	margin: 0;
+	border-width: 0;
+	background-color: var(--colour-6);
+	width: 100%;
+	height: 1px;
 }

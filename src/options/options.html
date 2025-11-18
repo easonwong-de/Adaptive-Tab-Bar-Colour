@@ -15,7 +15,7 @@
 		/>
 	</head>
 
-	<body>
+	<body data-tab-switch="tab-switch-1">
 		<div id="template">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -73,30 +73,30 @@
 					</g>
 				</defs>
 			</svg>
-			<div class="section policy colour-policy">
-				<div class="policy-header"></div>
+			<section class="colour-policy">
+				<div class="header"></div>
 				<div></div>
-				<div class="colour-input-wrapper">
-					<input type="text" class="colour-input" value="#333333" />
-					<label class="colour-picker-display"></label>
-					<input type="color" value="#333333" />
+				<div class="colour-input">
+					<label>
+						<input type="color" value="#333333" />
+					</label>
+					<input type="text" value="#333333" />
 				</div>
 				<button data-title="delete">
 					<svg viewBox="0 0 24 24">
 						<use xlink:href="#svg-bin" />
 					</svg>
 				</button>
-			</div>
-			<div class="section policy flexible-policy">
-				<div class="policy-header-input-wrapper">
+			</section>
+			<section class="flexible-policy">
+				<div class="text-input header">
 					<input
 						type="text"
-						class="policy-header-input"
 						data-placeholder="urlDomainOrRegex"
 						data-title="urlDomainOrRegex"
 					/>
 					<div
-						class="policy-header-warning"
+						class="policy-warning"
 						data-title="thisPolicyWillBeIgnored"
 					>
 						<svg viewBox="0 0 24 24">
@@ -104,7 +104,7 @@
 						</svg>
 					</div>
 				</div>
-				<select class="COLOUR">
+				<select data-selection="COLOUR">
 					<option
 						value="COLOUR"
 						data-text="specifyAColour"
@@ -119,26 +119,31 @@
 						data-text="pickColourFromElement"
 					></option>
 				</select>
-				<div class="colour-input-wrapper">
+				<div class="colour-input colour-control">
+					<label>
+						<input type="color" />
+					</label>
+					<div class="text-input">
+						<input
+							type="text"
+							data-placeholder="anyCSSColour"
+							data-title="anyCSSColour"
+						/>
+					</div>
+				</div>
+				<div class="toggle-switch theme-control">
+					<label>
+						<input type="radio" checked />
+						<div data-text="use"></div>
+					</label>
+					<label>
+						<input type="radio" />
+						<div data-text="ignore"></div>
+					</label>
+				</div>
+				<div class="text-input query-control">
 					<input
 						type="text"
-						class="colour-input"
-						data-placeholder="anyCSSColour"
-						data-title="anyCSSColour"
-					/>
-					<label class="colour-picker-display"></label>
-					<input type="color" />
-				</div>
-				<div class="toggle-switch-wrapper theme-colour-switch">
-					<input class="toggle-switch" type="radio" checked />
-					<label class="toggle-switch" data-text="use"></label>
-					<input class="toggle-switch" type="radio" />
-					<label class="toggle-switch" data-text="ignore"></label>
-				</div>
-				<div class="qs-input-wrapper">
-					<input
-						type="text"
-						class="qs-input"
 						data-placeholder="querySelector"
 						data-title="querySelector"
 					/>
@@ -148,736 +153,623 @@
 						<use xlink:href="#svg-bin" />
 					</svg>
 				</button>
-			</div>
+			</section>
 		</div>
-		<div id="settings-wrapper" class="tab-switch-1">
-			<div class="tab-switch-wrapper toggle-switch-wrapper">
-				<input
-					class="toggle-switch"
-					type="radio"
-					name="tab-switch"
-					id="tab-switch-1"
-					checked
-				/>
-				<label
-					for="tab-switch-1"
-					class="toggle-switch"
-					data-text="themeBuilder"
-				></label>
-				<input
-					class="toggle-switch"
-					type="radio"
-					name="tab-switch"
-					id="tab-switch-2"
-				/>
-				<label
-					for="tab-switch-2"
-					class="toggle-switch"
-					data-text="siteList"
-				></label>
-				<input
-					class="toggle-switch"
-					type="radio"
-					name="tab-switch"
-					id="tab-switch-3"
-				/>
-				<label
-					for="tab-switch-3"
-					class="toggle-switch"
-					data-text="advanced"
-				></label>
+		<nav class="toggle-switch tab-switch">
+			<label>
+				<input type="radio" name="tab-switch" checked />
+				<h2 data-text="themeBuilder"></h2>
+			</label>
+			<label>
+				<input type="radio" name="tab-switch" />
+				<h2 data-text="siteList"></h2>
+			</label>
+			<label>
+				<input type="radio" name="tab-switch" />
+				<h2 data-text="advanced"></h2>
+			</label>
+		</nav>
+		<hr />
+		<main>
+			<div id="tab-1">
+				<div class="column">
+					<section>
+						<h3 data-text="selectedTab"></h3>
+						<div
+							class="slider"
+							data-pref="tabSelected"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="background"></h4>
+						<div
+							class="slider"
+							data-pref="tabSelectedBorder"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="border"></h4>
+					</section>
+					<section>
+						<h3 data-text="tabBar"></h3>
+						<div
+							class="slider"
+							data-pref="tabbar"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="background"></h4>
+						<div
+							class="slider"
+							data-pref="tabbarBorder"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4>
+							<span data-text="border"></span>
+							<span
+								title="If “vertical tabs” are enabled, any non-zero value may cause a gap to appear above the window controls, making them harder to reach."
+								style="cursor: help"
+							>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-warning" />
+								</svg>
+							</span>
+						</h4>
+					</section>
+					<section>
+						<h3 data-text="popUp"></h3>
+						<div
+							class="slider"
+							data-pref="popup"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="background"></h4>
+						<div
+							class="slider"
+							data-pref="popupBorder"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="border"></h4>
+					</section>
+				</div>
+				<div class="column">
+					<section>
+						<h3 data-text="urlBar"></h3>
+						<div
+							class="slider"
+							data-pref="toolbarField"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="background"></h4>
+						<div
+							class="slider"
+							data-pref="toolbarFieldOnFocus"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="backgroundOnFocus"></h4>
+						<div
+							class="slider"
+							data-pref="toolbarFieldBorder"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="border"></h4>
+					</section>
+					<section>
+						<h3 data-text="toolbar"></h3>
+						<div
+							class="slider"
+							data-pref="toolbar"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="background"></h4>
+						<div
+							class="slider"
+							data-pref="toolbarBorder"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="border"></h4>
+					</section>
+					<section>
+						<h3 data-text="sidebar"></h3>
+						<div
+							class="slider"
+							data-pref="sidebar"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="background"></h4>
+						<div
+							class="slider"
+							data-pref="sidebarBorder"
+							data-min="-50"
+							data-max="50"
+							data-step="5"
+							data-value="0"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sunset" />
+								</svg>
+							</button>
+							<div class="track percentage"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-sun" />
+								</svg>
+							</button>
+						</div>
+						<h4 data-text="border"></h4>
+					</section>
+				</div>
 			</div>
-			<hr />
-			<div>
-				<div id="tab-1" class="tab grid-two-columns">
-					<div class="column">
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="selectedTab"
-							></div>
-							<div
-								class="slider"
-								data-pref="tabSelected"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="background"
-							></div>
-							<div
-								class="slider"
-								data-pref="tabSelectedBorder"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="border"></div>
-						</div>
-						<div class="section">
-							<div class="section-title" data-text="tabBar"></div>
-							<div
-								class="slider"
-								data-pref="tabbar"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="background"
-							></div>
-							<div
-								class="slider"
-								data-pref="tabbarBorder"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title">
-								<span data-text="border"></span>
-								<span
-									title="If “vertical tabs” are enabled, any non-zero value may cause a gap to appear above the window controls, making them harder to reach."
-									style="cursor: help"
-								>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-warning" />
-									</svg>
-								</span>
-							</div>
-						</div>
-						<div class="section">
-							<div class="section-title" data-text="popUp"></div>
-							<div
-								class="slider"
-								data-pref="popup"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="background"
-							></div>
-							<div
-								class="slider"
-								data-pref="popupBorder"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="border"></div>
-						</div>
-					</div>
-					<div class="column">
-						<div class="section">
-							<div class="section-title" data-text="urlBar"></div>
-							<div
-								class="slider"
-								data-pref="toolbarField"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="background"
-							></div>
-							<div
-								class="slider"
-								data-pref="toolbarFieldOnFocus"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="backgroundOnFocus"
-							></div>
-							<div
-								class="slider"
-								data-pref="toolbarFieldBorder"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="border"></div>
-						</div>
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="toolbar"
-							></div>
-							<div
-								class="slider"
-								data-pref="toolbar"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="background"
-							></div>
-							<div
-								class="slider"
-								data-pref="toolbarBorder"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="border"></div>
-						</div>
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="sidebar"
-							></div>
-							<div
-								class="slider"
-								data-pref="sidebar"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="background"
-							></div>
-							<div
-								class="slider"
-								data-pref="sidebarBorder"
-								data-min="-50"
-								data-max="50"
-								data-step="5"
-								data-value="0"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sunset" />
-									</svg>
-								</button>
-								<div class="slider-body percentage"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-sun" />
-									</svg>
-								</button>
-							</div>
-							<div class="slider-title" data-text="border"></div>
-						</div>
-					</div>
-				</div>
-				<div id="tab-2" class="tab grid-one-column">
-					<div class="list" id="policy-list"></div>
-					<button id="add-new-rule" data-text="addANewRule"></button>
-				</div>
-				<div id="tab-3" class="tab grid-two-columns">
-					<div class="column">
-						<div class="section">
-							<div
-								id="allow-dark-light-title"
-								class="section-title"
-								data-text="allowLightTabBar"
-							></div>
-							<div class="checkbox-wrapper">
+			<div id="tab-2">
+				<div class="list" id="policy-list"></div>
+				<button id="add-new-rule" data-text="addANewRule"></button>
+			</div>
+			<div id="tab-3">
+				<div class="column">
+					<section>
+						<h3
+							id="allow-dark-light-title"
+							data-text="allowLightTabBar"
+						></h3>
+						<div class="checkbox">
+							<label>
 								<input
 									type="checkbox"
 									data-pref="allowDarkLight"
-									id="allow-dark-light"
 								/>
-								<label
+								<span
 									id="allow-dark-light-caption"
-									for="allow-dark-light"
-									class="section-text"
 									data-text="allowDarkTabBarTooltip"
-								></label>
-							</div>
+								></span>
+							</label>
 						</div>
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="dynamicColourUpdate"
-							></div>
-							<div class="checkbox-wrapper">
-								<input
-									id="dynamic"
-									type="checkbox"
-									data-pref="dynamic"
-								/>
-								<label
-									for="dynamic"
-									class="section-text"
-									data-text="dynamicModeTooltip"
-								></label>
-							</div>
+					</section>
+					<section>
+						<h3 data-text="dynamicColourUpdate"></h3>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" data-pref="dynamic" />
+								<span data-text="dynamicModeTooltip"></span>
+							</label>
 						</div>
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="ignoreDesignatedThemeColour"
-							></div>
-							<div class="checkbox-wrapper">
+					</section>
+					<section>
+						<h3 data-text="ignoreDesignatedThemeColour"></h3>
+						<div class="checkbox">
+							<label>
 								<input
-									id="no-theme-color"
 									type="checkbox"
 									data-pref="noThemeColour"
 								/>
-								<label
-									for="no-theme-color"
-									class="section-text"
+								<span
 									data-text="ignoreDesignatedThemeColourTooltip"
-								></label>
-							</div>
+								></span>
+							</label>
 						</div>
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="compatibilityMode"
-							></div>
-							<div class="checkbox-wrapper">
+					</section>
+					<section>
+						<h3 data-text="compatibilityMode"></h3>
+						<div class="checkbox">
+							<label>
 								<input
-									id="compatibility-mode"
 									type="checkbox"
 									data-pref="compatibilityMode"
 								/>
-								<label
-									for="compatibility-mode"
-									class="section-text"
+								<span
 									data-text="compatibilityModeTooltip"
-								></label>
-							</div>
-						</div>
-						<div class="list">
-							<div class="section fixed-policy">
-								<div
-									class="policy-header"
-									data-text="homepageColourLight"
-								></div>
-								<div></div>
-								<div
-									class="colour-input-wrapper"
-									data-pref="homeBackground_light"
-								>
-									<input
-										type="text"
-										class="colour-input"
-										value="#ffffff"
-										data-placeholder="anyCSSColour"
-										data-title="anyCSSColour"
-									/>
-									<label
-										class="colour-picker-display"
-										for="home-bg-light"
-									></label>
-									<input
-										type="color"
-										value="#ffffff"
-										id="home-bg-light"
-									/>
-								</div>
-							</div>
-							<div class="section fixed-policy">
-								<div
-									class="policy-header"
-									data-text="homepageColourDark"
-								></div>
-								<div></div>
-								<div
-									class="colour-input-wrapper"
-									data-pref="homeBackground_dark"
-								>
-									<input
-										type="text"
-										class="colour-input"
-										value="#2b2a33"
-										data-placeholder="anyCSSColour"
-										data-title="anyCSSColour"
-									/>
-									<label
-										class="colour-picker-display"
-										for="home-bg-dark"
-									></label>
-									<input
-										type="color"
-										value="#2b2a33"
-										id="home-bg-dark"
-									/>
-								</div>
-							</div>
-							<div class="section fixed-policy">
-								<div
-									class="policy-header"
-									data-text="fallbackColourLight"
-								></div>
-								<div></div>
-								<div
-									class="colour-input-wrapper"
-									data-pref="fallbackColour_light"
-								>
-									<input
-										type="text"
-										class="colour-input"
-										value="#ffffff"
-										data-placeholder="anyCSSColour"
-										data-title="anyCSSColour"
-									/>
-									<label
-										class="colour-picker-display"
-										for="fallback-cl-light"
-									></label>
-									<input
-										type="color"
-										value="#ffffff"
-										id="fallback-cl-light"
-									/>
-								</div>
-							</div>
-							<div class="section fixed-policy">
-								<div
-									class="policy-header"
-									data-text="fallbackColourDark"
-								></div>
-								<div></div>
-								<div
-									class="colour-input-wrapper"
-									data-pref="fallbackColour_dark"
-								>
-									<input
-										type="text"
-										class="colour-input"
-										value="#2b2a33"
-										data-placeholder="anyCSSColour"
-										data-title="anyCSSColour"
-									/>
-									<label
-										class="colour-picker-display"
-										for="fallback-cl-dark"
-									></label>
-									<input
-										type="color"
-										value="#2b2a33"
-										id="fallback-cl-dark"
-									/>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="column">
-						<div class="section">
-							<div
-								class="section-title"
-								data-text="minimumContrast"
-							></div>
-							<div
-								class="section-text"
-								data-text="minimumContrastTooltip"
-							></div>
-							<div
-								class="slider"
-								data-pref="minContrast_light"
-								data-min="0"
-								data-max="210"
-								data-step="15"
-								data-value="0"
-								data-scale="1"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-circle" />
-									</svg>
-								</button>
-								<div class="slider-body"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-contrast" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="inLightMode"
-							></div>
-							<div
-								class="slider"
-								data-pref="minContrast_dark"
-								data-min="0"
-								data-max="210"
-								data-step="15"
-								data-value="0"
-								data-scale="1"
-							>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-circle" />
-									</svg>
-								</button>
-								<div class="slider-body"></div>
-								<button>
-									<svg viewBox="0 0 24 24">
-										<use xlink:href="#svg-contrast" />
-									</svg>
-								</button>
-							</div>
-							<div
-								class="slider-title"
-								data-text="inDarkMode"
-							></div>
-						</div>
-						<div class="section">
-							<button id="export-pref" class="text-button">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-download" />
-								</svg>
-								<span data-text="exportSettings"></span>
-								<a
-									id="export-pref-link"
-									class="hidden"
-									download="atbc_pref.json"
-								></a>
-							</button>
-							<label for="import-pref-link" class="text-button">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-upload" />
-								</svg>
-								<span data-text="importSettings"></span>
-								<input
-									id="import-pref-link"
-									class="hidden"
-									type="file"
-									accept=".json"
-								/>
+								></span>
 							</label>
-							<button
-								id="reset-theme-builder"
-								class="text-button"
-							>
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-								<span data-text="resetThemeBuilder"></span>
-							</button>
-							<button id="reset-site-list" class="text-button">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-								<span data-text="resetSiteList"></span>
-							</button>
-							<button id="reset-advanced" class="text-button">
-								<svg viewBox="0 0 24 24">
-									<use xlink:href="#svg-reset" />
-								</svg>
-								<span data-text="resetAdvanced"></span>
-							</button>
 						</div>
+					</section>
+					<div class="list">
+						<section class="fixed-policy">
+							<div
+								class="header"
+								data-text="homepageColourLight"
+							></div>
+							<div></div>
+							<div
+								class="colour-input"
+								data-pref="homeBackground_light"
+							>
+								<label>
+									<input type="color" value="#ffffff" />
+								</label>
+								<div class="text-input">
+									<input
+										type="text"
+										value="#ffffff"
+										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
+									/>
+								</div>
+							</div>
+						</section>
+						<section class="fixed-policy">
+							<div
+								class="header"
+								data-text="homepageColourDark"
+							></div>
+							<div></div>
+							<div
+								class="colour-input"
+								data-pref="homeBackground_dark"
+							>
+								<label>
+									<input type="color" value="#2b2a33" />
+								</label>
+								<div class="text-input">
+									<input
+										type="text"
+										value="#2b2a33"
+										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
+									/>
+								</div>
+							</div>
+						</section>
+						<section class="fixed-policy">
+							<div
+								class="header"
+								data-text="fallbackColourLight"
+							></div>
+							<div></div>
+							<div
+								class="colour-input"
+								data-pref="fallbackColour_light"
+							>
+								<label>
+									<input type="color" value="#ffffff" />
+								</label>
+								<div class="text-input">
+									<input
+										type="text"
+										value="#ffffff"
+										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
+									/>
+								</div>
+							</div>
+						</section>
+						<section class="fixed-policy">
+							<div
+								class="header"
+								data-text="fallbackColourDark"
+							></div>
+							<div></div>
+							<div
+								class="colour-input"
+								data-pref="fallbackColour_dark"
+							>
+								<label>
+									<input type="color" value="#2b2a33" />
+								</label>
+								<div class="text-input">
+									<input
+										type="text"
+										value="#2b2a33"
+										data-placeholder="anyCSSColour"
+										data-title="anyCSSColour"
+									/>
+								</div>
+							</div>
+						</section>
 					</div>
 				</div>
-			</div>
-			<hr />
-			<div id="footer">
-				<div>
-					<a
-						href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues"
-						data-text="reportAnIssue"
-					></a>
+				<div class="column">
+					<section>
+						<h3 data-text="minimumContrast"></h3>
+						<p data-text="minimumContrastTooltip"></p>
+						<div
+							class="slider"
+							data-pref="minContrast_light"
+							data-min="0"
+							data-max="210"
+							data-step="15"
+							data-value="0"
+							data-scale="1"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-circle" />
+								</svg>
+							</button>
+							<div class="track"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-contrast" />
+								</svg>
+							</button>
+							<label data-text="inLightMode"></label>
+						</div>
+						<div
+							class="slider"
+							data-pref="minContrast_dark"
+							data-min="0"
+							data-max="210"
+							data-step="15"
+							data-value="0"
+							data-scale="1"
+						>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-circle" />
+								</svg>
+							</button>
+							<div class="track"></div>
+							<button>
+								<svg viewBox="0 0 24 24">
+									<use xlink:href="#svg-contrast" />
+								</svg>
+							</button>
+							<label data-text="inDarkMode"></label>
+						</div>
+					</section>
+					<section>
+						<button id="export-pref" class="text-button">
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-download" />
+							</svg>
+							<span data-text="exportSettings"></span>
+							<a
+								id="export-pref-link"
+								class="hidden"
+								download="atbc_pref.json"
+							></a>
+						</button>
+						<label for="import-pref-link" class="text-button">
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-upload" />
+							</svg>
+							<span data-text="importSettings"></span>
+							<input
+								id="import-pref-link"
+								class="hidden"
+								type="file"
+								accept=".json"
+							/>
+						</label>
+						<button id="reset-theme-builder" class="text-button">
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-reset" />
+							</svg>
+							<span data-text="resetThemeBuilder"></span>
+						</button>
+						<button id="reset-site-list" class="text-button">
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-reset" />
+							</svg>
+							<span data-text="resetSiteList"></span>
+						</button>
+						<button id="reset-advanced" class="text-button">
+							<svg viewBox="0 0 24 24">
+								<use xlink:href="#svg-reset" />
+							</svg>
+							<span data-text="resetAdvanced"></span>
+						</button>
+					</section>
 				</div>
-				<div id="sponsor">
-					<form
-						action="https://www.paypal.com/donate"
-						method="post"
-						target="_blank"
-					>
-						<input
-							type="hidden"
-							name="hosted_button_id"
-							value="T5GL8WC7SVLLC"
-						/>
-						<input
-							type="image"
-							src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
-							name="submit"
-							title="PayPal - The safer, easier way to pay online!"
-							alt="Donate with PayPal button"
-							style="
-								height: 30px !important;
-								width: auto !important;
-							"
-						/>
-					</form>
-					<a
-						href="https://www.buymeacoffee.com/easonwong"
-						target="_blank"
-					>
-						<img
-							src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
-							alt="Buy Me A Coffee"
-							style="
-								height: 30px !important;
-								width: auto !important;
-							"
-						/>
-					</a>
-				</div>
 			</div>
-		</div>
+		</main>
+		<hr />
+		<footer>
+			<div>
+				<a
+					href="https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues"
+					data-text="reportAnIssue"
+				></a>
+			</div>
+			<div id="sponsor">
+				<form
+					action="https://www.paypal.com/donate"
+					method="post"
+					target="_blank"
+				>
+					<input
+						type="hidden"
+						name="hosted_button_id"
+						value="T5GL8WC7SVLLC"
+					/>
+					<input
+						type="image"
+						src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
+						name="submit"
+						title="PayPal - The safer, easier way to pay online!"
+						alt="Donate with PayPal button"
+						style="height: 30px !important; width: auto !important"
+					/>
+				</form>
+				<a
+					href="https://www.buymeacoffee.com/easonwong"
+					target="_blank"
+				>
+					<img
+						src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+						alt="Buy Me A Coffee"
+						style="height: 30px !important; width: auto !important"
+					/>
+				</a>
+			</div>
+		</footer>
+		<script defer type="module" src="./tabSwitch.js"></script>
 		<script defer type="module" src="./options.js"></script>
 	</body>
 </html>
