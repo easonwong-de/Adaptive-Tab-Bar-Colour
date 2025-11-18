@@ -10,7 +10,6 @@
 
 **Несовместимо с:**
 
-- Версиями Firefox старше[112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) (версия от Апреля 2023)
 - [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)

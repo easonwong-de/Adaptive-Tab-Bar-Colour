@@ -10,7 +10,6 @@
 
 **与本插件不兼容的有：**
 
-- 低于 [Version 112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) 版本的 Firefox（于 2023 年四月发布）
 - [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)

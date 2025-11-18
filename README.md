@@ -32,7 +32,6 @@ While you browse the web, this add-on changes the theme of Firefox to match the 
 
 ## Incompatible With:
 
-- Firefox versions older than [112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) (released in April 2023)
 - [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)

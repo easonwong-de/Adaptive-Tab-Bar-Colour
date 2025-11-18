@@ -10,7 +10,6 @@ Lorsque vous naviguez sur le web, cette extension modifie le thème de Firefox p
 
 **Incompatible avec :**
 
-- Versions de Firefox antérieures à [112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) (sortie en avril 2023)
 - [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
