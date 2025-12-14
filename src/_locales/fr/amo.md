@@ -1,40 +1,61 @@
 **Que fait cette extension ?**
 
-Lorsque vous naviguez sur le web, cette extension modifie le thème de Firefox pour l'adapter à l'apparence du site web que vous consultez, tout comme Safari sur macOS colore sa barre d'onglets.
+Cette extension ajuste dynamiquement le thème de Firefox pour correspondre à l’apparence du site web que vous consultez, de manière similaire à la fonction de teinte de la barre d’onglets dans Safari sur macOS.
 
-**Compatible avec :**
+**Compatible avec**
 
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
 - [Stylus](https://addons.mozilla.org/firefox/addon/styl-us/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
 
-**Incompatible avec :**
+**Incompatible avec**
 
-- Versions de Firefox antérieures à [112.0](https://www.mozilla.org/firefox/112.0/releasenotes/) (sortie en avril 2023)
 - [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
-- et tout autre extensions modifiant le thème Firefox
+- Toute autre extension qui modifie le thème Firefox
 
-**Si vous souhaitez supprimer l'ombre sous la barre d'outils :**
+**Supprimer l’ombre au bas de la barre d’outils**
 
-Pour supprimer la fine ombre projetée par le contenu web sous la barre d'outils du navigateur, allez dans Paramètres (`about:preferences`) et désactivez `Afficher le panneau latéral` dans la section `Disposition du navigateur`. Alternativement, vous pouvez utiliser un thème CSS. Pour plus d'informations, consultez [GitHub issue #155](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/155).
+Pour supprimer la fine ombre projetée par le contenu web sur la barre d’outils du navigateur, allez dans Paramètres (`about:preferences`) et désactivez « Afficher le panneau latéral » dans la section « Disposition du navigateur ». Alternativement, ajoutez le code suivant à votre thème CSS :
 
-**Si vous souhaitez activer la transition douce des couleurs :**
+> `#tabbrowser-tabbox {`
 
-En raison de limitations techniques, la transition douce des couleurs de la barre d'onglets n'est pas prise en charge nativement. Cependant, vous pouvez utiliser un thème CSS pour obtenir cet effet. Pour plus d'informations, consultez [GitHub issue #43](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/43).
+> > `box-shadow: none !important;`
 
-**Si vous utilisez un thème CSS :**
+> `}`
 
-Un thème CSS peut fonctionner avec ATBC (Adaptative Tab Bar Colour) lorsque des variables de couleur système sont utilisées (par exemple, `--lwt-accent-color` pour la couleur de la barre d'onglets). [Ceci](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) est un exemple de thème CSS compatible avec ATBC.
+**Activer les transitions douces des couleurs**
 
-**Si vous utilisez Linux avec un thème GTK :**
+En raison de limitations techniques, les transitions douces des couleurs pour la barre d’onglets ne sont pas prises en charge nativement. Cependant, vous pouvez activer cet effet en ajoutant le code suivant à votre thème CSS (merci à [@Moarram](https://github.com/Moarram/)) :
 
-Les boutons de la barre de titre de Firefox peuvent revenir au style de Windows. Pour éviter cela, ouvrez les Préférences avancées (`about:config`) et définissez `widget.gtk.non-native-titlebar-buttons.enabled` sur `false`. (Merci à [@anselstetter](https://github.com/anselstetter/))
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
-**Rappel de sécurité :**
+> > `transition:`
 
-Attention aux interfaces web malveillantes : Veuillez faire la distinction entre l'interface du navigateur et l'interface web. Pour plus d'informations, consultez [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Merci à [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
+> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+Pour activer les transitions douces des couleurs dans l’interface de Sidebery, ajoutez le code suivant à l’éditeur de style de Sidebery (merci à [@MaxHasBeenUsed](https://github.com/MaxHasBeenUsed/)) :
+
+> `.Sidebar, .bottom-space {`
+
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+**Compatibilité avec les thèmes CSS tiers**
+
+Un thème CSS tiers fonctionne avec Adaptive Tab Bar Colour (ATBC), à condition qu’ils utilisent les variables de couleur standard de Firefox (par exemple, `--lwt-accent-color` pour la couleur de la barre d’onglets). [Ceci](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) est un exemple de thème CSS compatible avec ATBC.
+
+**Boutons de la barre de titre sur Linux avec un thème GTK**
+
+Les boutons de la barre de titre de Firefox peuvent revenir au style de Windows. Pour éviter cela, ouvrez les « Préférences avancées » (`about:config`) et définissez `widget.gtk.non-native-titlebar-buttons.enabled` sur `false`. (Merci à [@anselstetter](https://github.com/anselstetter/))
+
+**Rappel de sécurité**
+
+Attention aux interfaces web malveillantes. Il est important de faire la distinction entre l’interface du navigateur et l’interface web. Pour plus d’informations, veuillez consulter [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Merci à [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))
 
 N'hésitez pas à ajouter ce projet à vos favoris sur GitHub : [https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour)
