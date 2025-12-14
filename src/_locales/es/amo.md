@@ -16,7 +16,7 @@ Este complemento ajusta dinámicamente el tema de Firefox para que coincida con 
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - Cualquier otro complemento que modifique el tema de Firefox
 
-**Eliminar la Sombra Debajo de la Barra de Herramientas**
+**Eliminar la Sombra en la Parte Inferior de la Barra de Herramientas**
 
 Para eliminar la sombra fina proyectada por el contenido web sobre la barra de herramientas del navegador, ve a Ajustes (`about:preferences`) y desactiva «Mostrar barra lateral» en la sección «Disposición del navegador». Alternativamente, añade el siguiente código a tu tema CSS:
 

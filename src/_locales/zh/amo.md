@@ -16,7 +16,7 @@
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - 任何修改 Firefox 佈景主題的擴充套件
 
-**移除工具列下方的陰影**
+**移除工具列底部的陰影**
 
 要移除網頁內容在瀏覽器工具列上投射的細微陰影，請前往設定 (`about:preferences`) 並在「瀏覽器版面」部分關閉「顯示側邊欄」。另外，閣下亦可將以下程式碼加入閣下的 CSS 主題：
 

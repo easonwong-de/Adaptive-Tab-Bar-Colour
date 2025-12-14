@@ -16,7 +16,7 @@ This add-on dynamically adjusts the Firefox theme to match the appearance of the
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - Any other add-on that modifies the Firefox theme
 
-**Removing the Shadow Beneath the Toolbar**
+**Removing the Shadow at the Bottom of the Toolbar**
 
 To remove the thin shadow cast by web content onto the browser toolbar, navigate to Settings (`about:preferences`) and disable “Show sidebar” in the “Browser Layout” section. Alternatively, add the following code to your CSS theme:
 
@@ -48,11 +48,11 @@ To enable smooth colour transitions in the Sidebery UI, add the following code t
 
 **Compatibility with Third-Party CSS Themes**
 
-A third-party CSS theme works with Adaptive Tab Bar Colour (ATBC), as long as they use Firefox's standard colour variables (e.g. `--lwt-accent-color` for the tab bar colour). [This](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) is an example of an ATBC-compatible CSS theme.
+A third-party CSS theme works with Adaptive Tab Bar Colour (ATBC), as long as they use Firefox’s standard colour variables (e.g. `--lwt-accent-color` for the tab bar colour). [This](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) is an example of an ATBC-compatible CSS theme.
 
 **Title Bar Buttons on Linux with GTK Theme**
 
-Firefox's titlebar buttons may revert to the Windows style. To prevent this, open “Advanced Preferences” (`about:config`) and set `widget.gtk.non-native-titlebar-buttons.enabled` to `false`. (Thanks to [@anselstetter](https://github.com/anselstetter/))
+Firefox’s titlebar buttons may revert to the Windows style. To prevent this, open “Advanced Preferences” (`about:config`) and set `widget.gtk.non-native-titlebar-buttons.enabled` to `false`. (Thanks to [@anselstetter](https://github.com/anselstetter/))
 
 **Safety Reminder**
 

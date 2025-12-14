@@ -16,7 +16,7 @@ Diese Erweiterung passt das Theme von Firefox dynamisch an das Erscheinungsbild 
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
 - Jede andere Erweiterung, die das Firefox-Theme ändert
 
-**Entfernen des Schattens unter der Werkzeugleiste**
+**Entfernen des Schattens am unteren Rand der Werkzeugleiste**
 
 Um den dünnen Schatten zu entfernen, den der Webinhalt auf die Browser-Werkzeugleiste wirft, gehe zu Einstellungen (`about:preferences`) und deaktiviere „Sidebar anzeigen“ im Abschnitt „Browser-Layout“. Alternativ kannst du den folgenden Code zu deinem CSS-Theme hinzufügen:
 

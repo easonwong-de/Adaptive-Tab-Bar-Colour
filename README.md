@@ -40,7 +40,7 @@ This add-on dynamically adjusts the Firefox theme to match the appearance of the
 
 <br>
 
-## Removing the Shadow Beneath the Toolbar
+## Removing the Shadow at the Bottom of the Toolbar
 
 To remove the thin shadow cast by web content onto the browser toolbar, navigate to Settings (`about:preferences`) and disable “Show sidebar” in the “Browser Layout” section. Alternatively, add the following code to your CSS theme:
 
