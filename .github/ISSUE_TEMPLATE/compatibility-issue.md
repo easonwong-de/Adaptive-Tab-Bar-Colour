@@ -1,6 +1,6 @@
 ---
 name: Compatibility issue
-about: ATBC is not compatible with my setup
+about: ATBC is not compatible with your setup
 title: ''
 labels: compatibility
 assignees: ''

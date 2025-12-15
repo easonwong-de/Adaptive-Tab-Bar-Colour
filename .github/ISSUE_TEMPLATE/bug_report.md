@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: ATBC is not behaving what it’s supposed to be
+about: ATBC is not behaving as it is supposed to
 title: ''
 labels: bug
 assignees: ''
