@@ -46,7 +46,7 @@
 
 > `}`
 
-**與第三方 CSS 主題的兼容性**
+**與第三方 CSS 主題的相容性**
 
 第三方 CSS 主題可與變色標題列 (ATBC) 相容，只要它們使用 Firefox 的標準顏色變數（例如，`--lwt-accent-color` 用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 ATBC 相容的 CSS 主題。
 
