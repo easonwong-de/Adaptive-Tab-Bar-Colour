@@ -3,44 +3,63 @@
 import { readFileSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
-import { execSync } from "child_process";
+import { execSync, spawn } from "child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const isWatch = process.argv.includes("--watch");
+const log = (msg, color = 42) => console.log(`\x1b[${color}m ${msg} \x1b[0m`);
 
-console.log("\x1b[42m 1. Running Prettier... \x1b[0m");
-execSync('prettier "src/**" --write', { stdio: "inherit" });
-
-const version = JSON.parse(
+// 1. Update Version
+const { version } = JSON.parse(
 	readFileSync(join(__dirname, "package.json"), "utf8"),
-).version;
-
-console.log(
-	`\x1b[42m 2. Updating manifest.json to version ${version}... \x1b[0m`,
 );
-const manifestPath = join(__dirname, "src", "manifest.json");
+log(`1. Updating add-on to version ${version}...`);
+
+const manifestPath = join(__dirname, "src/manifest.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 manifest.version = version;
 writeFileSync(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
 
-console.log(
-	`\x1b[42m 3. Updating constants.js to version ${version}... \x1b[0m`,
-);
-const constantsPath = join(__dirname, "src", "constants.js");
-let constantsContent = readFileSync(constantsPath, "utf8");
-const addonVersionOld = /export const addonVersion = \[[\d, ]+\];/;
-const addonVersionNew = `export const addonVersion = [${version.split(".").map(Number).join(", ")}];`;
-if (addonVersionOld.test(constantsContent)) {
+const constantsPath = join(__dirname, "src/constants.js");
+const constants = readFileSync(constantsPath, "utf8");
+if (constants.includes("export const addonVersion")) {
 	writeFileSync(
 		constantsPath,
-		constantsContent.replace(addonVersionOld, addonVersionNew),
+		constants.replace(
+			/export const addonVersion = \[[\d, ]+\];/,
+			`export const addonVersion = [${version.split(".").map(Number).join(", ")}];`,
+		),
 	);
 } else {
-	console.error(
-		"\x1b[41m Could not find addonVersion in constants.js \x1b[0m",
-	);
+	log("Could not find addonVersion in constants.js", 41);
 }
 
-console.log("\x1b[42m 4. Building extension... \x1b[0m");
+// 2. Format
+log("2. Formatting source code...");
+execSync('prettier "src/**" --write', { stdio: "inherit" });
+
+// 3. Build / Watch
+log(`3. ${isWatch ? "Starting" : "Building"} extension...`);
 execSync("vite build", { stdio: "inherit" });
-execSync("web-ext lint -s=./build", { stdio: "inherit" });
-execSync("web-ext build -s=./build -a=dist -o", { stdio: "inherit" });
+
+if (isWatch) {
+	const vite = spawn("vite build --watch", {
+		stdio: ["ignore", "inherit", "inherit"],
+		shell: true,
+	});
+	const webExt = spawn("web-ext run -s=./build -f=deved --devtools", {
+		stdio: "inherit",
+		shell: true,
+	});
+
+	const exit = () => {
+		vite.kill();
+		webExt.kill();
+		process.exit();
+	};
+	webExt.on("exit", exit);
+	process.on("SIGINT", exit);
+} else {
+	execSync("web-ext lint -s=./build", { stdio: "inherit" });
+	execSync("web-ext build -s=./build -a=dist -o", { stdio: "inherit" });
+}

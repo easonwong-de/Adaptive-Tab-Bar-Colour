@@ -23,7 +23,7 @@ export default defineConfig({
 		rollupOptions: {
 			input: {
 				popup: resolve(__dirname, "src/popup/index.html"),
-				option: resolve(__dirname, "src/options/index.html"),
+				options: resolve(__dirname, "src/options/index.html"),
 				background: resolve(__dirname, "src/background.js"),
 				atbc: resolve(__dirname, "src/atbc.js"),
 			},

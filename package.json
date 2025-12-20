@@ -4,7 +4,7 @@
 	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
 	"type": "module",
 	"scripts": {
-		"start": "vite build --watch & web-ext run -s=./build -f=deved --devtools",
+		"start": "node build.js --watch",
 		"build": "node build.js"
 	},
 	"repository": {
