@@ -9,7 +9,7 @@
 Changes the colour of Firefox theme to match the website’s appearance.
 
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
-	<img src="assets/get-addon-badge-firefox.png" width="178" height="48">
+	<img src="https://easonwong.de/downloads/get-addon-badge-firefox.png" width="178" height="48">
 </a>
 
 <br>
