@@ -193,7 +193,7 @@ button {
 		text-align: center;
 	}
 
-	.slider-body {
+	.track {
 		display: flex;
 		justify-content: center;
 		align-items: center;

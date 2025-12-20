@@ -10,28 +10,27 @@ import {
 	setupColourInput,
 	setColourInputValue,
 	getColourInputValue,
-	setupPolicyHeaderInput,
-	setPolicyHeaderInputValue,
-	setupThemeColourSwitch,
-	setThemeColourSwitchValue,
-	getThemeColourSwitchValue,
-	setupQuerySelectorInput,
+	setupTextInput,
+	setTextInputValue,
+	setupToggleSwitch,
+	setToggleSwitchValue,
+	getToggleSwitchValue,
+	setupQueryInput,
 	setQuerySelectorInputValue,
-	getQuerySelectorInputValue,
+	getTextInputValue,
 	setColourPolicySectionId,
 	setFlexiblePolicySectionId,
 } from "../elements.js";
 
 const pref = new preference();
 
-const settingsWrapper = document.querySelector("#settings-wrapper");
 const policyList = document.querySelector("#policy-list");
 
 const tabSwitches = document.querySelectorAll("input[name='tab-switch']");
 tabSwitches.forEach((tabSwitch) => {
 	tabSwitch.addEventListener(
 		"change",
-		() => (settingsWrapper.className = tabSwitch.id),
+		() => (document.body.dataset.tabSwitch = tabSwitch.id),
 	);
 });
 
@@ -54,7 +53,7 @@ sliders.forEach((slider) =>
 const fixedPolicies = document.querySelectorAll(".section.fixed-policy");
 fixedPolicies.forEach((fixedPolicySection) => {
 	const colourInputWrapper = fixedPolicySection.querySelector(
-		".colour-input-wrapper",
+		".colour-input",
 	);
 	const key = colourInputWrapper.dataset.pref;
 	setupColourInput(colourInputWrapper, pref[key], async (colour) => {
@@ -103,106 +102,11 @@ function createPolicySection(id, policy) {
  * @param {number} id
  * @param {object} policy
  */
-function setupFlexiblePolicySection(policySection, id, policy) {
-	setFlexiblePolicySectionId(policySection, id);
-	policySection.classList.toggle("warning", policy.header === "");
-	const select = policySection.querySelector("select");
-	select.className = select.value = policy.type;
-	select.addEventListener("change", async () => {
-		pref.siteList[id].type = select.className = select.value;
-		switch (select.value) {
-			case "COLOUR":
-				pref.siteList[id].value =
-					getColourInputValue(colourInputWrapper);
-				break;
-			case "THEME_COLOUR":
-				pref.siteList[id].value =
-					getThemeColourSwitchValue(themeColourSwitch);
-				break;
-			case "QUERY_SELECTOR":
-				pref.siteList[id].value = getQuerySelectorInputValue(
-					querySelectorInputWrapper,
-				);
-				break;
-			default:
-				break;
-		}
-		await applySettings();
-	});
-	const policyHeaderInputWrapper = policySection.querySelector(
-		".policy-header-input-wrapper",
-	);
-	const colourInputWrapper = policySection.querySelector(
-		".colour-input-wrapper",
-	);
-	const themeColourSwitch = policySection.querySelector(
-		".theme-colour-switch",
-	);
-	const querySelectorInputWrapper =
-		policySection.querySelector(".qs-input-wrapper");
-	const deleteButton = policySection.querySelector("button");
-	let initialColour = "#000000";
-	let initialUseThemeColour = true;
-	let initialQuerySelector = "";
-	switch (policy.type) {
-		case "COLOUR":
-			initialColour = policy.value;
-			break;
-		case "THEME_COLOUR":
-			initialUseThemeColour = policy.value;
-			break;
-		case "QUERY_SELECTOR":
-			initialQuerySelector = policy.value;
-			break;
-		default:
-			break;
-	}
-	setupPolicyHeaderInput(
-		policyHeaderInputWrapper,
-		policy.header,
-		async (newHeader) => {
-			policySection.classList.toggle("warning", newHeader === "");
-			pref.siteList[id].header = newHeader;
-			await applySettings();
-		},
-	);
-	setupColourInput(colourInputWrapper, initialColour, async (newColour) => {
-		pref.siteList[id].value = newColour;
-		await applySettings();
-	});
-	setupThemeColourSwitch(
-		themeColourSwitch,
-		initialUseThemeColour,
-		async (newUseThemeColour) => {
-			pref.siteList[id].value = newUseThemeColour;
-			await applySettings();
-		},
-	);
-	setupQuerySelectorInput(
-		querySelectorInputWrapper,
-		initialQuerySelector,
-		async (newQuerySelector) => {
-			pref.siteList[id].value = newQuerySelector;
-			await applySettings();
-		},
-	);
-	deleteButton.onclick = async () => {
-		pref.removePolicy(policySection.dataset.id);
-		policySection.remove();
-		await applySettings();
-	};
-}
-
-/**
- * @param {HTMLElement} policySection
- * @param {number} id
- * @param {object} policy
- */
 async function setupColourPolicySection(policySection, id, policy) {
 	setColourPolicySectionId(policySection, id);
 	const policyHeader = policySection.querySelector(".policy-header");
 	const colourInputWrapper = policySection.querySelector(
-		".colour-input-wrapper",
+		".colour-input",
 	);
 	const deleteButton = policySection.querySelector("button");
 	setupColourInput(colourInputWrapper, policy.value, async (newColour) => {
@@ -368,7 +272,7 @@ function updateCompatibilityMode() {
 function updateFixedPolicySection() {
 	fixedPolicies.forEach((fixedPolicySection) => {
 		const colourInputWrapper = fixedPolicySection.querySelector(
-			".colour-input-wrapper",
+			".colour-input",
 		);
 		const key = colourInputWrapper.dataset.pref;
 		setColourInputValue(colourInputWrapper, pref[key]);
@@ -396,7 +300,7 @@ async function updateSiteList() {
 				".policy-header-input-wrapper",
 			);
 			const colourInputWrapper = policySection.querySelector(
-				".colour-input-wrapper",
+				".colour-input",
 			);
 			const themeColourSwitch = policySection.querySelector(
 				".theme-colour-switch",
@@ -405,13 +309,13 @@ async function updateSiteList() {
 				policySection.querySelector(".qs-input-wrapper");
 			select.className = select.value = policy.type;
 			policySection.classList.toggle("warning", policy.header === "");
-			setPolicyHeaderInputValue(policyHeaderInputWrapper, policy.header);
+			setTextInputValue(policyHeaderInputWrapper, policy.header);
 			switch (policy.type) {
 				case "COLOUR":
 					setColourInputValue(colourInputWrapper, policy.value);
 					break;
 				case "THEME_COLOUR":
-					setThemeColourSwitchValue(themeColourSwitch, policy.value);
+					setToggleSwitchValue(themeColourSwitch, policy.value);
 					break;
 				case "QUERY_SELECTOR":
 					setQuerySelectorInputValue(
@@ -427,7 +331,7 @@ async function updateSiteList() {
 			policySection.classList.contains("colour-policy")
 		) {
 			const colourInputWrapper = policySection.querySelector(
-				".colour-input-wrapper",
+				".colour-input",
 			);
 			setColourInputValue(colourInputWrapper, policy.value);
 		} else {
