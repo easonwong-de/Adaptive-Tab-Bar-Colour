@@ -8,7 +8,7 @@ import { execSync } from "child_process";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 console.log("\x1b[42m 1. Running Prettier... \x1b[0m");
-execSync("npm run prettier", { stdio: "inherit" });
+execSync('prettier "src/**" --write', { stdio: "inherit" });
 
 const version = JSON.parse(
 	readFileSync(join(__dirname, "package.json"), "utf8"),
@@ -41,4 +41,6 @@ if (addonVersionOld.test(constantsContent)) {
 }
 
 console.log("\x1b[42m 4. Building extension... \x1b[0m");
-execSync("web-ext build -s=./src -a=dist -o", { stdio: "inherit" });
+execSync("vite build", { stdio: "inherit" });
+execSync("web-ext lint -s=./build", { stdio: "inherit" });
+execSync("web-ext build -s=./build -a=dist -o", { stdio: "inherit" });
