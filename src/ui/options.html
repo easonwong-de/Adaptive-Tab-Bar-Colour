@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" href="global.css" />
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module">
+			import { createRoot } from "react-dom/client";
+			import { createElement } from "react";
+			import OptionsApp from "./OptionsApp.jsx";
+			createRoot(document.getElementById("root")).render(
+				createElement(OptionsApp),
+			);
+		</script>
+	</body>
+</html>

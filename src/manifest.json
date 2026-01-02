@@ -8,7 +8,7 @@
 		"persistent": true
 	},
 	"browser_action": {
-		"default_popup": "src/popup/index.html",
+		"default_popup": "popup.html",
 		"default_title": "__MSG_extensionName__",
 		"browser_style": true,
 		"default_icon": {
@@ -53,7 +53,7 @@
 	"manifest_version": 2,
 	"name": "__MSG_extensionName__",
 	"options_ui": {
-		"page": "src/options/index.html",
+		"page": "options.html",
 		"open_in_tab": false,
 		"browser_style": true
 	},
