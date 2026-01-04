@@ -1,5 +1,3 @@
-"use strict";
-
 import { supportsThemeAPI } from "./utility.js";
 
 /** The version of ATBC */

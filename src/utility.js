@@ -1,5 +1,3 @@
-"use strict";
-
 const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 
 /**

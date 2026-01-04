@@ -1,5 +1,3 @@
-"use strict";
-
 import {
 	addonVersion,
 	default_homeBackground_light,

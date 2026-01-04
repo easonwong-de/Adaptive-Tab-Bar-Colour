@@ -1,5 +1,3 @@
-"use strict";
-
 /*
  * System colour scheme:
  * The colour scheme of the operating system, usually light or dark.

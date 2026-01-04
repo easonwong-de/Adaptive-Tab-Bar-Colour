@@ -1,5 +1,3 @@
-"use strict";
-
 import colour from "./colour.js";
 
 export function setupCheckbox(checkbox, isChecked, onChange) {

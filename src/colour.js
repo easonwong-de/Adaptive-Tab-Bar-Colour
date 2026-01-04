@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * All possible colour codes.
  *
