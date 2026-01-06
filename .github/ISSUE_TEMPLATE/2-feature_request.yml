@@ -1,0 +1,21 @@
+---
+name: Feature Request
+about: Suggest a new feature for ATBC
+title: ""
+labels: ["feature"]
+assignees: ""
+body:
+    - type: markdown
+      attributes:
+          value: |
+              If you want to suggest more than one feature, please [open a new issue](https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour/issues/new/choose) for each request.
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: Describe the feature you would like to see implemented.
+      validations:
+          required: true
+
+---
+

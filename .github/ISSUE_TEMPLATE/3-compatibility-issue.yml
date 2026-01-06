@@ -1,0 +1,17 @@
+---
+name: Compatibility Issue
+about: ATBC is not compatible with your setup
+title: ""
+labels: ["compatibility"]
+assignees: ""
+body:
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: Describe the compatibility issue.
+      validations:
+          required: true
+
+---
+

@@ -1,0 +1,29 @@
+---
+name: Bug Report
+about: ATBC is not behaving as it is supposed to
+title: ""
+labels: ["bug"]
+assignees: ""
+body:
+    - type: checkboxes
+      id: prerequisites
+      attributes:
+          label: Prerequisites
+          options:
+              - label: I am using Firefox Desktop (Release, Developer Edition, or Nightly).
+                required: true
+              - label: The issue is reproducible without custom CSS (userChrome.css).
+                required: true
+              - label: The issue is reproducible with all other extensions disabled.
+                required: true
+      validations:
+          required: true
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: Provide a detailed description of the bug, including steps to reproduce.
+      validations:
+          required: true
+---
+
