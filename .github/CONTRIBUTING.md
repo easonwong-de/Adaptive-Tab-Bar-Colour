@@ -1,11 +1,41 @@
 # Contributing
 
-## Prerequisites
+Thank you for your interest in contributing to Adaptive Tab Bar Colour!
 
-- [Node.js](https://nodejs.org/) (LTS)
+## Sponsor
+
+One way to contribute to the project is through sponsorship via:
+
+<a href="https://www.paypal.com/donate?hosted_button_id=T5GL8WC7SVLLC" target="_blank">
+	<img
+		src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
+		alt="Donate with PayPal button"
+		style="height: 30px !important; width: auto !important"
+	/>
+</a>
+<a href="https://www.buymeacoffee.com/easonwong" target="_blank">
+	<img
+		src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+		alt="Buy Me A Coffee"
+		style="height: 30px !important; width: auto !important"
+	/>
+</a>
+
+## Translation
+
+To rectify translation errors or add a new locale, please update the following files:
+
+- `src/_locales/xx/messages.json`: The text in the add-on’s popup and options page.
+- `amo/amo-xx.md`: The add-on description on the Mozilla Add-on store and the “Details” section in Firefox’s Add-ons Manager.
+
+## Development
+
+Ensure the following software is installed in the development environment:
+
+- [Node.js](https://nodejs.org/)
 - [Firefox Developer Edition](https://www.mozilla.org/firefox/developer/)
 
-## Setup
+To begin contributing, run the following commands:
 
 ```bash
 git clone https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour.git
@@ -13,30 +43,8 @@ cd Adaptive-Tab-Bar-Colour
 npm install
 ```
 
-## Commands
+To test the changes, run `npm start`, which:
 
-### Development
-Run `npm start` to execute `node build.js --watch`. This command:
-1. Syncs the version from `package.json` to `src/manifest.json` and `src/constants.js`.
-2. Formats source code using Prettier.
-3. Builds the extension with Vite in watch mode.
-4. Launches Firefox Developer Edition with the extension loaded.
-
-### Production Build
-Run `npm run build` to execute `node build.js`. This command:
-1. Syncs the version from `package.json` to `src/manifest.json` and `src/constants.js`.
-2. Formats source code using Prettier.
-3. Builds the extension to `build/` and packages it to `dist/`.
-4. Lints the output using `web-ext lint`.
-
-## Translation
-
-- `src/_locales/`: Contains `messages.json` files for extension UI translations.
-- `amo/`: Contains Markdown files for Add-on store descriptions.
-
-## Workflow
-
-1. Fork the repository and create a feature branch (e.g. `feat/fr-locale`).
-2. Make changes in the `src/` directory.
-3. Verify changes using `npm start`.
-4. Commit, push, and submit a Pull Request.
+1. Synchronises the add-on version from `package.json` to `src/manifest.json` and `src/constants.js`.
+1. Formats source code using Prettier.
+1. Launches the add-on in Firefox Developer Edition.
