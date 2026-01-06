@@ -1,9 +1,8 @@
 ---
 name: Feature Request
-about: Suggest a new feature for ATBC
-title: ""
+description: Suggest a new feature for ATBC
+title: "Replace With Title"
 labels: ["feature"]
-assignees: ""
 body:
     - type: markdown
       attributes:

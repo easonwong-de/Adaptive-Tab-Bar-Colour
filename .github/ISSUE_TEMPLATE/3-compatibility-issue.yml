@@ -1,9 +1,8 @@
 ---
 name: Compatibility Issue
-about: ATBC is not compatible with your setup
-title: ""
+description: ATBC is not compatible with your setup
+title: "Replace With Title"
 labels: ["compatibility"]
-assignees: ""
 body:
     - type: textarea
       id: description
