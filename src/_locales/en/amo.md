@@ -20,7 +20,9 @@ This add-on dynamically adjusts the Firefox theme to match the appearance of the
 
 To remove the thin shadow cast by web content onto the browser toolbar, navigate to Settings (`about:preferences`) and disable “Show sidebar” in the “Browser Layout” section. Alternatively, add the following code to your CSS theme:
 
-> `#tabbrowser-tabbox {`
+> `#tabbrowser-tabbox,`
+
+> `.browserContainer {`
 
 > > `box-shadow: none !important;`
 
