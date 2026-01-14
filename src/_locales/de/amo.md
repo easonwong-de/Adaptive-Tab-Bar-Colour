@@ -20,7 +20,9 @@ Diese Erweiterung passt das Theme von Firefox dynamisch an das Erscheinungsbild 
 
 Um den dünnen Schatten zu entfernen, den der Webinhalt auf die Browser-Werkzeugleiste wirft, gehe zu Einstellungen (`about:preferences`) und deaktiviere „Sidebar anzeigen“ im Abschnitt „Browser-Layout“. Alternativ kannst du den folgenden Code zu deinem CSS-Theme hinzufügen:
 
-> `#tabbrowser-tabbox {`
+> `#tabbrowser-tabbox,`
+
+> `.browserContainer {`
 
 > > `box-shadow: none !important;`
 
