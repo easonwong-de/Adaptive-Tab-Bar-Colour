@@ -3,3 +3,4 @@ assets
 build
 dist
 node_modules
+src/images
