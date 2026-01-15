@@ -20,9 +20,7 @@
 
 要移除網頁內容在瀏覽器工具列上投射的細微陰影，請前往設定 (`about:preferences`) 並在「瀏覽器版面」部分關閉「顯示側邊欄」。另外，閣下亦可將以下程式碼加入閣下的 CSS 主題：
 
-> `#tabbrowser-tabbox,`
-
-> `.browserContainer {`
+> `#tabbrowser-tabbox, .browserContainer {`
 
 > > `box-shadow: none !important;`
 

@@ -20,9 +20,7 @@ Cette extension ajuste dynamiquement le thème de Firefox pour correspondre à l
 
 Pour supprimer la fine ombre projetée par le contenu web sur la barre d’outils du navigateur, allez dans Paramètres (`about:preferences`) et désactivez « Afficher le panneau latéral » dans la section « Disposition du navigateur ». Alternativement, ajoutez le code suivant à votre thème CSS :
 
-> `#tabbrowser-tabbox,`
-
-> `.browserContainer {`
+> `#tabbrowser-tabbox, .browserContainer {`
 
 > > `box-shadow: none !important;`
 

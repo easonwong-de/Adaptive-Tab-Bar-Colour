@@ -20,9 +20,7 @@
 
 要移除网页内容在浏览器工具栏上投射的细微阴影，请前往设置 (`about:preferences`) 并在“浏览器布局”部分关闭“显示侧栏”。或者，将以下代码添加到您的 CSS 主题：
 
-> `#tabbrowser-tabbox,`
-
-> `.browserContainer {`
+> `#tabbrowser-tabbox, .browserContainer {`
 
 > > `box-shadow: none !important;`
 
