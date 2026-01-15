@@ -46,6 +46,7 @@ const buildUi = [
 			return {
 				root: "src/ui",
 				build: {
+					cssMinify: "lightningcss",
 					outDir: resolve(__dirname, "build"),
 					emptyOutDir: true,
 					rollupOptions: {

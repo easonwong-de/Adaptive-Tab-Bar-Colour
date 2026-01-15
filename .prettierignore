@@ -1,2 +1,5 @@
-src/images
-src/manifest.json
+.github
+assets
+build
+dist
+node_modules
