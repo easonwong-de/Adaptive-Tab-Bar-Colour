@@ -299,16 +299,15 @@ export default class preference {
 		let matchedPolicy;
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
-			if (!policy || policy?.header === "") continue;
+			const normalisedInput = input.replace(/\/$/, "");
+			const normalisedHeader = policy.header.replace(/\/$/, "");
 			const isMatch =
-				policy.headerType === "ADDON_ID"
-					? policy.header === input
-					: policy.headerType === "URL" &&
-						(policy.header === input ||
-							policy.header === `${input}/` ||
-							this.#testRegex(input, policy.header) ||
-							this.#testWildcard(input, policy.header) ||
-							this.#testHostname(input, policy.header));
+				(policy.headerType === "ADDON_ID" && policy.header === input) ||
+				(policy.headerType === "URL" &&
+					(normalisedInput === normalisedHeader ||
+						this.#testRegex(normalisedInput, normalisedHeader) ||
+						this.#testWildcard(normalisedInput, normalisedHeader) ||
+						this.#testHostname(normalisedInput, normalisedHeader)));
 			if (isMatch) {
 				matchedId = +id;
 				matchedPolicy = policy;
@@ -368,17 +367,23 @@ export default class preference {
 	}
 
 	/**
-	 * Tests if a URL matches a specific hostname.
+	 * Tests if a URL matches a specific hostname or hostname with path.
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
 	 * @param {string} hostname - The hostname to match.
-	 * @returns {boolean} `true` if the URL's hostname matches, `false`
-	 *   otherwise.
+	 * @returns {boolean} `true` if the URL's hostname (and path) matches,
+	 *   `false` otherwise.
 	 */
 	#testHostname(url, hostname) {
 		try {
-			return hostname === new URL(url).hostname;
+			const urlObj = new URL(url);
+			const urlPath = urlObj.hostname + urlObj.pathname;
+			return (
+				urlPath === hostname ||
+				(urlPath.startsWith(hostname) &&
+					urlPath[hostname.length] === "/")
+			);
 		} catch (error) {
 			return false;
 		}
