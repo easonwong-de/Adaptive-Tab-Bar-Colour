@@ -368,17 +368,21 @@ export default class preference {
 	}
 
 	/**
-	 * Tests if a URL matches a specific hostname.
+	 * Tests if a URL matches a specific hostname or hostname with path.
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
 	 * @param {string} hostname - The hostname to match.
-	 * @returns {boolean} `true` if the URL's hostname matches, `false`
-	 *   otherwise.
+	 * @returns {boolean} `true` if the URL's hostname (and path) matches,
+	 *   `false` otherwise.
 	 */
 	#testHostname(url, hostname) {
 		try {
-			return hostname === new URL(url).hostname;
+			const urlObj = new URL(url);
+			return (
+				hostname === urlObj.hostname ||
+				hostname === urlObj.hostname + urlObj.pathname
+			);
 		} catch (error) {
 			return false;
 		}
