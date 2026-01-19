@@ -563,14 +563,9 @@ function applyTheme(windowId, colour, colourScheme) {
 					.brightness(-1.5 * pref.tabSelected)
 					.toRGBA(),
 				toolbar: colour.brightness(-1.5 * pref.toolbar).toRGBA(),
-				toolbar_bottom_separator:
-					pref.toolbarBorder === 0
-						? "transparent"
-						: colour
-								.brightness(
-									-1.5 * (pref.toolbarBorder + pref.toolbar),
-								)
-								.toRGBA(),
+				toolbar_bottom_separator: colour
+					.brightness(-1.5 * (pref.toolbarBorder + pref.toolbar))
+					.toRGBA(),
 				toolbar_field: colour
 					.brightness(-1.5 * pref.toolbarField)
 					.toRGBA(),
@@ -637,12 +632,9 @@ function applyTheme(windowId, colour, colourScheme) {
 					.toRGBA(),
 				tab_selected: colour.brightness(pref.tabSelected).toRGBA(),
 				toolbar: colour.brightness(pref.toolbar).toRGBA(),
-				toolbar_bottom_separator:
-					pref.toolbarBorder === 0
-						? "transparent"
-						: colour
-								.brightness(pref.toolbarBorder + pref.toolbar)
-								.toRGBA(),
+				toolbar_bottom_separator: colour
+					.brightness(pref.toolbarBorder + pref.toolbar)
+					.toRGBA(),
 				toolbar_field: colour.brightness(pref.toolbarField).toRGBA(),
 				toolbar_field_border: colour
 					.brightness(pref.toolbarFieldBorder + pref.toolbarField)
