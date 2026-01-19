@@ -9,6 +9,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const copyResources = {
 	name: "copy-resources",
+	buildStart() {
+		this.addWatchFile(resolve(__dirname, "src/manifest.json"));
+	},
 	writeBundle() {
 		if (!fs.existsSync("build")) fs.mkdirSync("build");
 		fs.copyFileSync("src/manifest.json", "build/manifest.json");
@@ -19,6 +22,15 @@ const copyResources = {
 
 const minifyScripts = {
 	name: "minify-scripts",
+	buildStart() {
+		this.addWatchFile(resolve(__dirname, "src/atbc.js"));
+		this.addWatchFile(resolve(__dirname, "src/background.js"));
+		this.addWatchFile(resolve(__dirname, "src/colour.js"));
+		this.addWatchFile(resolve(__dirname, "src/constants.js"));
+		this.addWatchFile(resolve(__dirname, "src/elements.js"));
+		this.addWatchFile(resolve(__dirname, "src/preference.js"));
+		this.addWatchFile(resolve(__dirname, "src/utility.js"));
+	},
 	async writeBundle() {
 		await Promise.all([
 			build({
