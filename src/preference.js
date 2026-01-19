@@ -393,7 +393,7 @@ export default class preference {
 	 * @param {boolean} value - Whether to allow scheme switching.
 	 */
 	set allowDarkLight(value) {
-		this.#content.allowDarkLight = value;
+		this.#set("allowDarkLight", value);
 	}
 
 	/**
@@ -411,7 +411,7 @@ export default class preference {
 	 * @param {boolean} value - Whether to enable dynamic colour extraction.
 	 */
 	set dynamic(value) {
-		this.#content.dynamic = value;
+		this.#set("dynamic", value);
 	}
 
 	/**
@@ -429,7 +429,7 @@ export default class preference {
 	 * @param {boolean} value - Whether to ignore theme colours by default.
 	 */
 	set noThemeColour(value) {
-		this.#content.noThemeColour = value;
+		this.#set("noThemeColour", value);
 	}
 
 	/**
@@ -447,7 +447,7 @@ export default class preference {
 	 * @param {boolean} value - Whether to enable compatibility mode.
 	 */
 	set compatibilityMode(value) {
-		this.#content.compatibilityMode = value;
+		this.#set("compatibilityMode", value);
 	}
 
 	/**
@@ -465,7 +465,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set tabbar(value) {
-		this.#content.tabbar = value;
+		this.#set("tabbar", value);
 	}
 
 	/**
@@ -483,7 +483,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set tabbarBorder(value) {
-		this.#content.tabbarBorder = value;
+		this.#set("tabbarBorder", value);
 	}
 
 	/**
@@ -501,7 +501,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set tabSelected(value) {
-		this.#content.tabSelected = value;
+		this.#set("tabSelected", value);
 	}
 
 	/**
@@ -519,7 +519,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set tabSelectedBorder(value) {
-		this.#content.tabSelectedBorder = value;
+		this.#set("tabSelectedBorder", value);
 	}
 
 	/**
@@ -537,7 +537,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set toolbar(value) {
-		this.#content.toolbar = value;
+		this.#set("toolbar", value);
 	}
 
 	/**
@@ -555,7 +555,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set toolbarBorder(value) {
-		this.#content.toolbarBorder = value;
+		this.#set("toolbarBorder", value);
 	}
 
 	/**
@@ -573,7 +573,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set toolbarField(value) {
-		this.#content.toolbarField = value;
+		this.#set("toolbarField", value);
 	}
 
 	/**
@@ -591,7 +591,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set toolbarFieldBorder(value) {
-		this.#content.toolbarFieldBorder = value;
+		this.#set("toolbarFieldBorder", value);
 	}
 
 	/**
@@ -609,7 +609,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set toolbarFieldOnFocus(value) {
-		this.#content.toolbarFieldOnFocus = value;
+		this.#set("toolbarFieldOnFocus", value);
 	}
 
 	/**
@@ -627,7 +627,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set sidebar(value) {
-		this.#content.sidebar = value;
+		this.#set("sidebar", value);
 	}
 
 	/**
@@ -645,7 +645,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set sidebarBorder(value) {
-		this.#content.sidebarBorder = value;
+		this.#set("sidebarBorder", value);
 	}
 
 	/**
@@ -663,7 +663,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set popup(value) {
-		this.#content.popup = value;
+		this.#set("popup", value);
 	}
 
 	/**
@@ -681,7 +681,7 @@ export default class preference {
 	 * @param {number} value - The brightness adjustment.
 	 */
 	set popupBorder(value) {
-		this.#content.popupBorder = value;
+		this.#set("popupBorder", value);
 	}
 
 	/**
@@ -699,7 +699,7 @@ export default class preference {
 	 * @param {number} value - The minimum contrast ratio (0-210).
 	 */
 	set minContrast_light(value) {
-		this.#content.minContrast_light = value;
+		this.#set("minContrast_light", value);
 	}
 
 	/**
@@ -717,7 +717,7 @@ export default class preference {
 	 * @param {number} value - The minimum contrast ratio (0-210).
 	 */
 	set minContrast_dark(value) {
-		this.#content.minContrast_dark = value;
+		this.#set("minContrast_dark", value);
 	}
 
 	/**
@@ -735,7 +735,7 @@ export default class preference {
 	 * @param {string} value - The background colour as a hex string.
 	 */
 	set homeBackground_light(value) {
-		this.#content.homeBackground_light = value;
+		this.#set("homeBackground_light", value);
 	}
 
 	/**
@@ -753,7 +753,7 @@ export default class preference {
 	 * @param {string} value - The background colour as a hex string.
 	 */
 	set homeBackground_dark(value) {
-		this.#content.homeBackground_dark = value;
+		this.#set("homeBackground_dark", value);
 	}
 
 	/**
@@ -771,7 +771,7 @@ export default class preference {
 	 * @param {string} value - The fallback colour as a hex string.
 	 */
 	set fallbackColour_light(value) {
-		this.#content.fallbackColour_light = value;
+		this.#set("fallbackColour_light", value);
 	}
 
 	/**
@@ -789,7 +789,7 @@ export default class preference {
 	 * @param {string} value - The fallback colour as a hex string.
 	 */
 	set fallbackColour_dark(value) {
-		this.#content.fallbackColour_dark = value;
+		this.#set("fallbackColour_dark", value);
 	}
 
 	/**
@@ -807,7 +807,7 @@ export default class preference {
 	 * @param {object} value - The site list containing ID-keyed policy objects.
 	 */
 	set siteList(value) {
-		this.#content.siteList = value;
+		this.#set("siteList", value);
 	}
 
 	/**
@@ -825,6 +825,6 @@ export default class preference {
 	 * @param {number[]} value - The version as an array of numbers.
 	 */
 	set version(value) {
-		this.#content.version = value;
+		this.#set("version", value);
 	}
 }
