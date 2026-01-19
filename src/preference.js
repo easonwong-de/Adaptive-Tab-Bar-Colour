@@ -299,16 +299,15 @@ export default class preference {
 		let matchedPolicy;
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
-			if (!policy || policy?.header === "") continue;
+			const normalisedInput = input.replace(/\/$/, "");
+			const normalisedHeader = policy.header.replace(/\/$/, "");
 			const isMatch =
-				policy.headerType === "ADDON_ID"
-					? policy.header === input
-					: policy.headerType === "URL" &&
-						(policy.header === input ||
-							policy.header === `${input}/` ||
-							this.#testRegex(input, policy.header) ||
-							this.#testWildcard(input, policy.header) ||
-							this.#testHostname(input, policy.header));
+				(policy.headerType === "ADDON_ID" && policy.header === input) ||
+				(policy.headerType === "URL" &&
+					(normalisedInput === normalisedHeader ||
+						this.#testRegex(normalisedInput, normalisedHeader) ||
+						this.#testWildcard(normalisedInput, normalisedHeader) ||
+						this.#testHostname(normalisedInput, normalisedHeader)));
 			if (isMatch) {
 				matchedId = +id;
 				matchedPolicy = policy;
@@ -379,9 +378,11 @@ export default class preference {
 	#testHostname(url, hostname) {
 		try {
 			const urlObj = new URL(url);
+			const urlPath = urlObj.hostname + urlObj.pathname;
 			return (
-				hostname === urlObj.hostname ||
-				hostname === urlObj.hostname + urlObj.pathname
+				urlPath === hostname ||
+				(urlPath.startsWith(hostname) &&
+					urlPath[hostname.length] === "/")
 			);
 		} catch (error) {
 			return false;
