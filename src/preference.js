@@ -1,238 +1,234 @@
-import {
-	addonVersion,
-	default_homeBackground_light,
-	default_homeBackground_dark,
-	default_fallbackColour_light,
-	default_fallbackColour_dark,
-	default_compatibilityMode,
-	defaultPreference,
-} from "./constants.js";
-import colour from "./colour.js";
+import { addonVersion, defaultPref } from "./constants.js";
 import { supportsThemeAPI } from "./utility.js";
+import colour from "./colour.js";
 
 export default class preference {
 	/** The content of the preference */
-	#content = {
-		tabbar: 0,
-		tabbarBorder: 0,
-		tabSelected: 10,
-		tabSelectedBorder: 0,
-		toolbar: 0,
-		toolbarBorder: 0,
-		toolbarField: 5,
-		toolbarFieldBorder: 5,
-		toolbarFieldOnFocus: 5,
-		sidebar: 5,
-		sidebarBorder: 5,
-		popup: 5,
-		popupBorder: 5,
-		minContrast_light: 90,
-		minContrast_dark: 45,
-		allowDarkLight: true,
-		dynamic: true,
-		noThemeColour: true,
-		compatibilityMode: default_compatibilityMode,
-		homeBackground_light: default_homeBackground_light,
-		homeBackground_dark: default_homeBackground_dark,
-		fallbackColour_light: default_fallbackColour_light,
-		fallbackColour_dark: default_fallbackColour_dark,
-		siteList: {},
-		version: addonVersion,
-	};
+	#content = { ...defaultPref };
 
-	/** Loads preferences from browser storage into this instance. */
-	async load() {
-		this.#content = await browser.storage.local.get();
-	}
-
-	/** Saves preferences from this instance to browser storage. */
-	async save() {
-		await browser.storage.local.set(this.#content);
-	}
-
-	/**
-	 * Validates that preferences content has the correct structure and types.
-	 *
-	 * Checks that all properties exist and have the expected data types
-	 * compared to the default content.
-	 *
-	 * @returns {boolean} `true` if all properties have correct types, `false`
-	 *   otherwise.
-	 */
-	valid() {
-		if (
-			Object.keys(this.#content).length !==
-			Object.keys(defaultPreference).length
-		)
-			return false;
-		for (const key in defaultPreference) {
-			if (typeof this.#content[key] !== typeof defaultPreference[key])
-				return false;
+	/** Initialises the preferences by loading from storage and normalising. */
+	async initialise() {
+		const { storedPref, removedKeys } = this.#normalise(
+			await browser.storage.local.get(),
+		);
+		for (const key in storedPref) {
+			await this.#set(key, storedPref[key]);
 		}
-		return true;
+		removedKeys.forEach(
+			async (key) => await browser.storage.local.remove(key),
+		);
+		if (!supportsThemeAPI()) this.#set("compatibilityMode", true);
 	}
 
 	/**
-	 * Resets preferences to default values.
+	 * Resets a specific preference or all preferences to default values.
 	 *
-	 * If a valid key is provided, resets only that preference. Otherwise,
-	 * resets all preferences to their default values.
-	 *
-	 * @param {string | undefined} [key=undefined] - The preference key to
-	 *   reset, or `undefined` to reset all preferences. Default is `undefined`
+	 * @param {string} [key] - The specific preference key to reset.
 	 */
-	reset(key = undefined) {
-		if (key in defaultPreference) {
-			this.#content[key] = defaultPreference[key];
+	async reset(key = undefined) {
+		if (key in defaultPref) {
+			await this.#set(key, defaultPref[key]);
 		} else {
-			this.#content = {};
-			for (const key in defaultPreference) {
-				this.#content[key] = defaultPreference[key];
-			}
+			this.#content = { ...defaultPref };
+			await browser.storage.local.set(this.#content);
 		}
 	}
 
 	/**
-	 * Normalises preferences content to ensure compatibility and consistency.
+	 * Sets a preference value and saves it to storage.
 	 *
-	 * Handles version migrations, validates numeric preferences, and ensures
-	 * compatibility mode is enabled when theme API is not supported.
+	 * @param {string} key - The preference key.
+	 * @param {any} value - The value to set.
 	 */
-	async normalise() {
+	async #set(key, value) {
+		if (typeof value !== typeof defaultPref[key]) value = defaultPref[key];
+		switch (key) {
+			case "tabbar":
+			case "tabbarBorder":
+			case "tabSelected":
+			case "tabSelectedBorder":
+			case "toolbar":
+			case "toolbarBorder":
+			case "toolbarField":
+			case "toolbarFieldBorder":
+			case "toolbarFieldOnFocus":
+			case "sidebar":
+			case "sidebarBorder":
+			case "popup":
+			case "popupBorder":
+				value = this.#normaliseNumericPref(value, {
+					min: -50,
+					max: 50,
+					step: 1,
+				});
+				break;
+			case "minContrast_light":
+			case "minContrast_dark":
+				value = this.#normaliseNumericPref(value, {
+					min: 0,
+					max: 210,
+					step: 5,
+				});
+				break;
+			case "siteList":
+				for (const id in value)
+					if (!this.#validatePolicy(value[id])) value[id] = null;
+				break;
+			default:
+				break;
+		}
+		this.#content[key] = value;
+		await browser.storage.local.set(key, value);
+	}
+
+	/**
+	 * Validates a policy object structure.
+	 *
+	 * @param {object} policy - The policy to validate.
+	 * @returns {boolean} `true` if the policy is valid.
+	 */
+	#validatePolicy(policy) {
+		return (
+			typeof policy === "object" &&
+			typeof policy.header === "string" &&
+			((policy.headerType === "URL" &&
+				((policy.type === "THEME_COLOUR" &&
+					typeof policy.value === "boolean") ||
+					(policy.type === "QUERY_SELECTOR" &&
+						typeof policy.value === "string"))) ||
+				((policy.headerType === "URL" ||
+					policy.headerType === "ADDON_ID") &&
+					policy.type === "COLOUR" &&
+					typeof policy.value === "string"))
+		);
+	}
+
+	/**
+	 * Normalises a numeric preference within constraints.
+	 *
+	 * Applies min/max bounds, and rounds to the nearest step.
+	 *
+	 * @private
+	 * @param {number} num - The number to validate.
+	 * @param {number} min - The minimum allowed value.
+	 * @param {number} max - The maximum allowed value.
+	 * @param {number} step - The step size for rounding.
+	 * @returns {number} The validated and adjusted number.
+	 */
+	#normaliseNumericPref(num, { min, max, step }) {
+		if (-1 < num && num < 1) num = Math.round(num * 100);
+		num = Math.max(min, Math.min(max, num));
+		const remainder = (num - min) % step;
+		if (remainder !== 0)
+			num =
+				remainder >= step / 2
+					? num + (step - remainder)
+					: num - remainder;
+		return Math.round(num);
+	}
+
+	/**
+	 * Normalises and migrates preferences from older versions.
+	 *
+	 * @param {object} content - The stored preference content.
+	 * @returns {{ result: object; removedKeys: string[] }} The normalised
+	 *   preferences and removed keys.
+	 */
+	#normalise(content) {
 		if (
-			!this.#content.version ||
-			this.#content.version < [2, 0] ||
-			JSON.stringify(this.#content.version) === "[2,2,1]"
+			typeof content !== "object" ||
+			content?.version < [2, 0] ||
+			JSON.stringify(content.version) === "[2,2,1]"
 		) {
-			this.reset();
-			await this.save();
-			return;
-		}
-		const oldContent = Object.assign({}, this.#content);
-		this.#content = {};
-		for (const key in defaultPreference) {
-			this.#content[key] =
-				typeof oldContent[key] === typeof defaultPreference[key]
-					? oldContent[key]
-					: defaultPreference[key];
-		}
-		// Updating from before v2.2
-		if (this.#content.version < [2, 2]) {
-			// Turns on allow dark / light tab bar, dynamic, and no theme colour settings for once
-			this.#content.allowDarkLight = true;
-			this.#content.dynamic = true;
-			this.#content.noThemeColour = true;
-			// Re-formatting site list
-			const newSiteList = {};
-			let id = 1;
-			for (const site in this.#content.siteList) {
-				const legacyPolicy = this.#content.siteList[site];
-				if (typeof legacyPolicy !== "string") {
-					continue;
-				} else if (legacyPolicy === "IGNORE_THEME") {
-					newSiteList[id++] = {
-						headerType: "URL",
-						header: site,
-						type: "THEME_COLOUR",
-						value: false,
-					};
-				} else if (legacyPolicy === "UN_IGNORE_THEME") {
-					newSiteList[id++] = {
-						headerType: "URL",
-						header: site,
-						type: "THEME_COLOUR",
-						value: true,
-					};
-				} else if (legacyPolicy.startsWith("QS_")) {
-					newSiteList[id++] = {
-						headerType: "URL",
-						header: site,
-						type: "QUERY_SELECTOR",
-						value: legacyPolicy.replace("QS_", ""),
-					};
-				} else if (site.startsWith("Add-on ID: ")) {
-					newSiteList[id++] = {
-						headerType: "ADDON_ID",
-						header: site.replace("Add-on ID: ", ""),
-						type: "COLOUR",
-						value: new colour(legacyPolicy).toHex(),
-					};
-				} else {
-					newSiteList[id++] = {
-						headerType: "URL",
-						header: site,
-						type: "COLOUR",
-						value: new colour(legacyPolicy).toHex(),
-					};
+			return { result: { ...defaultPref }, removedKeys: [] };
+		} else {
+			const result = { ...defaultPref, ...content };
+			const removedKeys = [];
+			for (const key in result) {
+				if (!(key in defaultPref)) {
+					delete result[key];
+					removedKeys.push(key);
 				}
 			}
-			this.#content.siteList = newSiteList;
+			if (result.version < [2, 2]) {
+				result.allowDarkLight = true;
+				result.dynamic = true;
+				result.noThemeColour = true;
+				const siteList = {};
+				let id = 1;
+				for (const site in result.siteList) {
+					const policy = result.siteList[site];
+					if (typeof policy !== "string") {
+						continue;
+					} else if (policy === "IGNORE_THEME") {
+						siteList[id++] = {
+							headerType: "URL",
+							header: site,
+							type: "THEME_COLOUR",
+							value: false,
+						};
+					} else if (policy === "UN_IGNORE_THEME") {
+						siteList[id++] = {
+							headerType: "URL",
+							header: site,
+							type: "THEME_COLOUR",
+							value: true,
+						};
+					} else if (policy.startsWith("QS_")) {
+						siteList[id++] = {
+							headerType: "URL",
+							header: site,
+							type: "QUERY_SELECTOR",
+							value: policy.replace("QS_", ""),
+						};
+					} else if (site.startsWith("Add-on ID: ")) {
+						siteList[id++] = {
+							headerType: "ADDON_ID",
+							header: site.replace("Add-on ID: ", ""),
+							type: "COLOUR",
+							value: new colour(policy, false).toHex(),
+						};
+					} else {
+						siteList[id++] = {
+							headerType: "URL",
+							header: site,
+							type: "COLOUR",
+							value: new colour(policy, false).toHex(),
+						};
+					}
+				}
+				result.siteList = siteList;
+			}
+			if (result.version < [2, 4]) {
+				browser.theme.reset();
+				if (result.minContrast_light === 165)
+					result.minContrast_light = 90;
+			}
+			result.version = addonVersion;
+			return { result, removedKeys };
 		}
-		// Updating from before v2.4
-		if (this.#content.version < [2, 4]) {
-			browser.theme.reset();
-			if (this.#content.minContrast_light === 165)
-				this.#content.minContrast_light = 90;
-		}
-		[
-			"tabbar",
-			"tabbarBorder",
-			"tabSelected",
-			"tabSelectedBorder",
-			"toolbar",
-			"toolbarBorder",
-			"toolbarField",
-			"toolbarFieldBorder",
-			"toolbarFieldOnFocus",
-			"sidebar",
-			"sidebarBorder",
-			"popup",
-			"popupBorder",
-		].forEach((key) => {
-			this.#content[key] = this.#validateNumericPref(this.#content[key], {
-				min: -50,
-				max: 50,
-				step: 5,
-			});
-		});
-		["minContrast_light", "minContrast_dark"].forEach((key) => {
-			this.#content[key] = this.#validateNumericPref(this.#content[key], {
-				min: 0,
-				max: 210,
-				step: 15,
-			});
-		});
-		// Auto-enable compatibility mode if theme API is not supported
-		if (!supportsThemeAPI()) {
-			this.#content.compatibilityMode = true;
-		}
-		// Updates the pref version
-		this.#content.version = addonVersion;
 	}
 
 	/**
-	 * Converts preferences to a JSON string.
+	 * Exports preferences as a JSON string.
 	 *
-	 * @returns {string} The JSON string representation of the preferences.
+	 * @returns {string} The preferences as JSON.
 	 */
-	prefToJSON() {
+	exportJSON() {
 		return JSON.stringify(this.#content);
 	}
 
 	/**
-	 * Loads preferences from a JSON string and normalises them.
+	 * Imports preferences from a JSON string.
 	 *
-	 * @param {string} JSONString - The JSON string to parse and load.
-	 * @returns {Promise<boolean>} `true` if successfully parsed and loaded,
-	 *   `false` if the JSON string is invalid.
+	 * @param {string} jsonString - The JSON string to import.
+	 * @returns {Promise<boolean>} `true` if import succeeded, `false`
+	 *   otherwise.
 	 */
-	async JSONToPref(JSONString) {
+	async importPref(jsonString) {
 		try {
-			const parsedJSON = JSON.parse(JSONString);
-			if (typeof parsedJSON !== "object" || parsedJSON === null)
-				return false;
-			this.#content = parsedJSON;
-			await this.normalise();
+			const parsedPref = this.#normalise(JSON.parse(jsonString)).result;
+			for (const key in parsedPref) await this.#set(key, parsedPref[key]);
 			return true;
 		} catch (error) {
 			return false;
@@ -240,35 +236,36 @@ export default class preference {
 	}
 
 	/**
-	 * Adds a policy to the site list.
+	 * Adds a new policy to the site list.
 	 *
-	 * @param {object} policy - The policy object to add.
-	 * @returns {number} The assigned ID of the added policy.
+	 * @param {object} policy - The policy to add.
 	 */
-	addPolicy(policy) {
+	async addPolicy(policy) {
 		let id = 1;
 		while (id in this.#content.siteList) id++;
-		this.#content.siteList[id] = policy;
-		return id;
+		await this.setPolicy(id, policy);
 	}
 
 	/**
-	 * Sets a policy at the specified ID.
+	 * Sets a policy at a specific ID.
 	 *
-	 * @param {number} id - The ID where to set the policy.
-	 * @param {object} policy - The policy object to set.
+	 * @param {number} id - The policy ID.
+	 * @param {object} policy - The policy to set.
 	 */
-	setPolicy(id, policy) {
+	async setPolicy(id, policy) {
+		if (!this.#validatePolicy(policy)) return;
 		this.#content.siteList[id] = policy;
+		await browser.storage.local.set("siteList", this.#content.siteList);
 	}
 
 	/**
-	 * Removes a policy from the site list by setting it to `null`.
+	 * Removes a policy by setting it to null.
 	 *
-	 * @param {number} id - The ID of the policy to remove.
+	 * @param {number} id - The policy ID to remove.
 	 */
-	removePolicy(id) {
+	async removePolicy(id) {
 		this.#content.siteList[id] = null;
+		await browser.storage.local.set("siteList", this.#content.siteList);
 	}
 
 	/**
@@ -288,26 +285,25 @@ export default class preference {
 	 *
 	 * For add-on ID header types, performs exact string matching.
 	 *
-	 * @param {string} input - The site URL or add-on ID to match.
+	 * @param {string} query - The site URL or add-on ID to match.
 	 * @returns {{ id: number; policy: object | undefined }} Object containing
 	 *   the matched policy ID (0 if not found) and the policy object.
 	 */
-	getPolicy(input) {
+	getPolicy(query) {
 		let matchedId = 0;
 		let matchedPolicy;
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
-			if (!policy || policy?.header === "") continue;
-			const isMatch =
+			if (
 				policy.headerType === "ADDON_ID"
-					? policy.header === input
+					? policy.header === query
 					: policy.headerType === "URL" &&
-						(policy.header === input ||
-							policy.header === `${input}/` ||
-							this.#testRegex(input, policy.header) ||
-							this.#testWildcard(input, policy.header) ||
-							this.#testHostname(input, policy.header));
-			if (isMatch) {
+						(policy.header === query ||
+							policy.header === `${query}/` ||
+							this.#testRegex(query, policy.header) ||
+							this.#testWildcard(query, policy.header) ||
+							this.#testHostname(query, policy.header))
+			) {
 				matchedId = +id;
 				matchedPolicy = policy;
 			}
@@ -380,32 +376,6 @@ export default class preference {
 		} catch (error) {
 			return false;
 		}
-	}
-
-	/**
-	 * Validates and adjusts a numeric preference within constraints.
-	 *
-	 * Handles percentage conversion, applies min/max bounds, and rounds to the
-	 * nearest step value.
-	 *
-	 * @private
-	 * @param {number} num - The number to validate.
-	 * @param {object} constraints - The validation constraints.
-	 * @param {number} constraints.min - The minimum allowed value.
-	 * @param {number} constraints.max - The maximum allowed value.
-	 * @param {number} constraints.step - The step size for rounding.
-	 * @returns {number} The validated and adjusted number.
-	 */
-	#validateNumericPref(num, { min, max, step }) {
-		if (-1 < num && num < 1) num = Math.round(num * 100);
-		num = Math.max(min, Math.min(max, num));
-		const remainder = (num - min) % step;
-		if (remainder !== 0)
-			num =
-				remainder >= step / 2
-					? num + (step - remainder)
-					: num - remainder;
-		return Math.round(num);
 	}
 
 	/**

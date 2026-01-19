@@ -23,9 +23,13 @@ import preference from "./preference.js";
 import colour from "./colour.js";
 import { aboutPageColour, mozillaPageColour } from "./constants.js";
 import {
-	onSchemeChanged,
+	addSchemeChangeListener,
+	addTabChangeListener,
+	addMessageListener,
+	updateBrowserTheme,
 	getCurrentScheme,
 	getSystemScheme,
+	sendMessage,
 	getAddonId,
 } from "./utility.js";
 
@@ -106,33 +110,6 @@ const cache = {
 };
 
 /**
- * Triggers colour change in all windows.
- *
- * Clears the cache and updates all active and loaded tabs.
- */
-async function update() {
-	if (!pref.valid()) await initialise();
-	await cache.clear();
-	const activeTabs = await browser.tabs.query({
-		active: true,
-		status: "complete",
-	});
-	activeTabs.forEach(updateTab);
-}
-
-/**
- * Initialises preferences and cache.
- *
- * Loads, normalises, and saves preferences, then triggers an update.
- */
-async function initialise() {
-	await pref.load();
-	await pref.normalise();
-	await pref.save();
-	await update();
-}
-
-/**
  * Handles incoming messages based on their header.
  *
  * @param {object} message - The message object containing the header and data.
@@ -145,13 +122,6 @@ async function handleMessage(message, sender) {
 	const tab = sender.tab;
 	const header = message.header;
 	switch (header) {
-		case "INIT_REQUEST":
-			await initialise();
-			break;
-		case "PREF_CHANGED":
-			await pref.load();
-			await update();
-			break;
 		case "SCRIPT_READY":
 			updateTab(tab);
 			break;
@@ -168,9 +138,24 @@ async function handleMessage(message, sender) {
 		case "META_REQUEST":
 			return cache.meta[message.windowId];
 		default:
-			update();
+			run();
 	}
 	return true;
+}
+
+/**
+ * Triggers colour change in all windows.
+ *
+ * Clears the cache and updates all active and loaded tabs.
+ */
+async function run() {
+	await cache.clear();
+	await browser.tabs
+		.query({
+			active: true,
+			status: "complete",
+		})
+		.forEach(updateTab);
 }
 
 /**
@@ -209,7 +194,7 @@ async function getTabMeta(tab) {
 		};
 	} else {
 		try {
-			const tabColour = await browser.tabs.sendMessage(tab.id, {
+			const tabColour = await sendMessage(tab.id, {
 				header: "GET_COLOUR",
 				active: policy?.type !== "COLOUR",
 				dynamic: pref.dynamic,
@@ -528,7 +513,7 @@ function setFrameColour(tab, colour) {
  */
 async function setTabThemeColour(tab, colour) {
 	try {
-		await browser.tabs.sendMessage(tab.id, {
+		await sendMessage(tab.id, {
 			header: "SET_THEME_COLOUR",
 			colour: colour.brightness(pref.tabbar).toRGBA(),
 		});
@@ -546,9 +531,12 @@ async function setTabThemeColour(tab, colour) {
  * @param {number} windowId - The ID of the target window.
  * @param {colour} colour - The base colour for theme generation.
  * @param {"light" | "dark"} colourScheme - The colour scheme to apply.
+ * @link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {
+		const textColour = "#000000";
+		const secondaryColour = "#0000001c";
 		const theme = {
 			colors: {
 				// adaptive
@@ -603,30 +591,30 @@ function applyTheme(windowId, colour, colourScheme) {
 								)
 								.toRGBA(),
 				// static
-				icons: "rgb(0, 0, 0)",
-				ntp_text: "rgb(0, 0, 0)",
-				popup_text: "rgb(0, 0, 0)",
-				sidebar_text: "rgb(0, 0, 0)",
-				tab_background_text: "rgb(0, 0, 0)",
-				tab_text: "rgb(0, 0, 0)",
-				toolbar_field_text: "rgb(0, 0, 0)",
-				toolbar_text: "rgb(0, 0, 0)",
-				button_background_hover: "rgba(0, 0, 0, 0.11)",
-				toolbar_vertical_separator: "rgba(0, 0, 0, 0.11)",
+				icons: textColour,
+				ntp_text: textColour,
+				popup_text: textColour,
+				sidebar_text: textColour,
+				tab_background_text: textColour,
+				tab_text: textColour,
+				toolbar_field_text: textColour,
+				toolbar_text: textColour,
+				button_background_hover: secondaryColour,
+				toolbar_vertical_separator: secondaryColour,
 				toolbar_field_border_focus: "AccentColor",
 				popup_highlight: "AccentColor",
 				sidebar_highlight: "AccentColor",
 				icons_attention: "AccentColor",
 			},
 			properties: {
-				// More on: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme#properties
 				color_scheme: "system",
 				content_color_scheme: "system",
 			},
 		};
-		browser.theme.update(windowId, theme);
-	}
-	if (colourScheme === "dark") {
+		updateBrowserTheme(windowId, theme);
+	} else if (colourScheme === "dark") {
+		const textColour = "#ffffff";
+		const secondaryColour = "#ffffff1c";
 		const theme = {
 			colors: {
 				// adaptive
@@ -669,16 +657,16 @@ function applyTheme(windowId, colour, colourScheme) {
 								.brightness(pref.tabbarBorder + pref.tabbar)
 								.toRGBA(),
 				// static
-				icons: "rgb(255, 255, 255)",
-				ntp_text: "rgb(255, 255, 255)",
-				popup_text: "rgb(255, 255, 255)",
-				sidebar_text: "rgb(255, 255, 255)",
-				tab_background_text: "rgb(255, 255, 255)",
-				tab_text: "rgb(255, 255, 255)",
-				toolbar_field_text: "rgb(255, 255, 255)",
-				toolbar_text: "rgb(255, 255, 255)",
-				button_background_hover: "rgba(255, 255, 255, 0.11)",
-				toolbar_vertical_separator: "rgba(255, 255, 255, 0.11)",
+				icons: textColour,
+				ntp_text: textColour,
+				popup_text: textColour,
+				sidebar_text: textColour,
+				tab_background_text: textColour,
+				tab_text: textColour,
+				toolbar_field_text: textColour,
+				toolbar_text: textColour,
+				button_background_hover: secondaryColour,
+				toolbar_vertical_separator: secondaryColour,
 				toolbar_field_border_focus: "AccentColor",
 				popup_highlight: "AccentColor",
 				sidebar_highlight: "AccentColor",
@@ -689,19 +677,14 @@ function applyTheme(windowId, colour, colourScheme) {
 				content_color_scheme: "system",
 			},
 		};
-		browser.theme.update(windowId, theme);
+		updateBrowserTheme(windowId, theme);
 	}
 }
 
 (async () => {
-	await initialise();
-	onSchemeChanged(update);
-	browser.tabs.onUpdated.addListener(update, { properties: ["status"] });
-	browser.tabs.onActivated.addListener(update);
-	browser.tabs.onAttached.addListener(update);
-	browser.windows.onFocusChanged.addListener(update);
-	browser.browserSettings?.overrideContentColorScheme?.onChange?.addListener(
-		update,
-	);
-	browser.runtime.onMessage.addListener(handleMessage);
+	await pref.initialise();
+	addSchemeChangeListener(run);
+	addTabChangeListener(run);
+	addMessageListener(handleMessage);
+	await run();
 })();

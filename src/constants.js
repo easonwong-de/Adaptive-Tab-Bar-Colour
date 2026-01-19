@@ -68,7 +68,8 @@ export const recommendedAddonPageColour = Object.freeze({
 });
 
 /** Default content of the preference */
-export const defaultPreference = Object.freeze({
+export const defaultPref = Object.freeze({
+	// theme builder
 	tabbar: 0,
 	tabbarBorder: 0,
 	tabSelected: 10,
@@ -82,6 +83,9 @@ export const defaultPreference = Object.freeze({
 	sidebarBorder: 5,
 	popup: 5,
 	popupBorder: 5,
+	// site list
+	siteList: {},
+	// advanced
 	minContrast_light: 90,
 	minContrast_dark: 45,
 	allowDarkLight: true,
@@ -92,6 +96,6 @@ export const defaultPreference = Object.freeze({
 	homeBackground_dark: default_homeBackground_dark,
 	fallbackColour_light: default_fallbackColour_light,
 	fallbackColour_dark: default_fallbackColour_dark,
-	siteList: {},
+	// version
 	version: addonVersion,
 });
