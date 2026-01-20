@@ -21,6 +21,11 @@ browser.runtime.onMessage.addListener((message, _, sendResponse) => {
 	}
 });
 
+/**
+ * Retrieves the colour data from the current page.
+ *
+ * @returns {object} The colour data object.
+ */
 function getColour() {
 	return {
 		theme: getThemeColour(),
@@ -29,6 +34,11 @@ function getColour() {
 	};
 }
 
+/**
+ * Extracts the theme colour from meta tags.
+ *
+ * @returns {{ light?: string; dark?: string }} The extracted theme colours.
+ */
 function getThemeColour() {
 	const metaThemeColourLight =
 		document.querySelector(
@@ -44,6 +54,11 @@ function getThemeColour() {
 	};
 }
 
+/**
+ * Extracts visible element colours from the top of the viewport.
+ *
+ * @returns {object[]} List of element colour objects.
+ */
 function getPageColour() {
 	return document
 		.elementsFromPoint(window.innerWidth / 2, 3)
@@ -56,6 +71,12 @@ function getPageColour() {
 		.filter((colour) => colour !== undefined);
 }
 
+/**
+ * Extracts colour from an element matching the query.
+ *
+ * @param {string} query - The CSS selector.
+ * @returns {object | undefined} Element colour object.
+ */
 function getQueryColour(query) {
 	try {
 		return conf.query
@@ -66,6 +87,13 @@ function getQueryColour(query) {
 	}
 }
 
+/**
+ * Extracts style properties from an element.
+ *
+ * @param {Element} element - The target element.
+ * @returns {{ colour: string; opacity: string; filter: string } | undefined}
+ *   The extracted styles.
+ */
 function getElementColour(element) {
 	if (element instanceof Element) {
 		const style = getComputedStyle(element);
@@ -103,6 +131,7 @@ const styleTagObserver = new MutationObserver((mutationList) => {
 	}
 });
 
+/** Enables dynamic colour monitoring using event listeners and observers. */
 function enableDynamic() {
 	["click", "resize", "scroll", "visibilitychange"].forEach((event) =>
 		document.addEventListener(event, sendColour),
@@ -129,6 +158,7 @@ function enableDynamic() {
 	styleTagObserver.observe(document.head, { childList: true });
 }
 
+/** Disables dynamic colour monitoring. */
 function disableDynamic() {
 	["click", "resize", "scroll", "visibilitychange"].forEach((event) =>
 		document.removeEventListener(event, sendColour),
@@ -147,6 +177,11 @@ function disableDynamic() {
 	styleTagObserver.disconnect();
 }
 
+/**
+ * Sets the theme colour by adding a meta tag.
+ *
+ * @param {string} colour - The colour string.
+ */
 function setThemeColour(colour) {
 	const metaThemeColourList = document.querySelectorAll(
 		`meta[name="theme-color"]`,
@@ -162,6 +197,11 @@ let dispatchTimeout;
 let lastSentAt = 0;
 const throttleIntervalMs = 250;
 
+/**
+ * Sends the current page colour to the background script with throttling.
+ *
+ * @async
+ */
 async function sendColour() {
 	clearTimeout(dispatchTimeout);
 	const remaining = throttleIntervalMs + lastSentAt - Date.now();
@@ -178,6 +218,11 @@ async function sendColour() {
 		: (dispatchTimeout = setTimeout(dispatch, remaining));
 }
 
+/**
+ * Sends colour update if the document has focus.
+ *
+ * @async
+ */
 async function sendColourRequiresFocus() {
 	if (document.hasFocus()) await sendColour();
 }

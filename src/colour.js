@@ -32,13 +32,12 @@ export default class colour {
 	#code = undefined;
 
 	/**
-	 * Parses the given initialiser to set the colour value.
+	 * Parses the initialiser to set the colour.
 	 *
-	 * @param {string | object | colour} [initialiser=undefined] - A colour
-	 *   code, a CSS colour string, or an instance of `colour`. Default is
-	 *   `undefined`
-	 * @param {boolean} [acceptCode=true] - Whether the instance is allowed to
-	 *   contain a colour code. Default is `true`
+	 * @param {string | object | colour} [initialiser] - A colour code, CSS
+	 *   string, or `colour` instance.
+	 * @param {boolean} [acceptCode=true] - Whether to allow colour codes.
+	 *   Default is `true`
 	 */
 	constructor(initialiser = undefined, acceptCode = true) {
 		if (acceptCode && colourCodes.includes(initialiser)) {
@@ -72,13 +71,13 @@ export default class colour {
 	}
 
 	/**
-	 * Assigns RGBA values to the colour instance.
+	 * Assigns RGBA values.
 	 *
-	 * @param {number} r - Red channel value (0-255).
-	 * @param {number} g - Green channel value (0-255).
-	 * @param {number} b - Blue channel value (0-255).
-	 * @param {number} a - Alpha channel value (0-1).
-	 * @returns {colour} This colour instance for method chaining.
+	 * @param {number} r - Red (0-255).
+	 * @param {number} g - Green (0-255).
+	 * @param {number} b - Blue (0-255).
+	 * @param {number} a - Alpha (0-1).
+	 * @returns {colour} This instance.
 	 */
 	rgba(r, g, b, a) {
 		this.r = r;
@@ -143,11 +142,11 @@ export default class colour {
 	}
 
 	/**
-	 * Mixes this colour with another colour underneath.
+	 * Mixes this colour with another underneath.
 	 *
-	 * @param {colour} colour - The colour underneath to mix with.
-	 * @returns {colour} A new colour instance as the result of the mix.
-	 * @throws {Error} If the colour is defined by a colour code.
+	 * @param {colour} colour - The colour underneath.
+	 * @returns {colour} The result of the mix.
+	 * @throws {Error} If defined by a colour code.
 	 */
 	mix(colour) {
 		this.#noCode();
@@ -166,29 +165,21 @@ export default class colour {
 	}
 
 	/**
-	 * Creates a colour instance that meets the minimum contrast ratio against
-	 * specified colours.
+	 * Adjusts colour to meet minimum contrast.
 	 *
-	 * @param {"light" | "dark"} preferredScheme - The preferred colour scheme.
-	 * @param {boolean} allowDarkLight - Whether to allow a result in the
-	 *   opposite of the preferred colour scheme.
-	 * @param {number} minContrastLightX10 - The minimum contrast ratio required
-	 *   for light scheme eligibility (times 10).
-	 * @param {number} minContrastDarkX10 - The minimum contrast ratio required
-	 *   for dark scheme eligibility (times 10).
-	 * @param {colour} [contrastColourLight] - The colour to contrast against in
-	 *   light mode. Defaults to black.
-	 * @param {colour} [contrastColourDark] - The colour to contrast against in
-	 *   dark mode. Defaults to white.
+	 * @param {"light" | "dark"} preferredScheme - Preferred scheme.
+	 * @param {boolean} allowDarkLight - Allow opposite scheme.
+	 * @param {number} minContrastLightX10 - Min contrast for light (x10).
+	 * @param {number} minContrastDarkX10 - Min contrast for dark (x10).
+	 * @param {colour} [contrastColourLight] - Light mode contrast target.
+	 * @param {colour} [contrastColourDark] - Dark mode contrast target.
 	 * @returns {{
 	 * 	colour: colour;
 	 * 	scheme: "light" | "dark";
 	 * 	corrected: boolean;
 	 * }}
-	 *   Object containing the corrected colour, chosen scheme, and whether
-	 *   correction was applied.
-	 * @throws {Error} If the colour is defined by a colour code or if colour
-	 *   correction cannot be processed.
+	 *   Correction result.
+	 * @throws {Error} If defined by a colour code or correction fails.
 	 */
 	contrastCorrection(
 		preferredScheme,

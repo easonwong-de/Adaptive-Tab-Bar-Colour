@@ -1,20 +1,19 @@
+/** Match media for dark mode detection */
 const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 
 /**
- * Detects the current system colour scheme.
+ * Detects the system colour scheme.
  *
- * @returns {"dark" | "light"} The current system colour scheme, either "dark"
- *   or "light".
+ * @returns {"dark" | "light"} The current system colour scheme.
  */
 export function getSystemScheme() {
 	return darkSchemeDetection?.matches ? "dark" : "light";
 }
 
 /**
- * Registers a listener function that triggers when the colour scheme changes.
+ * Registers a listener for colour scheme changes.
  *
- * @param {Function} listener - The function to be called when a scheme change
- *   event occurs.
+ * @param {Function} listener - The function to call on scheme change.
  */
 export function addSchemeChangeListener(listener) {
 	darkSchemeDetection?.addEventListener("change", listener);
@@ -26,17 +25,10 @@ export function addSchemeChangeListener(listener) {
 /**
  * Retrieves the preferred colour scheme.
  *
- * Retrieves the user's "web appearance" browser settings. If the setting is
- * explicitly `light` or `dark`, returns it.
+ * Falls back to the system scheme if no browser preference is set.
  *
- * Otherwise, falls back to the operating system's current colour scheme based
- * on media query detection.
- *
- * This function should be called in background script to return the correct
- * result.
- *
- * @returns {Promise<"light" | "dark">} The current colour scheme, either
- *   `light` or `dark`.
+ * @async
+ * @returns {Promise<"light" | "dark">} The current colour scheme.
  */
 export async function getCurrentScheme() {
 	try {
@@ -66,8 +58,9 @@ export function addTabChangeListener(listener) {
 /**
  * Sends a message to a specific tab.
  *
- * @param {number} tabId - The ID of the tab to send the message to.
- * @param {object} message - The message to send.
+ * @async
+ * @param {number} tabId - The ID of the tab.
+ * @param {object} message - The message object.
  * @returns {Promise<any>} The response from the tab.
  */
 export async function sendMessage(tabId, message) {
@@ -77,7 +70,7 @@ export async function sendMessage(tabId, message) {
 /**
  * Registers a listener for runtime messages.
  *
- * @param {Function} listener - The function to call when a message is received.
+ * @param {Function} listener - The function to call on message.
  */
 export function addMessageListener(listener) {
 	browser.runtime.onMessage.addListener(listener);
@@ -86,7 +79,7 @@ export function addMessageListener(listener) {
 /**
  * Updates the browser theme for a specific window.
  *
- * @param {number} windowId - The ID of the window to update.
+ * @param {number} windowId - The ID of the window.
  * @param {object} theme - The theme object to apply.
  */
 export function updateBrowserTheme(windowId, theme) {
@@ -94,11 +87,25 @@ export function updateBrowserTheme(windowId, theme) {
 }
 
 /**
- * Inquires localised messages.
+ * Retrieves all active and fully loaded tabs.
  *
- * @param {string} handle - A handle in _locales. If the handle is not found,
- *   returns `i18n <${handle}>`. If the localisation value is `__EMPTY__`,
- *   returns an empty string.
+ * @async
+ * @returns {Promise<tabs.Tab[]>} List of active and complete tabs.
+ */
+export async function getActiveTabList() {
+	return await browser.tabs.query({
+		active: true,
+		status: "complete",
+	});
+}
+
+/**
+ * Retrieves a localised message.
+ *
+ * If the handle is not found, returns `i18n <${handle}>`. If the localisation
+ * value is `__EMPTY__`, returns an empty string.
+ *
+ * @param {string} handle - The locale handle.
  * @returns {string} The localised message.
  */
 export function i18n(handle) {
@@ -118,8 +125,7 @@ let _supportsThemeAPI = null;
 /**
  * Checks if the browser supports the theme API.
  *
- * @returns {boolean} True if the browser supports the theme API, false
- *   otherwise.
+ * @returns {boolean} `true` if supported.
  */
 export function supportsThemeAPI() {
 	if (_supportsThemeAPI === null) {
@@ -131,13 +137,11 @@ export function supportsThemeAPI() {
 }
 
 /**
- * Retrieves the addon ID from a given URL by matching the UUID with registered
- * extensions.
+ * Retrieves the add-on ID from a given URL.
  *
- * @param {string} url - The URL containing the UUID to match against extension
- *   host permissions.
- * @returns {Promise<string | undefined>} The addon ID if found, `undefined`
- *   otherwise.
+ * @async
+ * @param {string} url - The URL containing the UUID.
+ * @returns {Promise<string | undefined>} The add-on ID if found.
  */
 export async function getAddonId(url) {
 	const uuid = url.split(/\/|\?/)[2];
@@ -161,4 +165,16 @@ export async function getAddonId(url) {
 		}
 	}
 	return addonId;
+}
+
+/**
+ * Clamps a number between a minimum and maximum value.
+ *
+ * @param {number} min - The minimum value.
+ * @param {number} num - The number to clamp.
+ * @param {number} max - The maximum value.
+ * @returns {number} The clamped value.
+ */
+export function clamp(min, num, max) {
+	return Math.max(min, Math.min(max, num));
 }

@@ -23,14 +23,15 @@ import preference from "./preference.js";
 import colour from "./colour.js";
 import { aboutPageColour, mozillaPageColour } from "./constants.js";
 import {
+	addMessageListener,
 	addSchemeChangeListener,
 	addTabChangeListener,
-	addMessageListener,
-	updateBrowserTheme,
+	getActiveTabList,
+	getAddonId,
 	getCurrentScheme,
 	getSystemScheme,
 	sendMessage,
-	getAddonId,
+	updateBrowserTheme,
 } from "./utility.js";
 
 /** Preference */
@@ -112,11 +113,10 @@ const cache = {
 /**
  * Handles incoming messages based on their header.
  *
- * @param {object} message - The message object containing the header and data.
- * @param {string} message.header - The message type header.
- * @param {runtime.MessageSender} sender - The message sender information.
- * @returns {Promise<boolean | string | object>} Response data, scheme string,
- *   meta object, or `true` for acknowledgement.
+ * @async
+ * @param {object} message - The message object.
+ * @param {runtime.MessageSender} sender - The message sender.
+ * @returns {Promise<any>} Response data or acknowledgment.
  */
 async function handleMessage(message, sender) {
 	const tab = sender.tab;
@@ -138,32 +138,25 @@ async function handleMessage(message, sender) {
 		case "META_REQUEST":
 			return cache.meta[message.windowId];
 		default:
-			run();
+			await run();
 	}
 	return true;
 }
 
 /**
- * Triggers colour change in all windows.
+ * Triggers colour update for all active tabs.
  *
- * Clears the cache and updates all active and loaded tabs.
+ * @async
  */
 async function run() {
 	await cache.clear();
-	await browser.tabs
-		.query({
-			active: true,
-			status: "complete",
-		})
-		.forEach(updateTab);
+	(await getActiveTabList()).forEach(updateTab);
 }
 
 /**
- * Updates the colour for a tab and caches policy and meta information.
+ * Updates the colour for a tab and caches its meta information.
  *
- * Retrieves the policy for the tab's URL, caches it, gets tab metadata, and
- * applies the appropriate frame colour.
- *
+ * @async
  * @param {tabs.Tab} tab - The tab to update.
  */
 async function updateTab(tab) {
@@ -176,14 +169,12 @@ async function updateTab(tab) {
 }
 
 /**
- * Determines the appropriate colour for a tab.
+ * Determines the appropriate colour meta for a tab.
  *
- * Attempts to get colour from content script based on policy, falling back to
- * protected page colour if the content script is unavailable.
- *
+ * @async
  * @param {tabs.Tab} tab - The tab to extract colour from.
- * @returns {Promise<{ colour: colour; reason: string info?: string; }>} Object
- *   containing the determined colour, reason code, and optional info.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Tab
+ *   metadata.
  */
 async function getTabMeta(tab) {
 	const policy = cache.policy[tab.windowId];
@@ -212,15 +203,14 @@ async function getTabMeta(tab) {
 }
 
 /**
- * Parses a tab message to determine the appropriate colour based on policy.
+ * Parses tab colour data based on policy.
  *
- * @param {object} policy - The policy object containing type and value.
- * @param {object} colour - The object containing tab colour data.
- * @param {object} colour.theme - Theme colour data.
- * @param {Array} colour.page - Array of page element colour data.
- * @param {object} colour.query - Query selector colour result.
- * @returns {Promise<{ colour: colour; reason: string info?: string; }>} Object
- *   containing the determined colour, reason code, and optional info.
+ * @param {object} policy - The policy object.
+ * @param {object} colourData - The tab colour data.
+ * @param {object} colourData.theme - Theme colour data.
+ * @param {Array} colourData.page - Page element colour data.
+ * @param {object} colourData.query - Query selector result.
+ * @returns {{ colour: colour; reason: string; info?: string }} Parsed metadata.
  */
 function parseTabColour(policy, { theme, page, query }) {
 	const parseThemeColour = () => new colour(theme[cache.scheme], false);
@@ -277,14 +267,12 @@ function parseTabColour(policy, { theme, page, query }) {
 }
 
 /**
- * Determines the colour for a protected page based on URL patterns.
+ * Determines the colour for a protected page.
  *
- * Handles special pages like about: pages, extensions, Mozilla sites, and
- * various file types that cannot run content scripts.
- *
- * @param {tabs.Tab} tab - The tab to determine colour for.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Object
- *   containing the appropriate colour, reason code, and optional info.
+ * @async
+ * @param {tabs.Tab} tab - The tab.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>}
+ *   Metadata.
  */
 async function getProtectedPageMeta(tab) {
 	const url = new URL(tab.url);
@@ -368,11 +356,10 @@ async function getProtectedPageMeta(tab) {
 }
 
 /**
- * Gets the colour for an about: page based on its pathname.
+ * Gets the colour for an about: page.
  *
- * @param {string} pathname - The pathname of the about page (e.g., 'config').
- * @returns {{ colour: colour; reason: string }} Object containing the
- *   appropriate colour and reason code for the about page.
+ * @param {string} pathname - The pathname of the page.
+ * @returns {{ colour: colour; reason: string }} Metadata.
  */
 function getAboutPageMeta(pathname) {
 	if (aboutPageColour[pathname]?.[cache.scheme]) {
@@ -394,11 +381,10 @@ function getAboutPageMeta(pathname) {
 }
 
 /**
- * Gets the colour for a Mozilla domain page based on its hostname.
+ * Gets the colour for a Mozilla domain page.
  *
- * @param {string} hostname - The hostname of the Mozilla page.
- * @returns {{ colour: colour; reason: string }} Object containing the
- *   appropriate colour and reason code for the Mozilla page.
+ * @param {string} hostname - The hostname of the page.
+ * @returns {{ colour: colour; reason: string }} Metadata.
  */
 function getMozillaPageMeta(hostname) {
 	if (mozillaPageColour[hostname]?.[cache.scheme]) {
@@ -422,13 +408,12 @@ function getMozillaPageMeta(hostname) {
 }
 
 /**
- * Gets the colour for an extension page based on its URL.
+ * Gets the colour for an extension page.
  *
- * Attempts to identify the extension and apply any configured policy colour.
- *
- * @param {string} url - The moz-extension:// URL of the extension page.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Object
- *   containing the colour, reason code, and optional extension ID.
+ * @async
+ * @param {string} url - The URL of the page.
+ * @returns {Promise<{ colour: colour; reason: string; info?: string }>}
+ *   Metadata.
  */
 async function getAddonPageMeta(url) {
 	const addonId = await getAddonId(url);
@@ -448,13 +433,10 @@ async function getAddonPageMeta(url) {
 }
 
 /**
- * Applies the given colour to the browser frame of a tab's window.
+ * Applies the colour to the browser frame.
  *
- * Handles colour code resolution, contrast correction, and applies the theme
- * using either compatibility mode or full theme API based on preferences.
- *
- * @param {tabs.Tab} tab - The active tab whose window frame is being changed.
- * @param {colour} colour - The colour to apply to the frame.
+ * @param {tabs.Tab} tab - The active tab.
+ * @param {colour} colour - The colour to apply.
  */
 function setFrameColour(tab, colour) {
 	if (!tab?.active) return;
@@ -508,8 +490,9 @@ function setFrameColour(tab, colour) {
  *
  * Used when the theme API is not supported or compatibility mode is enabled.
  *
- * @param {tabs.Tab} tab - The tab to apply the theme colour to.
- * @param {colour} colour - The colour to apply with brightness adjustment.
+ * @async
+ * @param {tabs.Tab} tab - The tab.
+ * @param {colour} colour - The colour to apply.
  */
 async function setTabThemeColour(tab, colour) {
 	try {
@@ -523,15 +506,12 @@ async function setTabThemeColour(tab, colour) {
 }
 
 /**
- * Constructs and applies a complete browser theme to a window.
+ * Applies a browser theme to a window.
  *
- * Creates theme object with adaptive colours based on preferences and applies
- * it using the WebExtensions theme API.
- *
- * @param {number} windowId - The ID of the target window.
- * @param {colour} colour - The base colour for theme generation.
- * @param {"light" | "dark"} colourScheme - The colour scheme to apply.
- * @link https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
+ * @param {number} windowId - The window ID.
+ * @param {colour} colour - The base colour.
+ * @param {"light" | "dark"} colourScheme - The colour scheme.
+ * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
  */
 function applyTheme(windowId, colour, colourScheme) {
 	if (colourScheme === "light") {
@@ -675,6 +655,7 @@ function applyTheme(windowId, colour, colourScheme) {
 
 (async () => {
 	await pref.initialise();
+	pref.setOnChangeListener(run);
 	addSchemeChangeListener(run);
 	addTabChangeListener(run);
 	addMessageListener(handleMessage);
