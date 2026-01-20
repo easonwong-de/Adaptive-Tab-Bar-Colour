@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { i18n } from "../utility";
 import Switch from "./components/Switch";
 import Glyph from "./components/Glyph";
 import Slider from "./components/Slider";
+import preference from "../preference";
+
+const pref = new preference();
 
 export default function OptionsApp() {
 	const [activeTab, setActiveTab] = useState(0);
+	const [ready, setReady] = useState(false);
+	useEffect(() => pref.initialise().then(() => setReady(true)), []);
+	useSyncExternalStore(
+		(listener) => pref.setOnChangeListener(listener),
+		() => pref.getLastSave(),
+	);
+
 	return (
 		<>
 			<nav>
@@ -17,10 +27,11 @@ export default function OptionsApp() {
 						i18n("advanced"),
 					]}
 					onSelect={setActiveTab}
+					initialActiveIndex={activeTab}
 				/>
 			</nav>
 			<hr />
-			<Main activeTab={activeTab} />
+			<Main ready={ready} activeTab={activeTab} />
 			<hr />
 			<footer>
 				<a
@@ -35,186 +46,155 @@ export default function OptionsApp() {
 	);
 }
 
-function Main({ activeTab }) {
+function Main({ ready, activeTab }) {
 	switch (activeTab) {
 		case 0:
-			return (
-				<main id="tab-0">
-					<div className="column">
-						<section>
-							<Glyph highlight="tab" />
-							<div>
-								<h3>{i18n("selectedTab")}</h3>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("border")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-							</div>
-						</section>
-						<section>
-							<Glyph highlight="toolbar" />
-							<div>
-								<h3>{i18n("toolbar")}</h3>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-							</div>
-						</section>
-						<section>
-							<Glyph highlight="sidebar" />
-							<div>
-								<h3>{i18n("Sidebar")}</h3>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-							</div>
-						</section>
-					</div>
-					<div className="column">
-						<section>
-							<Glyph highlight="url-bar" />
-							<div>
-								<h3>{i18n("URLBar")}</h3>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("backgroundOnFocus")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-							</div>
-						</section>
-						<section>
-							<Glyph highlight="tab-bar" />
-							<div>
-								<h3>{i18n("tabBar")}</h3>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-							</div>
-						</section>
-						<section>
-							<Glyph highlight="popup" />
-							<div>
-								<h3>{i18n("Popup")}</h3>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-								<Slider
-									title={i18n("background")}
-									icon={""}
-									minValue={-50}
-									maxValue={50}
-									minorStep={1}
-									majorStep={5}
-									initialValue={0}
-									onChange={() => {}}
-								/>
-							</div>
-						</section>
-					</div>
-				</main>
-			);
+			return <ThemeBuilder ready={ready} />;
 		case 1:
-			return <main id="tab-1"></main>;
+			return <SiteList ready={ready} />;
 		case 2:
-			return <main id="tab-2"></main>;
+			return <Advanced ready={ready} />;
 	}
+}
+
+function ThemeBuilder({ ready }) {
+	return (
+		<main id="tab-0" className={ready ? "" : "disabled"}>
+			<div className="column">
+				<section>
+					<Glyph highlight="tab" />
+					<div>
+						<h3>{i18n("selectedTab")}</h3>
+						<Slider
+							title={i18n("background")}
+							initialValue={pref.tabSelected}
+							onChange={(value) => (pref.tabSelected = value)}
+						/>
+						<Slider
+							title={i18n("border")}
+							initialValue={pref.tabSelectedBorder}
+							onChange={(value) =>
+								(pref.tabSelectedBorder = value)
+							}
+						/>
+					</div>
+				</section>
+				<section>
+					<Glyph highlight="toolbar" />
+					<div>
+						<h3>{i18n("toolbar")}</h3>
+						<Slider
+							title={i18n("background")}
+							initialValue={pref.toolbar}
+							onChange={(value) => (pref.toolbar = value)}
+						/>
+						<Slider
+							title={i18n("border")}
+							initialValue={pref.toolbarBorder}
+							onChange={(value) => {
+								pref.toolbarBorder = value;
+							}}
+						/>
+					</div>
+				</section>
+				<section>
+					<Glyph highlight="sidebar" />
+					<div>
+						<h3>{i18n("Sidebar")}</h3>
+						<Slider
+							title={i18n("background")}
+							initialValue={pref.sidebar}
+							onChange={(value) => {
+								pref.sidebar = value;
+							}}
+						/>
+						<Slider
+							title={i18n("border")}
+							initialValue={pref.sidebarBorder}
+							onChange={(value) => {
+								pref.sidebarBorder = value;
+							}}
+						/>
+					</div>
+				</section>
+			</div>
+			<div className="column">
+				<section>
+					<Glyph highlight="url-bar" />
+					<div>
+						<h3>{i18n("URLBar")}</h3>
+						<Slider
+							title={i18n("background")}
+							initialValue={pref.toolbarField}
+							onChange={(value) => {
+								pref.toolbarField = value;
+							}}
+						/>
+						<Slider
+							title={i18n("backgroundOnFocus")}
+							initialValue={pref.toolbarFieldOnFocus}
+							onChange={(value) => {
+								pref.toolbarFieldOnFocus = value;
+							}}
+						/>
+						<Slider
+							title={i18n("border")}
+							initialValue={pref.toolbarFieldBorder}
+							onChange={(value) => {
+								pref.toolbarFieldBorder = value;
+							}}
+						/>
+					</div>
+				</section>
+				<section>
+					<Glyph highlight="tab-bar" />
+					<div>
+						<h3>{i18n("tabBar")}</h3>
+						<Slider
+							title={i18n("background")}
+							initialValue={pref.tabbar}
+							onChange={(value) => {
+								pref.tabbar = value;
+							}}
+						/>
+						<Slider
+							title={i18n("border")}
+							initialValue={pref.tabbarBorder}
+							onChange={(value) => {
+								pref.tabbarBorder = value;
+							}}
+						/>
+					</div>
+				</section>
+				<section>
+					<Glyph highlight="popup" />
+					<div>
+						<h3>{i18n("Popup")}</h3>
+						<Slider
+							title={i18n("background")}
+							initialValue={pref.popup}
+							onChange={(value) => {
+								pref.popup = value;
+							}}
+						/>
+						<Slider
+							title={i18n("border")}
+							initialValue={pref.popupBorder}
+							onChange={(value) => {
+								pref.popupBorder = value;
+							}}
+						/>
+					</div>
+				</section>
+			</div>
+		</main>
+	);
+}
+
+function SiteList({ ready }) {
+	return <main id="tab-1" className={ready ? "" : "disabled"}></main>;
+}
+
+function Advanced({ ready }) {
+	return <main id="tab-2" className={ready ? "" : "disabled"}></main>;
 }

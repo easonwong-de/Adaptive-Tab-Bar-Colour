@@ -229,6 +229,7 @@ div#sponsor {
 		justify-content: center;
 		align-items: center;
 		transition: background-position-x 0.1s ease-in;
+		cursor: grab;
 		border-radius: calc(12 * var(--unit));
 		background-image: linear-gradient(
 			to right,
@@ -243,12 +244,20 @@ div#sponsor {
 		height: calc(32 * var(--unit));
 		line-height: calc(32 * var(--unit));
 		text-align: center;
+
+		&.dragging {
+			transition: none;
+			cursor: grabbing;
+		}
 	}
 
 	button {
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		box-shadow:
+			0px 10px 20px -6px rgba(0, 0, 0, 0.235),
+			0px 6px 8px -3px rgba(0, 0, 0, 0.134);
 		border: none;
 		border-radius: calc(12 * var(--unit));
 		background-color: var(--light-purple);
@@ -263,17 +272,14 @@ div#sponsor {
 		}
 
 		&:active {
+			box-shadow: none;
 			background-color: #716e85;
 		}
 
 		svg {
 			align-self: center;
-			vertical-align: middle;
-			fill: none;
-			stroke: currentColor;
 			stroke-linecap: round;
 			stroke-linejoin: round;
-			stroke-width: 2px;
 			margin: 0;
 			width: calc(16 * var(--unit));
 			height: calc(16 * var(--unit));
@@ -283,6 +289,7 @@ div#sponsor {
 	h4 {
 		display: flex;
 		flex-direction: row;
+		justify-content: center;
 		gap: 1rem;
 		color: var(--text-colour-secondary);
 		font-size: 80%;

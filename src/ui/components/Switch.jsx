@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Switch({
 	className = "",
@@ -7,6 +7,8 @@ export default function Switch({
 	initialActiveIndex = 0,
 }) {
 	const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
+	useEffect(() => setActiveIndex(initialActiveIndex), [initialActiveIndex]);
+
 	return (
 		<div className={`switch ${className}`}>
 			{itemList.map((item, index) => {
