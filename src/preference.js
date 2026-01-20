@@ -6,41 +6,79 @@ export default class preference {
 	/** The content of the preference */
 	#content = { ...defaultPref };
 
-	/** Initialises the preferences by loading from storage and normalising. */
+	/** The listener for preference changes */
+	#listener = () => {};
+
+	/** The timestamp of last preference change */
+	#lastSave = Date.now();
+
+	/**
+	 * Initialises preferences from storage.
+	 *
+	 * @async
+	 */
 	async initialise() {
-		const { storedPref, removedKeys } = this.#normalise(
+		const { result, removedKeys } = this.#normalise(
 			await browser.storage.local.get(),
 		);
-		for (const key in storedPref) {
-			await this.#set(key, storedPref[key]);
-		}
+		for (const key in result) this.#set(key, result[key]);
 		removedKeys.forEach(
 			async (key) => await browser.storage.local.remove(key),
 		);
 		if (!supportsThemeAPI()) this.#set("compatibilityMode", true);
+		await this.#save();
+		browser.storage.onChanged.addListener((changes, area) => {
+			if (area !== "local") return;
+			let hasUpdates = false;
+			for (const key in changes) {
+				const newValue = changes[key].newValue;
+				if (
+					key in this.#content &&
+					JSON.stringify(this.#content[key]) !==
+						JSON.stringify(newValue)
+				) {
+					this.#content[key] = newValue;
+					hasUpdates = true;
+				}
+			}
+			if (hasUpdates) {
+				this.#lastSave = Date.now();
+				this.#listener();
+			}
+		});
 	}
 
 	/**
-	 * Resets a specific preference or all preferences to default values.
+	 * Resets preferences to default values.
 	 *
-	 * @param {string} [key] - The specific preference key to reset.
+	 * @async
+	 * @param {string} [key] - The preference key to reset.
 	 */
 	async reset(key = undefined) {
-		if (key in defaultPref) {
-			await this.#set(key, defaultPref[key]);
-		} else {
-			this.#content = { ...defaultPref };
-			await browser.storage.local.set(this.#content);
-		}
+		if (key in defaultPref) this.#set(key, defaultPref[key]);
+		else this.#content = { ...defaultPref };
+		await this.#save();
 	}
 
 	/**
-	 * Sets a preference value and saves it to storage.
+	 * Saves preferences to storage.
 	 *
-	 * @param {string} key - The preference key.
-	 * @param {any} value - The value to set.
+	 * @async
+	 * @private
 	 */
-	async #set(key, value) {
+	async #save() {
+		this.#lastSave = Date.now();
+		await browser.storage.local.set(this.#content);
+	}
+
+	/**
+	 * Sets a preference value.
+	 *
+	 * @private
+	 * @param {string} key - The preference key.
+	 * @param {any} value - The value.
+	 */
+	#set(key, value) {
 		if (typeof value !== typeof defaultPref[key]) value = defaultPref[key];
 		switch (key) {
 			case "tabbar":
@@ -78,7 +116,6 @@ export default class preference {
 				break;
 		}
 		this.#content[key] = value;
-		await browser.storage.local.set(key, value);
 	}
 
 	/**
@@ -130,6 +167,7 @@ export default class preference {
 	/**
 	 * Normalises and migrates preferences from older versions.
 	 *
+	 * @private
 	 * @param {object} content - The stored preference content.
 	 * @returns {{ result: object; removedKeys: string[] }} The normalised
 	 *   preferences and removed keys.
@@ -210,25 +248,26 @@ export default class preference {
 	}
 
 	/**
-	 * Exports preferences as a JSON string.
+	 * Returns preferences as JSON.
 	 *
-	 * @returns {string} The preferences as JSON.
+	 * @returns {string} The JSON string.
 	 */
 	exportJSON() {
 		return JSON.stringify(this.#content);
 	}
 
 	/**
-	 * Imports preferences from a JSON string.
+	 * Imports preferences from JSON.
 	 *
-	 * @param {string} jsonString - The JSON string to import.
-	 * @returns {Promise<boolean>} `true` if import succeeded, `false`
-	 *   otherwise.
+	 * @async
+	 * @param {string} jsonString - The JSON string.
+	 * @returns {Promise<boolean>} `true` if successful.
 	 */
 	async importPref(jsonString) {
 		try {
 			const parsedPref = this.#normalise(JSON.parse(jsonString)).result;
-			for (const key in parsedPref) await this.#set(key, parsedPref[key]);
+			for (const key in parsedPref) this.#set(key, parsedPref[key]);
+			await this.#save();
 			return true;
 		} catch (error) {
 			return false;
@@ -236,9 +275,30 @@ export default class preference {
 	}
 
 	/**
-	 * Adds a new policy to the site list.
+	 * Registers the listener for preference changes.
 	 *
-	 * @param {object} policy - The policy to add.
+	 * @param {Function} listener - The callback function.
+	 * @returns {Function} A function to remove the listener.
+	 */
+	setOnChangeListener(listener) {
+		this.#listener = listener;
+		return () => (this.#listener = () => {});
+	}
+
+	/**
+	 * Gets the timestamp of the last save.
+	 *
+	 * @returns {number} Timestamp in ms.
+	 */
+	getLastSave() {
+		return this.#lastSave;
+	}
+
+	/**
+	 * Adds a policy to the site list.
+	 *
+	 * @async
+	 * @param {object} policy - The policy object.
 	 */
 	async addPolicy(policy) {
 		let id = 1;
@@ -247,29 +307,31 @@ export default class preference {
 	}
 
 	/**
-	 * Sets a policy at a specific ID.
+	 * Sets a policy by ID.
 	 *
+	 * @async
 	 * @param {number} id - The policy ID.
-	 * @param {object} policy - The policy to set.
+	 * @param {object} policy - The policy object.
 	 */
 	async setPolicy(id, policy) {
 		if (!this.#validatePolicy(policy)) return;
 		this.#content.siteList[id] = policy;
-		await browser.storage.local.set("siteList", this.#content.siteList);
+		await this.#save();
 	}
 
 	/**
-	 * Removes a policy by setting it to null.
+	 * Removes a policy by ID.
 	 *
-	 * @param {number} id - The policy ID to remove.
+	 * @async
+	 * @param {number} id - The policy ID.
 	 */
 	async removePolicy(id) {
 		this.#content.siteList[id] = null;
-		await browser.storage.local.set("siteList", this.#content.siteList);
+		await this.#save();
 	}
 
 	/**
-	 * Finds the most recently created policy that matches the given input.
+	 * Finds a policy matching the query.
 	 *
 	 * For URL header types, supports:
 	 *
@@ -281,13 +343,12 @@ export default class preference {
 	 *   - `*` matches any characters except `/`, `.`, and `:`
 	 *   - `?` matches any single character
 	 *   - Scheme (e.g., `https://`) is optional
-	 * - Hostname matching
+	 * - Hostname & path matching
 	 *
 	 * For add-on ID header types, performs exact string matching.
 	 *
-	 * @param {string} query - The site URL or add-on ID to match.
-	 * @returns {{ id: number; policy: object | undefined }} Object containing
-	 *   the matched policy ID (0 if not found) and the policy object.
+	 * @param {string} query - Site URL or add-on ID.
+	 * @returns {{ id: number; policy: object | undefined }} Result.
 	 */
 	getPolicy(query) {
 		let matchedId = 0;
@@ -394,6 +455,7 @@ export default class preference {
 	 */
 	set allowDarkLight(value) {
 		this.#set("allowDarkLight", value);
+		this.#save();
 	}
 
 	/**
@@ -412,6 +474,7 @@ export default class preference {
 	 */
 	set dynamic(value) {
 		this.#set("dynamic", value);
+		this.#save();
 	}
 
 	/**
@@ -430,6 +493,7 @@ export default class preference {
 	 */
 	set noThemeColour(value) {
 		this.#set("noThemeColour", value);
+		this.#save();
 	}
 
 	/**
@@ -448,6 +512,7 @@ export default class preference {
 	 */
 	set compatibilityMode(value) {
 		this.#set("compatibilityMode", value);
+		this.#save();
 	}
 
 	/**
@@ -466,6 +531,7 @@ export default class preference {
 	 */
 	set tabbar(value) {
 		this.#set("tabbar", value);
+		this.#save();
 	}
 
 	/**
@@ -484,6 +550,7 @@ export default class preference {
 	 */
 	set tabbarBorder(value) {
 		this.#set("tabbarBorder", value);
+		this.#save();
 	}
 
 	/**
@@ -502,6 +569,7 @@ export default class preference {
 	 */
 	set tabSelected(value) {
 		this.#set("tabSelected", value);
+		this.#save();
 	}
 
 	/**
@@ -520,6 +588,7 @@ export default class preference {
 	 */
 	set tabSelectedBorder(value) {
 		this.#set("tabSelectedBorder", value);
+		this.#save();
 	}
 
 	/**
@@ -538,6 +607,7 @@ export default class preference {
 	 */
 	set toolbar(value) {
 		this.#set("toolbar", value);
+		this.#save();
 	}
 
 	/**
@@ -556,6 +626,7 @@ export default class preference {
 	 */
 	set toolbarBorder(value) {
 		this.#set("toolbarBorder", value);
+		this.#save();
 	}
 
 	/**
@@ -574,6 +645,7 @@ export default class preference {
 	 */
 	set toolbarField(value) {
 		this.#set("toolbarField", value);
+		this.#save();
 	}
 
 	/**
@@ -592,6 +664,7 @@ export default class preference {
 	 */
 	set toolbarFieldBorder(value) {
 		this.#set("toolbarFieldBorder", value);
+		this.#save();
 	}
 
 	/**
@@ -610,6 +683,7 @@ export default class preference {
 	 */
 	set toolbarFieldOnFocus(value) {
 		this.#set("toolbarFieldOnFocus", value);
+		this.#save();
 	}
 
 	/**
@@ -628,6 +702,7 @@ export default class preference {
 	 */
 	set sidebar(value) {
 		this.#set("sidebar", value);
+		this.#save();
 	}
 
 	/**
@@ -646,6 +721,7 @@ export default class preference {
 	 */
 	set sidebarBorder(value) {
 		this.#set("sidebarBorder", value);
+		this.#save();
 	}
 
 	/**
@@ -664,6 +740,7 @@ export default class preference {
 	 */
 	set popup(value) {
 		this.#set("popup", value);
+		this.#save();
 	}
 
 	/**
@@ -682,6 +759,7 @@ export default class preference {
 	 */
 	set popupBorder(value) {
 		this.#set("popupBorder", value);
+		this.#save();
 	}
 
 	/**
@@ -700,6 +778,7 @@ export default class preference {
 	 */
 	set minContrast_light(value) {
 		this.#set("minContrast_light", value);
+		this.#save();
 	}
 
 	/**
@@ -718,6 +797,7 @@ export default class preference {
 	 */
 	set minContrast_dark(value) {
 		this.#set("minContrast_dark", value);
+		this.#save();
 	}
 
 	/**
@@ -736,6 +816,7 @@ export default class preference {
 	 */
 	set homeBackground_light(value) {
 		this.#set("homeBackground_light", value);
+		this.#save();
 	}
 
 	/**
@@ -754,6 +835,7 @@ export default class preference {
 	 */
 	set homeBackground_dark(value) {
 		this.#set("homeBackground_dark", value);
+		this.#save();
 	}
 
 	/**
@@ -772,6 +854,7 @@ export default class preference {
 	 */
 	set fallbackColour_light(value) {
 		this.#set("fallbackColour_light", value);
+		this.#save();
 	}
 
 	/**
@@ -790,6 +873,7 @@ export default class preference {
 	 */
 	set fallbackColour_dark(value) {
 		this.#set("fallbackColour_dark", value);
+		this.#save();
 	}
 
 	/**
@@ -808,6 +892,7 @@ export default class preference {
 	 */
 	set siteList(value) {
 		this.#set("siteList", value);
+		this.#save();
 	}
 
 	/**
@@ -826,5 +911,6 @@ export default class preference {
 	 */
 	set version(value) {
 		this.#set("version", value);
+		this.#save();
 	}
 }
