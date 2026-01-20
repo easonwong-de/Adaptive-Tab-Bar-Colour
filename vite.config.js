@@ -27,7 +27,6 @@ const minifyScripts = {
 		this.addWatchFile(resolve(__dirname, "src/background.js"));
 		this.addWatchFile(resolve(__dirname, "src/colour.js"));
 		this.addWatchFile(resolve(__dirname, "src/constants.js"));
-		this.addWatchFile(resolve(__dirname, "src/elements.js"));
 		this.addWatchFile(resolve(__dirname, "src/preference.js"));
 		this.addWatchFile(resolve(__dirname, "src/utility.js"));
 	},
