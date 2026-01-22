@@ -26,7 +26,7 @@
 
 > `}`
 
-**啟用平滑顏色過渡**
+**自訂顏色過渡**
 
 由於技術限制，標籤列的平滑顏色過渡無法原生支援。然而，閣下可以透過將以下程式碼加入閣下的 CSS 主題來啟用此效果（感謝 [@Moarram](https://github.com/Moarram/)）：
 
@@ -43,6 +43,14 @@
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+另外，若閣下希望移除 Firefox 工具列內建的顏色過渡以實現即時顏色更改，請將以下程式碼加入閣下的 CSS 主題中：
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

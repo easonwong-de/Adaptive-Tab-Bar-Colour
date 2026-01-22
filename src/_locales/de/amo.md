@@ -26,7 +26,7 @@ Um den dünnen Schatten zu entfernen, den der Webinhalt auf die Browser-Werkzeug
 
 > `}`
 
-**Aktivieren sanfter Farbübergänge**
+**Farbübergänge anpassen**
 
 Aufgrund technischer Einschränkungen werden sanfte Farbübergänge der Tableiste nicht nativ unterstützt. Du kannst jedoch diesen Effekt aktivieren, indem du den folgenden Code zu deinem CSS-Theme hinzufügst (dank an [@Moarram](https://github.com/Moarram/)):
 
@@ -43,6 +43,14 @@ Um sanfte Farbübergänge in der Sidebery-Benutzeroberfläche zu aktivieren, fü
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+Alternativ, wenn Sie den integrierten Farbübergang von Firefox in der Symbolleiste für einen sofortigen Farbwechsel entfernen möchten, fügen Sie den folgenden Code zu Ihrem CSS-Theme hinzu:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

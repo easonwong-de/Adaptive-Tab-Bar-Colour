@@ -26,7 +26,7 @@ To remove the thin shadow cast by web content onto the browser toolbar, navigate
 
 > `}`
 
-**Enabling Smooth Color Transitions**
+**Customizing Color Transitions**
 
 Due to technical limitations, smooth color transitions for the tab bar are not natively supported. However, you can enable this effect by adding the following code to your CSS theme (thanks to [@Moarram](https://github.com/Moarram/)):
 
@@ -43,6 +43,14 @@ To enable smooth color transitions in the Sidebery UI, add the following code to
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+Alternatively, if you wish to remove Firefox’s built-in color transition on the toolbar for an instant color change, add the following code to your CSS theme:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 
