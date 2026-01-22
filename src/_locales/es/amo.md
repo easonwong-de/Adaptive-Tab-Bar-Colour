@@ -26,7 +26,7 @@ Para eliminar la sombra fina proyectada por el contenido web sobre la barra de h
 
 > `}`
 
-**Activar Transiciones Suaves de Color**
+**Personalización de las transiciones de color**
 
 Debido a limitaciones técnicas, las transiciones suaves de color para la barra de pestañas no están soportadas nativamente. Sin embargo, puedes activar este efecto añadiendo el siguiente código a tu tema CSS (gracias a [@Moarram](https://github.com/Moarram/)):
 
@@ -43,6 +43,14 @@ Para activar transiciones suaves de color en la interfaz de Sidebery, añade el 
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+Alternativamente, si desea eliminar la transición de color integrada de Firefox en la barra de herramientas para un cambio de color instantáneo, añada el siguiente código a su tema CSS:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 
