@@ -3,6 +3,7 @@ import { i18n } from "../utility";
 import Switch from "./components/Switch";
 import Glyph from "./components/Glyph";
 import Slider from "./components/Slider";
+import Rule from "./components/Rule";
 import preference from "../preference";
 
 const pref = new preference();
@@ -26,7 +27,7 @@ export default function OptionsApp() {
 						i18n("siteList"),
 						i18n("advanced"),
 					]}
-					onSelect={setActiveTab}
+					onChange={setActiveTab}
 					initialActiveIndex={activeTab}
 				/>
 			</nav>
@@ -51,7 +52,7 @@ function Main({ ready, activeTab }) {
 		case 0:
 			return <ThemeBuilder ready={ready} />;
 		case 1:
-			return <SiteList ready={ready} />;
+			return <RuleList ready={ready} />;
 		case 2:
 			return <Advanced ready={ready} />;
 	}
@@ -191,8 +192,34 @@ function ThemeBuilder({ ready }) {
 	);
 }
 
-function SiteList({ ready }) {
-	return <main id="tab-1" className={ready ? "" : "disabled"}></main>;
+function RuleList({ ready }) {
+	return (
+		<main id="tab-1" className={ready ? "" : "disabled"}>
+			{Object.keys(pref.siteList).map((id) => {
+				if (pref.siteList[id])
+					return (
+						<Rule
+							key={`rule${id}`}
+							initialRule={pref.siteList[id]}
+							onChange={(newRule) => pref.setRule(id, newRule)}
+						/>
+					);
+			})}
+			<button
+				id="add-rule"
+				onClick={() =>
+					pref.addRule({
+						headerType: "URL",
+						header: "",
+						type: "COLOUR",
+						value: "#000000",
+					})
+				}
+			>
+				{i18n("addANewRule")}
+			</button>
+		</main>
+	);
 }
 
 function Advanced({ ready }) {

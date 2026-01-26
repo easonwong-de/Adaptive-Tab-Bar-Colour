@@ -168,15 +168,6 @@ hr {
 	}
 }
 
-#reinstall-tip {
-	opacity: 0;
-	animation-duration: 0.5s;
-	animation-delay: 5s;
-	animation-fill-mode: forwards;
-	animation-name: appear;
-	white-space: normal;
-}
-
 @keyframes appear {
 	from {
 		opacity: 0;

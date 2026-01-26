@@ -95,18 +95,18 @@ const cache = {
 	/** `windowId: { colour, reason, info, corrected }` */
 	meta: {},
 	/** `windowId: { headerType, header, type, value }` */
-	policy: {},
+	rule: {},
 	/** `light` or `dark` */
 	scheme: "light",
 	/** The reversed colour theme. */
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
 	},
-	/** Update `scheme` & clear `info` and `policy`. */
+	/** Update `scheme` & clear `info` and `rule`. */
 	async clear() {
 		this.scheme = await getCurrentScheme();
 		this.meta = {};
-		this.policy = {};
+		this.rule = {};
 	},
 };
 
@@ -127,7 +127,7 @@ async function handleMessage(message, sender) {
 			break;
 		case "UPDATE_COLOUR":
 			const tabMeta = parseTabColour(
-				cache.policy[tab.windowId],
+				cache.rule[tab.windowId],
 				message.colour,
 			);
 			cache.meta[tab.windowId] = tabMeta;
@@ -161,8 +161,8 @@ async function run() {
  */
 async function updateTab(tab) {
 	const windowId = tab.windowId;
-	const policy = pref.getPolicy(tab.url).policy;
-	cache.policy[windowId] = policy;
+	const rule = pref.getRule(tab.url).rule;
+	cache.rule[windowId] = rule;
 	const tabMeta = await getTabMeta(tab);
 	cache.meta[windowId] = tabMeta;
 	setFrameColour(tab, tabMeta.colour);
@@ -177,24 +177,21 @@ async function updateTab(tab) {
  *   metadata.
  */
 async function getTabMeta(tab) {
-	const policy = cache.policy[tab.windowId];
-	if (policy?.headerType === "URL" && policy?.type === "COLOUR") {
+	const rule = cache.rule[tab.windowId];
+	if (rule?.headerType === "URL" && rule?.type === "COLOUR") {
 		return {
-			colour: new colour(policy.value),
+			colour: new colour(rule.value),
 			reason: "COLOUR_SPECIFIED",
 		};
 	} else {
 		try {
 			const tabColour = await sendMessage(tab.id, {
 				header: "GET_COLOUR",
-				active: policy?.type !== "COLOUR",
+				active: rule?.type !== "COLOUR",
 				dynamic: pref.dynamic,
-				query:
-					policy?.type === "QUERY_SELECTOR"
-						? policy.value
-						: undefined,
+				query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
 			});
-			return parseTabColour(policy, tabColour);
+			return parseTabColour(rule, tabColour);
 		} catch (error) {
 			console.warn("Failed to connect to", tab.url);
 			return await getProtectedPageMeta(tab);
@@ -203,16 +200,16 @@ async function getTabMeta(tab) {
 }
 
 /**
- * Parses tab colour data based on policy.
+ * Parses tab colour data based on rule.
  *
- * @param {object} policy - The policy object.
+ * @param {object} rule - The rule object.
  * @param {object} colourData - The tab colour data.
  * @param {object} colourData.theme - Theme colour data.
  * @param {Array} colourData.page - Page element colour data.
  * @param {object} colourData.query - Query selector result.
  * @returns {{ colour: colour; reason: string; info?: string }} Parsed metadata.
  */
-function parseTabColour(policy, { theme, page, query }) {
+function parseTabColour(rule, { theme, page, query }) {
 	const parseThemeColour = () => new colour(theme[cache.scheme], false);
 	const parsePageColour = () => {
 		let pageColour = new colour();
@@ -229,10 +226,10 @@ function parseTabColour(policy, { theme, page, query }) {
 			: pageColour.mix(colourCode.FALLBACK[cache.scheme]);
 	};
 	const parseQueryColour = () => new colour(query?.colour);
-	switch (policy?.type) {
+	switch (rule?.type) {
 		case "THEME_COLOUR": {
 			const themeColour = parseThemeColour();
-			if (policy.value && themeColour.isOpaque()) {
+			if (rule.value && themeColour.isOpaque()) {
 				return {
 					colour: themeColour,
 					reason: "THEME_USED",
@@ -240,7 +237,7 @@ function parseTabColour(policy, { theme, page, query }) {
 			}
 			return {
 				colour: parsePageColour(),
-				reason: policy.value
+				reason: rule.value
 					? "THEME_MISSING"
 					: themeColour.isOpaque()
 						? "THEME_IGNORED"
@@ -253,12 +250,12 @@ function parseTabColour(policy, { theme, page, query }) {
 				? {
 						colour: queryColour,
 						reason: "QS_USED",
-						info: policy.value || "🕳️",
+						info: rule.value || "🕳️",
 					}
 				: {
 						colour: parsePageColour(),
 						reason: "QS_FAILED",
-						info: policy.value || "🕳️",
+						info: rule.value || "🕳️",
 					};
 		}
 		default:
@@ -418,10 +415,10 @@ function getMozillaPageMeta(hostname) {
 async function getAddonPageMeta(url) {
 	const addonId = await getAddonId(url);
 	if (!addonId) return { colour: new colour("ADDON"), reason: "ADDON" };
-	const policy = pref.getPolicy(addonId).policy;
-	return policy
+	const rule = pref.getRule(addonId).rule;
+	return rule
 		? {
-				colour: new colour(policy.value),
+				colour: new colour(rule.value),
 				reason: "ADDON",
 				info: addonId,
 			}

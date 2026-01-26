@@ -68,6 +68,7 @@ export default class preference {
 	 */
 	async #save() {
 		this.#lastSave = Date.now();
+		this.#listener();
 		await browser.storage.local.set(this.#content);
 	}
 
@@ -110,7 +111,7 @@ export default class preference {
 				break;
 			case "siteList":
 				for (const id in value)
-					if (!this.#validatePolicy(value[id])) value[id] = null;
+					if (!this.#validateRule(value[id])) value[id] = null;
 				break;
 			default:
 				break;
@@ -119,24 +120,25 @@ export default class preference {
 	}
 
 	/**
-	 * Validates a policy object structure.
+	 * Validates a rule object structure.
 	 *
-	 * @param {object} policy - The policy to validate.
-	 * @returns {boolean} `true` if the policy is valid.
+	 * @param {object} rule - The rule to validate.
+	 * @returns {boolean} `true` if the rule is valid.
 	 */
-	#validatePolicy(policy) {
+	#validateRule(rule) {
 		return (
-			typeof policy === "object" &&
-			typeof policy.header === "string" &&
-			((policy.headerType === "URL" &&
-				((policy.type === "THEME_COLOUR" &&
-					typeof policy.value === "boolean") ||
-					(policy.type === "QUERY_SELECTOR" &&
-						typeof policy.value === "string"))) ||
-				((policy.headerType === "URL" ||
-					policy.headerType === "ADDON_ID") &&
-					policy.type === "COLOUR" &&
-					typeof policy.value === "string"))
+			rule === null ||
+			(typeof rule === "object" &&
+				typeof rule?.header === "string" &&
+				((rule.headerType === "URL" &&
+					((rule.type === "THEME_COLOUR" &&
+						typeof rule.value === "boolean") ||
+						(rule.type === "QUERY_SELECTOR" &&
+							typeof rule.value === "string"))) ||
+					((rule.headerType === "URL" ||
+						rule.headerType === "ADDON_ID") &&
+						rule.type === "COLOUR" &&
+						typeof rule.value === "string")))
 		);
 	}
 
@@ -195,43 +197,43 @@ export default class preference {
 				const siteList = {};
 				let id = 1;
 				for (const site in result.siteList) {
-					const policy = result.siteList[site];
-					if (typeof policy !== "string") {
+					const rule = result.siteList[site];
+					if (typeof rule !== "string") {
 						continue;
-					} else if (policy === "IGNORE_THEME") {
+					} else if (rule === "IGNORE_THEME") {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "THEME_COLOUR",
 							value: false,
 						};
-					} else if (policy === "UN_IGNORE_THEME") {
+					} else if (rule === "UN_IGNORE_THEME") {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "THEME_COLOUR",
 							value: true,
 						};
-					} else if (policy.startsWith("QS_")) {
+					} else if (rule.startsWith("QS_")) {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "QUERY_SELECTOR",
-							value: policy.replace("QS_", ""),
+							value: rule.replace("QS_", ""),
 						};
 					} else if (site.startsWith("Add-on ID: ")) {
 						siteList[id++] = {
 							headerType: "ADDON_ID",
 							header: site.replace("Add-on ID: ", ""),
 							type: "COLOUR",
-							value: new colour(policy, false).toHex(),
+							value: new colour(rule, false).toHex(),
 						};
 					} else {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "COLOUR",
-							value: new colour(policy, false).toHex(),
+							value: new colour(rule, false).toHex(),
 						};
 					}
 				}
@@ -295,43 +297,32 @@ export default class preference {
 	}
 
 	/**
-	 * Adds a policy to the site list.
+	 * Adds a rule to the site list.
 	 *
 	 * @async
-	 * @param {object} policy - The policy object.
+	 * @param {object} rule - The rule object.
 	 */
-	async addPolicy(policy) {
+	async addRule(rule) {
 		let id = 1;
 		while (id in this.#content.siteList) id++;
-		await this.setPolicy(id, policy);
+		await this.setRule(id, rule);
 	}
 
 	/**
-	 * Sets a policy by ID.
+	 * Sets a rule by ID.
 	 *
 	 * @async
-	 * @param {number} id - The policy ID.
-	 * @param {object} policy - The policy object.
+	 * @param {number} id - The rule ID.
+	 * @param {object} rule - The rule object.
 	 */
-	async setPolicy(id, policy) {
-		if (!this.#validatePolicy(policy)) return;
-		this.#content.siteList[id] = policy;
+	async setRule(id, rule) {
+		if (!this.#validateRule(rule)) return;
+		this.#content.siteList[id] = rule;
 		await this.#save();
 	}
 
 	/**
-	 * Removes a policy by ID.
-	 *
-	 * @async
-	 * @param {number} id - The policy ID.
-	 */
-	async removePolicy(id) {
-		this.#content.siteList[id] = null;
-		await this.#save();
-	}
-
-	/**
-	 * Finds a policy matching the query.
+	 * Finds a rule matching the query.
 	 *
 	 * For URL header types, supports:
 	 *
@@ -348,28 +339,32 @@ export default class preference {
 	 * For add-on ID header types, performs exact string matching.
 	 *
 	 * @param {string} query - Site URL or add-on ID.
-	 * @returns {{ id: number; policy: object | undefined }} Result.
+	 * @returns {{ id: number; rule: object | undefined }} Result.
 	 */
-	getPolicy(query) {
+	getRule(query) {
 		let matchedId = 0;
-		let matchedPolicy;
+		let matchedRule;
 		for (const id in this.#content.siteList) {
-			const policy = this.#content.siteList[id];
-			if (
-				policy.headerType === "ADDON_ID"
-					? policy.header === query
-					: policy.headerType === "URL" &&
-						(policy.header === query ||
-							policy.header === `${query}/` ||
-							this.#testRegex(query, policy.header) ||
-							this.#testWildcard(query, policy.header) ||
-							this.#testHostname(query, policy.header))
+			const rule = this.#content.siteList[id];
+			if (!rule || rule?.header === "") {
+				continue;
+			} else if (
+				rule.headerType === "ADDON_ID"
+					? rule.header === query
+					: rule.headerType === "URL" &&
+						(rule.header === query ||
+							rule.header === `${query}/` ||
+							this.#testRegex(query, rule.header) ||
+							this.#testWildcard(query, rule.header) ||
+							this.#testHostname(query, rule.header))
 			) {
 				matchedId = +id;
-				matchedPolicy = policy;
+				matchedRule = rule;
+			} else {
+				continue;
 			}
 		}
-		return { id: matchedId, policy: matchedPolicy };
+		return { id: matchedId, rule: matchedRule };
 	}
 
 	/**
@@ -879,7 +874,7 @@ export default class preference {
 	/**
 	 * Gets the site-specific policies list.
 	 *
-	 * @returns {object} The site list containing ID-keyed policy objects.
+	 * @returns {object} The site list containing ID-keyed rule objects.
 	 */
 	get siteList() {
 		return this.#content.siteList;
@@ -888,7 +883,7 @@ export default class preference {
 	/**
 	 * Sets the site-specific policies list.
 	 *
-	 * @param {object} value - The site list containing ID-keyed policy objects.
+	 * @param {object} value - The site list containing ID-keyed rule objects.
 	 */
 	set siteList(value) {
 		this.#set("siteList", value);

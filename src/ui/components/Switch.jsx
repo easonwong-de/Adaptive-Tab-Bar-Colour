@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 export default function Switch({
 	className = "",
 	itemList,
-	onSelect,
 	initialActiveIndex = 0,
+	onChange = () => {},
 }) {
 	const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
 	useEffect(() => setActiveIndex(initialActiveIndex), [initialActiveIndex]);
@@ -18,14 +18,10 @@ export default function Switch({
 						className={activeIndex === index ? "active" : ""}
 						onClick={() => {
 							setActiveIndex(index);
-							onSelect(index);
+							onChange(index);
 						}}
 					>
-						{className.includes("tab-switch") ? (
-							<h2>{item}</h2>
-						) : (
-							<div>{item}</div>
-						)}
+						<div>{item}</div>
 					</button>
 				);
 			})}

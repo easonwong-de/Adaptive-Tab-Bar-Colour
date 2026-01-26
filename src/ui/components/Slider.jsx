@@ -3,14 +3,14 @@ import { clamp } from "../../utility.js";
 
 export default function Slider({
 	className = "",
-	title,
+	title = "",
 	minValue = -50,
 	maxValue = 50,
 	minorStep = 1,
 	majorStep = 5,
+	initialValue = minValue,
 	onChange = () => {},
 	onDisplay = (value) => `${value} %`,
-	initialValue = minValue,
 }) {
 	const rafRef = useRef(null);
 	const rectRef = useRef(null);
@@ -23,7 +23,7 @@ export default function Slider({
 	const onDown = () => {
 		const newValue = clamp(
 			minValue,
-			(Math.ceil(value / majorStep) - 1) * majorStep,
+			(Math.ceil(value / minorStep) - 1) * minorStep,
 			maxValue,
 		);
 		if (newValue !== value) {
@@ -42,8 +42,8 @@ export default function Slider({
 				(clamp(0, (clientX - rect.left) / rect.width, 1) *
 					(maxValue - minValue) +
 					minValue) /
-					minorStep,
-			) * minorStep,
+					majorStep,
+			) * majorStep,
 			maxValue,
 		);
 		if (newValue !== value) {
@@ -61,7 +61,7 @@ export default function Slider({
 	const onUp = () => {
 		const newValue = clamp(
 			minValue,
-			(Math.floor(value / majorStep) + 1) * majorStep,
+			(Math.floor(value / minorStep) + 1) * minorStep,
 			maxValue,
 		);
 		if (newValue !== value) {
