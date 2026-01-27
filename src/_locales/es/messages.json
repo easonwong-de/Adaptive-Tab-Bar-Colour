@@ -98,8 +98,8 @@
 		"message": "¿Estás seguro de que quieres restablecer la configuración avanzada?"
 	},
 
-	"confirmResetSiteList": {
-		"message": "¿Estás seguro de que quieres restablecer la lista de sitios?"
+	"confirmResetRuleList": {
+		"message": "¿Estás seguro de que quieres restablecer la lista de reglas?"
 	},
 
 	"confirmResetThemeBuilder": {
@@ -246,12 +246,16 @@
 		"message": "Restablecer la configuración avanzada"
 	},
 
-	"resetSiteList": {
-		"message": "Restablecer la lista de sitios"
+	"resetRuleList": {
+		"message": "Restablecer la lista de reglas"
 	},
 
 	"resetThemeBuilder": {
 		"message": "Restablecer el creador de temas"
+	},
+
+	"ruleList": {
+		"message": "Lista de reglas"
 	},
 
 	"selectedTab": {
@@ -268,10 +272,6 @@
 
 	"sidebar": {
 		"message": "Barra lateral"
-	},
-
-	"siteList": {
-		"message": "Lista de sitios"
 	},
 
 	"specifyAColour": {

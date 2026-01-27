@@ -41,10 +41,7 @@ export default class preference {
 					hasUpdates = true;
 				}
 			}
-			if (hasUpdates) {
-				this.#lastSave = Date.now();
-				this.#listener();
-			}
+			if (hasUpdates) this.syncUI();
 		});
 	}
 
@@ -68,7 +65,6 @@ export default class preference {
 	 */
 	async #save() {
 		this.#lastSave = Date.now();
-		this.#listener();
 		await browser.storage.local.set(this.#content);
 	}
 
@@ -109,7 +105,7 @@ export default class preference {
 					step: 5,
 				});
 				break;
-			case "siteList":
+			case "ruleList":
 				for (const id in value)
 					if (!this.#validateRule(value[id])) value[id] = null;
 				break;
@@ -183,13 +179,6 @@ export default class preference {
 			return { result: { ...defaultPref }, removedKeys: [] };
 		} else {
 			const result = { ...defaultPref, ...content };
-			const removedKeys = [];
-			for (const key in result) {
-				if (!(key in defaultPref)) {
-					delete result[key];
-					removedKeys.push(key);
-				}
-			}
 			if (result.version < [2, 2]) {
 				result.allowDarkLight = true;
 				result.dynamic = true;
@@ -244,6 +233,16 @@ export default class preference {
 				if (result.minContrast_light === 165)
 					result.minContrast_light = 90;
 			}
+			if (result.version < [3, 3]) {
+				if (result.siteList) result.ruleList = result.siteList;
+			}
+			const removedKeys = [];
+			for (const key in result) {
+				if (!(key in defaultPref)) {
+					delete result[key];
+					removedKeys.push(key);
+				}
+			}
 			result.version = addonVersion;
 			return { result, removedKeys };
 		}
@@ -287,6 +286,12 @@ export default class preference {
 		return () => (this.#listener = () => {});
 	}
 
+	/** Synchronises the UI with the current preference state. */
+	syncUI() {
+		this.#lastSave = Date.now();
+		this.#listener();
+	}
+
 	/**
 	 * Gets the timestamp of the last save.
 	 *
@@ -297,14 +302,14 @@ export default class preference {
 	}
 
 	/**
-	 * Adds a rule to the site list.
+	 * Adds a rule to the rule list.
 	 *
 	 * @async
 	 * @param {object} rule - The rule object.
 	 */
 	async addRule(rule) {
 		let id = 1;
-		while (id in this.#content.siteList) id++;
+		while (id in this.#content.ruleList) id++;
 		await this.setRule(id, rule);
 	}
 
@@ -317,7 +322,7 @@ export default class preference {
 	 */
 	async setRule(id, rule) {
 		if (!this.#validateRule(rule)) return;
-		this.#content.siteList[id] = rule;
+		this.#content.ruleList[id] = rule;
 		await this.#save();
 	}
 
@@ -344,8 +349,8 @@ export default class preference {
 	getRule(query) {
 		let matchedId = 0;
 		let matchedRule;
-		for (const id in this.#content.siteList) {
-			const rule = this.#content.siteList[id];
+		for (const id in this.#content.ruleList) {
+			const rule = this.#content.ruleList[id];
 			if (!rule || rule?.header === "") {
 				continue;
 			} else if (
@@ -874,19 +879,19 @@ export default class preference {
 	/**
 	 * Gets the site-specific policies list.
 	 *
-	 * @returns {object} The site list containing ID-keyed rule objects.
+	 * @returns {object} The rule list containing ID-keyed rule objects.
 	 */
-	get siteList() {
-		return this.#content.siteList;
+	get ruleList() {
+		return this.#content.ruleList;
 	}
 
 	/**
 	 * Sets the site-specific policies list.
 	 *
-	 * @param {object} value - The site list containing ID-keyed rule objects.
+	 * @param {object} value - The rule list containing ID-keyed rule objects.
 	 */
-	set siteList(value) {
-		this.#set("siteList", value);
+	set ruleList(value) {
+		this.#set("ruleList", value);
 		this.#save();
 	}
 

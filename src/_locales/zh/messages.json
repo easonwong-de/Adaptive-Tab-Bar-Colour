@@ -98,8 +98,8 @@
 		"message": "是否確認重設進階設定？"
 	},
 
-	"confirmResetSiteList": {
-		"message": "是否確認重設自訂規則？"
+	"confirmResetRuleList": {
+		"message": "是否確認清空自訂規則？"
 	},
 
 	"confirmResetThemeBuilder": {
@@ -246,12 +246,16 @@
 		"message": "重設進階設定"
 	},
 
-	"resetSiteList": {
-		"message": "重設自訂規則"
+	"resetRuleList": {
+		"message": "清空自訂規則"
 	},
 
 	"resetThemeBuilder": {
 		"message": "重設佈景主題設定"
+	},
+
+	"ruleList": {
+		"message": "自訂規則"
 	},
 
 	"selectedTab": {
@@ -268,10 +272,6 @@
 
 	"sidebar": {
 		"message": "側邊列"
-	},
-
-	"siteList": {
-		"message": "自訂規則"
 	},
 
 	"specifyAColour": {

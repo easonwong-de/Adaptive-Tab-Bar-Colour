@@ -24,7 +24,7 @@ export default function OptionsApp() {
 					className="tab-switch"
 					itemList={[
 						i18n("themeBuilder"),
-						i18n("siteList"),
+						i18n("ruleList"),
 						i18n("advanced"),
 					]}
 					onChange={setActiveTab}
@@ -195,26 +195,27 @@ function ThemeBuilder({ ready }) {
 function RuleList({ ready }) {
 	return (
 		<main id="tab-1" className={ready ? "" : "disabled"}>
-			{Object.keys(pref.siteList).map((id) => {
-				if (pref.siteList[id])
+			{Object.keys(pref.ruleList).map((id) => {
+				if (pref.ruleList[id])
 					return (
 						<Rule
 							key={`rule${id}`}
-							initialRule={pref.siteList[id]}
+							initialRule={pref.ruleList[id]}
 							onChange={(newRule) => pref.setRule(id, newRule)}
 						/>
 					);
 			})}
 			<button
 				id="add-rule"
-				onClick={() =>
+				onClick={() => {
 					pref.addRule({
 						headerType: "URL",
 						header: "",
 						type: "COLOUR",
 						value: "#000000",
-					})
-				}
+					});
+					pref.syncUI();
+				}}
 			>
 				{i18n("addANewRule")}
 			</button>

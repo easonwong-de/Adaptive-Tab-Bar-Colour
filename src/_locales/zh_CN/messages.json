@@ -95,15 +95,15 @@
 	},
 
 	"confirmResetAdvanced": {
-		"message": "是否确认重新设置高级设置？"
+		"message": "是否确认重置高级设置？"
 	},
 
-	"confirmResetSiteList": {
-		"message": "是否确认重新设置自定义站点规则？"
+	"confirmResetRuleList": {
+		"message": "是否确认清空自定义规则？"
 	},
 
 	"confirmResetThemeBuilder": {
-		"message": "是否确认重新设置背景主题？"
+		"message": "是否确认重置背景主题？"
 	},
 
 	"delete": {
@@ -243,15 +243,19 @@
 	},
 
 	"resetAdvanced": {
-		"message": "重新设置高级设置"
+		"message": "重置高级设置"
 	},
 
-	"resetSiteList": {
-		"message": "重新设置自定义站点规则"
+	"resetRuleList": {
+		"message": "清空自定义规则"
 	},
 
 	"resetThemeBuilder": {
-		"message": "重新设置背景主题"
+		"message": "重置背景主题"
+	},
+
+	"ruleList": {
+		"message": "自定义规则"
 	},
 
 	"selectedTab": {
@@ -268,10 +272,6 @@
 
 	"sidebar": {
 		"message": "侧栏"
-	},
-
-	"siteList": {
-		"message": "自定义规则"
 	},
 
 	"specifyAColour": {

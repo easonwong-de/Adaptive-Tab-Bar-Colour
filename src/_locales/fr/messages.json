@@ -98,8 +98,8 @@
 		"message": "Êtes-vous sûr de vouloir réinitialiser les paramètres avancés ?"
 	},
 
-	"confirmResetSiteList": {
-		"message": "Êtes-vous sûr de vouloir réinitialiser la liste des sites ?"
+	"confirmResetRuleList": {
+		"message": "Êtes-vous sûr de vouloir réinitialiser la liste des règles ?"
 	},
 
 	"confirmResetThemeBuilder": {
@@ -246,12 +246,16 @@
 		"message": "Réinitialiser les paramètres avancés"
 	},
 
-	"resetSiteList": {
-		"message": "Réinitialiser la liste des sites"
+	"resetRuleList": {
+		"message": "Réinitialiser la liste des règles"
 	},
 
 	"resetThemeBuilder": {
 		"message": "Réinitialiser le constructeur de thème"
+	},
+
+	"ruleList": {
+		"message": "Liste de règles"
 	},
 
 	"selectedTab": {
@@ -268,10 +272,6 @@
 
 	"sidebar": {
 		"message": "Barre latérale"
-	},
-
-	"siteList": {
-		"message": "Liste de sites"
 	},
 
 	"specifyAColour": {

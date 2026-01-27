@@ -83,8 +83,8 @@ export const defaultPref = Object.freeze({
 	sidebarBorder: 5,
 	popup: 5,
 	popupBorder: 5,
-	// site list
-	siteList: {},
+	// rule list
+	ruleList: {},
 	// advanced
 	minContrast_light: 90,
 	minContrast_dark: 45,

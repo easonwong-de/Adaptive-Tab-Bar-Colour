@@ -98,8 +98,8 @@
 		"message": "Sind Sie sicher, dass Sie die erweiterten Einstellungen zurücksetzen möchten?"
 	},
 
-	"confirmResetSiteList": {
-		"message": "Sind Sie sicher, dass Sie die Seitenliste zurücksetzen möchten?"
+	"confirmResetRuleList": {
+		"message": "Sind Sie sicher, dass Sie die Regelliste zurücksetzen möchten?"
 	},
 
 	"confirmResetThemeBuilder": {
@@ -246,12 +246,16 @@
 		"message": "Erweiterte Einstellungen zurücksetzen"
 	},
 
-	"resetSiteList": {
-		"message": "Seitenliste zurücksetzen"
+	"resetRuleList": {
+		"message": "Regelliste zurücksetzen"
 	},
 
 	"resetThemeBuilder": {
 		"message": "Theme-Editor zurücksetzen"
+	},
+
+	"ruleList": {
+		"message": "Regelliste"
 	},
 
 	"selectedTab": {
@@ -268,10 +272,6 @@
 
 	"sidebar": {
 		"message": "Seitenleiste"
-	},
-
-	"siteList": {
-		"message": "Seitenliste"
 	},
 
 	"specifyAColour": {

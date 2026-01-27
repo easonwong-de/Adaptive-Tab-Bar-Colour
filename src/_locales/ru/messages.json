@@ -98,8 +98,8 @@
 		"message": "Вы уверены, что хотите сбросить расширенные настройки?"
 	},
 
-	"confirmResetSiteList": {
-		"message": "Вы уверены, что хотите сбросить список сайтов?"
+	"confirmResetRuleList": {
+		"message": "Вы уверены, что хотите сбросить список правил?"
 	},
 
 	"confirmResetThemeBuilder": {
@@ -246,12 +246,16 @@
 		"message": "Сброс расширенных настроек"
 	},
 
-	"resetSiteList": {
-		"message": "Сброс списка сайтов"
+	"resetRuleList": {
+		"message": "Сброс списка правил"
 	},
 
 	"resetThemeBuilder": {
 		"message": "Сброс конструктора темы"
+	},
+
+	"ruleList": {
+		"message": "Список правил"
 	},
 
 	"selectedTab": {
@@ -268,10 +272,6 @@
 
 	"sidebar": {
 		"message": "Боковая панель"
-	},
-
-	"siteList": {
-		"message": "Список сайтов"
 	},
 
 	"specifyAColour": {

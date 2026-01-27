@@ -1,7 +1,7 @@
 @import "global.css";
 
 body {
-	background-color: var(--bg-app);
+	background-color: var(--app);
 	min-height: calc(250 * var(--unit));
 	color: var(--text-primary);
 }
@@ -33,7 +33,7 @@ main#tab-0 {
 		align-items: center;
 		gap: calc(20 * var(--unit));
 		border-radius: calc(8 * var(--unit));
-		background-color: var(--bg-panel);
+		background-color: var(--panel);
 		padding: calc(15 * var(--unit));
 
 		& > .glyph {
@@ -62,11 +62,11 @@ main#tab-1 {
 			auto max-content calc(160 * var(--unit))
 			max-content;
 		gap: calc(8 * var(--unit));
-		background-color: var(--bg-panel);
+		background-color: var(--panel);
 		padding: calc(8 * var(--unit));
 
 		&:nth-of-type(even) {
-			background-color: var(--bg-panel-alt);
+			background-color: var(--panel-alt);
 		}
 
 		:is(&:first-of-type) {
@@ -109,8 +109,6 @@ main#tab-1 {
 		}
 
 		select {
-			border-radius: calc(4 * var(--unit));
-			padding-inline: calc(8 * var(--unit)) 0;
 			height: calc(32 * var(--unit));
 		}
 
@@ -119,15 +117,9 @@ main#tab-1 {
 		}
 
 		.colour-input {
-			position: relative;
-
 			label {
-				position: absolute;
 				top: calc(8 * var(--unit));
 				left: calc(8 * var(--unit));
-				cursor: pointer;
-				outline: solid 1px var(--control-bg-selected);
-				border-radius: 50%;
 				width: calc(16 * var(--unit));
 				height: calc(16 * var(--unit));
 			}
@@ -135,15 +127,9 @@ main#tab-1 {
 			input[type="text"] {
 				padding-left: calc(32 * var(--unit));
 			}
-
-			input[type="color"] {
-				display: none;
-			}
 		}
 
-		.delete-button {
-			border-radius: calc(4 * var(--unit));
-			padding: 0;
+		button.delete-button {
 			width: calc(32 * var(--unit));
 			height: calc(32 * var(--unit));
 		}
@@ -151,18 +137,18 @@ main#tab-1 {
 
 	button#add-rule {
 		margin-top: calc(16 * var(--unit));
-		border-radius: calc(8 * var(--unit));
-		background-color: var(--bg-panel);
+		border-radius: calc(12 * var(--unit));
+		background-color: var(--panel);
 		width: 100%;
 		height: calc(48 * var(--unit));
 		text-align: center;
 
 		&:hover {
-			background-color: var(--bg-panel-hover);
+			background-color: var(--panel-hover);
 		}
 
 		&:active {
-			background-color: var(--bg-panel-active);
+			background-color: var(--panel-active);
 		}
 
 		&:only-child {
@@ -189,7 +175,7 @@ main#tab-2 {
 		align-items: center;
 		gap: calc(20 * var(--unit));
 		border-radius: calc(8 * var(--unit));
-		background-color: var(--bg-panel);
+		background-color: var(--panel);
 		padding: calc(15 * var(--unit));
 	}
 }
@@ -222,7 +208,7 @@ main#tab-2 {
 }
 
 input[type="text"] {
-	border-radius: 0.25rem;
+	border-radius: calc(12 * var(--unit));
 	padding-inline: calc(8 * var(--unit));
 	width: 100%;
 	height: calc(32 * var(--unit));

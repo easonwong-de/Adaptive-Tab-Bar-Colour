@@ -8,7 +8,12 @@ export default function Glyph({ highlight }) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<rect width="84" height="56" rx="4" fill="var(--glyph-background)" />
+			<rect
+				width="84"
+				height="56"
+				rx="4"
+				fill="var(--glyph-background)"
+			/>
 			<path
 				d="M5 7C5 5.34315 6.34315 4 8 4H22.5C23.8807 4 25 5.11929 25 6.5C25 7.88071 23.8807 9 22.5 9H6C5.44772 9 5 8.55228 5 8V7Z"
 				fill={
