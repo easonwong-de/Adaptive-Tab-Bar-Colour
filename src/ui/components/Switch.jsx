@@ -16,7 +16,7 @@ export default function Switch({
 					<button
 						key={`switch${item}${index}`}
 						className={activeIndex === index ? "active" : ""}
-						onClick={() => {
+						onPointerDown={() => {
 							setActiveIndex(index);
 							onChange(index);
 						}}

@@ -72,7 +72,7 @@ export default function Slider({
 
 	return (
 		<div className={`slider ${className}`}>
-			<div className="slider-body">
+			<div className="body">
 				<button onPointerDown={onDown}>
 					<svg
 						width="16"
