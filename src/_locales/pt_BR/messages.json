@@ -1,0 +1,392 @@
+{
+	"addANewRule": {
+		"message": "Adicionar nova regra"
+	},
+
+	"addonNotFound": {
+		"message": "Extensão não encontrada"
+	},
+
+	"advanced": {
+		"message": "Avançado"
+	},
+
+	"allowDarkTabBar": {
+		"message": "Permitir abas escuras"
+	},
+
+	"allowDarkTabBarTooltip": {
+		"message": "Permite o uso de cores escuras nas abas (texto claro em abas escuras)."
+	},
+
+	"allowLightTabBar": {
+		"message": "Permitir abas claras"
+	},
+
+	"allowLightTabBarTooltip": {
+		"message": "Permite o uso de cores claras nas abas (texto escuro em abas claras)."
+	},
+
+	"anyCSSColour": {
+		"message": "Qualquer formato"
+	},
+
+	"background": {
+		"message": "Fundo"
+	},
+
+	"backgroundOnFocus": {
+		"message": "Fundo em foco"
+	},
+
+	"border": {
+		"message": "Borda"
+	},
+
+	"cannotFindElement": {
+		"message": "Não é possível encontrar o elemento HTML que coincide com "
+	},
+
+	"cannotFindElementEnd": {
+		"message": ", então a cor foi selecionada da página web"
+	},
+
+	"colourForHomePage": {
+		"message": "A cor da aba da página inicial pode ser definida nas conigurações"
+	},
+
+	"colourForJSONViewer": {
+		"message": "Usando cor para visualização de JSON"
+	},
+
+	"colourForPDFViewer": {
+		"message": "Usando cor para visualização de PDF"
+	},
+
+	"colourForPlainTextViewer": {
+		"message": "Usando cor para visualização de texto simples"
+	},
+
+	"colourIsAdjusted": {
+		"message": "A cor original foi ajustada para garantir um contraste mínimo"
+	},
+	"colourIsPickedFrom": {
+		"message": "A cor foi obtida a partir de um elemento HTML que coincide com "
+	},
+
+	"colourIsPickedFromEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"colourIsSpecified": {
+		"message": "A cor desse site está especificada nas configurações"
+	},
+
+	"colourPickedFromWebpage": {
+		"message": "A cor foi obtida a partir da página web"
+	},
+
+	"compatibilityMode": {
+		"message": "Modo de compatibilidade"
+	},
+
+	"compatibilityModeTooltip": {
+		"message": "Ao invés da Theme API, utilize a propriedade HTML “theme-color” para mudar a cor da aba. Só funciona em certos navegadores de forma limitada."
+	},
+
+	"confirmResetAdvanced": {
+		"message": "Você realmente deseja redefinir as configurações avançadas?"
+	},
+
+	"confirmResetSiteList": {
+		"message": "Você realmente deseja redefinir a lista de sites?"
+	},
+
+	"confirmResetThemeBuilder": {
+		"message": "Você realmente deseja redefinir o criador de temas?"
+	},
+
+	"delete": {
+		"message": "Apagar"
+	},
+
+	"dynamicColourUpdate": {
+		"message": "Atualização dinâmica de cor"
+	},
+
+	"dynamicModeTooltip": {
+		"message": "Continua atualizando a cor da aba durante a navegação em uma página web."
+	},
+
+	"errorOccured": {
+		"message": "Um erro ocorreu, será utilizada a cor alternativa"
+	},
+
+	"errorOccuredLocatingElement": {
+		"message": "Um erro ocorreu durante a procura de um elemento HTML que coincide com "
+	},
+
+	"errorOccuredLocatingElementEnd": {
+		"message": ", então a cor foi selecionada da página web"
+	},
+
+	"exportSettings": {
+		"message": "Exportar configurações"
+	},
+
+	"extensionDescription": {
+		"message": "Muda a cor do tema do Firefox para combinar com a aparência dos sites."
+	},
+
+	"extensionName": {
+		"message": "Adaptive Tab Bar Colour"
+	},
+
+	"fallbackColourDark": {
+		"message": "Cor alternativa: Escuro"
+	},
+
+	"fallbackColourLight": {
+		"message": "Cor alternativa: Claro"
+	},
+
+	"homepageColourDark": {
+		"message": "Cor da página inicial: Escuro"
+	},
+
+	"homepageColourLight": {
+		"message": "Cor da página inicial: Claro"
+	},
+
+	"ignore": {
+		"message": "Ignore" 
+	},
+  
+	"ignoreDesignatedThemeColour": {
+		"message": "Ignorar a cor do tema do site"
+	},
+
+	"ignoreDesignatedThemeColourTooltip": {
+		"message": "Alguns sites fornecem sua própria cor do tema. Ative essa opção para ignorar essas cores."
+	},
+
+	"ignoreThemeColourButton": {
+		"message": "Ignorar cor do tema"
+	},
+
+	"ignoreThemeColourTitle": {
+		"message": "Ignorar cor do tema definido pelo site."
+	},
+
+	"importFailed": {
+		"message": "Erro ao importar configurações. Por favor, tente novamente."
+	},
+
+	"importSettings": {
+		"message": "Importar configurações"
+	},
+
+	"inDarkMode": {
+		"message": "Em modo escuro"
+	},
+
+	"inLightMode": {
+		"message": "Em modo claro"
+	},
+
+	"loading": {
+		"message": "Carregando…"
+	},
+
+	"minimumContrast": {
+		"message": "Contraste mínimo"
+	},
+
+	"minimumContrastTooltip": {
+		"message": "Ajuste o contraste mínimo entre a aba e o texto. A cor da aba é ajustada automaticamente se o contraste mínimo não for alcançado."
+	},
+
+	"moreSettings": {
+		"message": "Mais opções…"
+	},
+
+	"moreSettingsTooltip": {
+		"message": "Abre a página de opções"
+	},
+
+	"pageIsProtected": {
+		"message": "Essa página é protegida pelo navegador"
+	},
+
+	"pickColourFromElement": {
+		"message": "Selecionar a cor a partir de um elemento"
+	},
+
+	"popUp": {
+		"message": "Pop-up"
+	},
+
+	"querySelector": {
+		"message": "Seletor de consulta"
+	},
+
+	"reinstallTip": {
+		"message": "Dados preferenciais podem estar corrompidos. Se o problema continuar, por favor reinstale a extensão. Pedimos desculpas pela inconveniência."
+	},
+
+	"reportAnIssue": {
+		"message": "Reporte um problema / Deixe uma sugestão / Traduza essa extensão"
+	},
+
+	"reset": {
+		"message": "Redefinir"
+	},
+
+	"resetAdvanced": {
+		"message": "Redefinir configurações avançadas"
+	},
+
+	"resetSiteList": {
+		"message": "Redefinir lista de sites"
+	},
+
+	"resetThemeBuilder": {
+		"message": "Redefinir criador de temas"
+	},
+
+	"selectedTab": {
+		"message": "Aba selecionada"
+	},
+
+	"settingsAreExported": {
+		"message": "As configurações foram exportadas para sua pasta de downloads."
+	},
+
+	"settingsAreImported": {
+		"message": "As configurações foram importadas."
+	},
+
+	"sidebar": {
+		"message": "Barra lateral"
+	},
+
+	"siteList": {
+		"message": "Lista de sites"
+	},
+
+	"specifyAColour": {
+		"message": "Especificar uma cor"
+	},
+
+	"specifyColourForAddon": {
+		"message": "Clique “Especificar uma cor” para abrir as configurações e especificar a cor da aba para páginas relacionadas a "
+	},
+
+	"specifyColourForAddonButton": {
+		"message": "Especificar uma cor"
+	},
+
+	"specifyColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"specifyColourForAddonTitle": {
+		"message": "Abrir as configurações e especificar uma cor para as páginas relacionadas à extensão"
+	},
+
+	"tabBar": {
+		"message": "Barra de abas"
+	},
+
+	"themeBuilder": {
+		"message": "Criador de temas"
+	},
+
+	"themeColourIsIgnored": {
+		"message": "A cor do tema definida pelo site é ignorada"
+	},
+
+	"themeColourIsUnignored": {
+		"message": "A cor do tema definida pelo site é utilizada, ao invés de ser ignorada por padrão"
+	},
+
+	"themeColourNotFound": {
+		"message": "A cor do tema não foi encontrada, a cor será selecionada da página web"
+	},
+
+	"thisPolicyWillBeIgnored": {
+		"message": "Essa política será ignorada"
+	},
+
+	"toolbar": {
+		"message": "Barra de ferramentas"
+	},
+
+	"urlBar": {
+		"message": "Barra de URL"
+	},
+
+	"urlDomainOrRegex": {
+		"message": "URL / regex / wildcard / domínio"
+	},
+
+	"use": {
+		"message": "Usar"
+	},
+
+	"useDefaultColourForAddon": {
+		"message": "Usando cor especificada para páginas relacionadas a "
+	},
+
+	"useDefaultColourForAddonButton": {
+		"message": "Usar cor padrão"
+	},
+
+	"useDefaultColourForAddonEnd": {
+		"message": "__EMPTY__"
+	},
+
+	"useDefaultColourForAddonTitle": {
+		"message": "Usar cor padrão"
+	},
+
+	"useIgnoreThemeColour": {
+		"message": "usar / ignorar cor do tema"
+	},
+
+	"useRecommendedColourForAddon": {
+		"message": "Cor recomendada para páginas relacionadas a "
+	},
+
+	"useRecommendedColourForAddonButton": {
+		"message": "Usar cor recomendada"
+	},
+
+	"useRecommendedColourForAddonEnd": {
+		"message": " está disponível"
+	},
+
+	"useRecommendedColourForAddonTitle": {
+		"message": "Usar a cor recomendada"
+	},
+
+	"useThemeColourButton": {
+		"message": "Usar a cor do tema"
+	},
+
+	"useThemeColourTitle": {
+		"message": "Usar a cor do tema definida pelo site"
+	},
+
+	"usingFallbackColour": {
+		"message": "Não há cor disponível, usando cor alternativa"
+	},
+
+	"usingImageViewer": {
+		"message": "Usando cor para visualizador de imagem"
+	},
+
+	"usingThemeColour": {
+		"message": "Usando cor do tema definida pelo site"
+	}
+}
