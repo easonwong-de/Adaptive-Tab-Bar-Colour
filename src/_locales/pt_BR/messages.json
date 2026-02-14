@@ -267,7 +267,7 @@
 	},
 
 	"sidebar": {
-		"message": "Barra lateral"
+		"message": "Painel lateral"
 	},
 
 	"siteList": {
@@ -323,7 +323,7 @@
 	},
 
 	"urlBar": {
-		"message": "Barra de URL"
+		"message": "Barra de endereços"
 	},
 
 	"urlDomainOrRegex": {
