@@ -10,7 +10,8 @@
 		"lint": "web-ext lint -s=./src",
 		"prettier": "npx prettier \"src/**\" --write",
 		"sync-version": "node sync-version.js",
-		"build": "npm run prettier && npm run sync-version && web-ext build -s=./src -a=dist -o"
+		"build": "npm run prettier && npm run sync-version && web-ext build -s=./src -a=dist -o",
+		"test": "node test.cjs"
 	},
 	"repository": {
 		"type": "git",
@@ -23,6 +24,11 @@
 		"email": "me@easonwong.de"
 	},
 	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
+	"dependencies": {
+		"geckodriver": "^6.1.0",
+		"selenium-webdriver": "^4.40.0",
+		"selenium-webext-bridge": "^0.2.0"
+	},
 	"devDependencies": {
 		"prettier": "^3.6.2",
 		"prettier-plugin-css-order": "^2.1.2",
