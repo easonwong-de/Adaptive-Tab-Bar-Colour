@@ -47,6 +47,10 @@ function getPageColour() {
 				element.offsetHeight >= 20,
 		)
 		.map((element) => getElementColour(element))
+		.concat(
+			getElementColour(document.body),
+			getElementColour(document.documentElement),
+		)
 		.filter((colour) => colour !== undefined);
 }
 
