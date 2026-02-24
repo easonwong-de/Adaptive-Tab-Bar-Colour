@@ -24,14 +24,17 @@ function getColour() {
 }
 
 function getThemeColour() {
+	const metaThemeColour = document.querySelector(
+		`meta[name="theme-color"]:not([media])`,
+	);
 	const metaThemeColourLight =
 		document.querySelector(
 			`meta[name="theme-color"][media="(prefers-color-scheme: light)"]`,
-		) ?? document.querySelector(`meta[name="theme-color"]`);
+		) ?? metaThemeColour;
 	const metaThemeColourDark =
 		document.querySelector(
 			`meta[name="theme-color"][media="(prefers-color-scheme: dark)"]`,
-		) ?? document.querySelector(`meta[name="theme-color"]`);
+		) ?? metaThemeColour;
 	return {
 		light: metaThemeColourLight?.content,
 		dark: metaThemeColourDark?.content,
