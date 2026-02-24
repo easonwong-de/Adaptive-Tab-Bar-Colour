@@ -245,9 +245,9 @@ input[type="radio"] {
 		var(--transparent-0) 50%,
 		var(--colour-2) 50%
 	);
+	background-position-x: var(--slider-position, 100%);
 	background-size: 200% 100%;
 	background-color: var(--colour-2);
-	background-position-x: var(--slider-position, 100%);
 	width: 10rem;
 	height: 2rem;
 	line-height: 2rem;
