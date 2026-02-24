@@ -103,7 +103,7 @@ export default class preference {
 	async normalise() {
 		if (
 			!this.#content.version ||
-			this.#content.version < [2, 0] ||
+			this.#isOlderThan([2, 0]) ||
 			JSON.stringify(this.#content.version) === "[2,2,1]"
 		) {
 			this.reset();
@@ -119,7 +119,7 @@ export default class preference {
 					: defaultPreference[key];
 		}
 		// Updating from before v2.2
-		if (this.#content.version < [2, 2]) {
+		if (this.#isOlderThan([2, 2])) {
 			// Turns on allow dark / light tab bar, dynamic, and no theme colour settings for once
 			this.#content.allowDarkLight = true;
 			this.#content.dynamic = true;
@@ -171,7 +171,7 @@ export default class preference {
 			this.#content.siteList = newSiteList;
 		}
 		// Updating from before v2.4
-		if (this.#content.version < [2, 4]) {
+		if (this.#isOlderThan([2, 4])) {
 			browser.theme.reset();
 			if (this.#content.minContrast_light === 165)
 				this.#content.minContrast_light = 90;
@@ -210,6 +210,26 @@ export default class preference {
 		}
 		// Updates the pref version
 		this.#content.version = addonVersion;
+	}
+
+	/**
+	 * Checks if the current preference version is older than the given version.
+	 *
+	 * @private
+	 * @param {number[]} version - The version array to compare against.
+	 * @returns {boolean} `true` if older, `false` otherwise.
+	 */
+	#isOlderThan(version) {
+		const currentVersion = this.#content.version || [];
+		for (
+			let i = 0;
+			i < Math.max(currentVersion.length, version.length);
+			i++
+		) {
+			if ((currentVersion[i] || 0) !== (version[i] || 0))
+				return (currentVersion[i] || 0) < (version[i] || 0);
+		}
+		return false;
 	}
 
 	/**
@@ -297,8 +317,11 @@ export default class preference {
 	getPolicy(input) {
 		let matchedId = 0;
 		let matchedPolicy;
+		if (typeof input !== "string")
+			return { id: matchedId, policy: matchedPolicy };
 		for (const id in this.#content.siteList) {
 			const policy = this.#content.siteList[id];
+			if (!policy || typeof policy.header !== "string") continue;
 			const normalisedInput = input.replace(/\/$/, "");
 			const normalisedHeader = policy.header.replace(/\/$/, "");
 			const isMatch =
@@ -367,23 +390,23 @@ export default class preference {
 	}
 
 	/**
-	 * Tests if a URL matches a specific hostname or hostname with path.
+	 * Tests if a URL matches a specific hostname (with optional subdomains) or
+	 * hostname with path.
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
 	 * @param {string} hostname - The hostname to match.
-	 * @returns {boolean} `true` if the URL's hostname (and path) matches,
-	 *   `false` otherwise.
+	 * @returns {boolean} `true` if the URL's hostname (with optional
+	 *   subdomains) and path match, `false` otherwise.
 	 */
 	#testHostname(url, hostname) {
 		try {
-			const urlObj = new URL(url);
-			const urlPath = urlObj.hostname + urlObj.pathname;
-			return (
-				urlPath === hostname ||
-				(urlPath.startsWith(hostname) &&
-					urlPath[hostname.length] === "/")
-			);
+			const { hostname: urlHost, pathname } = new URL(url);
+			const hostPart = hostname.split("/")[0];
+			if (urlHost !== hostPart && !urlHost.endsWith(`.${hostPart}`))
+				return false;
+			const urlPath = hostPart + pathname;
+			return urlPath === hostname || urlPath.startsWith(`${hostname}/`);
 		} catch (error) {
 			return false;
 		}

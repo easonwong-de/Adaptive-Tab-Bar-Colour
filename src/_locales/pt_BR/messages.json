@@ -159,9 +159,9 @@
 	},
 
 	"ignore": {
-		"message": "Ignore" 
+		"message": "Ignore"
 	},
-  
+
 	"ignoreDesignatedThemeColour": {
 		"message": "Ignorar a cor do tema do site"
 	},

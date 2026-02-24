@@ -15,7 +15,6 @@ const colourCodes = [
 	"IMAGEVIEWER",
 	"JSONVIEWER",
 	"DEFAULT",
-	"ACCENT",
 ];
 
 /**
@@ -83,11 +82,11 @@ export default class colour {
 	 * @returns {colour} This colour instance for method chaining.
 	 */
 	rgba(r, g, b, a) {
+		this.#code = undefined;
 		this.r = r;
 		this.g = g;
 		this.b = b;
 		this.a = a;
-		this.#code = undefined;
 		return this;
 	}
 
@@ -121,9 +120,9 @@ export default class colour {
 	brightness(percentage) {
 		this.#noCode();
 		const cent = percentage / 100;
-		if (cent > 1) {
+		if (1 < cent) {
 			return new this.constructor().rgba(255, 255, 255, this.#a);
-		} else if (cent > 0) {
+		} else if (0 < cent && cent <= 1) {
 			return new this.constructor().rgba(
 				cent * 255 + (1 - cent) * this.#r,
 				cent * 255 + (1 - cent) * this.#g,
@@ -132,7 +131,7 @@ export default class colour {
 			);
 		} else if (cent === 0) {
 			return this;
-		} else if (cent < 0) {
+		} else if (-1 <= cent && cent < 0) {
 			return new this.constructor().rgba(
 				(cent + 1) * this.#r,
 				(cent + 1) * this.#g,

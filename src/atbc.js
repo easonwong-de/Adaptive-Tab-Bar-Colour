@@ -1,17 +1,11 @@
-const conf = {
-	active: false,
-	dynamic: false,
-	query: null,
-};
+let query = null;
 
 browser.runtime.onMessage.addListener((message, _, sendResponse) => {
 	switch (message.header) {
 		case "GET_COLOUR":
-			conf.active = message.active;
-			conf.dynamic = message.dynamic;
-			conf.query = message.query;
-			conf.active && conf.dynamic ? enableDynamic() : disableDynamic();
-			if (conf.active) sendResponse(getColour());
+			query = message.query;
+			message.dynamic ? enableDynamic() : disableDynamic();
+			sendResponse(getColour());
 			break;
 		case "SET_THEME_COLOUR":
 			setThemeColour(message.colour);
@@ -56,9 +50,9 @@ function getPageColour() {
 		.filter((colour) => colour !== undefined);
 }
 
-function getQueryColour(query) {
+function getQueryColour() {
 	try {
-		return conf.query
+		return query
 			? getElementColour(document.querySelector(query))
 			: undefined;
 	} catch (error) {
@@ -168,10 +162,14 @@ async function sendColour() {
 	const dispatch = async () => {
 		if (document.visibilityState !== "visible") return;
 		lastSentAt = Date.now();
-		await browser.runtime.sendMessage({
-			header: "UPDATE_COLOUR",
-			colour: getColour(),
-		});
+		try {
+			await browser.runtime.sendMessage({
+				header: "UPDATE_COLOUR",
+				colour: getColour(),
+			});
+		} catch (error) {
+			console.warn("Failed to send colour to ATBC background.");
+		}
 	};
 	remaining <= 0
 		? await dispatch()

@@ -73,13 +73,18 @@ async function updateInfoDisplay(nthTry = 0) {
 		};
 		colourCorrectionInfo.classList.toggle("hidden", !meta.corrected);
 		if (meta.reason === "ADDON") {
-			const addonInfo = await getAddonPageInfo(meta.info);
-			setInfoDisplay(addonInfo);
+			if (!meta.info) {
+				setInfoDisplay({ reason: "ADDON" });
+			} else {
+				const addonInfo = await getAddonPageInfo(meta.info);
+				setInfoDisplay(addonInfo);
+			}
 		} else if (meta.reason in actions) {
 			setInfoDisplay({
 				reason: meta.reason,
 				info: null,
 				infoAction: async () => {
+					if (!tab.url) return;
 					const header = new URL(tab.url).hostname;
 					const { id, policy } = pref.getPolicy(tab.url);
 					if (
