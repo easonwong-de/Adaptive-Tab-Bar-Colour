@@ -122,9 +122,11 @@ function enableDynamic() {
 		.forEach((metaTag) =>
 			metaThemeColourObserver.observe(metaTag, { attributes: true }),
 		);
-	metaTagObserver.observe(document.head, { childList: true });
+	if (document.head)
+		metaTagObserver.observe(document.head, { childList: true });
 	styleTagObserver.observe(document.documentElement, { childList: true });
-	styleTagObserver.observe(document.head, { childList: true });
+	if (document.head)
+		styleTagObserver.observe(document.head, { childList: true });
 }
 
 function disableDynamic() {
@@ -152,7 +154,7 @@ function setThemeColour(colour) {
 	const newMetaThemeColour = document.createElement("meta");
 	newMetaThemeColour.name = "theme-color";
 	newMetaThemeColour.content = colour;
-	document.head.appendChild(newMetaThemeColour);
+	(document.head || document.documentElement).appendChild(newMetaThemeColour);
 	metaThemeColourList.forEach((metaThemeColour) => metaThemeColour.remove());
 }
 
@@ -191,6 +193,6 @@ async function sendColourRequiresFocus() {
 		attempt >= 3
 			? console.error("Could not connect to ATBC background.")
 			: console.warn("Failed to connect to ATBC background.");
-		setTimeout(() => sendMessageOnLoad(++attempt), 50);
+		if (attempt < 60) setTimeout(() => sendMessageOnLoad(++attempt), 1000);
 	}
 })();
