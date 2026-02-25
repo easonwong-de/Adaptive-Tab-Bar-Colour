@@ -46,6 +46,8 @@ export default class colour {
 			this.#code = initialiser;
 		} else if (typeof initialiser === "string") {
 			const canvas = document.createElement("canvas");
+			canvas.width = 1;
+			canvas.height = 1;
 			const canvasContext = canvas.getContext("2d");
 			canvasContext.fillStyle = initialiser;
 			const parsedColour = canvasContext.fillStyle;
