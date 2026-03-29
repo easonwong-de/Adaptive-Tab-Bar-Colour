@@ -1,7 +1,7 @@
 import { supportsThemeAPI } from "./utility.js";
 
 /** The version of ATBC */
-export const addonVersion = [3, 4];
+export const addonVersion = [4, 0];
 
 /** Default light homepage colour */
 export const default_homeBackground_light = "#ffffff";
@@ -72,7 +72,7 @@ export const defaultPref = Object.freeze({
 	// theme builder
 	tabbar: 0,
 	tabbarBorder: 0,
-	tabSelected: 10,
+	tabSelected: 15,
 	tabSelectedBorder: 0,
 	toolbar: 0,
 	toolbarBorder: 0,

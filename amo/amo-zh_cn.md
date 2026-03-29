@@ -1,6 +1,6 @@
 **主要功能**
 
-此插件可动态调整 Firefox 主题，使之与您正在浏览的网站外观相匹配——正如 macOS Safari 的标签栏着色功能一样。
+此插件可动态调整 Firefox 主题，使之与您正在浏览的网站融为一体——正如 macOS Safari 的标签栏着色功能一样。
 
 **与本插件兼容的插件有**
 
@@ -20,13 +20,13 @@
 
 要移除网页内容在浏览器工具栏上投射的细微阴影，请前往设置 (`about:preferences`) 并在“浏览器布局”部分关闭“显示侧栏”。或者，将以下代码添加到您的 CSS 主题：
 
-> `#tabbrowser-tabbox {`
+> `#tabbrowser-tabbox, .browserContainer {`
 
 > > `box-shadow: none !important;`
 
 > `}`
 
-**启用平滑颜色过渡**
+**自定义颜色过渡**
 
 由于技术限制，标签栏的平滑颜色过渡无法原生支持。不过，您可以通过将以下代码添加到您的 CSS 主题来启用此效果（感谢 [@Moarram](https://github.com/Moarram/)）：
 
@@ -43,6 +43,14 @@
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+另外，如果您希望移除 Firefox 工具栏内置的颜色过渡以实现实时颜色更改，请将以下代码添加到您的 CSS 主题中：
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

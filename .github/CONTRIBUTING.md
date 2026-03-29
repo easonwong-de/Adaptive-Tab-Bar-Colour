@@ -23,14 +23,16 @@ One way to contribute to the project is through sponsorship via:
 
 ## Translation
 
-To rectify translation errors or add a new locale, please update the following files:
+To fix translation errors or add a new locale, please update the following files:
 
-- `src/_locales/xx/messages.json`: The text in the add-on’s popup and options page.
+- `src/locales/xx.json`: The text in the add-on’s popup and options page.
 - `amo/amo-xx.md`: The add-on description on the Mozilla Add-on store and the “Details” section in Firefox’s Add-ons Manager.
+
+You can work on the locales using the [i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally) extension.
 
 ## Development
 
-Ensure the following software is installed in the development environment:
+Ensure the following software is installed:
 
 - [Node.js](https://nodejs.org/)
 - [Firefox Developer Edition](https://www.mozilla.org/firefox/developer/)
@@ -45,6 +47,5 @@ npm install
 
 To test the changes, run `npm start`, which:
 
-1. Synchronises the add-on version from `package.json` to `src/manifest.json` and `src/constants.js`.
 1. Formats source code using Prettier.
-1. Launches the add-on in Firefox Developer Edition.
+1. Builds the add-on using WXT and launches it in the browser.

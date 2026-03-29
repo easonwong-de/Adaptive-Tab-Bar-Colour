@@ -123,9 +123,10 @@ async function handleMessage(message, sender) {
 	const header = message.header;
 	switch (header) {
 		case "SCRIPT_READY":
-			updateTab(tab);
+			if (tab) updateTab(tab);
 			break;
 		case "UPDATE_COLOUR":
+			if (!tab) break;
 			const tabMeta = parseTabColour(
 				cache.rule[tab.windowId],
 				message.colour,
@@ -163,7 +164,7 @@ async function updateTab(tab) {
 	const windowId = tab.windowId;
 	const rule = pref.getRule(tab.url).rule;
 	cache.rule[windowId] = rule;
-	const tabMeta = await getTabMeta(tab);
+	const tabMeta = await getTabMeta(rule, tab);
 	cache.meta[windowId] = tabMeta;
 	setFrameColour(tab, tabMeta.colour);
 }
@@ -172,30 +173,27 @@ async function updateTab(tab) {
  * Determines the appropriate colour meta for a tab.
  *
  * @async
+ * @param {object} rule - The policy object containing type and value.
  * @param {tabs.Tab} tab - The tab to extract colour from.
  * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Tab
  *   metadata.
  */
-async function getTabMeta(tab) {
-	const rule = cache.rule[tab.windowId];
-	if (rule?.headerType === "URL" && rule?.type === "COLOUR") {
-		return {
-			colour: new colour(rule.value),
-			reason: "COLOUR_SPECIFIED",
-		};
-	} else {
-		try {
-			const tabColour = await sendMessage(tab.id, {
-				header: "GET_COLOUR",
-				active: rule?.type !== "COLOUR",
-				dynamic: pref.dynamic,
-				query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
-			});
-			return parseTabColour(rule, tabColour);
-		} catch (error) {
-			console.warn("Failed to connect to", tab.url);
-			return await getProtectedPageMeta(tab);
-		}
+async function getTabMeta(rule, tab) {
+	try {
+		const tabColour = await browser.tabs.sendMessage(tab.id, {
+			header: "GET_COLOUR",
+			dynamic: rule?.type === "COLOUR" ? false : pref.dynamic,
+			query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
+		});
+		return parseTabColour(rule, tabColour);
+	} catch (error) {
+		console.warn("Failed to connect to", tab.url);
+		if (rule?.headerType === "URL" && rule?.type === "COLOUR") {
+			return {
+				colour: new colour(rule.value),
+				reason: "COLOUR_SPECIFIED",
+			};
+		} else return await getProtectedPageMeta(tab);
 	}
 }
 
@@ -258,6 +256,12 @@ function parseTabColour(rule, { theme, page, query }) {
 						info: rule.value || "🕳️",
 					};
 		}
+		case "COLOUR": {
+			return {
+				colour: new colour(rule.value),
+				reason: "COLOUR_SPECIFIED",
+			};
+		}
 		default:
 			return { colour: parsePageColour(), reason: "COLOUR_PICKED" };
 	}
@@ -272,7 +276,14 @@ function parseTabColour(rule, { theme, page, query }) {
  *   Metadata.
  */
 async function getProtectedPageMeta(tab) {
+	if (!tab.url) {
+		return {
+			colour: new colour("FALLBACK"),
+			reason: "FALLBACK_COLOUR",
+		};
+	}
 	const url = new URL(tab.url);
+	const tabTitle = tab.title || "";
 	if (
 		["about:firefoxview", "about:home", "about:newtab"].some((href) =>
 			url.href.startsWith(href),
@@ -281,10 +292,10 @@ async function getProtectedPageMeta(tab) {
 		return { colour: new colour("HOME"), reason: "HOME_PAGE" };
 	} else if (
 		url.href === "about:blank" &&
-		tab.title.startsWith("about:") &&
-		tab.title.endsWith("profile")
+		tabTitle.startsWith("about:") &&
+		tabTitle.endsWith("profile")
 	) {
-		return getAboutPageMeta(tab.title.slice(6));
+		return getAboutPageMeta(tabTitle.slice(6));
 	} else if (url.protocol === "about:") {
 		return getAboutPageMeta(url.pathname);
 	} else if (url.protocol === "moz-extension:") {
@@ -324,12 +335,12 @@ async function getProtectedPageMeta(tab) {
 			colour: new colour("IMAGEVIEWER"),
 			reason: "IMAGE_VIEWER",
 		};
-	} else if (url.href.endsWith(".pdf") || tab.title.endsWith(".pdf")) {
+	} else if (url.href.endsWith(".pdf") || tabTitle.endsWith(".pdf")) {
 		return {
 			colour: new colour("PDFVIEWER"),
 			reason: "PDF_VIEWER",
 		};
-	} else if (url.href.endsWith(".json") || tab.title.endsWith(".json")) {
+	} else if (url.href.endsWith(".json") || tabTitle.endsWith(".json")) {
 		return {
 			colour: new colour("JSONVIEWER"),
 			reason: "JSON_VIEWER",
@@ -339,7 +350,7 @@ async function getProtectedPageMeta(tab) {
 			colour: new colour("DEFAULT"),
 			reason: "PROTECTED_PAGE",
 		};
-	} else if (url.href.match(new RegExp(`https?:\/\/${tab.title}$`, "i"))) {
+	} else if (url.href.match(new RegExp(`https?:\\/\\/${tabTitle}$`, "i"))) {
 		return {
 			colour: new colour("PLAINTEXT"),
 			reason: "TEXT_VIEWER",
@@ -451,7 +462,7 @@ function setFrameColour(tab, colour) {
 			finalColour = colourCode[colour.code][cache.reversedScheme];
 			finalScheme = cache.reversedScheme;
 		} else {
-			const correctionResult = colourCode[colour][
+			const correctionResult = colourCode[colour.code][
 				cache.reversedScheme
 			].contrastCorrection(
 				cache.scheme,

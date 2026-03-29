@@ -1,6 +1,6 @@
 **主要功能**
 
-此擴充套件可動態調整 Firefox 佈景主題，使之與閣下正在瀏覽的網站外觀相配——正如 macOS Safari 的標籤列着色功能一樣。
+此擴充套件可動態調整 Firefox 佈景主題，使之與閣下正在瀏覽的網站融為一體——正如 macOS Safari 的標籤列着色功能一樣。
 
 **和此套件運作無間的有**
 
@@ -20,13 +20,13 @@
 
 要移除網頁內容在瀏覽器工具列上投射的細微陰影，請前往設定 (`about:preferences`) 並在「瀏覽器版面」部分關閉「顯示側邊欄」。另外，閣下亦可將以下程式碼加入閣下的 CSS 主題：
 
-> `#tabbrowser-tabbox {`
+> `#tabbrowser-tabbox, .browserContainer {`
 
 > > `box-shadow: none !important;`
 
 > `}`
 
-**啟用平滑顏色過渡**
+**自訂顏色過渡**
 
 由於技術限制，標籤列的平滑顏色過渡無法原生支援。然而，閣下可以透過將以下程式碼加入閣下的 CSS 主題來啟用此效果（感謝 [@Moarram](https://github.com/Moarram/)）：
 
@@ -46,7 +46,15 @@
 
 > `}`
 
-**與第三方 CSS 主題的兼容性**
+另外，若閣下希望移除 Firefox 工具列內建的顏色過渡以實現即時顏色更改，請將以下程式碼加入閣下的 CSS 主題中：
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> `}`
+
+**與第三方 CSS 主題的相容性**
 
 第三方 CSS 主題可與變色標題列 (ATBC) 相容，只要它們使用 Firefox 的標準顏色變數（例如，`--lwt-accent-color` 用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 ATBC 相容的 CSS 主題。
 

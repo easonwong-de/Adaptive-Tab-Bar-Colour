@@ -14,7 +14,7 @@ export default function Rule({ rule, onChange = () => {} }) {
 	if (!rule) return null;
 
 	return (
-		<section className={styles.ruleSection} headerType={rule.headerType}>
+		<section className={styles.ruleSection}>
 			<Header
 				rule={rule}
 				onChange={(newHeader) => {

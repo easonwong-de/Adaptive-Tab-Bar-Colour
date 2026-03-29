@@ -20,13 +20,13 @@ This add-on dynamically adjusts the Firefox theme to match the appearance of the
 
 To remove the thin shadow cast by web content onto the browser toolbar, navigate to Settings (`about:preferences`) and disable “Show sidebar” in the “Browser Layout” section. Alternatively, add the following code to your CSS theme:
 
-> `#tabbrowser-tabbox {`
+> `#tabbrowser-tabbox, .browserContainer {`
 
 > > `box-shadow: none !important;`
 
 > `}`
 
-**Enabling Smooth Colour Transitions**
+**Customising Colour Transitions**
 
 Due to technical limitations, smooth colour transitions for the tab bar are not natively supported. However, you can enable this effect by adding the following code to your CSS theme (thanks to [@Moarram](https://github.com/Moarram/)):
 
@@ -43,6 +43,14 @@ To enable smooth colour transitions in the Sidebery UI, add the following code t
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+
+> `}`
+
+Alternatively, if you wish to remove Firefox’s built-in colour transition on the toolbar for an instant colour change, add the following code to your CSS theme:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

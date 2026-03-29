@@ -182,68 +182,68 @@ export default class preference {
 	 */
 	#normalise(content) {
 		if (
-			typeof content !== "object" ||
-			content?.version < [2, 0] ||
-			JSON.stringify(content.version) === "[2,2,1]"
+			!this.#content.version ||
+			this.#isOlderThan([2, 0]) ||
+			JSON.stringify(this.#content.version) === "[2,2,1]"
 		) {
 			return { result: { ...defaultPref }, removedKeys: [] };
 		} else {
 			const result = { ...defaultPref, ...content };
-			if (result.version < [2, 2]) {
-				result.allowDarkLight = true;
-				result.dynamic = true;
-				result.noThemeColour = true;
+			if (this.#isOlderThan([2, 2])) {
+				this.#content.allowDarkLight = true;
+				this.#content.dynamic = true;
+				this.#content.noThemeColour = true;
 				const siteList = {};
 				let id = 1;
 				for (const site in result.siteList) {
-					const rule = result.siteList[site];
-					if (typeof rule !== "string") {
+					const policy = result.siteList[site];
+					if (typeof policy !== "string") {
 						continue;
-					} else if (rule === "IGNORE_THEME") {
+					} else if (policy === "IGNORE_THEME") {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "THEME_COLOUR",
 							value: false,
 						};
-					} else if (rule === "UN_IGNORE_THEME") {
+					} else if (policy === "UN_IGNORE_THEME") {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "THEME_COLOUR",
 							value: true,
 						};
-					} else if (rule.startsWith("QS_")) {
+					} else if (policy.startsWith("QS_")) {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "QUERY_SELECTOR",
-							value: rule.replace("QS_", ""),
+							value: policy.replace("QS_", ""),
 						};
 					} else if (site.startsWith("Add-on ID: ")) {
 						siteList[id++] = {
 							headerType: "ADDON_ID",
 							header: site.replace("Add-on ID: ", ""),
 							type: "COLOUR",
-							value: new colour(rule, false).toHex(),
+							value: new colour(policy, false).toHex(),
 						};
 					} else {
 						siteList[id++] = {
 							headerType: "URL",
 							header: site,
 							type: "COLOUR",
-							value: new colour(rule, false).toHex(),
+							value: new colour(policy, false).toHex(),
 						};
 					}
 				}
 				result.siteList = siteList;
 			}
-			if (result.version < [2, 4]) {
+			if (this.#isOlderThan([2, 4])) {
 				browser.theme.reset();
 				if (result.minContrast_light === 165)
 					result.minContrast_light = 90;
 			}
-			if (result.version < [3, 4]) {
+			if (this.#isOlderThan([3, 4])) {
 				if (result.siteList) result.ruleList = result.siteList;
 			}
 			const removedKeys = [];
@@ -256,6 +256,26 @@ export default class preference {
 			result.version = addonVersion;
 			return { result, removedKeys };
 		}
+	}
+
+	/**
+	 * Checks if the current preference version is older than the given version.
+	 *
+	 * @private
+	 * @param {number[]} version - The version array to compare against.
+	 * @returns {boolean} `true` if older, `false` otherwise.
+	 */
+	#isOlderThan(version) {
+		const currentVersion = this.#content.version || [];
+		for (
+			let i = 0;
+			i < Math.max(currentVersion.length, version.length);
+			i++
+		) {
+			if ((currentVersion[i] || 0) !== (version[i] || 0))
+				return (currentVersion[i] || 0) < (version[i] || 0);
+		}
+		return false;
 	}
 
 	/**
@@ -358,20 +378,21 @@ export default class preference {
 	getRule(query) {
 		let matchedId = 0;
 		let matchedRule;
+		if (typeof query !== "string")
+			return { id: matchedId, policy: matchedRule };
 		for (const id in this.#content.ruleList) {
 			const rule = this.#content.ruleList[id];
-			if (!rule || rule?.header === "") {
-				continue;
-			} else if (
-				rule.headerType === "ADDON_ID"
-					? rule.header === query
-					: rule.headerType === "URL" &&
-						(rule.header === query ||
-							rule.header === `${query}/` ||
-							this.#testRegex(query, rule.header) ||
-							this.#testWildcard(query, rule.header) ||
-							this.#testHostname(query, rule.header))
-			) {
+			if (!rule || typeof rule.header !== "string") continue;
+			const cleanQuery = query.replace(/\/$/, "");
+			const cleanHeader = rule.header.replace(/\/$/, "");
+			const isMatch =
+				(rule.headerType === "ADDON_ID" && rule.header === query) ||
+				(rule.headerType === "URL" &&
+					(cleanQuery === cleanHeader ||
+						this.#testRegex(cleanQuery, cleanHeader) ||
+						this.#testWildcard(cleanQuery, cleanHeader) ||
+						this.#testHostname(cleanQuery, cleanHeader)));
+			if (isMatch) {
 				matchedId = +id;
 				matchedRule = rule;
 			} else {
@@ -432,17 +453,23 @@ export default class preference {
 	}
 
 	/**
-	 * Tests if a URL matches a specific hostname.
+	 * Tests if a URL matches a specific hostname (with optional subdomains) or
+	 * hostname with path.
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
 	 * @param {string} hostname - The hostname to match.
-	 * @returns {boolean} `true` if the URL's hostname matches, `false`
-	 *   otherwise.
+	 * @returns {boolean} `true` if the URL's hostname (with optional
+	 *   subdomains) and path match, `false` otherwise.
 	 */
 	#testHostname(url, hostname) {
 		try {
-			return hostname === new URL(url).hostname;
+			const { hostname: urlHost, pathname } = new URL(url);
+			const hostPart = hostname.split("/")[0];
+			if (urlHost !== hostPart && !urlHost.endsWith(`.${hostPart}`))
+				return false;
+			const urlPath = hostPart + pathname;
+			return urlPath === hostname || urlPath.startsWith(`${hostname}/`);
 		} catch (error) {
 			return false;
 		}
