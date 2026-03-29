@@ -1,11 +1,13 @@
 {
 	"name": "adaptive-tab-bar-colour",
-	"version": "3.3",
+	"version": "3.4",
 	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
 	"type": "module",
 	"scripts": {
-		"start": "node build.js --watch",
-		"build": "node build.js"
+		"start": "npm run format && wxt",
+		"build": "npm run format && wxt build",
+		"zip": "npm run format && wxt zip",
+		"format": "prettier --write --list-different src"
 	},
 	"repository": {
 		"type": "git",
@@ -19,17 +21,17 @@
 	},
 	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"devDependencies": {
-		"@vitejs/plugin-react": "^5.1.2",
-		"lightningcss": "^1.30.2",
-		"prettier": "^3.6.2",
-		"prettier-plugin-css-order": "^2.1.2",
-		"prettier-plugin-jsdoc": "^1.5.0",
-		"prettier-plugin-sort-json": "^4.1.1",
-		"vite": "^7.3.0",
-		"web-ext": "^9.1.0"
+		"@wxt-dev/module-react": "^1.2.2",
+		"prettier": "^3.8.1",
+		"prettier-plugin-css-order": "^2.2.0",
+		"prettier-plugin-jsdoc": "^1.8.0",
+		"prettier-plugin-sort-json": "^4.2.0",
+		"wxt": "^0.20.20"
 	},
 	"dependencies": {
-		"react": "^19.2.3",
-		"react-dom": "^19.2.3"
+		"@wxt-dev/i18n": "^0.2.5",
+		"clsx": "^2.1.1",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4"
 	}
 }

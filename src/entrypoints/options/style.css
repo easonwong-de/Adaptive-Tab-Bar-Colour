@@ -1,0 +1,227 @@
+:root {
+	--unit: 0.0769rem;
+
+	--app: hsl(247, 12%, 100%);
+	--panel: hsl(247, 12%, 78%);
+	--panel-alt: hsl(247, 12%, 76%);
+	--panel-hover: hsl(247, 12%, 73%);
+	--panel-active: hsl(247, 12%, 75%);
+	--panel-selected: hsl(247, 12%, 65%);
+	--panel-selected-hover: hsl(247, 12%, 50%);
+	--panel-selected-active: hsl(247, 12%, 62%);
+
+	--control: hsl(247, 12%, 49%);
+	--control-hover: hsl(247, 12%, 47%);
+	--control-active: hsl(247, 12%, 52%);
+	--control-selected: hsl(247, 12%, 64%);
+	--control-selected-hover: hsl(247, 12%, 60%);
+	--control-selected-active: hsl(247, 12%, 62%);
+
+	--glyph-foreground: hsl(247, 12%, 49%);
+	--glyph-background: hsl(247, 12%, 66%);
+
+	--text-primary: hsl(0 0% 0%);
+	--text-secondary: hsl(0 0% 20%);
+
+	--accent: hsl(216, 100%, 49%);
+	--accent-hover: hsl(215, 100%, 40%);
+	--accent-active: hsl(216, 100%, 69%);
+
+	@media (prefers-color-scheme: dark) {
+		--app: hsl(247, 12%, 15%);
+		--panel: hsl(247, 12%, 22%);
+		--panel-alt: hsl(247, 12%, 24%);
+		--panel-hover: hsl(247, 12%, 27%);
+		--panel-active: hsl(247, 12%, 25%);
+		--panel-selected: hsl(247, 12%, 35%);
+		--panel-selected-hover: hsl(247, 12%, 40%);
+		--panel-selected-active: hsl(247, 12%, 38%);
+
+		--control: hsl(247, 12%, 34%);
+		--control-hover: hsl(247, 12%, 40%);
+		--control-active: hsl(247, 12%, 38%);
+		--control-selected: hsl(247, 12%, 51%);
+		--control-selected-hover: hsl(247, 12%, 53%);
+		--control-selected-active: hsl(247, 12%, 48%);
+
+		--glyph-foreground: hsl(247, 12%, 51%);
+		--glyph-background: hsl(247, 12%, 34%);
+
+		--text-primary: hsl(0, 0%, 100%);
+		--text-secondary: hsl(0, 0%, 80%);
+
+		--accent: hsl(185, 100%, 43%);
+		--accent-hover: hsl(186, 100%, 65%);
+		--accent-active: hsl(186, 100%, 80%);
+	}
+}
+
+html {
+	cursor: default;
+	margin: 0;
+	padding: 0;
+	color: var(--text-primary);
+	font: caption;
+	line-height: 1.5;
+	font-family:
+		system-uibody,
+		-apple-system,
+		"SF Pro Text",
+		"SF Pro Icons",
+		"Helvetica Neue",
+		"Helvetica",
+		"Arial",
+		sans-serif;
+	user-select: none;
+	-webkit-font-smoothing: antialiased;
+	background-color: var(--app);
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	min-height: calc(250 * var(--unit));
+}
+
+#root {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: calc(16 * var(--unit));
+	padding: calc(16 * var(--unit)) 0;
+	width: 100%;
+	max-width: calc(960 * var(--unit));
+	height: 100%;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+img,
+picture,
+video,
+canvas {
+	display: block;
+	max-width: 100%;
+}
+
+input,
+textarea,
+select {
+	overflow: hidden;
+	font: inherit;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+button {
+	all: unset;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: calc(12 * var(--unit));
+	background-color: var(--control);
+	color: var(--text-primary);
+	text-align: center;
+
+	&:hover {
+		background-color: var(--control-hover);
+	}
+
+	&:active {
+		box-shadow: none;
+		background-color: var(--control-active);
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: calc(4 * var(--unit));
+	font: inherit;
+	font-size: inherit;
+	text-wrap: balance;
+	overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 600;
+}
+
+h4,
+h5,
+h6 {
+	color: var(--text-secondary);
+	font-size: 80%;
+}
+
+p {
+	color: var(--text-secondary);
+	font: inherit;
+	text-wrap: pretty;
+	overflow-wrap: break-word;
+}
+
+a {
+	&:link,
+	&:visited {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	&:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	&:active {
+		color: var(--accent-active);
+		text-decoration: underline;
+	}
+}
+
+hr {
+	margin: 0;
+	border-width: 0;
+	background-color: var(--panel-active);
+	width: 100%;
+	height: calc(1 * var(--unit));
+}
+
+svg {
+	align-self: center;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: calc(1.5 * var(--unit));
+	margin: 0;
+	width: calc(16 * var(--unit));
+	height: calc(16 * var(--unit));
+}
+
+.hidden {
+	display: none !important;
+}
+
+.disabled {
+	opacity: 0.5 !important;
+	pointer-events: none !important;
+
+	* {
+		pointer-events: none !important;
+	}
+}

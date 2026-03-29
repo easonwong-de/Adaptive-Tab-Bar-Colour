@@ -1,0 +1,52 @@
+.confirm {
+	position: relative;
+	width: 100%;
+
+	.confirm-menu {
+		display: flex;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		flex-direction: column;
+		gap: calc(8 * var(--unit));
+		z-index: 10;
+		filter: drop-shadow(0 0 calc(4 * var(--unit)) rgba(0, 0, 0, 0.25));
+		box-sizing: border-box;
+		margin-top: calc(8.6 * var(--unit));
+		border-radius: calc(16 * var(--unit));
+		background-color: var(--panel);
+		padding: calc(8 * var(--unit));
+		width: 100%;
+
+		&::before {
+			position: absolute;
+			top: calc(-6 * var(--unit));
+			left: calc(50% - 6 * var(--unit));
+			transform: rotate(45deg);
+			z-index: -1;
+			border-radius: calc(4 * var(--unit)) calc(1 * var(--unit)) 0
+				calc(1 * var(--unit));
+			background-color: var(--panel);
+			width: calc(12 * var(--unit));
+			height: calc(12 * var(--unit));
+			content: "";
+		}
+	}
+
+	.confirm-text {
+		padding: calc(4 * var(--unit));
+		text-align: start;
+	}
+
+	.confirm-actions {
+		display: flex;
+		justify-content: space-between;
+		gap: calc(8 * var(--unit));
+
+		button {
+			flex: 1;
+			justify-content: center;
+			height: calc(32 * var(--unit));
+		}
+	}
+}

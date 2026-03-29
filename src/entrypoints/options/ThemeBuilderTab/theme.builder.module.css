@@ -1,0 +1,38 @@
+main.theme-builder-tab {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: calc(16 * var(--unit));
+
+	@media screen and (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: calc(16 * var(--unit));
+	}
+
+	section {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: calc(16 * var(--unit));
+		border-radius: calc(16 * var(--unit));
+		background-color: var(--panel);
+		padding: calc(16 * var(--unit));
+
+		& > :first-child {
+			flex: 1 1 0;
+		}
+
+		& > :last-child {
+			display: flex;
+			flex: 2 1 0;
+			flex-direction: column;
+			align-items: center;
+			gap: calc(8 * var(--unit));
+		}
+	}
+}

@@ -1,0 +1,50 @@
+.text {
+	position: relative;
+
+	input[type="text"] {
+		display: inline-block;
+		vertical-align: middle;
+		box-sizing: border-box;
+		outline: none;
+		outline-offset: -1px;
+		border: none;
+		border-radius: calc(12 * var(--unit));
+		background-color: var(--control);
+		padding-inline: calc(8 * var(--unit));
+		width: 100%;
+		height: calc(32 * var(--unit));
+		color: var(--text-primary);
+		line-height: 100%;
+		font-family: monospace;
+
+		&:hover {
+			background-color: var(--control-hover);
+		}
+
+		&:focus-visible {
+			outline: solid 1px var(--control-hover);
+			background-color: transparent;
+		}
+	}
+
+	& > div {
+		display: none;
+		position: absolute;
+		top: 50%;
+		right: calc(8 * var(--unit));
+		transform: translateY(-50%);
+		cursor: help;
+		width: calc(16 * var(--unit));
+		height: calc(16 * var(--unit));
+	}
+
+	&.warning {
+		input[type="text"] {
+			padding-inline-end: calc(32 * var(--unit));
+		}
+
+		& > div {
+			display: block;
+		}
+	}
+}

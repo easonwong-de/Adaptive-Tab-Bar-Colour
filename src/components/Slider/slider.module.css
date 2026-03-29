@@ -1,0 +1,128 @@
+.slider {
+	display: flex;
+	flex-direction: column;
+	gap: calc(8 * var(--unit));
+	padding-top: calc(8 * var(--unit));
+	width: 100%;
+
+	.body {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: calc(4 * var(--unit));
+	}
+
+	.track {
+		display: flex;
+		position: relative;
+		flex: 1;
+		justify-content: center;
+		align-items: center;
+		border-radius: calc(12 * var(--unit));
+		background-color: var(--control);
+		max-width: calc(120 * var(--unit));
+		height: calc(32 * var(--unit));
+		overflow: hidden;
+		line-height: 100%;
+		font-variant-numeric: tabular-nums;
+		text-align: center;
+
+		.display {
+			position: relative;
+			z-index: 1;
+			pointer-events: none;
+		}
+
+		.fill {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 0;
+			transition: width 0.1s ease-in;
+			background-color: var(--control-selected);
+			width: calc(var(--percent, 0) * (100% - calc(12 * var(--unit))));
+		}
+
+		.thumb {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: calc(var(--percent, 0) * (100% - calc(12 * var(--unit))));
+			z-index: 0;
+			transition: left 0.1s ease-in;
+			cursor: grab;
+			border-radius: 0 calc(12 * var(--unit)) calc(12 * var(--unit)) 0;
+			background-color: var(--control-selected);
+			width: calc(12 * var(--unit));
+
+			&::after {
+				position: absolute;
+				opacity: 0;
+				transition:
+					opacity 0.1s,
+					background-color 0.1s;
+				inset: 30% 35%;
+				border-radius: calc(infinity * 1px);
+				background-color: var(--control);
+				content: "";
+			}
+
+			&:hover::after {
+				opacity: 1;
+			}
+		}
+
+		&:hover {
+			.fill {
+				background-color: var(--control-selected-hover);
+			}
+
+			.thumb {
+				background-color: var(--control-selected-hover);
+
+				&:not(:hover)::after {
+					opacity: 0.5;
+				}
+			}
+		}
+
+		&.dragging {
+			.fill {
+				transition: none;
+				background-color: var(--control-selected-active);
+			}
+
+			.thumb {
+				transition: none;
+				cursor: grabbing;
+				background-color: var(--control-selected-active);
+
+				&::after {
+					opacity: 1;
+					background-color: var(--accent);
+				}
+			}
+		}
+	}
+
+	button {
+		flex-shrink: 0;
+		border-radius: calc(12 * var(--unit));
+		width: calc(32 * var(--unit));
+		height: calc(32 * var(--unit));
+		color: var(--text-primary);
+	}
+
+	.warning {
+		display: inline-flex;
+		align-items: center;
+		vertical-align: text-bottom;
+		cursor: help;
+
+		svg {
+			width: 1em;
+			height: 1em;
+		}
+	}
+}
