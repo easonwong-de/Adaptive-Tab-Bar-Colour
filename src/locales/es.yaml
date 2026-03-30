@@ -1,0 +1,119 @@
+addANewRule: Agregar una nueva regla
+addonNotFound: Extensión no encontrada
+advanced: Avanzado
+allowDarkTabBar: Permitir barra de pestañas oscura
+allowDarkTabBarTooltip: Permitir que la barra de pestañas use un color oscuro
+    (texto claro en la barra de pestañas oscura).
+allowLightTabBar: Permitir barra de pestañas clara
+allowLightTabBarTooltip: Permitir que la barra de pestañas use un color
+    brillante (texto oscuro en la barra de pestañas clara).
+anyCSSColour: Cualquier formato
+background: Fondo
+backgroundOnFocus: Fondo en foco
+backup: Copia de seguridad
+border: Borde
+cannotFindElement: "No se puede encontrar el elemento HTML que coincide con "
+cannotFindElementEnd: ", el color se toma de la página web en su lugar"
+colourForHomePage: El color de la barra de pestañas para la página de inicio se
+    puede configurar en la página de opciones
+colourForJSONViewer: Se está usando color para el lector de JSON
+colourForPDFViewer: Se está usando color para el lector de PDF
+colourForPlainTextViewer: Se está usando color para el visor de texto plano
+colourIsAdjusted: El color original ha sido ajustado para asegurar un contraste mínimo
+colourIsPickedFrom: "El color se toma de un elemento HTML que coincide con "
+colourIsPickedFromEnd: "\u200B"
+colourIsSpecified: El color para este sitio está especificado en la configuración
+colourPickedFromWebpage: El color se ha tomado con éxito de la página web
+compatibilityMode: Modo de compatibilidad
+compatibilityModeTooltip: En lugar de la theme API, utiliza la propiedad HTML
+    «theme-color» para cambiar el color de la barra de pestañas. Esto solo
+    funciona con ciertos navegadores de forma limitada.
+confirmResetAdvanced: ¿Estás seguro de que quieres restablecer la configuración avanzada?
+confirmResetRuleList: ¿Estás seguro de que quieres restablecer la lista de reglas?
+confirmResetThemeBuilder: ¿Estás seguro de que quieres restablecer el creador de temas?
+delete: Eliminar
+dynamicColourUpdate: Actualización dinámica de color
+dynamicModeTooltip: Sigue actualizando el color de la barra de pestañas mientras
+    navegas dentro de una página web.
+errorOccured: Ocurrió un error, se está usando color de respaldo
+errorOccuredLocatingElement: "Ocurrió un error al buscar el elemento HTML que coincide con "
+errorOccuredLocatingElementEnd: ", el color se toma de la página web en su lugar"
+exportSettings: Exportar configuración
+extensionDescription: Cambia el color del tema de Firefox para que coincida con
+    la apariencia del sitio web.
+extensionName: Adaptive Tab Bar Colour
+fallbackColourDark: "Color de respaldo: oscuro"
+fallbackColourLight: "Color de respaldo: claro"
+homepageColourDark: "Color de la página de inicio: oscuro"
+homepageColourLight: "Color de la página de inicio: claro"
+ifVerticalTabsAreEnabled: Si las “pestañas verticales” están habilitadas,
+    cualquier valor distinto de cero puede causar que aparezca un espacio sobre
+    los controles de la ventana, dificultando su alcance.
+ignore: Ignorar
+ignoreDesignatedThemeColour: Ignorar el color del tema del sitio web
+ignoreDesignatedThemeColourTooltip: Algunos sitios web proporcionan su propio
+    color de tema. Activa esta opción para ignorar estos colores.
+ignoreThemeColourButton: Ignorar color del tema
+ignoreThemeColourTitle: Ignorar el color del tema definido por el sitio web
+importFailed: Error al importar configuraciones. Por favor, inténtalo de nuevo.
+importSettings: Importar configuraciones
+inDarkMode: En modo oscuro
+inLightMode: En modo claro
+loading: Cargando…
+minimumContrast: Contraste mínimo
+minimumContrastTooltip: Establece la relación de contraste mínima entre la barra
+    de pestañas y el texto. El color de la barra de pestañas se ajusta
+    automáticamente si no se cumple la relación.
+moreSettings: Más opciones…
+moreSettingsTooltip: Abrir página de opciones
+no: No
+pageIsProtected: Esta página está protegida por el navegador
+pickColourFromElement: usar el color del elemento
+popUp: Ventana emergente
+querySelector: Selector de consulta
+reinstallTip: Los datos de preferencias podrían estar corruptos. Si el problema
+    persiste, por favor reinstala la extensión. ¡Disculpa las molestias!
+reportAnIssue: Reportar un problema / enviar una sugerencia / traducir esta extensión
+reset: Restablecer
+resetAdvanced: Restablecer la configuración avanzada
+resetRuleList: Restablecer la lista de reglas
+resetThemeBuilder: Restablecer el creador de temas
+ruleList: Lista de reglas
+selectedTab: Pestaña seleccionada
+settingsAreExported: Las configuraciones han sido exportadas a tu carpeta de descargas.
+settingsAreImported: Las configuraciones han sido importadas.
+sidebar: Barra lateral
+specifyAColour: especificar un color
+specifyColourForAddon: "Haz clic en “Especificar un color” para abrir la página
+    de opciones y especificar el color de la barra de pestañas para páginas
+    relacionadas con "
+specifyColourForAddonButton: Especificar un color
+specifyColourForAddonEnd: "\u200B"
+specifyColourForAddonTitle: Abrir la página de opciones y especificar un color
+    para las páginas relacionadas con la extensión
+tabBar: Barra de pestañas
+themeBuilder: Creador de temas
+themeColourIsIgnored: El color del tema definido por el sitio web es ignorado
+themeColourIsUnignored: Se está utilizando el color del tema definido por el
+    sitio web, en lugar de ser ignorado por defecto
+themeColourNotFound: No se encuentra el color del tema, el color se toma de la página web
+thisPolicyWillBeIgnored: Esta política será ignorada.
+toolbar: Barra de herramientas
+urlBar: Barra de direcciones
+urlDomainOrRegex: URL / regex / wildcard / dominio
+use: Usar
+useDefaultColourForAddon: "Se está usando color especificado para páginas relacionadas con "
+useDefaultColourForAddonButton: Usar color predeterminado
+useDefaultColourForAddonEnd: "\u200B"
+useDefaultColourForAddonTitle: Usar color predeterminado
+useIgnoreThemeColour: usar / ignorar el color del tema
+useRecommendedColourForAddon: "Color recomendado para páginas relacionadas con "
+useRecommendedColourForAddonButton: Usar color recomendado
+useRecommendedColourForAddonEnd: " está disponible"
+useRecommendedColourForAddonTitle: Usar el color recomendado
+useThemeColourButton: Usar color del tema
+useThemeColourTitle: Usar el color del tema definido por el sitio web
+usingFallbackColour: No hay color disponible, se está usando color de respaldo
+usingImageViewer: Se está usando color para el visor de imágenes
+usingThemeColour: Se está usando el color del tema definido por el sitio web
+yes: Sí

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import preference from "@/utils/preference";
-
 import Toggle from "@/components/Toggle/Toggle";
 import AdvancedSettingsTab from "./AdvancedSettingsTab/AdvancedSettingsTab";
 import RuleListTab from "./RuleListTab/RuleListTab";

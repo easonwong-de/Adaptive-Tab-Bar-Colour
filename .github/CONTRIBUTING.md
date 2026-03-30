@@ -25,7 +25,7 @@ One way to contribute to the project is through sponsorship via:
 
 To fix translation errors or add a new locale, please update the following files:
 
-- `src/locales/xx.json`: The text in the add-on’s popup and options page.
+- `src/locales/xx.yaml`: The text in the add-on’s popup and options page.
 - `amo/amo-xx.md`: The add-on description on the Mozilla Add-on store and the “Details” section in Firefox’s Add-ons Manager.
 
 You can work on the locales using the [i18n Ally](https://marketplace.visualstudio.com/items?itemName=Lokalise.i18n-ally) extension.

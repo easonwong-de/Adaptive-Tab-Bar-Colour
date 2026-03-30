@@ -1,12 +1,6 @@
 {
 	"i18n-ally.displayLanguage": "en",
-	"i18n-ally.localeCountryMap": {
-		"en": "gb",
-		"en_US": "us",
-		"zh_TW": "hk",
-		"zh_CN": "cn"
-	},
+	"i18n-ally.localeCountryMap": { "en": "gb" },
 	"i18n-ally.localesPaths": ["src/locales"],
-	"i18n-ally.sourceLanguage": "en",
-	"i18n-ally.keystyle": "flat"
+	"i18n-ally.sourceLanguage": "en"
 }
