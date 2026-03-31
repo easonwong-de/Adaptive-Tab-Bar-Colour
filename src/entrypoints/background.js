@@ -92,11 +92,13 @@ const colourCode = Object.freeze({
 
 /** Cache */
 const cache = {
-	/** `windowId: { colour, reason, info, corrected }` */
-	meta: {},
-	/** `windowId: { headerType, header, type, value }` */
+	/** `windowId: { id, rule: {headerType, header, type, value }}` */
 	rule: {},
-	/** `light` or `dark` */
+	/** `windowId: { colour, reason, info }` */
+	meta: {},
+	/** `windowId: { popupColour, scheme, corrected }` */
+	theme: {},
+	/** The preferred colour scheme of current setup, `light` or `dark` */
 	scheme: "light",
 	/** The reversed colour theme. */
 	get reversedScheme() {
@@ -105,8 +107,9 @@ const cache = {
 	/** Update `scheme` & clear `info` and `rule`. */
 	async clear() {
 		this.scheme = await getCurrentScheme();
-		this.meta = {};
 		this.rule = {};
+		this.meta = {};
+		this.theme = {};
 	},
 };
 
@@ -128,16 +131,19 @@ async function handleMessage(message, sender) {
 		case "UPDATE_COLOUR":
 			if (!tab) break;
 			const tabMeta = parseTabColour(
-				cache.rule[tab.windowId],
+				cache.rule[tab.windowId].rule,
 				message.colour,
 			);
-			cache.meta[tab.windowId] = tabMeta;
-			setFrameColour(tab, tabMeta.colour);
+			setFrameColour(tab, tabMeta);
 			break;
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
-		case "META_REQUEST":
-			return cache.meta[message.windowId];
+		case "CACHE_REQUEST":
+			return {
+				rule: cache.rule[message.windowId],
+				meta: cache.meta[message.windowId],
+				theme: cache.theme[message.windowId],
+			};
 		default:
 			await run();
 	}
@@ -162,25 +168,25 @@ async function run() {
  */
 async function updateTab(tab) {
 	const windowId = tab.windowId;
-	const rule = pref.getRule(tab.url).rule;
+	const rule = pref.getRule(tab.url);
 	cache.rule[windowId] = rule;
-	const tabMeta = await getTabMeta(rule, tab);
-	cache.meta[windowId] = tabMeta;
-	setFrameColour(tab, tabMeta.colour);
+	const meta = await getTabMeta(rule.rule, tab);
+	cache.meta[windowId] = meta;
+	cache.theme[windowId] = setFrameColour(tab, meta);
 }
 
 /**
  * Determines the appropriate colour meta for a tab.
  *
  * @async
- * @param {object} rule - The policy object containing type and value.
+ * @param {object} rule - The rule object.
  * @param {tabs.Tab} tab - The tab to extract colour from.
  * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Tab
  *   metadata.
  */
 async function getTabMeta(rule, tab) {
 	try {
-		const tabColour = await browser.tabs.sendMessage(tab.id, {
+		const tabColour = await sendMessage(tab.id, {
 			header: "GET_COLOUR",
 			dynamic: rule?.type === "COLOUR" ? false : pref.dynamic,
 			query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
@@ -227,20 +233,22 @@ function parseTabColour(rule, { theme, page, query }) {
 	switch (rule?.type) {
 		case "THEME_COLOUR": {
 			const themeColour = parseThemeColour();
-			if (rule.value && themeColour.isOpaque()) {
-				return {
-					colour: themeColour,
-					reason: "THEME_USED",
-				};
-			}
-			return {
-				colour: parsePageColour(),
-				reason: rule.value
-					? "THEME_MISSING"
-					: themeColour.isOpaque()
-						? "THEME_IGNORED"
-						: "COLOUR_PICKED",
-			};
+			return themeColour.isOpaque()
+				? rule?.value
+					? {
+							colour: themeColour,
+							reason: pref.noThemeColour
+								? "THEME_UNIGNORED"
+								: "THEME_USED",
+						}
+					: {
+							colour: parsePageColour(),
+							reason: "THEME_IGNORED",
+						}
+				: {
+						colour: parsePageColour(),
+						reason: rule?.value ? "THEME_MISSING" : "COLOUR_PICKED",
+					};
 		}
 		case "QUERY_SELECTOR": {
 			const queryColour = parseQueryColour();
@@ -248,22 +256,33 @@ function parseTabColour(rule, { theme, page, query }) {
 				? {
 						colour: queryColour,
 						reason: "QS_USED",
-						info: rule.value || "🕳️",
+						info: rule?.value || "🕳️",
 					}
 				: {
 						colour: parsePageColour(),
 						reason: "QS_FAILED",
-						info: rule.value || "🕳️",
+						info: rule?.value || "🕳️",
 					};
 		}
 		case "COLOUR": {
 			return {
-				colour: new colour(rule.value),
+				colour: new colour(rule?.value),
 				reason: "COLOUR_SPECIFIED",
 			};
 		}
 		default:
-			return { colour: parsePageColour(), reason: "COLOUR_PICKED" };
+			const themeColour = parseThemeColour();
+			return themeColour.isOpaque()
+				? pref.noThemeColour
+					? {
+							colour: parsePageColour(),
+							reason: "THEME_IGNORED",
+						}
+					: {
+							colour: themeColour,
+							reason: "THEME_USED",
+						}
+				: { colour: parsePageColour(), reason: "COLOUR_PICKED" };
 	}
 }
 
@@ -279,7 +298,7 @@ async function getProtectedPageMeta(tab) {
 	if (!tab.url) {
 		return {
 			colour: new colour("FALLBACK"),
-			reason: "FALLBACK_COLOUR",
+			reason: "ERROR_OCCURRED",
 		};
 	}
 	const url = new URL(tab.url);
@@ -425,72 +444,87 @@ function getMozillaPageMeta(hostname) {
  */
 async function getAddonPageMeta(url) {
 	const addonId = await getAddonId(url);
-	if (!addonId) return { colour: new colour("ADDON"), reason: "ADDON" };
+	if (!addonId)
+		return { colour: new colour("FALLBACK"), reason: "ERROR_OCCURRED" };
 	const rule = pref.getRule(addonId).rule;
 	return rule
 		? {
 				colour: new colour(rule.value),
-				reason: "ADDON",
+				reason: "ADDON_SPECIFIED",
 				info: addonId,
 			}
 		: {
 				colour: new colour("ADDON"),
-				reason: "ADDON",
+				reason: "ADDON_DEFAULT",
 				info: addonId,
 			};
 }
 
 /**
- * Applies the colour to the browser frame.
+ * Applies the colour to the browser frame and updates cache.
  *
  * @param {tabs.Tab} tab - The active tab.
- * @param {colour} colour - The colour to apply.
+ * @param {{ colour: colour; reason: string; info?: string }} meta - The tab
+ *   metadata.
+ * @returns {{
+ * 	popup: string;
+ * 	scheme: "light" | "dark";
+ * 	corrected: boolean;
+ * }}
+ *   Theme metadata.
  */
-function setFrameColour(tab, colour) {
+function setFrameColour(tab, meta) {
 	if (!tab?.active) return;
 	const windowId = tab.windowId;
-	let finalColour, finalScheme;
+	const code = meta.colour.code;
+	let corrected = false;
+	let scheme, colour;
 
-	if (colour.code) {
-		if (colourCode[colour.code][cache.scheme]) {
-			finalColour = colourCode[colour.code][cache.scheme];
-			finalScheme = cache.scheme;
+	if (code) {
+		if (colourCode[code][cache.scheme]) {
+			colour = colourCode[code][cache.scheme];
+			scheme = cache.scheme;
 		} else if (
-			colourCode[colour.code][cache.reversedScheme] &&
+			colourCode[code][cache.reversedScheme] &&
 			pref.allowDarkLight
 		) {
-			finalColour = colourCode[colour.code][cache.reversedScheme];
-			finalScheme = cache.reversedScheme;
+			colour = colourCode[code][cache.reversedScheme];
+			scheme = cache.reversedScheme;
 		} else {
-			const correctionResult = colourCode[colour.code][
+			const correctionResult = colourCode[code][
 				cache.reversedScheme
 			].contrastCorrection(
 				cache.scheme,
-				pref.compatibilityMode ? false : pref.allowDarkLight,
+				!pref.compatibilityMode && pref.allowDarkLight,
 				pref.minContrast_light,
 				pref.minContrast_dark,
 			);
-			finalColour = correctionResult.colour;
-			finalScheme = correctionResult.scheme;
-			cache.meta[windowId].corrected = correctionResult.corrected;
+			colour = correctionResult.colour;
+			scheme = correctionResult.scheme;
+			corrected = correctionResult.corrected;
 		}
 	} else {
-		const correctionResult = colour.contrastCorrection(
+		const correctionResult = meta.colour.contrastCorrection(
 			cache.scheme,
-			pref.compatibilityMode ? false : pref.allowDarkLight,
+			!pref.compatibilityMode && pref.allowDarkLight,
 			pref.minContrast_light,
 			pref.minContrast_dark,
 		);
-		finalColour = correctionResult.colour;
-		finalScheme = correctionResult.scheme;
-		cache.meta[windowId].corrected = correctionResult.corrected;
+		colour = correctionResult.colour;
+		scheme = correctionResult.scheme;
+		corrected = correctionResult.corrected;
 	}
 
-	if (pref.compatibilityMode) {
-		setTabThemeColour(tab, finalColour);
-	} else {
-		applyTheme(windowId, finalColour, finalScheme);
-	}
+	pref.compatibilityMode
+		? setTabThemeColour(tab, colour)
+		: applyTheme(windowId, colour, scheme);
+	return {
+		popup: colour
+			.brightness((scheme === "light" ? -1.5 : 1) * pref.popup)
+			.toRGBA(),
+		scheme: scheme,
+		corrected: corrected,
+	};
 }
 
 /**
@@ -518,11 +552,11 @@ async function setTabThemeColour(tab, colour) {
  *
  * @param {number} windowId - The window ID.
  * @param {colour} colour - The base colour.
- * @param {"light" | "dark"} colourScheme - The colour scheme.
+ * @param {"light" | "dark"} scheme - The colour scheme.
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
  */
-function applyTheme(windowId, colour, colourScheme) {
-	if (colourScheme === "light") {
+function applyTheme(windowId, colour, scheme) {
+	if (scheme === "light") {
 		const textColour = "#000000";
 		const secondaryColour = "#0000001c";
 		const theme = {
@@ -595,7 +629,7 @@ function applyTheme(windowId, colour, colourScheme) {
 			},
 		};
 		updateBrowserTheme(windowId, theme);
-	} else if (colourScheme === "dark") {
+	} else if (scheme === "dark") {
 		const textColour = "#ffffff";
 		const secondaryColour = "#ffffff1c";
 		const theme = {

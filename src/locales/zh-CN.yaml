@@ -49,17 +49,15 @@ importFailed: 导入偏好设置失败。请检查文件是否正确并重试。
 importSettings: 从文件导入偏好设置
 inDarkMode: 在暗色模式下
 inLightMode: 在亮色模式下
-loading: 加载中……
 minimumContrast: 最小对比度设置
 minimumContrastTooltip: 在此设置标题栏和文字的最小对比度。如果未达到该指标，标签栏的颜色将会被调整，使之达到设置的最小对比度。
 moreSettings: 更多设置
 moreSettingsTooltip: 打开设置页
-no: 否
+"no": 否
 pageIsProtected: 此页面受浏览器保护
 pickColourFromElement: 从网页元素取色
 popUp: 弹出菜单
 querySelector: CSS 选择器名称
-reinstallTip: 配置文件可能已损坏，请尝试重新安装本插件。
 reportAnIssue: 报告问题 / 提供建议 / 提供翻译
 reset: 重新设定
 resetAdvanced: 重置高级设置
@@ -99,4 +97,4 @@ useThemeColourTitle: 使用此网站指定的主题色
 usingFallbackColour: 未能从网页获取颜色，使用备选颜色
 usingImageViewer: 按图像查看器着色
 usingThemeColour: 使用此网站指定的主题色
-yes: 是
+"yes": 是

@@ -49,17 +49,15 @@ importFailed: 載入偏好設定失敗。請重試。
 importSettings: 載入偏好設定
 inDarkMode: 在暗色模式下
 inLightMode: 在亮色模式下
-loading: 載入中⋯⋯
 minimumContrast: 最小對比度設定
 minimumContrastTooltip: 在此設定標題列和文字的最小對比度。若該指標未達到，標題列會調整其顏色，使之達到設定的最小對比度。
 moreSettings: 更多設定
 moreSettingsTooltip: 開啟設定頁
-no: 否
+"no": 否
 pageIsProtected: 此頁面受瀏覽器保護
 pickColourFromElement: 從網頁元件取色
 popUp: 選單
 querySelector: CSS 選擇器
-reinstallTip: 設定檔可能已損壞，請考慮嘗試重新安裝此擴充套件。
 reportAnIssue: 回報問題 / 提供建議 / 提供繙譯
 reset: 重設
 resetAdvanced: 重設進階設定
@@ -99,4 +97,4 @@ useThemeColourTitle: 採用此網站指定的主題色
 usingFallbackColour: 未能從網頁獲取顏色，採用備選顏色
 usingImageViewer: 按圖像預覽器著色
 usingThemeColour: 採用此網站指定的主題色
-yes: 是
+"yes": 是

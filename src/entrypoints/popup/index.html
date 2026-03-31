@@ -1,8 +1,17 @@
 <!doctype html>
 <html>
-	<head></head>
+	<head>
+		<link rel="stylesheet" href="./style.css" />
+	</head>
 	<body>
 		<div id="root"></div>
-		<script type="module" src="./app.jsx"></script>
+		<script type="module">
+			import { createRoot } from "react-dom/client";
+			import { createElement } from "react";
+			import App from "./app";
+			createRoot(document.getElementById("root")).render(
+				createElement(App),
+			);
+		</script>
 	</body>
 </html>

@@ -2,21 +2,23 @@ addANewRule: Neue Policy hinzufügen
 addonNotFound: Add-on nicht gefunden
 advanced: Erweitert
 allowDarkTabBar: Dunkle Tableiste erlauben
-allowDarkTabBarTooltip: Erlaubt der Tableiste, dunkle Farben zu verwenden
-    (heller Text auf dunkler Tableiste).
+allowDarkTabBarTooltip: >-
+    Erlaubt der Tableiste, dunkle Farben zu verwenden (heller Text auf dunkler
+    Tableiste).
 allowLightTabBar: Helle Tableiste erlauben
-allowLightTabBarTooltip: Erlaubt der Tableiste, helle Farben zu verwenden
-    (dunkler Text auf heller Tableiste).
+allowLightTabBarTooltip: >-
+    Erlaubt der Tableiste, helle Farben zu verwenden (dunkler Text auf heller
+    Tableiste).
 anyCSSColour: Jedes Format
 background: Hintergrund
 backgroundOnFocus: Hintergrund bei Fokus
 backup: Backup
 border: Rahmen
 cannotFindElement: "Das HTML-Element, das mit "
-cannotFindElementEnd: " übereinstimmt, konnte nicht gefunden werden. Die Farbe
-    wird stattdessen von der Webseite gewählt"
-colourForHomePage: Die Farbe der Tableiste für die Startseite kann in den
-    Einstellungen konfiguriert werden
+cannotFindElementEnd: " übereinstimmt, konnte nicht gefunden werden. Die Farbe wird stattdessen von der Webseite gewählt"
+colourForHomePage: >-
+    Die Farbe der Tableiste für die Startseite kann in den Einstellungen
+    konfiguriert werden
 colourForJSONViewer: Farbe für JSON-Viewer verwenden
 colourForPDFViewer: Farbe für PDF-Viewer verwenden
 colourForPlainTextViewer: Farbe für Plain-Text-Viewer verwenden
@@ -26,56 +28,59 @@ colourIsPickedFromEnd: " übereinstimmt"
 colourIsSpecified: Die Farbe für diese Seite ist in den Einstellungen angegeben
 colourPickedFromWebpage: Farbe erfolgreich von der Webseite gewählt
 compatibilityMode: Kompatibilitätsmodus
-compatibilityModeTooltip: Anstelle der Theme-API wird die HTML „theme-color“
-    Eigenschaft verwendet, um die Tableistenfarbe zu ändern. Dies funktioniert nur
-    bei bestimmten Browsern in begrenztem Umfang.
+compatibilityModeTooltip: >-
+    Anstelle der Theme-API wird die HTML „theme-color“ Eigenschaft verwendet, um
+    die Tableistenfarbe zu ändern. Dies funktioniert nur bei bestimmten Browsern
+    in begrenztem Umfang.
 confirmResetAdvanced: Sind Sie sicher, dass Sie die erweiterten Einstellungen zurücksetzen möchten?
 confirmResetRuleList: Sind Sie sicher, dass Sie die Regelliste zurücksetzen möchten?
 confirmResetThemeBuilder: Sind Sie sicher, dass Sie den Theme-Editor zurücksetzen möchten?
 delete: Löschen
 dynamicColourUpdate: Dynamische Farbaktualisierung
-dynamicModeTooltip: Aktualisiert die Farbe der Tableiste während des Surfens auf
-    einer Webseite ständig.
+dynamicModeTooltip: >-
+    Aktualisiert die Farbe der Tableiste während des Surfens auf einer Webseite
+    ständig.
 errorOccured: Ein Fehler ist aufgetreten, Fallback-Farbe wird verwendet
-errorOccuredLocatingElement: "Ein Fehler ist aufgetreten, während nach dem
-    HTML-Element gesucht wurde, das mit "
+errorOccuredLocatingElement: >-
+    Ein Fehler ist aufgetreten, während nach dem HTML-Element gesucht wurde, das
+    mit
 errorOccuredLocatingElementEnd: " übereinstimmt. Die Farbe wird stattdessen von der Webseite gewählt"
 exportSettings: Einstellungen exportieren
-extensionDescription: Ändert die Farbe des Firefox-Themes, um dem
-    Erscheinungsbild der Website zu entsprechen.
+extensionDescription: >-
+    Ändert die Farbe des Firefox-Themes, um dem Erscheinungsbild der Website zu
+    entsprechen.
 extensionName: Anpassende Tableistenfarbe
 fallbackColourDark: "Fallback-Farbe: dunkel"
 fallbackColourLight: "Fallback-Farbe: hell"
 homepageColourDark: "Startseitenfarbe: dunkel"
 homepageColourLight: "Startseitenfarbe: hell"
-ifVerticalTabsAreEnabled: Wenn „vertikale Tabs“ aktiviert sind, kann ein Wert
-    ungleich Null dazu führen, dass über den Fenstersteuerungen eine Lücke
-    entsteht, was deren Erreichbarkeit erschwert.
+ifVerticalTabsAreEnabled: >-
+    Wenn „vertikale Tabs“ aktiviert sind, kann ein Wert ungleich Null dazu führen,
+    dass über den Fenstersteuerungen eine Lücke entsteht, was deren Erreichbarkeit
+    erschwert.
 ignore: Aus
 ignoreDesignatedThemeColour: Theme-Farbe der Website ignorieren
-ignoreDesignatedThemeColourTooltip: Einige Websites geben selbst eine
-    Theme-Farbe an. Aktivieren Sie diese Option, um diese Farben zu ignorieren.
+ignoreDesignatedThemeColourTooltip: >-
+    Einige Websites geben selbst eine Theme-Farbe an. Aktivieren Sie diese Option,
+    um diese Farben zu ignorieren.
 ignoreThemeColourButton: Theme-Farbe ignorieren
 ignoreThemeColourTitle: Die von der Website definierte Theme-Farbe ignorieren
 importFailed: Einstellungen konnten nicht importiert werden. Bitte versuchen Sie es erneut.
 importSettings: Einstellungen importieren
 inDarkMode: Im dunklen Modus
 inLightMode: Im hellen Modus
-loading: Lädt…
 minimumContrast: Minimaler Kontrast
-minimumContrastTooltip: Stellt den minimalen Kontrast zwischen Tableiste und
-    ihrem Text ein. Die Farbe der Tableiste wird automatisch angepasst, wenn der
-    Kontrast nicht erreicht wird.
+minimumContrastTooltip: >-
+    Stellt den minimalen Kontrast zwischen Tableiste und ihrem Text ein. Die Farbe
+    der Tableiste wird automatisch angepasst, wenn der Kontrast nicht erreicht
+    wird.
 moreSettings: Weitere Einstellungen…
 moreSettingsTooltip: Optionenseite öffnen
-no: Nein
+"no": Nein
 pageIsProtected: Diese Seite wird vom Browser geschützt
 pickColourFromElement: Farbe aus Element
 popUp: Pop-up
 querySelector: Query-Selector
-reinstallTip: Einstellungsdaten könnten beschädigt sein. Wenn das Problem
-    weiterhin besteht, installieren Sie das Add-on bitte neu. Entschuldigung für
-    die Unannehmlichkeiten.
 reportAnIssue: Ein Problem melden / einen Vorschlag einreichen / dieses Add-on übersetzen
 reset: Zurücksetzen
 resetAdvanced: Erweiterte Einstellungen zurücksetzen
@@ -87,16 +92,18 @@ settingsAreExported: Einstellungen wurden in Ihren Download-Ordner exportiert.
 settingsAreImported: Einstellungen wurden importiert.
 sidebar: Seitenleiste
 specifyAColour: eine Farbe angeben
-specifyColourForAddon: "Klicken Sie auf „Eine Farbe angeben“, um die
-    Einstellungen zu öffnen und die Farbe der Tableiste für Seiten, die zu "
+specifyColourForAddon: >-
+    Klicken Sie auf „Eine Farbe angeben“, um die Einstellungen zu öffnen und die
+    Farbe der Tableiste für Seiten, die zu
 specifyColourForAddonButton: Eine Farbe angeben
 specifyColourForAddonEnd: " gehören, anzugeben"
 specifyColourForAddonTitle: Einstellungen öffnen und eine Farbe für die Seiten des Add-ons angeben
 tabBar: Tableiste
 themeBuilder: Theme-Editor
 themeColourIsIgnored: Die von der Website definierte Theme-Farbe wird ignoriert
-themeColourIsUnignored: Die von der Website definierte Theme-Farbe wird
-    verwendet, anstatt standardmäßig ignoriert zu werden
+themeColourIsUnignored: >-
+    Die von der Website definierte Theme-Farbe wird verwendet, anstatt
+    standardmäßig ignoriert zu werden
 themeColourNotFound: Theme-Farbe wurde nicht gefunden, Farbe wird von der Webseite gewählt
 thisPolicyWillBeIgnored: Diese Policy wird ignoriert
 toolbar: Werkzeugleiste
@@ -117,4 +124,4 @@ useThemeColourTitle: Die von der Website definierte Theme-Farbe verwenden
 usingFallbackColour: Keine Farbe verfügbar, Fallback-Farbe wird verwendet
 usingImageViewer: Farbe für Bild-Viewer verwenden
 usingThemeColour: Die von der Website definierte Theme-Farbe wird verwendet
-yes: Ja
+"yes": Ja

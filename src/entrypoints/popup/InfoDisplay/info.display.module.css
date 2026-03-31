@@ -1,0 +1,17 @@
+.info-display {
+	border: 1px solid var(--transparent-0);
+	border-radius: calc(4 * var(--unit));
+	padding: calc(8 * var(--unit));
+
+	svg {
+		display: inline-block;
+		vertical-align: text-bottom;
+		padding-inline-end: calc(4 * var(--unit));
+		width: auto;
+		height: 1em;
+	}
+
+	strong {
+		padding-inline: var(--unit);
+	}
+}

@@ -55,7 +55,6 @@ importFailed: Failed to import settings. Please try again.
 importSettings: Import settings
 inDarkMode: In dark mode
 inLightMode: In light mode
-loading: Loading…
 minimumContrast: Minimum contrast
 minimumContrastTooltip: >-
     Set the minimum contrast ratio between the tab bar and text. The tab bar
@@ -67,9 +66,6 @@ pageIsProtected: This page is protected by browser
 pickColourFromElement: pick colour from element
 popUp: Pop-up
 querySelector: Query selector
-reinstallTip: >-
-    Preference data may be corrupted. If the issue persists, please reinstall the
-    add-on. We apologize for the inconvenience.
 reportAnIssue: Report an issue / submit a suggestion / translate this add-on
 reset: Reset
 resetAdvanced: Reset advanced settings

@@ -55,10 +55,10 @@ export default function ThemeBuilderTab({ pref, ready }) {
 						/>
 					</div>
 				</section>
-				<section className={clsx(pref.compatibilityMode && "disabled")}>
+				<section>
 					<Glyph highlight="popup" />
 					<div>
-						<h3>{i18n.t("Popup")}</h3>
+						<h3>{i18n.t("popUp")}</h3>
 						<Slider
 							title={i18n.t("background")}
 							value={pref.popup}
@@ -67,6 +67,9 @@ export default function ThemeBuilderTab({ pref, ready }) {
 							}}
 						/>
 						<Slider
+							className={clsx(
+								pref.compatibilityMode && "disabled",
+							)}
 							title={i18n.t("border")}
 							value={pref.popupBorder}
 							onChange={(value) => {
@@ -85,7 +88,7 @@ export default function ThemeBuilderTab({ pref, ready }) {
 				<section>
 					<Glyph highlight="url-bar" />
 					<div>
-						<h3>{i18n.t("URLBar")}</h3>
+						<h3>{i18n.t("urlBar")}</h3>
 						<Slider
 							title={i18n.t("background")}
 							value={pref.toolbarField}

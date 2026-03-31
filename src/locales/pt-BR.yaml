@@ -22,9 +22,9 @@ colourIsPickedFromEnd: "\u200B"
 colourIsSpecified: A cor desse site está especificada nas configurações
 colourPickedFromWebpage: A cor foi obtida a partir da página web
 compatibilityMode: Modo de compatibilidade
-compatibilityModeTooltip: Ao invés da Theme API, utilize a propriedade HTML
-    “theme-color” para mudar a cor da aba. Só funciona em certos navegadores de
-    forma limitada.
+compatibilityModeTooltip: >-
+    Ao invés da Theme API, utilize a propriedade HTML “theme-color” para mudar a
+    cor da aba. Só funciona em certos navegadores de forma limitada.
 confirmResetAdvanced: Você realmente deseja redefinir as configurações avançadas?
 confirmResetRuleList: Você realmente deseja redefinir a lista de regras?
 confirmResetThemeBuilder: Você realmente deseja redefinir o criador de temas?
@@ -44,28 +44,26 @@ homepageColourLight: "Cor da página inicial: Claro"
 ifVerticalTabsAreEnabled: Se as abas verticais estiverem ativadas
 ignore: Ignore
 ignoreDesignatedThemeColour: Ignorar a cor do tema do site
-ignoreDesignatedThemeColourTooltip: Alguns sites fornecem sua própria cor do
-    tema. Ative essa opção para ignorar essas cores.
+ignoreDesignatedThemeColourTooltip: >-
+    Alguns sites fornecem sua própria cor do tema. Ative essa opção para ignorar
+    essas cores.
 ignoreThemeColourButton: Ignorar cor do tema
 ignoreThemeColourTitle: Ignorar cor do tema definido pelo site.
 importFailed: Erro ao importar configurações. Por favor, tente novamente.
 importSettings: Importar configurações
 inDarkMode: Em modo escuro
 inLightMode: Em modo claro
-loading: Carregando…
 minimumContrast: Contraste mínimo
-minimumContrastTooltip: Ajuste o contraste mínimo entre a aba e o texto. A cor
-    da aba é ajustada automaticamente se o contraste mínimo não for alcançado.
+minimumContrastTooltip: >-
+    Ajuste o contraste mínimo entre a aba e o texto. A cor da aba é ajustada
+    automaticamente se o contraste mínimo não for alcançado.
 moreSettings: Mais opções…
 moreSettingsTooltip: Abre a página de opções
-no: Não
+"no": Não
 pageIsProtected: Essa página é protegida pelo navegador
 pickColourFromElement: Selecionar a cor a partir de um elemento
 popUp: Pop-up
 querySelector: Seletor de consulta
-reinstallTip: Dados preferenciais podem estar corrompidos. Se o problema
-    continuar, por favor reinstale a extensão. Pedimos desculpas pela
-    inconveniência.
 reportAnIssue: Reporte um problema / Deixe uma sugestão / Traduza essa extensão
 reset: Redefinir
 resetAdvanced: Redefinir configurações avançadas
@@ -77,8 +75,9 @@ settingsAreExported: As configurações foram exportadas para sua pasta de downl
 settingsAreImported: As configurações foram importadas.
 sidebar: Painel lateral
 specifyAColour: Especificar uma cor
-specifyColourForAddon: "Clique “Especificar uma cor” para abrir as configurações
-    e especificar a cor da aba para páginas relacionadas a "
+specifyColourForAddon: >-
+    Clique “Especificar uma cor” para abrir as configurações e especificar a cor
+    da aba para páginas relacionadas a
 specifyColourForAddonButton: Especificar uma cor
 specifyColourForAddonEnd: "\u200B"
 specifyColourForAddonTitle: Abrir as configurações e especificar uma cor para as
@@ -86,8 +85,9 @@ specifyColourForAddonTitle: Abrir as configurações e especificar uma cor para 
 tabBar: Barra de abas
 themeBuilder: Criador de temas
 themeColourIsIgnored: A cor do tema definida pelo site é ignorada
-themeColourIsUnignored: A cor do tema definida pelo site é utilizada, ao invés
-    de ser ignorada por padrão
+themeColourIsUnignored: >-
+    A cor do tema definida pelo site é utilizada, ao invés de ser ignorada por
+    padrão
 themeColourNotFound: A cor do tema não foi encontrada, a cor será selecionada da página web
 thisPolicyWillBeIgnored: Essa política será ignorada
 toolbar: Barra de ferramentas
@@ -108,4 +108,4 @@ useThemeColourTitle: Usar a cor do tema definida pelo site
 usingFallbackColour: Não há cor disponível, usando cor alternativa
 usingImageViewer: Usando cor para visualizador de imagem
 usingThemeColour: Usando cor do tema definida pelo site
-yes: Sim
+"yes": Sim

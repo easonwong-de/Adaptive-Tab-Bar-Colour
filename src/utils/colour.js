@@ -298,19 +298,6 @@ export default class colour {
 	}
 
 	/**
-	 * Returns the colour as a string representation.
-	 *
-	 * If the colour is defined by a code, returns the code. Otherwise, returns
-	 * an RGBA CSS string.
-	 *
-	 * @returns {string} The colour code or the CSS RGBA representation.
-	 */
-	toString() {
-		if (this.#code) return this.#code;
-		else return this.toRGBA();
-	}
-
-	/**
 	 * Returns the colour as an RGB CSS string.
 	 *
 	 * @returns {string} The RGB CSS string.

@@ -44,6 +44,25 @@ export async function getCurrentScheme() {
 }
 
 /**
+ * Retrieves the cache information for the current window.
+ *
+ * @async
+ * @returns {Promise<{ rule: object; meta: object; theme: object }>} A promise
+ *   resolving to the cache object or undefined if failed.
+ */
+export async function getCurrentWindowCache() {
+	try {
+		const window = await browser.windows.getCurrent();
+		return await browser.runtime.sendMessage({
+			header: "CACHE_REQUEST",
+			windowId: window.id,
+		});
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Registers a listener for tab and window change events.
  *
  * @param {Function} listener - The function to call on tab changes.
@@ -53,6 +72,7 @@ export function addTabChangeListener(listener) {
 	browser.tabs.onActivated.addListener(listener);
 	browser.tabs.onUpdated.addListener(listener, { properties: ["status"] });
 	browser.windows.onFocusChanged.addListener(listener);
+	browser.windows.onBoundsChanged?.addListener(listener);
 }
 
 /**

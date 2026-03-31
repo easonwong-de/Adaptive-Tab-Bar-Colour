@@ -379,7 +379,7 @@ export default class preference {
 		let matchedId = 0;
 		let matchedRule;
 		if (typeof query !== "string")
-			return { id: matchedId, policy: matchedRule };
+			return { id: matchedId, rule: matchedRule };
 		for (const id in this.#content.ruleList) {
 			const rule = this.#content.ruleList[id];
 			if (!rule || typeof rule.header !== "string") continue;

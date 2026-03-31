@@ -104,14 +104,6 @@ body {
 	padding: 0;
 }
 
-img,
-picture,
-video,
-canvas {
-	display: block;
-	max-width: 100%;
-}
-
 input,
 textarea,
 select {
