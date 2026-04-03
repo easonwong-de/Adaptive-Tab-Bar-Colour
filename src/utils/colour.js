@@ -1,22 +1,5 @@
 /**
- * All possible colour codes.
- *
- * Each of which represents a certain colour determined by the browser.
- */
-const colourCodes = [
-	"HOME",
-	"FALLBACK",
-	"PLAINTEXT",
-	"SYSTEM",
-	"ADDON",
-	"PDFVIEWER",
-	"IMAGEVIEWER",
-	"JSONVIEWER",
-	"DEFAULT",
-];
-
-/**
- * Represents a colour with RGBA channels or a predefined colour code.
+ * Represents a colour with RGBA channels.
  *
  * Provides methods for parsing, manipulating, and converting colours, as well
  * as calculating contrast and luminance for accessibility.
@@ -28,20 +11,15 @@ export default class colour {
 	#g = 0;
 	#b = 0;
 	#a = 0;
-	#code = undefined;
 
 	/**
 	 * Parses the initialiser to set the colour.
 	 *
-	 * @param {string | object | colour} [initialiser] - A colour code, CSS
+	 * @param {string | colour} [initialiser] - A CSS
 	 *   string, or `colour` instance.
-	 * @param {boolean} [acceptCode=true] - Whether to allow colour codes.
-	 *   Default is `true`
 	 */
-	constructor(initialiser = undefined, acceptCode = true) {
-		if (acceptCode && colourCodes.includes(initialiser)) {
-			this.#code = initialiser;
-		} else if (typeof initialiser === "string") {
+	constructor(initialiser = undefined) {
+		if (typeof initialiser === "string") {
 			const canvas = document.createElement("canvas");
 			canvas.width = 1;
 			canvas.height = 1;
@@ -60,14 +38,12 @@ export default class colour {
 				this.rgba(...parsedColour.match(/[.?\d]+/g).map(Number));
 			}
 		} else if (initialiser instanceof colour) {
-			if (initialiser.code) this.#code = initialiser.code;
-			else
-				this.rgba(
-					initialiser.r,
-					initialiser.g,
-					initialiser.b,
-					initialiser.a,
-				);
+			this.rgba(
+				initialiser.r,
+				initialiser.g,
+				initialiser.b,
+				initialiser.a,
+			);
 		}
 	}
 
@@ -81,7 +57,6 @@ export default class colour {
 	 * @returns {colour} This instance.
 	 */
 	rgba(r, g, b, a) {
-		this.#code = undefined;
 		this.r = r;
 		this.g = g;
 		this.b = b;
@@ -94,10 +69,8 @@ export default class colour {
 	 *
 	 * @param {number} opacity - The opacity factor to apply (0-1).
 	 * @returns {colour} This colour instance for method chaining.
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	opacity(opacity) {
-		this.#noCode();
 		this.#a *= Math.max(0, Math.min(1, opacity));
 		return this;
 	}
@@ -114,10 +87,8 @@ export default class colour {
 	 *   - Values beyond the range of -100 to 100 make the colour black or white.
 	 *
 	 * @returns {colour} A new colour instance with adjusted brightness.
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	brightness(percentage) {
-		this.#noCode();
 		const cent = percentage / 100;
 		if (1 < cent) {
 			return new this.constructor().rgba(255, 255, 255, this.#a);
@@ -147,10 +118,8 @@ export default class colour {
 	 *
 	 * @param {colour} colour - The colour underneath.
 	 * @returns {colour} The result of the mix.
-	 * @throws {Error} If defined by a colour code.
 	 */
 	mix(colour) {
-		this.#noCode();
 		const a = this.#a + colour.a * (1 - this.#a);
 		return a === 0
 			? new this.constructor()
@@ -180,7 +149,7 @@ export default class colour {
 	 * 	corrected: boolean;
 	 * }}
 	 *   Correction result.
-	 * @throws {Error} If defined by a colour code or correction fails.
+	 * @throws {Error} If correction fails.
 	 */
 	contrastCorrection(
 		preferredScheme,
@@ -190,7 +159,6 @@ export default class colour {
 		contrastColourLight = new this.constructor().rgba(0, 0, 0, 1),
 		contrastColourDark = new this.constructor().rgba(255, 255, 255, 1),
 	) {
-		this.#noCode();
 		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
 		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
 		const eligibilityLight = contrastRatioLight > minContrastLightX10 / 10;
@@ -301,10 +269,8 @@ export default class colour {
 	 * Returns the colour as an RGB CSS string.
 	 *
 	 * @returns {string} The RGB CSS string.
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	toRGB() {
-		this.#noCode();
 		return `rgb(${this.#r}, ${this.#g}, ${this.#b})`;
 	}
 
@@ -312,10 +278,8 @@ export default class colour {
 	 * Returns the colour as an RGBA CSS string.
 	 *
 	 * @returns {string} The RGBA CSS string.
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	toRGBA() {
-		this.#noCode();
 		return `rgba(${this.#r}, ${this.#g}, ${this.#b}, ${this.#a})`;
 	}
 
@@ -323,10 +287,8 @@ export default class colour {
 	 * Returns the colour as a hex string.
 	 *
 	 * @returns {string} The hex string.
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	toHex() {
-		this.#noCode();
 		const hexR = Math.round(this.#r).toString(16).padStart(2, "0");
 		const hexG = Math.round(this.#g).toString(16).padStart(2, "0");
 		const hexB = Math.round(this.#b).toString(16).padStart(2, "0");
@@ -337,10 +299,8 @@ export default class colour {
 	 * Returns the colour as a hex string with alpha.
 	 *
 	 * @returns {string} The hex string with alpha.
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	toHexa() {
-		this.#noCode();
 		const hexR = Math.round(this.#r).toString(16).padStart(2, "0");
 		const hexG = Math.round(this.#g).toString(16).padStart(2, "0");
 		const hexB = Math.round(this.#b).toString(16).padStart(2, "0");
@@ -353,32 +313,18 @@ export default class colour {
 	/**
 	 * Checks if the colour is fully opaque.
 	 *
-	 * @returns {boolean} `true` if the colour is opaque (alpha = 1 or is a
-	 *   colour code), `false` otherwise.
+	 * @returns {boolean} `true` if the colour is opaque (alpha = 1), `false` otherwise.
 	 */
 	isOpaque() {
-		return this.#code || this.#a === 1;
-	}
-
-	/**
-	 * Throws if the colour is defined by a colour code.
-	 *
-	 * @private
-	 * @throws {Error} If the colour is defined by a colour code.
-	 */
-	#noCode() {
-		if (this.#code)
-			throw new Error("The colour is defined by a colour code");
+		return this.#a === 1;
 	}
 
 	/**
 	 * Gets the red channel value.
 	 *
 	 * @returns {number} The red channel value (0-255).
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	get r() {
-		this.#noCode();
 		return this.#r;
 	}
 
@@ -386,11 +332,9 @@ export default class colour {
 	 * Sets the red channel value.
 	 *
 	 * @param {number} value - The red channel value to set.
-	 * @throws {Error} If the colour is defined by a colour code or the value is
-	 *   invalid.
+	 * @throws {Error} If the value is invalid.
 	 */
 	set r(value) {
-		this.#noCode();
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for r");
 		this.#r = Math.max(0, Math.min(255, num));
@@ -400,10 +344,8 @@ export default class colour {
 	 * Gets the green channel value.
 	 *
 	 * @returns {number} The green channel value (0-255).
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	get g() {
-		this.#noCode();
 		return this.#g;
 	}
 
@@ -411,11 +353,9 @@ export default class colour {
 	 * Sets the green channel value.
 	 *
 	 * @param {number} value - The green channel value to set.
-	 * @throws {Error} If the colour is defined by a colour code or the value is
-	 *   invalid.
+	 * @throws {Error} If the value is invalid.
 	 */
 	set g(value) {
-		this.#noCode();
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for g");
 		this.#g = Math.max(0, Math.min(255, num));
@@ -425,10 +365,8 @@ export default class colour {
 	 * Gets the blue channel value.
 	 *
 	 * @returns {number} The blue channel value (0-255).
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	get b() {
-		this.#noCode();
 		return this.#b;
 	}
 
@@ -436,11 +374,9 @@ export default class colour {
 	 * Sets the blue channel value.
 	 *
 	 * @param {number} value - The blue channel value to set.
-	 * @throws {Error} If the colour is defined by a colour code or the value is
-	 *   invalid.
+	 * @throws {Error} If the value is invalid.
 	 */
 	set b(value) {
-		this.#noCode();
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for b");
 		this.#b = Math.max(0, Math.min(255, num));
@@ -450,10 +386,8 @@ export default class colour {
 	 * Gets the alpha channel value.
 	 *
 	 * @returns {number} The alpha channel value (0-1).
-	 * @throws {Error} If the colour is defined by a colour code.
 	 */
 	get a() {
-		this.#noCode();
 		return this.#a;
 	}
 
@@ -461,34 +395,11 @@ export default class colour {
 	 * Sets the alpha channel value.
 	 *
 	 * @param {number} value - The alpha channel value to set (0-1).
-	 * @throws {Error} If the colour is defined by a colour code or the value is
-	 *   invalid.
+	 * @throws {Error} If the value is invalid.
 	 */
 	set a(value) {
-		this.#noCode();
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for a");
 		this.#a = Math.max(0, Math.min(1, num));
-	}
-
-	/**
-	 * Gets the colour code.
-	 *
-	 * @returns {string | undefined} The colour code, or `undefined` if the
-	 *   colour is defined by RGBA values.
-	 */
-	get code() {
-		return this.#code;
-	}
-
-	/**
-	 * Sets the colour code.
-	 *
-	 * @param {string} value - The colour code to set.
-	 * @throws {Error} If the value is not a valid colour code.
-	 */
-	set code(value) {
-		if (colourCodes.includes(value)) this.#code = value;
-		else throw new Error("Invalid colour code");
 	}
 }

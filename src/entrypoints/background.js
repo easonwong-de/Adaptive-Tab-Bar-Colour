@@ -37,56 +37,58 @@ import {
 /** Preference */
 const pref = new preference();
 
-/** Lookup table for colour codes */
-const colourCode = Object.freeze({
-	HOME: {
-		get light() {
-			return new colour(pref.homeBackground_light);
-		},
-		get dark() {
-			return new colour(pref.homeBackground_dark);
-		},
+/** Page colour of Firefox internal page. */
+const browserColour = Object.freeze({
+	get HOME() {
+		return cache.scheme === "light"
+			? new colour(pref.homeBackground_light)
+			: new colour(pref.homeBackground_dark);
 	},
-	FALLBACK: {
-		get light() {
-			return new colour(pref.fallbackColour_light);
-		},
-		get dark() {
-			return new colour(pref.fallbackColour_dark);
-		},
+	get FALLBACK() {
+		return cache.scheme === "light"
+			? new colour(pref.fallbackColour_light)
+			: new colour(pref.fallbackColour_dark);
 	},
-	PLAINTEXT: {
-		light: new colour().rgba(255, 255, 255, 1),
-		dark: new colour().rgba(28, 27, 34, 1),
+	get PLAINTEXT() {
+		return cache.scheme === "light"
+			? new colour().rgba(255, 255, 255, 1)
+			: new colour().rgba(28, 27, 34, 1);
 	},
-	SYSTEM: {
-		light: new colour().rgba(255, 255, 255, 1),
-		dark: new colour().rgba(30, 30, 30, 1),
+	get SYSTEM() {
+		return cache.scheme === "light"
+			? new colour().rgba(255, 255, 255, 1)
+			: new colour().rgba(30, 30, 30, 1);
 	},
-	ADDON: {
-		light: new colour().rgba(236, 236, 236, 1),
-		dark: new colour().rgba(50, 50, 50, 1),
+	get ADDON() {
+		return cache.scheme === "light"
+			? new colour().rgba(236, 236, 236, 1)
+			: new colour().rgba(50, 50, 50, 1);
 	},
-	PDFVIEWER: {
-		light: new colour().rgba(249, 249, 250, 1),
-		dark: new colour().rgba(56, 56, 61, 1),
+	get PDFVIEWER() {
+		return cache.scheme === "light"
+			? new colour().rgba(249, 249, 250, 1)
+			: new colour().rgba(56, 56, 61, 1);
 	},
-	IMAGEVIEWER: { light: undefined, dark: new colour().rgba(33, 33, 33, 1) },
-	JSONVIEWER: {
-		get light() {
-			return getSystemScheme() === "light"
-				? new colour().rgba(249, 249, 250, 1)
-				: undefined;
-		},
-		get dark() {
-			return getSystemScheme() === "dark"
-				? new colour().rgba(12, 12, 13, 1)
-				: undefined;
-		},
+	get IMAGEVIEWER() {
+		return new colour().rgba(33, 33, 33, 1);
 	},
-	DEFAULT: {
-		light: new colour().rgba(255, 255, 255, 1),
-		dark: new colour().rgba(28, 27, 34, 1),
+	get JSONVIEWER() {
+		const resolved = {
+			light:
+				getSystemScheme() === "light"
+					? new colour().rgba(249, 249, 250, 1)
+					: undefined,
+			dark:
+				getSystemScheme() === "dark"
+					? new colour().rgba(12, 12, 13, 1)
+					: undefined,
+		};
+		return resolved[cache.scheme] || resolved[cache.reversedScheme];
+	},
+	get DEFAULT() {
+		return cache.scheme === "light"
+			? new colour().rgba(255, 255, 255, 1)
+			: new colour().rgba(28, 27, 34, 1);
 	},
 });
 
@@ -207,27 +209,32 @@ async function getTabMeta(rule, tab) {
  * Parses tab colour data based on rule.
  *
  * @param {object} rule - The rule object.
- * @param {object} colourData - The tab colour data.
- * @param {object} colourData.theme - Theme colour data.
- * @param {Array} colourData.page - Page element colour data.
- * @param {object} colourData.query - Query selector result.
+ * @param {object} tabColour - The tab colour data.
+ * @param {{ light?: string; dark?: string }} tabColour.theme - Theme colour
+ *   data.
+ * @param {{ colour: string; opacity: string; filter: string }[]} tabColour.page
+ *   - Page element colour data.
+ *
+ * @param {{ colour: string; opacity: string; filter: string }} [tabColour.query]
+ *   - Query selector result.
+ *
+ * @param {boolean} tabColour.image - If the tab is image viewer.
  * @returns {{ colour: colour; reason: string; info?: string }} Parsed metadata.
  */
-function parseTabColour(rule, { theme, page, query }) {
-	const parseThemeColour = () => new colour(theme[cache.scheme], false);
+function parseTabColour(rule, { theme, page, query, image }) {
+	const parseThemeColour = () => new colour(theme[cache.scheme]);
 	const parsePageColour = () => {
+		if (image) return browserColour.IMAGEVIEWER;
 		let pageColour = new colour();
 		for (const element of page) {
 			const opacity = parseFloat(element.opacity);
 			if (isNaN(opacity)) continue;
 			pageColour = pageColour.mix(
-				new colour(element.colour, false).opacity(opacity),
+				new colour(element.colour).opacity(opacity),
 			);
-			if (pageColour.isOpaque()) break;
+			if (pageColour.isOpaque()) return pageColour;
 		}
-		return pageColour.isOpaque()
-			? pageColour
-			: pageColour.mix(colourCode.FALLBACK[cache.scheme]);
+		return pageColour.mix(browserColour.FALLBACK);
 	};
 	const parseQueryColour = () => new colour(query?.colour);
 	switch (rule?.type) {
@@ -282,7 +289,10 @@ function parseTabColour(rule, { theme, page, query }) {
 							colour: themeColour,
 							reason: "THEME_USED",
 						}
-				: { colour: parsePageColour(), reason: "COLOUR_PICKED" };
+				: {
+						colour: parsePageColour(),
+						reason: image ? "IMAGE_VIEWER" : "COLOUR_PICKED",
+					};
 	}
 }
 
@@ -297,7 +307,7 @@ function parseTabColour(rule, { theme, page, query }) {
 async function getProtectedPageMeta(tab) {
 	if (!tab.url) {
 		return {
-			colour: new colour("FALLBACK"),
+			colour: browserColour.FALLBACK,
 			reason: "ERROR_OCCURRED",
 		};
 	}
@@ -308,7 +318,7 @@ async function getProtectedPageMeta(tab) {
 			url.href.startsWith(href),
 		)
 	) {
-		return { colour: new colour("HOME"), reason: "HOME_PAGE" };
+		return { colour: browserColour.HOME, reason: "HOME_PAGE" };
 	} else if (
 		url.href === "about:blank" &&
 		tabTitle.startsWith("about:") &&
@@ -323,7 +333,7 @@ async function getProtectedPageMeta(tab) {
 		return getMozillaPageMeta(url.hostname);
 	} else if (url.protocol === "view-source:") {
 		return {
-			colour: new colour("PLAINTEXT"),
+			colour: browserColour.PLAINTEXT,
 			reason: "PROTECTED_PAGE",
 		};
 	} else if (["chrome:", "resource:", "jar:file:"].includes(url.protocol)) {
@@ -333,50 +343,50 @@ async function getProtectedPageMeta(tab) {
 			)
 		) {
 			return {
-				colour: new colour("PLAINTEXT"),
+				colour: browserColour.PLAINTEXT,
 				reason: "PROTECTED_PAGE",
 			};
 		} else if (
 			[".png", ".jpg"].some((extention) => url.href.endsWith(extention))
 		) {
 			return {
-				colour: new colour("IMAGEVIEWER"),
+				colour: browserColour.IMAGEVIEWER,
 				reason: "PROTECTED_PAGE",
 			};
 		} else {
 			return {
-				colour: new colour("SYSTEM"),
+				colour: browserColour.SYSTEM,
 				reason: "PROTECTED_PAGE",
 			};
 		}
 	} else if (url.href.startsWith("data:image")) {
 		return {
-			colour: new colour("IMAGEVIEWER"),
+			colour: browserColour.IMAGEVIEWER,
 			reason: "IMAGE_VIEWER",
 		};
 	} else if (url.href.endsWith(".pdf") || tabTitle.endsWith(".pdf")) {
 		return {
-			colour: new colour("PDFVIEWER"),
+			colour: browserColour.PDFVIEWER,
 			reason: "PDF_VIEWER",
 		};
 	} else if (url.href.endsWith(".json") || tabTitle.endsWith(".json")) {
 		return {
-			colour: new colour("JSONVIEWER"),
+			colour: browserColour.JSONVIEWER,
 			reason: "JSON_VIEWER",
 		};
 	} else if (tab.favIconUrl?.startsWith("chrome:")) {
 		return {
-			colour: new colour("DEFAULT"),
+			colour: browserColour.DEFAULT,
 			reason: "PROTECTED_PAGE",
 		};
 	} else if (url.href.match(new RegExp(`https?:\\/\\/${tabTitle}$`, "i"))) {
 		return {
-			colour: new colour("PLAINTEXT"),
+			colour: browserColour.PLAINTEXT,
 			reason: "TEXT_VIEWER",
 		};
 	} else {
 		return {
-			colour: new colour("FALLBACK"),
+			colour: browserColour.FALLBACK,
 			reason: "FALLBACK_COLOUR",
 		};
 	}
@@ -401,7 +411,7 @@ function getAboutPageMeta(pathname) {
 		};
 	} else {
 		return {
-			colour: new colour("DEFAULT"),
+			colour: browserColour.DEFAULT,
 			reason: "PROTECTED_PAGE",
 		};
 	}
@@ -428,7 +438,7 @@ function getMozillaPageMeta(hostname) {
 		};
 	} else {
 		return {
-			colour: new colour("FALLBACK"),
+			colour: browserColour.FALLBACK,
 			reason: "PROTECTED_PAGE",
 		};
 	}
@@ -445,7 +455,7 @@ function getMozillaPageMeta(hostname) {
 async function getAddonPageMeta(url) {
 	const addonId = await getAddonId(url);
 	if (!addonId)
-		return { colour: new colour("FALLBACK"), reason: "ERROR_OCCURRED" };
+		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
 	const rule = pref.getRule(addonId).rule;
 	return rule
 		? {
@@ -454,7 +464,7 @@ async function getAddonPageMeta(url) {
 				info: addonId,
 			}
 		: {
-				colour: new colour("ADDON"),
+				colour: browserColour.ADDON,
 				reason: "ADDON_DEFAULT",
 				info: addonId,
 			};
@@ -474,47 +484,17 @@ async function getAddonPageMeta(url) {
  *   Theme metadata.
  */
 function setFrameColour(tab, meta) {
-	if (!tab?.active) return;
+	if (!tab?.active || !meta.colour) return;
 	const windowId = tab.windowId;
-	const code = meta.colour.code;
-	let corrected = false;
-	let scheme, colour;
-
-	if (code) {
-		if (colourCode[code][cache.scheme]) {
-			colour = colourCode[code][cache.scheme];
-			scheme = cache.scheme;
-		} else if (
-			colourCode[code][cache.reversedScheme] &&
-			pref.allowDarkLight
-		) {
-			colour = colourCode[code][cache.reversedScheme];
-			scheme = cache.reversedScheme;
-		} else {
-			const correctionResult = colourCode[code][
-				cache.reversedScheme
-			].contrastCorrection(
-				cache.scheme,
-				!pref.compatibilityMode && pref.allowDarkLight,
-				pref.minContrast_light,
-				pref.minContrast_dark,
-			);
-			colour = correctionResult.colour;
-			scheme = correctionResult.scheme;
-			corrected = correctionResult.corrected;
-		}
-	} else {
-		const correctionResult = meta.colour.contrastCorrection(
-			cache.scheme,
-			!pref.compatibilityMode && pref.allowDarkLight,
-			pref.minContrast_light,
-			pref.minContrast_dark,
-		);
-		colour = correctionResult.colour;
-		scheme = correctionResult.scheme;
-		corrected = correctionResult.corrected;
-	}
-
+	const correctionResult = meta.colour.contrastCorrection(
+		cache.scheme,
+		!pref.compatibilityMode && pref.allowDarkLight,
+		pref.minContrast_light,
+		pref.minContrast_dark,
+	);
+	const colour = correctionResult.colour;
+	const scheme = correctionResult.scheme;
+	const corrected = correctionResult.corrected;
 	pref.compatibilityMode
 		? setTabThemeColour(tab, colour)
 		: applyTheme(windowId, colour, scheme);
@@ -567,7 +547,7 @@ function applyTheme(windowId, colour, scheme) {
 					.toRGBA(),
 				frame: colour.brightness(-1.5 * pref.tabbar).toRGBA(),
 				frame_inactive: colour.brightness(-1.5 * pref.tabbar).toRGBA(),
-				ntp_background: colourCode.HOME[cache.scheme].toRGBA(),
+				ntp_background: browserColour.HOME.toRGBA(),
 				popup: colour.brightness(-1.5 * pref.popup).toRGBA(),
 				popup_border: colour
 					.brightness(-1.5 * (pref.popup + pref.popupBorder))
@@ -640,7 +620,7 @@ function applyTheme(windowId, colour, scheme) {
 					.toRGBA(),
 				frame: colour.brightness(pref.tabbar).toRGBA(),
 				frame_inactive: colour.brightness(pref.tabbar).toRGBA(),
-				ntp_background: colourCode.HOME[cache.scheme].toRGBA(),
+				ntp_background: browserColour.HOME.toRGBA(),
 				popup: colour.brightness(pref.popup).toRGBA(),
 				popup_border: colour
 					.brightness(pref.popup + pref.popupBorder)

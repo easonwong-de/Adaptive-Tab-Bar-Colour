@@ -51,6 +51,8 @@ export default function InfoDisplay({ cache }) {
 						return i18n.t("colourForHomePage");
 					case "PROTECTED_PAGE":
 						return i18n.t("pageIsProtected");
+					case "IMAGE_VIEWER":
+						return i18n.t("usingImageViewer");
 					case "PDF_VIEWER":
 						return i18n.t("colourForPDFViewer");
 					case "JSON_VIEWER":

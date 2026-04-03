@@ -10,6 +10,7 @@ function getColour() {
 		theme: getThemeColour(),
 		page: getPageColour(),
 		query: getQueryColour(),
+		image: isImageViewer(),
 	};
 }
 
@@ -72,6 +73,13 @@ function getQueryColour() {
 	}
 }
 
+function isImageViewer() {
+	return (
+		getComputedStyle(document.documentElement).backgroundImage ===
+		'url("chrome://global/skin/media/imagedoc-darknoise.png")'
+	);
+}
+
 /**
  * Extracts style properties from an element.
  *
@@ -82,11 +90,14 @@ function getQueryColour() {
 function getElementColour(element) {
 	if (element instanceof Element) {
 		const style = getComputedStyle(element);
-		return {
-			colour: style.backgroundColor,
-			opacity: style.opacity,
-			filter: style.filter,
-		};
+		const backgroundColor = style.backgroundColor;
+		const opacity = style.opacity;
+		if (backgroundColor !== "rgba(0, 0, 0, 0)" && opacity !== "0")
+			return {
+				colour: backgroundColor,
+				opacity: opacity,
+				filter: style.filter,
+			};
 	}
 }
 

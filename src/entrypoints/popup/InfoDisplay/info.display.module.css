@@ -12,6 +12,6 @@
 	}
 
 	strong {
-		padding-inline: var(--unit);
+		padding-inline: calc(4 * var(--unit));
 	}
 }
