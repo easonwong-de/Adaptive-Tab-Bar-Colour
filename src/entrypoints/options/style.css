@@ -128,7 +128,6 @@ button {
 	}
 
 	&:active {
-		box-shadow: none;
 		background-color: var(--control-active);
 	}
 }

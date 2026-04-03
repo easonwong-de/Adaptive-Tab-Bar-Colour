@@ -8,7 +8,7 @@
 		outline: none;
 		outline-offset: -1px;
 		border: none;
-		border-radius: calc(12 * var(--unit));
+		border-radius: var(--component-border-radius, calc(12 * var(--unit)));
 		background-color: var(--control);
 		padding-inline: calc(8 * var(--unit));
 		width: 100%;

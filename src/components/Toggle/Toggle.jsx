@@ -5,7 +5,7 @@ export default function Toggle({
 	isTabToggle = false,
 	itemList,
 	activeIndex = 0,
-	onChange = () => {},
+	onChange,
 }) {
 	return (
 		<div className={clsx(styles.toggle, isTabToggle && styles.tabToggle)}>

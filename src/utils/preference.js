@@ -373,13 +373,14 @@ export default class preference {
 	 * For add-on ID header types, performs exact string matching.
 	 *
 	 * @param {string} query - Site URL or add-on ID.
-	 * @returns {{ id: number; rule: object | undefined }} Result.
+	 * @returns {{ id: number; query: string; rule: object | undefined }}
+	 *   Result.
 	 */
 	getRule(query) {
 		let matchedId = 0;
 		let matchedRule;
 		if (typeof query !== "string")
-			return { id: matchedId, rule: matchedRule };
+			return { id: matchedId, query, rule: matchedRule };
 		for (const id in this.#content.ruleList) {
 			const rule = this.#content.ruleList[id];
 			if (!rule || typeof rule.header !== "string") continue;
@@ -399,7 +400,7 @@ export default class preference {
 				continue;
 			}
 		}
-		return { id: matchedId, rule: matchedRule };
+		return { id: matchedId, query, rule: matchedRule };
 	}
 
 	/**

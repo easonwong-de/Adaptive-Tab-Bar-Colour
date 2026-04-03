@@ -10,8 +10,16 @@
 	--transparent-4: hsla(0, 0%, 0%, 30%);
 	--transparent-5: hsla(0, 0%, 0%, 35%);
 
+	--control: var(--transparent-0);
+	--control-hover: var(--transparent-1);
+	--control-active: var(--transparent-3);
+	--control-selected: var(--transparent-2);
+	--control-selected-hover: var(--transparent-4);
+
 	--text-primary: hsl(0 0% 0%);
 	--text-secondary: hsl(0 0% 20%);
+
+	--accent: hsl(216, 100%, 49%);
 
 	@media (prefers-color-scheme: dark) {
 		--app: hsl(247, 12%, 15%);
@@ -25,6 +33,8 @@
 
 		--text-primary: hsl(0, 0%, 100%);
 		--text-secondary: hsl(0, 0%, 80%);
+
+		--accent: hsl(185, 100%, 43%);
 	}
 }
 
@@ -34,6 +44,7 @@ html {
 	padding: 0;
 	color: var(--text-primary);
 	font: menu;
+	line-height: 1.5;
 	font-family:
 		system-uibody,
 		-apple-system,
@@ -116,7 +127,6 @@ button {
 	}
 
 	&:active {
-		box-shadow: none;
 		background-color: var(--transparent-2);
 	}
 }

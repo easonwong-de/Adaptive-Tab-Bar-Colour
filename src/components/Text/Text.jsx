@@ -6,7 +6,7 @@ export default function Text({
 	value = "",
 	placeholder = "",
 	warning = "",
-	onChange = () => {},
+	onChange,
 }) {
 	return (
 		<div

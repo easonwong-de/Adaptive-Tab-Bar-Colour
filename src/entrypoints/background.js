@@ -30,12 +30,13 @@ import {
 	addMessageListener,
 	addSchemeChangeListener,
 	addTabChangeListener,
+	broadcastMessage,
 	getActiveTabList,
 	getAddonId,
 	getAddonName,
 	getCurrentScheme,
 	getSystemScheme,
-	sendMessage,
+	sendMessageToTab,
 	updateBrowserTheme,
 } from "@/utils/utility.js";
 
@@ -193,7 +194,7 @@ async function updateTab(tab) {
  */
 async function getTabMeta(rule, tab) {
 	try {
-		const tabColour = await sendMessage(tab.id, {
+		const tabColour = await sendMessageToTab(tab.id, {
 			header: "GET_COLOUR",
 			dynamic: rule?.type === "COLOUR" ? false : pref.dynamic,
 			query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
@@ -333,7 +334,10 @@ async function getProtectedPageMeta(tab) {
 	} else if (url.protocol === "about:") {
 		return getAboutPageMeta(url.pathname);
 	} else if (url.protocol === "moz-extension:") {
-		return await getAddonPageMeta(url.href);
+		const addonId = await getAddonId(url.href);
+		const rule = pref.getRule(addonId);
+		cache.rule[tab.windowId] = rule;
+		return await getAddonPageMeta(addonId, rule);
 	} else if (url.hostname in mozillaPageColour) {
 		return getMozillaPageMeta(url.hostname);
 	} else if (url.protocol === "view-source:") {
@@ -455,19 +459,16 @@ function getMozillaPageMeta(hostname) {
  * Gets the colour for an extension page.
  *
  * @async
- * @param {string} url - The URL of the page.
+ * @param {string} addonId - The ID of the add-on.
+ * @param {object} rule - The rule object.
  * @returns {Promise<{ colour: colour; reason: string; info?: string }>}
  *   Metadata.
  */
-async function getAddonPageMeta(url) {
-	const addonId = await getAddonId(url);
-	if (!addonId)
-		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
-	const rule = pref.getRule(addonId).rule;
+async function getAddonPageMeta(addonId, rule) {
 	const addonName = await getAddonName(addonId);
-	if (rule) {
+	if (rule.id !== 0) {
 		return {
-			colour: new colour(rule.value),
+			colour: new colour(rule.rule.value),
 			reason: "ADDON_SPECIFIED",
 			info: addonName,
 		};
@@ -522,13 +523,15 @@ function setFrameColour(tab, meta) {
 	pref.compatibilityMode
 		? setTabThemeColour(tab, colour)
 		: applyTheme(windowId, colour, scheme);
-	return {
+	const themeCache = {
 		popup: colour
 			.brightness((scheme === "light" ? -1.5 : 1) * pref.popup)
 			.toRGBA(),
 		scheme: scheme,
 		corrected: corrected,
 	};
+	broadcastMessage({ header: "CACHE_UPDATED" });
+	return themeCache;
 }
 
 /**
@@ -542,7 +545,7 @@ function setFrameColour(tab, meta) {
  */
 async function setTabThemeColour(tab, colour) {
 	try {
-		await sendMessage(tab.id, {
+		await sendMessageToTab(tab.id, {
 			header: "SET_THEME_COLOUR",
 			colour: colour.brightness(pref.tabbar).toRGBA(),
 		});

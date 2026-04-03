@@ -1,3 +1,6 @@
+import { useState, useEffect } from "react";
+import clsx from "clsx";
+import { getAddonName } from "../../utils/utility";
 import Colour from "../Colour/Colour";
 import Icon from "../Icon/Icon";
 import Text from "../Text/Text";
@@ -10,106 +13,90 @@ const defaultValue = {
 	QUERY_SELECTOR: "",
 };
 
-export default function Rule({ rule, onChange = () => {} }) {
+export default function Rule({ rule, inPopup = false, onChange }) {
 	if (!rule) return null;
 
+	const [addonName, setAddonName] = useState(rule?.header);
+
+	useEffect(() => {
+		if (rule?.headerType === "ADDON_ID")
+			getAddonName(rule.header).then(setAddonName);
+	}, [rule?.header, rule?.headerType]);
+
 	return (
-		<section className={styles.ruleSection}>
-			<Header
-				rule={rule}
-				onChange={(newHeader) => {
-					const newRule = { ...rule, header: newHeader };
-					onChange(newRule);
-				}}
-			/>
-			<Select
-				rule={rule}
-				onChange={(newType) => {
-					const newRule = {
+		<section
+			className={clsx(styles.ruleSection, inPopup && styles.inPopup)}
+		>
+			{!inPopup &&
+				(rule.headerType === "ADDON_ID" ? (
+					<div className={styles.addonHeader}>{addonName}</div>
+				) : (
+					<Text
+						value={rule.header}
+						placeholder={i18n.t("urlDomainOrRegex")}
+						warning={i18n.t("thisPolicyWillBeIgnored")}
+						onChange={(newHeader) =>
+							onChange({ ...rule, header: newHeader })
+						}
+					/>
+				))}
+			<select
+				value={rule.type}
+				onChange={(e) => {
+					const newType = e.target.value;
+					onChange({
 						...rule,
 						type: newType,
 						value: defaultValue[newType],
-					};
-					onChange(newRule);
+					});
 				}}
-			/>
-			<Input
-				rule={rule}
-				onChange={(newValue) => {
-					const newRule = {
-						...rule,
-						value: newValue,
-					};
-					onChange(newRule);
-				}}
-			/>
-			<button
-				className={styles.deleteButton}
-				onClick={() => onChange(null)}
 			>
-				<Icon type="delete" />
-			</button>
-		</section>
-	);
-}
-
-function Header({ rule, onChange }) {
-	switch (rule.headerType) {
-		case "URL":
-			return (
-				<Text
-					value={rule.header}
-					placeholder={i18n.t("urlDomainOrRegex")}
-					warning={i18n.t("thisPolicyWillBeIgnored")}
-					onChange={onChange}
-				/>
-			);
-		case "ADDON_ID":
-			return <div>{rule.header}</div>;
-	}
-}
-
-function Select({ rule, onChange }) {
-	switch (rule.headerType) {
-		case "URL":
-			return (
-				<select
-					value={rule.type}
-					onChange={(e) => onChange(e.target.value)}
+				<option value="COLOUR">{i18n.t("specifyAColour")}</option>
+				<option
+					value="THEME_COLOUR"
+					disabled={rule.headerType === "ADDON_ID"}
 				>
-					<option value="COLOUR">{i18n.t("specifyAColour")}</option>
-					<option value="THEME_COLOUR">
-						{i18n.t("useIgnoreThemeColour")}
-					</option>
-					<option value="QUERY_SELECTOR">
-						{i18n.t("pickColourFromElement")}
-					</option>
-				</select>
-			);
-		case "ADDON_ID":
-			return null;
-	}
-}
-
-function Input({ rule, onChange }) {
-	switch (rule.type) {
-		case "COLOUR":
-			return <Colour value={rule.value} onChange={onChange} />;
-		case "THEME_COLOUR":
-			return (
+					{i18n.t("useIgnoreThemeColour")}
+				</option>
+				<option
+					value="QUERY_SELECTOR"
+					disabled={rule.headerType === "ADDON_ID"}
+				>
+					{i18n.t("pickColourFromElement")}
+				</option>
+			</select>
+			{rule.type === "COLOUR" ? (
+				<Colour
+					value={rule.value}
+					onChange={(newValue) =>
+						onChange({ ...rule, value: newValue })
+					}
+				/>
+			) : rule.type === "THEME_COLOUR" ? (
 				<Toggle
 					itemList={[i18n.t("use"), i18n.t("ignore")]}
 					activeIndex={rule.value ? 0 : 1}
-					onChange={(newIndex) => onChange(newIndex === 0)}
+					onChange={(newIndex) =>
+						onChange({ ...rule, value: newIndex === 0 })
+					}
 				/>
-			);
-		case "QUERY_SELECTOR":
-			return (
+			) : rule.type === "QUERY_SELECTOR" ? (
 				<Text
 					value={rule.value}
 					placeholder={i18n.t("querySelector")}
-					onChange={onChange}
+					onChange={(newValue) =>
+						onChange({ ...rule, value: newValue })
+					}
 				/>
-			);
-	}
+			) : null}
+			{!inPopup && (
+				<button
+					className={styles.deleteButton}
+					onClick={() => onChange(null)}
+				>
+					<Icon type="delete" />
+				</button>
+			)}
+		</section>
+	);
 }

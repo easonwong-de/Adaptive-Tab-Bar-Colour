@@ -15,7 +15,7 @@ export default function Slider({
 	value = minValue,
 	leftIconType = "moon",
 	rightIconType = "sun",
-	onChange = () => {},
+	onChange,
 	onDisplay = (value) => `${value} %`,
 }) {
 	const rafRef = useRef(null);

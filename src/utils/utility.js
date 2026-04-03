@@ -83,7 +83,7 @@ export function addTabChangeListener(listener) {
  * @param {object} message - The message object.
  * @returns {Promise<any>} The response from the tab.
  */
-export async function sendMessage(tabId, message) {
+export async function sendMessageToTab(tabId, message) {
 	return await browser.tabs.sendMessage(tabId, message);
 }
 
@@ -94,6 +94,24 @@ export async function sendMessage(tabId, message) {
  */
 export function addMessageListener(listener) {
 	browser.runtime.onMessage.addListener(listener);
+}
+
+/**
+ * Removes a listener for runtime messages.
+ *
+ * @param {Function} listener - The function to remove.
+ */
+export function removeMessageListener(listener) {
+	browser.runtime.onMessage.removeListener(listener);
+}
+
+/**
+ * Sends a runtime message.
+ *
+ * @param {object} message - The message object.
+ */
+export function broadcastMessage(message) {
+	browser.runtime.sendMessage(message).catch(() => {});
 }
 
 /**

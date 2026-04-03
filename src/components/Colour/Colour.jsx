@@ -1,9 +1,8 @@
 import { useState } from "react";
-
 import colour from "@/utils/colour.js";
 import styles from "./colour.module.css";
 
-export default function Colour({ value = "#000000", onChange = () => {} }) {
+export default function Colour({ value = "#000000", onChange }) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [transientValue, setTransientValue] = useState(value);
 

@@ -1,14 +1,25 @@
 .rule-section {
 	display: grid;
 	grid-template-columns:
-		auto max-content calc(120 * var(--unit))
+		minmax(0, 1fr) max-content calc(120 * var(--unit))
 		max-content;
 	gap: calc(8 * var(--unit));
 	background-color: var(--panel);
 	padding: calc(8 * var(--unit));
 
+	&.in-popup {
+		display: contents;
+		--component-border-radius: calc(4 * var(--unit));
+
+		select {
+			border-radius: calc(4 * var(--unit));
+		}
+	}
+
 	@media screen and (max-width: 550px) {
-		grid-template-columns: 1fr calc(200 * var(--unit)) max-content;
+		grid-template-columns:
+			minmax(max-content, 1fr) minmax(0, 1fr)
+			max-content;
 
 		& > :first-child {
 			grid-column: 1 / -1;
@@ -51,6 +62,16 @@
 		@media screen and (max-width: 550px) {
 			width: 100%;
 		}
+	}
+
+	.addon-header {
+		display: block;
+		padding-inline-start: calc(8 * var(--unit));
+		height: calc(32 * var(--unit));
+		overflow: hidden;
+		line-height: calc(32 * var(--unit));
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.delete-button {

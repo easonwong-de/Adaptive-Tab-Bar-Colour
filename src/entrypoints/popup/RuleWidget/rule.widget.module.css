@@ -1,0 +1,35 @@
+.rule-widget {
+	display: flex;
+	flex-direction: column;
+	gap: calc(8 * var(--unit));
+	border: 1px solid var(--transparent-0);
+	border-radius: calc(4 * var(--unit));
+	padding: calc(8 * var(--unit));
+
+	.info-message {
+		svg {
+			display: inline-block;
+			vertical-align: text-bottom;
+			padding-inline-end: calc(4 * var(--unit));
+			width: auto;
+			height: 1em;
+		}
+
+		strong {
+			padding-inline: calc(4 * var(--unit));
+		}
+	}
+
+	button {
+		justify-content: center;
+		background-color: var(--transparent-0);
+
+		&:hover {
+			background-color: var(--transparent-1);
+		}
+
+		&:active {
+			background-color: var(--transparent-2);
+		}
+	}
+}
