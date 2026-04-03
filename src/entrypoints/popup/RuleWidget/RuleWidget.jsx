@@ -121,7 +121,7 @@ function RuleControls({ pref, rule, meta }) {
 						pref.setRule(rule.id, null);
 					}}
 				>
-					Delete rule
+					{i18n.t("deleteRule")}
 				</button>
 			</>
 		);

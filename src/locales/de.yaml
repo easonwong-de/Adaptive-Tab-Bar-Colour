@@ -31,6 +31,7 @@ confirmResetAdvanced: "Sind Sie sicher, dass Sie die erweiterten Einstellungen z
 confirmResetRuleList: "Sind Sie sicher, dass Sie die Regelliste zurücksetzen möchten?"
 confirmResetThemeBuilder: "Sind Sie sicher, dass Sie den Theme-Editor zurücksetzen möchten?"
 delete: "Löschen"
+deleteRule: "Regel löschen"
 dynamicColourUpdate: "Dynamische Farbaktualisierung"
 dynamicModeTooltip: >-
     Aktualisiert die Farbe der Tableiste während des Surfens auf einer Webseite ständig.

@@ -31,6 +31,7 @@ confirmResetAdvanced: "¿Estás seguro de que quieres restablecer la configuraci
 confirmResetRuleList: "¿Estás seguro de que quieres restablecer la lista de reglas?"
 confirmResetThemeBuilder: "¿Estás seguro de que quieres restablecer el creador de temas?"
 delete: "Eliminar"
+deleteRule: "Eliminar regla"
 dynamicColourUpdate: "Actualización dinámica de color"
 dynamicModeTooltip: >-
     Sigue actualizando el color de la barra de pestañas mientras navegas dentro de una página web.

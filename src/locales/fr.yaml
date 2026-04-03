@@ -31,6 +31,7 @@ confirmResetAdvanced: "Êtes-vous sûr de vouloir réinitialiser les paramètres
 confirmResetRuleList: "Êtes-vous sûr de vouloir réinitialiser la liste des règles ?"
 confirmResetThemeBuilder: "Êtes-vous sûr de vouloir réinitialiser le constructeur de thèmes ?"
 delete: "Supprimer"
+deleteRule: "Supprimer la règle"
 dynamicColourUpdate: "Mise à jour dynamique des couleurs"
 dynamicModeTooltip: >-
     Met à jour continuellement la couleur de la barre d'onglets lors de la navigation sur une page Web.

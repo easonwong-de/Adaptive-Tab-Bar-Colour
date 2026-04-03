@@ -30,6 +30,7 @@ confirmResetAdvanced: "Вы уверены, что хотите сбросить
 confirmResetRuleList: "Вы уверены, что хотите сбросить список правил?"
 confirmResetThemeBuilder: "Вы уверены, что хотите сбросить конструктор темы?"
 delete: "Удалить"
+deleteRule: "Удалить правило"
 dynamicColourUpdate: "Динамическое обновление цвета"
 dynamicModeTooltip: "Обновлять цвет панели вкладок во время навигации внутри страницы."
 errorOccured: "Произошла ошибка, используется резервный цвет"

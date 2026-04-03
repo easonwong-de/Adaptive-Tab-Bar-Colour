@@ -28,6 +28,7 @@ confirmResetAdvanced: "Você realmente deseja redefinir as configurações avan�
 confirmResetRuleList: "Você realmente deseja redefinir a lista de regras?"
 confirmResetThemeBuilder: "Você realmente deseja redefinir o criador de temas?"
 delete: "Apagar"
+deleteRule: "Apagar regra"
 dynamicColourUpdate: "Atualização dinâmica de cor"
 dynamicModeTooltip: "Continua atualizando a cor da aba durante a navegação em uma página web."
 errorOccured: "Um erro ocorreu, será utilizada a cor alternativa"
