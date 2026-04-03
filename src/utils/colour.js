@@ -15,8 +15,8 @@ export default class colour {
 	/**
 	 * Parses the initialiser to set the colour.
 	 *
-	 * @param {string | colour} [initialiser] - A CSS
-	 *   string, or `colour` instance.
+	 * @param {string | colour} [initialiser] - A CSS string, or `colour`
+	 *   instance.
 	 */
 	constructor(initialiser = undefined) {
 		if (typeof initialiser === "string") {
@@ -313,7 +313,8 @@ export default class colour {
 	/**
 	 * Checks if the colour is fully opaque.
 	 *
-	 * @returns {boolean} `true` if the colour is opaque (alpha = 1), `false` otherwise.
+	 * @returns {boolean} `true` if the colour is opaque (alpha = 1), `false`
+	 *   otherwise.
 	 */
 	isOpaque() {
 		return this.#a === 1;

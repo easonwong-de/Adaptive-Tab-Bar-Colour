@@ -1,111 +1,94 @@
-addANewRule: Adicionar nova regra
-addonNotFound: Extensão não encontrada
-advanced: Avançado
-allowDarkTabBar: Permitir abas escuras
-allowDarkTabBarTooltip: Permite o uso de cores escuras nas abas (texto claro em abas escuras).
-allowLightTabBar: Permitir abas claras
-allowLightTabBarTooltip: Permite o uso de cores claras nas abas (texto escuro em abas claras).
-anyCSSColour: Qualquer formato
-background: Fundo
-backgroundOnFocus: Fundo em foco
-backup: Backup
-border: Borda
+addANewRule: "Adicionar nova regra"
+addonNotFound: "Extensão não encontrada"
+advanced: "Avançado"
+allowDarkTabBar: "Permitir abas escuras"
+allowDarkTabBarTooltip: "Permite o uso de cores escuras nas abas (texto claro em abas escuras)."
+allowLightTabBar: "Permitir abas claras"
+allowLightTabBarTooltip: "Permite o uso de cores claras nas abas (texto escuro em abas claras)."
+anyCSSColour: "Qualquer formato"
+background: "Fundo"
+backgroundOnFocus: "Fundo em foco"
+backup: "Backup"
+border: "Borda"
 cannotFindElement: "Não é possível encontrar o elemento HTML que coincide com "
 cannotFindElementEnd: ", então a cor foi selecionada da página web"
-colourForHomePage: A cor da aba da página inicial pode ser definida nas conigurações
-colourForJSONViewer: Usando cor para visualização de JSON
-colourForPDFViewer: Usando cor para visualização de PDF
-colourForPlainTextViewer: Usando cor para visualização de texto simples
-colourIsAdjusted: A cor original foi ajustada para garantir um contraste mínimo
+colourForHomePage: "A cor da aba da página inicial pode ser definida nas conigurações"
+colourForJSONViewer: "Usando cor para visualização de JSON"
+colourForPDFViewer: "Usando cor para visualização de PDF"
+colourForPlainTextViewer: "Usando cor para visualização de texto simples"
+colourIsAdjusted: "A cor original foi ajustada para garantir um contraste mínimo"
 colourIsPickedFrom: "A cor foi obtida a partir de um elemento HTML que coincide com "
-colourIsPickedFromEnd: "\u200B"
-colourIsSpecified: A cor desse site está especificada nas configurações
-colourPickedFromWebpage: A cor foi obtida a partir da página web
-compatibilityMode: Modo de compatibilidade
+colourIsPickedFromEnd: "\0"
+colourIsSpecified: "A cor desse site está especificada nas configurações"
+colourPickedFromWebpage: "A cor foi obtida a partir da página web"
+compatibilityMode: "Modo de compatibilidade"
 compatibilityModeTooltip: >-
-    Ao invés da Theme API, utilize a propriedade HTML “theme-color” para mudar a
-    cor da aba. Só funciona em certos navegadores de forma limitada.
-confirmResetAdvanced: Você realmente deseja redefinir as configurações avançadas?
-confirmResetRuleList: Você realmente deseja redefinir a lista de regras?
-confirmResetThemeBuilder: Você realmente deseja redefinir o criador de temas?
-delete: Apagar
-dynamicColourUpdate: Atualização dinâmica de cor
-dynamicModeTooltip: Continua atualizando a cor da aba durante a navegação em uma página web.
-errorOccured: Um erro ocorreu, será utilizada a cor alternativa
+    Ao invés da Theme API, utilize a propriedade HTML “theme-color” para mudar a cor da aba. Só funciona em certos navegadores de forma limitada.
+confirmResetAdvanced: "Você realmente deseja redefinir as configurações avançadas?"
+confirmResetRuleList: "Você realmente deseja redefinir a lista de regras?"
+confirmResetThemeBuilder: "Você realmente deseja redefinir o criador de temas?"
+delete: "Apagar"
+dynamicColourUpdate: "Atualização dinâmica de cor"
+dynamicModeTooltip: "Continua atualizando a cor da aba durante a navegação em uma página web."
+errorOccured: "Um erro ocorreu, será utilizada a cor alternativa"
 errorOccuredLocatingElement: "Um erro ocorreu durante a procura de um elemento HTML que coincide com "
 errorOccuredLocatingElementEnd: ", então a cor foi selecionada da página web"
-exportSettings: Exportar configurações
-extensionDescription: Muda a cor do tema do Firefox para combinar com a aparência dos sites.
-extensionName: Adaptive Tab Bar Colour
+exportSettings: "Exportar configurações"
+extensionDescription: "Muda a cor do tema do Firefox para combinar com a aparência dos sites."
+extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Cor alternativa: Escuro"
 fallbackColourLight: "Cor alternativa: Claro"
 homepageColourDark: "Cor da página inicial: Escuro"
 homepageColourLight: "Cor da página inicial: Claro"
-ifVerticalTabsAreEnabled: Se as abas verticais estiverem ativadas
-ignore: Ignore
-ignoreDesignatedThemeColour: Ignorar a cor do tema do site
+ifVerticalTabsAreEnabled: "Se as abas verticais estiverem ativadas"
+ignore: "Ignore"
+ignoreDesignatedThemeColour: "Ignorar a cor do tema do site"
 ignoreDesignatedThemeColourTooltip: >-
-    Alguns sites fornecem sua própria cor do tema. Ative essa opção para ignorar
-    essas cores.
-ignoreThemeColourButton: Ignorar cor do tema
-ignoreThemeColourTitle: Ignorar cor do tema definido pelo site.
-importFailed: Erro ao importar configurações. Por favor, tente novamente.
-importSettings: Importar configurações
-inDarkMode: Em modo escuro
-inLightMode: Em modo claro
-minimumContrast: Contraste mínimo
+    Alguns sites fornecem sua própria cor do tema. Ative essa opção para ignorar essas cores.
+importFailed: "Erro ao importar configurações. Por favor, tente novamente."
+importSettings: "Importar configurações"
+inDarkMode: "Em modo escuro"
+inLightMode: "Em modo claro"
+minimumContrast: "Contraste mínimo"
 minimumContrastTooltip: >-
-    Ajuste o contraste mínimo entre a aba e o texto. A cor da aba é ajustada
-    automaticamente se o contraste mínimo não for alcançado.
-moreSettings: Mais opções…
-moreSettingsTooltip: Abre a página de opções
-"no": Não
-pageIsProtected: Essa página é protegida pelo navegador
-pickColourFromElement: Selecionar a cor a partir de um elemento
-popUp: Pop-up
-querySelector: Seletor de consulta
-reportAnIssue: Reporte um problema / Deixe uma sugestão / Traduza essa extensão
-reset: Redefinir
-resetAdvanced: Redefinir configurações avançadas
-resetRuleList: Redefinir lista de regras
-resetThemeBuilder: Redefinir criador de temas
-ruleList: Lista de regras
-selectedTab: Aba selecionada
-settingsAreExported: As configurações foram exportadas para sua pasta de downloads.
-settingsAreImported: As configurações foram importadas.
-sidebar: Painel lateral
-specifyAColour: Especificar uma cor
-specifyColourForAddon: >-
-    Clique “Especificar uma cor” para abrir as configurações e especificar a cor
-    da aba para páginas relacionadas a
-specifyColourForAddonButton: Especificar uma cor
-specifyColourForAddonEnd: "\u200B"
-specifyColourForAddonTitle: Abrir as configurações e especificar uma cor para as
-    páginas relacionadas à extensão
-tabBar: Barra de abas
-themeBuilder: Criador de temas
-themeColourIsIgnored: A cor do tema definida pelo site é ignorada
+    Ajuste o contraste mínimo entre a aba e o texto. A cor da aba é ajustada automaticamente se o contraste mínimo não for alcançado.
+moreSettings: "Mais opções…"
+moreSettingsTooltip: "Abre a página de opções"
+no: "Não"
+pageIsProtected: "Essa página é protegida pelo navegador"
+pickColourFromElement: "Selecionar a cor a partir de um elemento"
+popUp: "Pop-up"
+querySelector: "Seletor de consulta"
+reportAnIssue: "Reporte um problema / Deixe uma sugestão / Traduza essa extensão"
+reset: "Redefinir"
+resetAdvanced: "Redefinir configurações avançadas"
+resetRuleList: "Redefinir lista de regras"
+resetThemeBuilder: "Redefinir criador de temas"
+ruleList: "Lista de regras"
+selectedTab: "Aba selecionada"
+settingsAreExported: "As configurações foram exportadas para sua pasta de downloads."
+settingsAreImported: "As configurações foram importadas."
+sidebar: "Painel lateral"
+specifyAColour: "Especificar uma cor"
+tabBar: "Barra de abas"
+themeBuilder: "Criador de temas"
+themeColourIsIgnored: "A cor do tema definida pelo site é ignorada"
 themeColourIsUnignored: >-
-    A cor do tema definida pelo site é utilizada, ao invés de ser ignorada por
-    padrão
-themeColourNotFound: A cor do tema não foi encontrada, a cor será selecionada da página web
-thisPolicyWillBeIgnored: Essa política será ignorada
-toolbar: Barra de ferramentas
-urlBar: Barra de endereços
-urlDomainOrRegex: URL / regex / wildcard / domínio
-use: Usar
-useDefaultColourForAddon: "Usando cor especificada para páginas relacionadas a "
-useDefaultColourForAddonButton: Usar cor padrão
-useDefaultColourForAddonEnd: "\u200B"
-useDefaultColourForAddonTitle: Usar cor padrão
-useIgnoreThemeColour: usar / ignorar cor do tema
-useRecommendedColourForAddon: "Cor recomendada para páginas relacionadas a "
-useRecommendedColourForAddonButton: Usar cor recomendada
-useRecommendedColourForAddonEnd: " está disponível"
-useRecommendedColourForAddonTitle: Usar a cor recomendada
-useThemeColourButton: Usar a cor do tema
-useThemeColourTitle: Usar a cor do tema definida pelo site
-usingFallbackColour: Não há cor disponível, usando cor alternativa
-usingImageViewer: Usando cor para visualizador de imagem
-usingThemeColour: Usando cor do tema definida pelo site
-"yes": Sim
+    A cor do tema definida pelo site é utilizada, ao invés de ser ignorada por padrão
+themeColourNotFound: "A cor do tema não foi encontrada, a cor será selecionada da página web"
+thisPolicyWillBeIgnored: "Essa política será ignorada"
+toolbar: "Barra de ferramentas"
+urlBar: "Barra de endereços"
+urlDomainOrRegex: "URL / regex / wildcard / domínio"
+use: "Usar"
+useIgnoreThemeColour: "usar / ignorar cor do tema"
+usingDefaultColourForAddon: "Usando cor padrão para páginas relacionadas a "
+usingDefaultColourForAddonEnd: "\0"
+usingFallbackColour: "Não há cor disponível, usando cor alternativa"
+usingImageViewer: "Usando cor para visualizador de imagem"
+usingPresetColourForAddon: "Usando cor predefinida para páginas relacionadas a "
+usingPresetColourForAddonEnd: "\0"
+usingSpecifiedColourForAddon: "Usando cor especificada para páginas relacionadas a "
+usingSpecifiedColourForAddonEnd: "\0"
+usingThemeColour: "Usando cor do tema definida pelo site"
+yes: "Sim"

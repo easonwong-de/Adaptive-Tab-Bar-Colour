@@ -46,25 +46,28 @@ export const mozillaPageColour = Object.freeze({
 	"support.mozilla.org": { light: "#ffffff", dark: undefined },
 });
 
+// prettier-ignore
 /**
- * Recommended colours for Add-ons' built-in pages.
+ * Preset colours for Add-ons' built-in pages.
  *
  * Contributions are welcomed.
- *
- * @todo Adds light / dark attributes.
  */
-export const recommendedAddonPageColour = Object.freeze({
-	"addon@darkreader.org": "#141e24", // Dark Reader
-	"adguardadblocker@adguard.com": "#1f1f1f", // AdGuard AdBlocker
-	"deArrow@ajay.app": "#333333", // DeArrow
-	"enhancerforyoutube@maximerf.addons.mozilla.org": "#292a2d", // Enhancer for YouTube™
-	"languagetool-webextension@languagetool.org": "#111213", // LanguageTool
-	"sponsorBlocker@ajay.app": "#333333", // SponsorBlock for YouTube
-	"uBlock0@raymondhill.net": "#1b1b24", // uBlock Origin
-	"{036a55b4-5e72-4d05-a06c-cba2dfcc134a}": "#171a1b", // Translate Web Pages
-	"{7a7a4a92-a2a0-41d1-9fd7-1e92480d612d}": "#242424", // Stylus
-	"{aecec67f-0d10-4fa7-b7c7-609a2db280cf}": "#262626", // Violentmonkey
-	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": "#1c1b1f", // Clear Browsing Data
+export const presetAddonPageColour = Object.freeze({
+	"addon@darkreader.org": { light: undefined, dark: "#141e24" }, // Dark Reader
+	"adguardadblocker@adguard.com": { light: "#ffffff", dark: "#1f1f1f" }, // AdGuard AdBlocker
+	"copyplaintext@eros.man": { light: "#ffffff", dark: "#000000" }, // Copy PlainText
+	"deArrow@ajay.app": { light: undefined, dark: "#333333" }, // DeArrow
+	"enhancerforyoutube@maximerf.addons.mozilla.org": { light: "#eeeeee", dark: "#292a2d"}, // Enhancer for YouTube™
+	"gdpr@cavi.au.dk": { light: undefined, dark: "#00237a" }, // Consent-O-Matic
+	"jid1-KdTtiCj6wxVAFA@jetpack": { light: "#f9f9f8", dark: "#171a18" }, // Swift Selection Search
+	"sponsorBlocker@ajay.app": { light: undefined, dark: "#333333" }, // SponsorBlock for YouTube
+	"uBlock0@raymondhill.net": { light: "#f0f0f2", dark: "#1b1b24" }, // uBlock Origin
+	"{1018e4d6-728f-4b20-ad56-37578a4de76b}": { light: "#ffffff", dark: undefined }, // Flagfox
+	"{74145f27-f039-47ce-a470-a662b129930a}": { light: undefined, dark: "#343a40" }, // ClearURLs
+	"{7a7a4a92-a2a0-41d1-9fd7-1e92480d612d}": { light: "#ffffff", dark: "#242424" }, // Stylus
+	"{a8cf72f7-09b7-4cd4-9aaa-7a023bf09916}": { light: undefined, dark: "#191919" }, // Time Tracker
+	"{aecec67f-0d10-4fa7-b7c7-609a2db280cf}": { light: "#ffffff", dark: "#262626" }, // Violentmonkey
+	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": { light: "#ffffff", dark: "#1c1b1f" }, // Clear Browsing Data
 });
 
 /** Default content of the preference */

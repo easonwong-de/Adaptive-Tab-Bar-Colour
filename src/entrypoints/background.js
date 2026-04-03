@@ -21,13 +21,18 @@
 
 import preference from "@/utils/preference.js";
 import colour from "@/utils/colour.js";
-import { aboutPageColour, mozillaPageColour } from "@/utils/constants.js";
+import {
+	aboutPageColour,
+	mozillaPageColour,
+	presetAddonPageColour,
+} from "@/utils/constants.js";
 import {
 	addMessageListener,
 	addSchemeChangeListener,
 	addTabChangeListener,
 	getActiveTabList,
 	getAddonId,
+	getAddonName,
 	getCurrentScheme,
 	getSystemScheme,
 	sendMessage,
@@ -400,13 +405,15 @@ async function getProtectedPageMeta(tab) {
  */
 function getAboutPageMeta(pathname) {
 	if (aboutPageColour[pathname]?.[cache.scheme]) {
+		const val = aboutPageColour[pathname][cache.scheme];
 		return {
-			colour: new colour(aboutPageColour[pathname][cache.scheme]),
+			colour: browserColour[val] || new colour(val),
 			reason: "PROTECTED_PAGE",
 		};
 	} else if (aboutPageColour[pathname]?.[cache.reversedScheme]) {
+		const val = aboutPageColour[pathname][cache.reversedScheme];
 		return {
-			colour: new colour(aboutPageColour[pathname][cache.reversedScheme]),
+			colour: browserColour[val] || new colour(val),
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -425,15 +432,15 @@ function getAboutPageMeta(pathname) {
  */
 function getMozillaPageMeta(hostname) {
 	if (mozillaPageColour[hostname]?.[cache.scheme]) {
+		const val = mozillaPageColour[hostname][cache.scheme];
 		return {
-			colour: new colour(mozillaPageColour[hostname][cache.scheme]),
+			colour: browserColour[val] || new colour(val),
 			reason: "PROTECTED_PAGE",
 		};
 	} else if (mozillaPageColour[hostname]?.[cache.reversedScheme]) {
+		const val = mozillaPageColour[hostname][cache.reversedScheme];
 		return {
-			colour: new colour(
-				mozillaPageColour[hostname][cache.reversedScheme],
-			),
+			colour: browserColour[val] || new colour(val),
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -457,17 +464,34 @@ async function getAddonPageMeta(url) {
 	if (!addonId)
 		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
 	const rule = pref.getRule(addonId).rule;
-	return rule
-		? {
-				colour: new colour(rule.value),
-				reason: "ADDON_SPECIFIED",
-				info: addonId,
-			}
-		: {
-				colour: browserColour.ADDON,
-				reason: "ADDON_DEFAULT",
-				info: addonId,
-			};
+	const addonName = await getAddonName(addonId);
+	if (rule) {
+		return {
+			colour: new colour(rule.value),
+			reason: "ADDON_SPECIFIED",
+			info: addonName,
+		};
+	} else if (presetAddonPageColour[addonId]?.[cache.scheme]) {
+		return {
+			colour: new colour(presetAddonPageColour[addonId][cache.scheme]),
+			reason: "ADDON_PRESET",
+			info: addonName,
+		};
+	} else if (presetAddonPageColour[addonId]?.[cache.reversedScheme]) {
+		return {
+			colour: new colour(
+				presetAddonPageColour[addonId][cache.reversedScheme],
+			),
+			reason: "ADDON_PRESET",
+			info: addonName,
+		};
+	} else {
+		return {
+			colour: browserColour.ADDON,
+			reason: "ADDON_DEFAULT",
+			info: addonName,
+		};
+	}
 }
 
 /**

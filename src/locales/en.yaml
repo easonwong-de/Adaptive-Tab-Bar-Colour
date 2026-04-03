@@ -1,112 +1,95 @@
-addANewRule: Add a new rule
-addonNotFound: Add-on not found
-advanced: Advanced
-allowDarkTabBar: Allow dark tab bar
-allowDarkTabBarTooltip: Allow tab bar to use dark colour (light text on dark tab bar).
-allowLightTabBar: Allow light tab bar
-allowLightTabBarTooltip: Allow tab bar to use bright colour (dark text on light tab bar).
-anyCSSColour: Any format
-background: Background
-backgroundOnFocus: Background on focus
-backup: Backup
-border: Border
+addANewRule: "Add a new rule"
+addonNotFound: "Add-on not found"
+advanced: "Advanced"
+allowDarkTabBar: "Allow dark tab bar"
+allowDarkTabBarTooltip: "Allow tab bar to use dark colour (light text on dark tab bar)."
+allowLightTabBar: "Allow light tab bar"
+allowLightTabBarTooltip: "Allow tab bar to use bright colour (dark text on light tab bar)."
+anyCSSColour: "Any format"
+background: "Background"
+backgroundOnFocus: "Background on focus"
+backup: "Backup"
+border: "Border"
 cannotFindElement: "Cannot find the HTML element matching "
 cannotFindElementEnd: ", colour is picked from the web page instead"
-colourForHomePage: Tab bar colour for home page can be configured in settings
-colourForJSONViewer: Using colour for JSON viewer
-colourForPDFViewer: Using colour for PDF viewer
-colourForPlainTextViewer: Using colour for plain text viewer
-colourIsAdjusted: The original colour has been adjusted to ensure minimum contrast
+colourForHomePage: "Tab bar colour for home page can be configured in settings"
+colourForJSONViewer: "Using colour for JSON viewer"
+colourForPDFViewer: "Using colour for PDF viewer"
+colourForPlainTextViewer: "Using colour for plain text viewer"
+colourIsAdjusted: "The original colour has been adjusted to ensure minimum contrast"
 colourIsPickedFrom: "Colour is picked from an HTML element matching "
-colourIsPickedFromEnd: "\u200B"
-colourIsSpecified: Colour for this site is specified in the settings
-colourPickedFromWebpage: Colour is picked from the web page
-compatibilityMode: Compatibility mode
+colourIsPickedFromEnd: "\0"
+colourIsSpecified: "Colour for this site is specified in the settings"
+colourPickedFromWebpage: "Colour is picked from the web page"
+compatibilityMode: "Compatibility mode"
 compatibilityModeTooltip: >-
-    Instead of the theme API, use the HTML “theme-color” property to change the
-    tab bar colour. This only works with certain browsers to a limited extent.
-confirmResetAdvanced: Are you sure you want to reset the advanced settings?
-confirmResetRuleList: Are you sure you want to reset the rule list?
-confirmResetThemeBuilder: Are you sure you want to reset the theme builder?
-delete: Delete
-dynamicColourUpdate: Dynamic colour update
-dynamicModeTooltip: Keeps updating tab bar colour while browsing within a web page.
-errorOccured: An error occurred, using fallback colour
+    Instead of the theme API, use the HTML “theme-color” property to change the tab bar colour. This only works with certain browsers to a limited extent.
+confirmResetAdvanced: "Are you sure you want to reset the advanced settings?"
+confirmResetRuleList: "Are you sure you want to reset the rule list?"
+confirmResetThemeBuilder: "Are you sure you want to reset the theme builder?"
+delete: "Delete"
+dynamicColourUpdate: "Dynamic colour update"
+dynamicModeTooltip: "Keeps updating tab bar colour while browsing within a web page."
+errorOccured: "An error occurred, using fallback colour"
 errorOccuredLocatingElement: "An error occurred while looking for the HTML element matching "
 errorOccuredLocatingElementEnd: ", colour is picked from the web page instead"
-exportSettings: Export settings
-extensionDescription: Changes the colour of Firefox theme to match the website’s appearance.
-extensionName: Adaptive Tab Bar Colour
+exportSettings: "Export settings"
+extensionDescription: "Changes the colour of Firefox theme to match the website’s appearance."
+extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Fallback colour: dark"
 fallbackColourLight: "Fallback colour: light"
 homepageColourDark: "Home page colour: dark"
 homepageColourLight: "Home page colour: light"
 ifVerticalTabsAreEnabled: >-
-    If “vertical tabs” are enabled, any non-zero value may cause a gap to appear
-    above the window controls, making them harder to reach.
-ignore: Ignore
-ignoreDesignatedThemeColour: Ignore website’s theme colour
+    If “vertical tabs” are enabled, any non-zero value may cause a gap to appear above the window controls, making them harder to reach.
+ignore: "Ignore"
+ignoreDesignatedThemeColour: "Ignore website’s theme colour"
 ignoreDesignatedThemeColourTooltip: >-
-    Some websites provide a theme colour themselves. Turn on this option to ignore
-    these colours.
-ignoreThemeColourButton: Ignore theme colour
-ignoreThemeColourTitle: Ignore theme colour defined by the website
-importFailed: Failed to import settings. Please try again.
-importSettings: Import settings
-inDarkMode: In dark mode
-inLightMode: In light mode
-minimumContrast: Minimum contrast
+    Some websites provide a theme colour themselves. Turn on this option to ignore these colours.
+importFailed: "Failed to import settings. Please try again."
+importSettings: "Import settings"
+inDarkMode: "In dark mode"
+inLightMode: "In light mode"
+minimumContrast: "Minimum contrast"
 minimumContrastTooltip: >-
-    Set the minimum contrast ratio between the tab bar and text. The tab bar
-    colour adjusts automatically if the ratio is unmet.
-moreSettings: More settings…
-moreSettingsTooltip: Open option page
-"no": "No"
-pageIsProtected: This page is protected by browser
-pickColourFromElement: pick colour from element
-popUp: Pop-up
-querySelector: Query selector
-reportAnIssue: Report an issue / submit a suggestion / translate this add-on
-reset: Reset
-resetAdvanced: Reset advanced settings
-resetRuleList: Reset rule list
-resetThemeBuilder: Reset theme builder
-ruleList: Rule list
-selectedTab: Selected tab
-settingsAreExported: Settings have been exported to your download folder.
-settingsAreImported: Settings have been imported.
-sidebar: Sidebar
-specifyAColour: specify a colour
-specifyColourForAddon: >-
-    Click “Specify a color” to open settings and specify tab bar colour for pages
-    related to
-specifyColourForAddonButton: Specify a colour
-specifyColourForAddonEnd: "\u200B"
-specifyColourForAddonTitle: Open settings and specify a colour to pages related to the add-on
-tabBar: Tab bar
-themeBuilder: Theme builder
-themeColourIsIgnored: Theme colour defined by the website is ignored
+    Set the minimum contrast ratio between the tab bar and text. The tab bar colour adjusts automatically if the ratio is unmet.
+moreSettings: "More settings…"
+moreSettingsTooltip: "Open option page"
+no: "No"
+pageIsProtected: "This page is protected by browser"
+pickColourFromElement: "pick colour from element"
+popUp: "Pop-up"
+querySelector: "Query selector"
+reportAnIssue: "Report an issue / submit a suggestion / translate this add-on"
+reset: "Reset"
+resetAdvanced: "Reset advanced settings"
+resetRuleList: "Reset rule list"
+resetThemeBuilder: "Reset theme builder"
+ruleList: "Rule list"
+selectedTab: "Selected tab"
+settingsAreExported: "Settings have been exported to your download folder."
+settingsAreImported: "Settings have been imported."
+sidebar: "Sidebar"
+specifyAColour: "specify a colour"
+tabBar: "Tab bar"
+themeBuilder: "Theme builder"
+themeColourIsIgnored: "Theme colour defined by the website is ignored"
 themeColourIsUnignored: >-
-    Theme colour defined by the website is used, instead of being ignored by
-    default
-themeColourNotFound: Theme colour is not found, colour is picked from the web page
-thisPolicyWillBeIgnored: This policy will be ignored
-toolbar: Toolbar
-urlBar: URL bar
-urlDomainOrRegex: URL / regex / wildcard / domain
-use: Use
-useDefaultColourForAddon: "Using specified colour for pages related to "
-useDefaultColourForAddonButton: Use default colour
-useDefaultColourForAddonEnd: "\u200B"
-useDefaultColourForAddonTitle: Use default colour
-useIgnoreThemeColour: use / ignore theme colour
-useRecommendedColourForAddon: "Recommended colour for pages related to "
-useRecommendedColourForAddonButton: Use recommended colour
-useRecommendedColourForAddonEnd: " is available"
-useRecommendedColourForAddonTitle: Use the recommended colour
-useThemeColourButton: Use theme colour
-useThemeColourTitle: Use theme colour defined by the website
-usingFallbackColour: No colour is available, using fallback colour
-usingImageViewer: Using colour for image viewer
-usingThemeColour: Using theme colour defined by the website
-"yes": "Yes"
+    Theme colour defined by the website is used, instead of being ignored by default
+themeColourNotFound: "Theme colour is not found, colour is picked from the web page"
+thisPolicyWillBeIgnored: "This policy will be ignored"
+toolbar: "Toolbar"
+urlBar: "URL bar"
+urlDomainOrRegex: "URL / regex / wildcard / domain"
+use: "Use"
+useIgnoreThemeColour: "use / ignore theme colour"
+usingDefaultColourForAddon: "Using default colour for pages related to "
+usingDefaultColourForAddonEnd: "\0"
+usingFallbackColour: "No colour is available, using fallback colour"
+usingImageViewer: "Using colour for image viewer"
+usingPresetColourForAddon: "Using preset colour for pages related to "
+usingPresetColourForAddonEnd: "\0"
+usingSpecifiedColourForAddon: "Using specified colour for pages related to "
+usingSpecifiedColourForAddonEnd: "\0"
+usingThemeColour: "Using theme colour defined by the website"
+yes: "Yes"

@@ -168,6 +168,22 @@ export async function getAddonId(url) {
 }
 
 /**
+ * Retrieves the name of an add-on.
+ *
+ * @async
+ * @param {string} addonId - The ID of the add-on.
+ * @returns {Promise<string>} The name of the add-on.
+ */
+export async function getAddonName(addonId) {
+	try {
+		const info = await browser.management.get(addonId);
+		return info.name;
+	} catch (error) {
+		return browser.i18n.getMessage("addonNotFound");
+	}
+}
+
+/**
  * Clamps a number between a minimum and maximum value.
  *
  * @param {number} min - The minimum value.

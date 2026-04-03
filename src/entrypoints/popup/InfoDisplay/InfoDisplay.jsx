@@ -13,6 +13,8 @@ export default function InfoDisplay({ cache }) {
 				switch (reason) {
 					case "COLOUR_PICKED":
 						return i18n.t("colourPickedFromWebpage");
+					case "COLOUR_SPECIFIED":
+						return i18n.t("colourIsSpecified");
 					case "THEME_USED":
 						return i18n.t("usingThemeColour");
 					case "THEME_MISSING":
@@ -45,8 +47,30 @@ export default function InfoDisplay({ cache }) {
 								{i18n.t("errorOccuredLocatingElementEnd")}
 							</>
 						);
-					case "COLOUR_SPECIFIED":
-						return i18n.t("colourIsSpecified");
+					case "ADDON_SPECIFIED":
+						return (
+							<>
+								{i18n.t("usingSpecifiedColourForAddon")}
+								<strong>{info}</strong>
+								{i18n.t("usingSpecifiedColourForAddonEnd")}
+							</>
+						);
+					case "ADDON_PRESET":
+						return (
+							<>
+								{i18n.t("usingPresetColourForAddon")}
+								<strong>{info}</strong>
+								{i18n.t("usingPresetColourForAddonEnd")}
+							</>
+						);
+					case "ADDON_DEFAULT":
+						return (
+							<>
+								{i18n.t("usingDefaultColourForAddon")}
+								<strong>{info}</strong>
+								{i18n.t("usingDefaultColourForAddonEnd")}
+							</>
+						);
 					case "HOME_PAGE":
 						return i18n.t("colourForHomePage");
 					case "PROTECTED_PAGE":
@@ -59,30 +83,6 @@ export default function InfoDisplay({ cache }) {
 						return i18n.t("colourForJSONViewer");
 					case "TEXT_VIEWER":
 						return i18n.t("colourForPlainTextViewer");
-					case "ADDON_SPECIFIED":
-						return (
-							<>
-								{i18n.t("useDefaultColourForAddon")}
-								<strong>{info}</strong>
-								{i18n.t("useDefaultColourForAddonEnd")}
-							</>
-						);
-					case "ADDON_RECOM":
-						return (
-							<>
-								{i18n.t("useRecommendedColourForAddon")}
-								<strong>{info}</strong>
-								{i18n.t("useRecommendedColourForAddonEnd")}
-							</>
-						);
-					case "ADDON_DEFAULT":
-						return (
-							<>
-								{i18n.t("specifyColourForAddon")}
-								<strong>{info}</strong>
-								{i18n.t("specifyColourForAddonEnd")}
-							</>
-						);
 					case "FALLBACK_COLOUR":
 						return i18n.t("usingFallbackColour");
 					default:
