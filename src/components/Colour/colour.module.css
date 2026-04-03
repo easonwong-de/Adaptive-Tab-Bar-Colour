@@ -1,0 +1,45 @@
+.colour {
+	position: relative;
+
+	input[type="text"] {
+		display: inline-block;
+		vertical-align: middle;
+		box-sizing: border-box;
+		outline: none;
+		outline-offset: -1px;
+		border: none;
+		border-radius: var(--component-border-radius, calc(12 * var(--unit)));
+		background-color: var(--control);
+		padding-inline: calc(32 * var(--unit)) calc(8 * var(--unit));
+		width: 100%;
+		height: calc(32 * var(--unit));
+		color: var(--text-primary);
+		line-height: 100%;
+		font-family: monospace;
+
+		&:hover {
+			background-color: var(--control-hover);
+		}
+
+		&:focus-visible {
+			outline: solid 1px var(--control-hover);
+			background-color: transparent;
+		}
+	}
+
+	label {
+		position: absolute;
+		top: calc(8 * var(--unit));
+		left: calc(8 * var(--unit));
+		cursor: pointer;
+		outline: solid 1px var(--control-hover);
+		border-radius: 50%;
+		background-color: #000000;
+		width: calc(16 * var(--unit));
+		height: calc(16 * var(--unit));
+	}
+
+	input[type="color"] {
+		display: none;
+	}
+}

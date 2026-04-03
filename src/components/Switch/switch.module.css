@@ -1,0 +1,58 @@
+.switch {
+	display: flex;
+	flex-direction: row;
+	justify-content: start;
+	align-items: center;
+	gap: calc(16 * var(--unit));
+	width: 100%;
+
+	button {
+		position: relative;
+		flex: 0 0 auto;
+		border-radius: calc(8 * var(--unit));
+		background-color: var(--control);
+		width: calc(32 * var(--unit));
+		height: calc(16 * var(--unit));
+
+		&:hover {
+			background-color: var(--control-hover);
+		}
+
+		&:active {
+			background-color: var(--control-active);
+		}
+
+		&:before {
+			position: absolute;
+			top: calc(2 * var(--unit));
+			right: auto;
+			left: calc(2 * var(--unit));
+			border-radius: calc(12 * var(--unit));
+			background-color: var(--panel);
+			width: calc(12 * var(--unit));
+			height: calc(12 * var(--unit));
+			content: "";
+		}
+
+		&.selected {
+			background-color: var(--accent);
+		}
+
+		&.selected:hover {
+			background-color: var(--accent-hover);
+		}
+
+		&.selected:active {
+			background-color: var(--accent-active);
+		}
+
+		&.selected:before {
+			right: calc(2 * var(--unit));
+			left: auto;
+		}
+	}
+
+	p {
+		flex: 1 1 auto;
+	}
+}

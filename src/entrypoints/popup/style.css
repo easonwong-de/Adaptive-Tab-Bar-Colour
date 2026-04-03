@@ -1,0 +1,199 @@
+:root {
+	--unit: 0.0769rem;
+
+	--app: hsl(247, 12%, 100%);
+
+	--transparent-0: hsla(0, 0%, 0%, 10%);
+	--transparent-1: hsla(0, 0%, 0%, 15%);
+	--transparent-2: hsla(0, 0%, 0%, 20%);
+	--transparent-3: hsla(0, 0%, 0%, 25%);
+	--transparent-4: hsla(0, 0%, 0%, 30%);
+	--transparent-5: hsla(0, 0%, 0%, 35%);
+
+	--control: var(--transparent-0);
+	--control-hover: var(--transparent-1);
+	--control-active: var(--transparent-3);
+	--control-selected: var(--transparent-2);
+	--control-selected-hover: var(--transparent-4);
+
+	--text-primary: hsl(0 0% 0%);
+	--text-secondary: hsl(0 0% 20%);
+
+	--accent: hsl(216, 100%, 49%);
+
+	@media (prefers-color-scheme: dark) {
+		--app: hsl(247, 12%, 15%);
+
+		--transparent-0: hsla(0, 0%, 100%, 10%);
+		--transparent-1: hsla(0, 0%, 100%, 15%);
+		--transparent-2: hsla(0, 0%, 100%, 20%);
+		--transparent-3: hsla(0, 0%, 100%, 25%);
+		--transparent-4: hsla(0, 0%, 100%, 30%);
+		--transparent-5: hsla(0, 0%, 100%, 35%);
+
+		--text-primary: hsl(0, 0%, 100%);
+		--text-secondary: hsl(0, 0%, 80%);
+
+		--accent: hsl(185, 100%, 43%);
+	}
+}
+
+html {
+	cursor: default;
+	margin: 0;
+	padding: 0;
+	color: var(--text-primary);
+	font: menu;
+	line-height: 1.5;
+	font-family:
+		system-uibody,
+		-apple-system,
+		"SF Pro Text",
+		"SF Pro Icons",
+		"Helvetica Neue",
+		"Helvetica",
+		"Arial",
+		sans-serif;
+	user-select: none;
+	-webkit-font-smoothing: antialiased;
+	background-color: var(--app);
+	width: calc(320 * var(--unit));
+	min-width: calc(320 * var(--unit));
+	max-width: calc(320 * var(--unit));
+	font-weight: 500;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#root {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	align-items: stretch;
+	gap: calc(8 * var(--unit));
+	padding: calc(8 * var(--unit));
+	width: 100%;
+	height: 100%;
+}
+
+.background {
+	position: absolute;
+	z-index: -1;
+	transition: background-color 0.1s;
+	inset: 0;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+section {
+	overflow-wrap: break-word;
+}
+
+input,
+textarea,
+select {
+	overflow: hidden;
+	font: inherit;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+button {
+	all: unset;
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	box-sizing: border-box;
+	border-radius: calc(4 * var(--unit));
+	padding: calc(8 * var(--unit));
+	width: 100%;
+	height: calc(32 * var(--unit));
+	color: var(--text-primary);
+	text-align: start;
+
+	&:hover {
+		background-color: var(--transparent-1);
+	}
+
+	&:active {
+		background-color: var(--transparent-2);
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: calc(4 * var(--unit));
+	font: inherit;
+	font-size: inherit;
+	text-wrap: balance;
+	overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 600;
+}
+
+h4,
+h5,
+h6 {
+	color: var(--text-secondary);
+	font-size: 80%;
+}
+
+p {
+	color: var(--text-secondary);
+	font: inherit;
+	text-wrap: pretty;
+	overflow-wrap: break-word;
+}
+
+hr {
+	margin: 0;
+	border-width: 0;
+	background-color: var(--panel-active);
+	width: 100%;
+	height: calc(1 * var(--unit));
+}
+
+svg {
+	align-self: center;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: calc(1.5 * var(--unit));
+	margin: 0;
+	width: calc(16 * var(--unit));
+	height: calc(16 * var(--unit));
+}
+
+.hidden {
+	display: none !important;
+}
+
+.disabled {
+	opacity: 0.5 !important;
+	pointer-events: none !important;
+
+	* {
+		pointer-events: none !important;
+	}
+}

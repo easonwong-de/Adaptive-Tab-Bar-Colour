@@ -1,0 +1,81 @@
+.rule-section {
+	display: grid;
+	grid-template-columns:
+		minmax(0, 1fr) max-content calc(120 * var(--unit))
+		max-content;
+	gap: calc(8 * var(--unit));
+	background-color: var(--panel);
+	padding: calc(8 * var(--unit));
+
+	&.in-popup {
+		display: contents;
+		--component-border-radius: calc(4 * var(--unit));
+
+		select {
+			border-radius: calc(4 * var(--unit));
+		}
+	}
+
+	@media screen and (max-width: 550px) {
+		grid-template-columns:
+			minmax(max-content, 1fr) minmax(0, 1fr)
+			max-content;
+
+		& > :first-child {
+			grid-column: 1 / -1;
+		}
+	}
+
+	&:nth-of-type(even) {
+		background-color: var(--panel-alt);
+	}
+
+	:is(&:first-of-type) {
+		border-top-right-radius: calc(16 * var(--unit));
+		border-top-left-radius: calc(16 * var(--unit));
+	}
+
+	:is(&:last-of-type) {
+		border-bottom-right-radius: calc(16 * var(--unit));
+		border-bottom-left-radius: calc(16 * var(--unit));
+	}
+
+	select {
+		display: flex;
+		vertical-align: middle;
+		border: none;
+		border-radius: calc(12 * var(--unit));
+		background-color: var(--control);
+		padding-inline: calc(8 * var(--unit)) 0;
+		width: max-content;
+		height: calc(32 * var(--unit));
+		color: var(--text-primary);
+
+		&:hover {
+			background-color: var(--control-hover);
+		}
+
+		&:active {
+			background-color: var(--control-active);
+		}
+
+		@media screen and (max-width: 550px) {
+			width: 100%;
+		}
+	}
+
+	.addon-header {
+		display: block;
+		padding-inline-start: calc(8 * var(--unit));
+		height: calc(32 * var(--unit));
+		overflow: hidden;
+		line-height: calc(32 * var(--unit));
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.delete-button {
+		width: calc(32 * var(--unit));
+		height: calc(32 * var(--unit));
+	}
+}

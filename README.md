@@ -1,8 +1,8 @@
-![Icon](src/images/ATBC_128.png)  
+![Icon](public/icon/icon-128.png)  
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)
 ![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)
 ![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-colour?color=blue&label=version)
-![Sponsors](https://img.shields.io/badge/sponsors-25-green)
+![Sponsors](https://img.shields.io/badge/sponsors-27-green)
 
 # Adaptive Tab Bar Colour
 

@@ -1,0 +1,25 @@
+main.rule-list-tab {
+	display: flex;
+	flex-direction: column;
+
+	.add-rule-button {
+		margin-top: calc(16 * var(--unit));
+		border-radius: calc(16 * var(--unit));
+		background-color: var(--panel);
+		width: 100%;
+		height: calc(48 * var(--unit));
+		text-align: center;
+
+		&:hover {
+			background-color: var(--panel-hover);
+		}
+
+		&:active {
+			background-color: var(--panel-active);
+		}
+
+		&:only-child {
+			margin-top: 0rem;
+		}
+	}
+}
