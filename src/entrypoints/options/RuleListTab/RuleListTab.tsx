@@ -1,9 +1,15 @@
 import { useSyncExternalStore } from "react";
 import clsx from "clsx";
 import Rule from "@/components/Rule/Rule";
+import type preference from "@/utils/preference";
 import styles from "./rule.list.module.css";
 
-export default function RuleListTab({ pref, ready }) {
+interface RuleListTabProps {
+	pref: preference;
+	ready: boolean;
+}
+
+export default function RuleListTab({ pref, ready }: RuleListTabProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
@@ -16,15 +22,16 @@ export default function RuleListTab({ pref, ready }) {
 				(!ready || pref.compatibilityMode) && "disabled",
 			)}
 		>
-			{Object.keys(pref.ruleList).map((id) => {
-				if (pref.ruleList[id])
-					return (
-						<Rule
-							key={`rule${id}`}
-							rule={pref.ruleList[id]}
-							onChange={(newRule) => pref.setRule(id, newRule)}
-						/>
-					);
+			{Object.entries(pref.ruleList).map(([rawId, rule]) => {
+				if (!rule) return null;
+				const id = Number(rawId);
+				return (
+					<Rule
+						key={`rule${id}`}
+						rule={rule}
+						onChange={(newRule) => pref.setRule(id, newRule)}
+					/>
+				);
 			})}
 			<button
 				className={styles.addRuleButton}

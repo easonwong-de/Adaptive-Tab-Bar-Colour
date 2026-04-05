@@ -30,17 +30,30 @@ import {
 	addMessageListener,
 	addSchemeChangeListener,
 	addTabChangeListener,
-	broadcastMessage,
 	getActiveTabList,
 	getAddonId,
 	getAddonName,
 	getCurrentScheme,
+	getCurrentWindowId,
+	sendMessageToPopup,
 	getSystemScheme,
 	sendMessageToTab,
 	updateBrowserTheme,
 } from "@/utils/utility.js";
+import type {
+	ApplyThemeResult,
+	Scheme,
+	Rule,
+	RuleQueryResult,
+	MessageForBackground,
+	MessageForTab,
+	TabColourData,
+	MetaQueryResult,
+	Theme,
+	MessageForPopup,
+} from "@/utils/types.js";
 
-/** Preference */
+/** Preference instance. */
 const pref = new preference();
 
 /** Page colour of Firefox internal page. */
@@ -79,17 +92,9 @@ const browserColour = Object.freeze({
 		return new colour().rgba(33, 33, 33, 1);
 	},
 	get JSONVIEWER() {
-		const resolved = {
-			light:
-				getSystemScheme() === "light"
-					? new colour().rgba(249, 249, 250, 1)
-					: undefined,
-			dark:
-				getSystemScheme() === "dark"
-					? new colour().rgba(12, 12, 13, 1)
-					: undefined,
-		};
-		return resolved[cache.scheme] || resolved[cache.reversedScheme];
+		return getSystemScheme() === "light"
+			? new colour().rgba(249, 249, 250, 1)
+			: new colour().rgba(12, 12, 13, 1);
 	},
 	get DEFAULT() {
 		return cache.scheme === "light"
@@ -98,21 +103,24 @@ const browserColour = Object.freeze({
 	},
 });
 
-/** Cache */
-const cache = {
-	/** `windowId: { id, rule: {headerType, header, type, value }}` */
+/** Runtime cache. */
+const cache: {
+	rule: Record<number, RuleQueryResult>;
+	meta: Record<number, MetaQueryResult>;
+	theme: Record<number, ApplyThemeResult>;
+	scheme: Scheme;
+	readonly reversedScheme: Scheme;
+	clear: () => Promise<void>;
+} = {
 	rule: {},
-	/** `windowId: { colour, reason, info }` */
 	meta: {},
-	/** `windowId: { popupColour, scheme, corrected }` */
 	theme: {},
-	/** The preferred colour scheme of current setup, `light` or `dark` */
 	scheme: "light",
 	/** The reversed colour theme. */
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
 	},
-	/** Update `scheme` & clear `info` and `rule`. */
+	/** Updates `scheme` and clears `rule`, `meta`, and `theme`. */
 	async clear() {
 		this.scheme = await getCurrentScheme();
 		this.rule = {};
@@ -124,34 +132,43 @@ const cache = {
 /**
  * Handles incoming messages based on their header.
  *
- * @async
- * @param {object} message - The message object.
- * @param {runtime.MessageSender} sender - The message sender.
- * @returns {Promise<any>} Response data or acknowledgment.
+ * @param {MessageForBackground} message - The runtime message payload.
+ * @param {Browser.runtime.MessageSender} sender - Metadata about the sender.
+ * @returns {Promise<unknown>} Message response payload.
  */
-async function handleMessage(message, sender) {
+async function handleMessage(
+	message: MessageForBackground,
+	sender: Browser.runtime.MessageSender,
+): Promise<unknown> {
 	const tab = sender.tab;
 	const header = message.header;
 	switch (header) {
 		case "SCRIPT_READY":
-			if (tab) updateTab(tab);
+			if (tab === undefined) break;
+			updateTab(tab);
 			break;
 		case "UPDATE_COLOUR":
-			if (!tab) break;
-			const tabMeta = parseTabColour(
-				cache.rule[tab.windowId].rule,
+			if (tab === undefined) break;
+			const windowId = tab.windowId;
+			const meta = parseTabColour(
 				message.colour,
+				cache.rule[windowId]?.rule ?? null,
 			);
-			setFrameColour(tab, tabMeta);
+			cache.meta[windowId] = meta;
+			cache.theme[tab.windowId] = setFrameColour(tab, meta);
+			sendMessageToPopup({ header: "CACHE_UPDATED" });
 			break;
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
-		case "CACHE_REQUEST":
+		case "CACHE_REQUEST": {
+			const windowId = await getCurrentWindowId(tab);
+			if (windowId === undefined) return undefined;
 			return {
-				rule: cache.rule[message.windowId],
-				meta: cache.meta[message.windowId],
-				theme: cache.theme[message.windowId],
+				rule: cache.rule[windowId],
+				meta: cache.meta[windowId],
+				theme: cache.theme[windowId],
 			};
+		}
 		default:
 			await run();
 	}
@@ -161,9 +178,9 @@ async function handleMessage(message, sender) {
 /**
  * Triggers colour update for all active tabs.
  *
- * @async
+ * @returns {Promise<void>} Resolves when all active tabs are processed.
  */
-async function run() {
+async function run(): Promise<void> {
 	await cache.clear();
 	(await getActiveTabList()).forEach(updateTab);
 }
@@ -171,63 +188,69 @@ async function run() {
 /**
  * Updates the colour for a tab and caches its meta information.
  *
- * @async
- * @param {tabs.Tab} tab - The tab to update.
+ * @param {Browser.tabs.Tab} tab - The target tab.
+ * @returns {Promise<void>} Resolves when tab processing is completed.
  */
-async function updateTab(tab) {
+async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	const windowId = tab.windowId;
-	const rule = pref.getRule(tab.url);
-	cache.rule[windowId] = rule;
-	const meta = await getTabMeta(rule.rule, tab);
+	const ruleQueryResult = pref.getRule(tab.url);
+	cache.rule[windowId] = ruleQueryResult;
+	const meta = await getTabMeta(tab, ruleQueryResult.rule);
 	cache.meta[windowId] = meta;
 	cache.theme[windowId] = setFrameColour(tab, meta);
+	sendMessageToPopup({ header: "CACHE_UPDATED" });
 }
 
 /**
- * Determines the appropriate colour meta for a tab.
+ * Determines the appropriate colour metadata for a tab.
  *
- * @async
- * @param {object} rule - The rule object.
- * @param {tabs.Tab} tab - The tab to extract colour from.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>} Tab
- *   metadata.
+ * @param {Browser.tabs.Tab} tab - Target browser tab.
+ * @param {Rule} rule - Matched rule for the tab URL.
+ * @returns {Promise<MetaQueryResult>} Resolved metadata used for theme application.
  */
-async function getTabMeta(rule, tab) {
-	try {
-		const tabColour = await sendMessageToTab(tab.id, {
-			header: "GET_COLOUR",
-			dynamic: rule?.type === "COLOUR" ? false : pref.dynamic,
-			query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
-		});
-		return parseTabColour(rule, tabColour);
-	} catch (error) {
+async function getTabMeta(
+	tab: Browser.tabs.Tab,
+	rule: Rule,
+): Promise<MetaQueryResult> {
+	const getFallbackMeta = async (): Promise<MetaQueryResult> => {
 		console.warn("Failed to connect to", tab.url);
 		if (rule?.headerType === "URL" && rule?.type === "COLOUR") {
 			return {
 				colour: new colour(rule.value),
 				reason: "COLOUR_SPECIFIED",
 			};
-		} else return await getProtectedPageMeta(tab);
+		}
+		return await getProtectedPageMeta(tab);
+	};
+
+	if (!tab.id) return await getFallbackMeta();
+	try {
+		const message: MessageForTab = {
+			header: "GET_COLOUR",
+			dynamic: rule?.type === "COLOUR" ? false : pref.dynamic,
+			query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
+		};
+		const tabColour = await sendMessageToTab<TabColourData>(
+			tab.id,
+			message,
+		);
+		return parseTabColour(tabColour, rule);
+	} catch (error) {
+		return await getFallbackMeta();
 	}
 }
 
 /**
- * Parses tab colour data based on rule.
+ * Parses tab colour data according to rule configuration.
  *
- * @param {object} rule - The rule object.
- * @param {object} tabColour - The tab colour data.
- * @param {{ light?: string; dark?: string }} tabColour.theme - Theme colour
- *   data.
- * @param {{ colour: string; opacity: string; filter: string }[]} tabColour.page
- *   - Page element colour data.
- *
- * @param {{ colour: string; opacity: string; filter: string }} [tabColour.query]
- *   - Query selector result.
- *
- * @param {boolean} tabColour.image - If the tab is image viewer.
- * @returns {{ colour: colour; reason: string; info?: string }} Parsed metadata.
+ * @param {TabColourData} colourData - Colour data from content script.
+ * @param {Rule} rule - Matched rule or `null`.
+ * @returns {MetaQueryResult} Parsed metadata for theme application.
  */
-function parseTabColour(rule, { theme, page, query, image }) {
+function parseTabColour(
+	{ theme, page, query, image }: TabColourData,
+	rule: Rule,
+): MetaQueryResult {
 	const parseThemeColour = () => new colour(theme[cache.scheme]);
 	const parsePageColour = () => {
 		if (image) return browserColour.IMAGEVIEWER;
@@ -303,14 +326,14 @@ function parseTabColour(rule, { theme, page, query, image }) {
 }
 
 /**
- * Determines the colour for a protected page.
+ * Determines the colour metadata for a protected page.
  *
- * @async
- * @param {tabs.Tab} tab - The tab.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>}
- *   Metadata.
+ * @param {Browser.tabs.Tab} tab - The protected tab.
+ * @returns {Promise<MetaQueryResult>} Protected-page metadata.
  */
-async function getProtectedPageMeta(tab) {
+async function getProtectedPageMeta(
+	tab: Browser.tabs.Tab,
+): Promise<MetaQueryResult> {
 	if (!tab.url) {
 		return {
 			colour: browserColour.FALLBACK,
@@ -335,9 +358,18 @@ async function getProtectedPageMeta(tab) {
 		return getAboutPageMeta(url.pathname);
 	} else if (url.protocol === "moz-extension:") {
 		const addonId = await getAddonId(url.href);
-		const rule = pref.getRule(addonId);
-		cache.rule[tab.windowId] = rule;
-		return await getAddonPageMeta(addonId, rule);
+		if (addonId) {
+			const ruleQueryResult = pref.getRule(addonId);
+			cache.rule[tab.windowId] = ruleQueryResult;
+			return await getAddonPageMeta(addonId, ruleQueryResult);
+		} else {
+			cache.rule[tab.windowId] = { id: 0, query: "", rule: null };
+			return {
+				colour: browserColour.ADDON,
+				reason: "ADDON_DEFAULT",
+				info: i18n.t("addonNotFound"),
+			};
+		}
 	} else if (url.hostname in mozillaPageColour) {
 		return getMozillaPageMeta(url.hostname);
 	} else if (url.protocol === "view-source:") {
@@ -402,22 +434,30 @@ async function getProtectedPageMeta(tab) {
 }
 
 /**
- * Gets the colour for an about: page.
+ * Gets the colour metadata for an `about:` page.
  *
- * @param {string} pathname - The pathname of the page.
- * @returns {{ colour: colour; reason: string }} Metadata.
+ * @param {string} pathname - `about:` page pathname.
+ * @returns {MetaQueryResult} Metadata for the page.
  */
-function getAboutPageMeta(pathname) {
-	if (aboutPageColour[pathname]?.[cache.scheme]) {
-		const val = aboutPageColour[pathname][cache.scheme];
+function getAboutPageMeta(pathname: string): MetaQueryResult {
+	const currentSchemeValue = aboutPageColour[pathname]?.[cache.scheme];
+	if (currentSchemeValue) {
 		return {
-			colour: browserColour[val] || new colour(val),
+			colour:
+				(browserColour as Record<string, colour | undefined>)[
+					currentSchemeValue
+				] || new colour(currentSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
-	} else if (aboutPageColour[pathname]?.[cache.reversedScheme]) {
-		const val = aboutPageColour[pathname][cache.reversedScheme];
+	}
+	const reversedSchemeValue =
+		aboutPageColour[pathname]?.[cache.reversedScheme];
+	if (reversedSchemeValue) {
 		return {
-			colour: browserColour[val] || new colour(val),
+			colour:
+				(browserColour as Record<string, colour | undefined>)[
+					reversedSchemeValue
+				] || new colour(reversedSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -429,22 +469,30 @@ function getAboutPageMeta(pathname) {
 }
 
 /**
- * Gets the colour for a Mozilla domain page.
+ * Gets the colour metadata for a Mozilla domain page.
  *
- * @param {string} hostname - The hostname of the page.
- * @returns {{ colour: colour; reason: string }} Metadata.
+ * @param {string} hostname - Page hostname.
+ * @returns {MetaQueryResult} Metadata for the page.
  */
-function getMozillaPageMeta(hostname) {
-	if (mozillaPageColour[hostname]?.[cache.scheme]) {
-		const val = mozillaPageColour[hostname][cache.scheme];
+function getMozillaPageMeta(hostname: string): MetaQueryResult {
+	const currentSchemeValue = mozillaPageColour[hostname]?.[cache.scheme];
+	if (currentSchemeValue) {
 		return {
-			colour: browserColour[val] || new colour(val),
+			colour:
+				(browserColour as Record<string, colour | undefined>)[
+					currentSchemeValue
+				] || new colour(currentSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
-	} else if (mozillaPageColour[hostname]?.[cache.reversedScheme]) {
-		const val = mozillaPageColour[hostname][cache.reversedScheme];
+	}
+	const reversedSchemeValue =
+		mozillaPageColour[hostname]?.[cache.reversedScheme];
+	if (reversedSchemeValue) {
 		return {
-			colour: browserColour[val] || new colour(val),
+			colour:
+				(browserColour as Record<string, colour | undefined>)[
+					reversedSchemeValue
+				] || new colour(reversedSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -456,17 +504,18 @@ function getMozillaPageMeta(hostname) {
 }
 
 /**
- * Gets the colour for an extension page.
+ * Gets the colour metadata for an extension page.
  *
- * @async
- * @param {string} addonId - The ID of the add-on.
- * @param {object} rule - The rule object.
- * @returns {Promise<{ colour: colour; reason: string; info?: string }>}
- *   Metadata.
+ * @param {string} addonId - The extension ID.
+ * @param {RuleQueryResult} rule - Rule query result.
+ * @returns {Promise<MetaQueryResult>} Metadata for the extension page.
  */
-async function getAddonPageMeta(addonId, rule) {
+async function getAddonPageMeta(
+	addonId: string,
+	rule: RuleQueryResult,
+): Promise<MetaQueryResult> {
 	const addonName = await getAddonName(addonId);
-	if (rule.id !== 0) {
+	if (rule.id !== 0 && rule.rule?.type === "COLOUR") {
 		return {
 			colour: new colour(rule.rule.value),
 			reason: "ADDON_SPECIFIED",
@@ -498,18 +547,14 @@ async function getAddonPageMeta(addonId, rule) {
 /**
  * Applies the colour to the browser frame and updates cache.
  *
- * @param {tabs.Tab} tab - The active tab.
- * @param {{ colour: colour; reason: string; info?: string }} meta - The tab
- *   metadata.
- * @returns {{
- * 	popup: string;
- * 	scheme: "light" | "dark";
- * 	corrected: boolean;
- * }}
- *   Theme metadata.
+ * @param {Browser.tabs.Tab} tab - Target tab.
+ * @param {MetaQueryResult} meta - Parsed tab metadata.
+ * @returns {ApplyThemeResult} Theme cache payload when applied.
  */
-function setFrameColour(tab, meta) {
-	if (!tab?.active || !meta.colour) return;
+function setFrameColour(
+	tab: Browser.tabs.Tab,
+	meta: MetaQueryResult,
+): ApplyThemeResult {
 	const windowId = tab.windowId;
 	const correctionResult = meta.colour.contrastCorrection(
 		cache.scheme,
@@ -518,19 +563,18 @@ function setFrameColour(tab, meta) {
 		pref.minContrast_dark,
 	);
 	const colour = correctionResult.colour;
-	const scheme = correctionResult.scheme;
+	const scheme = correctionResult.scheme as Scheme;
 	const corrected = correctionResult.corrected;
 	pref.compatibilityMode
 		? setTabThemeColour(tab, colour)
 		: applyTheme(windowId, colour, scheme);
 	const themeCache = {
-		popup: colour
+		popupColour: colour
 			.brightness((scheme === "light" ? -1.5 : 1) * pref.popup)
 			.toRGBA(),
 		scheme: scheme,
 		corrected: corrected,
 	};
-	broadcastMessage({ header: "CACHE_UPDATED" });
 	return themeCache;
 }
 
@@ -539,16 +583,21 @@ function setFrameColour(tab, meta) {
  *
  * Used when the theme API is not supported or compatibility mode is enabled.
  *
- * @async
- * @param {tabs.Tab} tab - The tab.
- * @param {colour} colour - The colour to apply.
+ * @param {Browser.tabs.Tab} tab - Target tab.
+ * @param {colour} colour - Colour to apply.
+ * @returns {Promise<void>} Resolves when message delivery is attempted.
  */
-async function setTabThemeColour(tab, colour) {
+async function setTabThemeColour(
+	tab: Browser.tabs.Tab,
+	colour: colour,
+): Promise<void> {
+	if (!tab.id) return;
 	try {
-		await sendMessageToTab(tab.id, {
+		const message: MessageForTab = {
 			header: "SET_THEME_COLOUR",
 			colour: colour.brightness(pref.tabbar).toRGBA(),
-		});
+		};
+		await sendMessageToTab(tab.id, message);
 	} catch (error) {
 		console.warn("Could not apply theme colour to tab:", tab.url);
 	}
@@ -557,16 +606,17 @@ async function setTabThemeColour(tab, colour) {
 /**
  * Applies a browser theme to a window.
  *
- * @param {number} windowId - The window ID.
- * @param {colour} colour - The base colour.
- * @param {"light" | "dark"} scheme - The colour scheme.
+ * @param {number} windowId - Target browser window ID.
+ * @param {colour} colour - Base colour.
+ * @param {Scheme} scheme - Target colour scheme.
+ * @returns {void}
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
  */
-function applyTheme(windowId, colour, scheme) {
+function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 	if (scheme === "light") {
 		const textColour = "#000000";
 		const secondaryColour = "#0000001c";
-		const theme = {
+		const theme: Theme = {
 			colors: {
 				// adaptive
 				button_background_active: colour
@@ -639,7 +689,7 @@ function applyTheme(windowId, colour, scheme) {
 	} else if (scheme === "dark") {
 		const textColour = "#ffffff";
 		const secondaryColour = "#ffffff1c";
-		const theme = {
+		const theme: Theme = {
 			colors: {
 				// adaptive
 				button_background_active: colour

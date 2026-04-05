@@ -1,8 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import clsx from "clsx";
 import { clamp } from "@/utils/utility.js";
-import Icon from "../Icon/Icon.jsx";
+import Icon from "../Icon/Icon.js";
 import styles from "./slider.module.css";
+
+interface SliderProps {
+	className?: string;
+	title?: string;
+	warning?: string;
+	minValue?: number;
+	maxValue?: number;
+	minorStep?: number;
+	majorStep?: number;
+	value?: number;
+	leftIconType?: Parameters<typeof Icon>[0]["type"];
+	rightIconType?: Parameters<typeof Icon>[0]["type"];
+	onChange: (nextValue: number) => void;
+	onDisplay?: (value: number) => string;
+}
 
 export default function Slider({
 	className = "",
@@ -17,18 +32,23 @@ export default function Slider({
 	rightIconType = "sun",
 	onChange,
 	onDisplay = (value) => `${value} %`,
-}) {
-	const rafRef = useRef(null);
-	const rectRef = useRef(null);
-	const trackRef = useRef(null);
-	const dragOffsetRef = useRef(0);
+}: SliderProps) {
+	const rafRef = useRef<number | null>(null);
+	const rectRef = useRef<DOMRect | null>(null);
+	const trackRef = useRef<HTMLDivElement | null>(null);
+	const dragOffsetRef = useRef({ offset: 0, thumbWidth: 0 });
 	const [isDragging, setIsDragging] = useState(false);
 	const [transientValue, setTransientValue] = useState(value);
 	const currentValue = isDragging ? transientValue : value;
 
-	useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
+	useEffect(
+		() => () => {
+			if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+		},
+		[],
+	);
 
-	const onDown = () => {
+	const onDown = (): void => {
 		const newValue = clamp(
 			minValue,
 			(Math.ceil(value / majorStep) - 1) * majorStep,
@@ -37,9 +57,9 @@ export default function Slider({
 		if (newValue !== value) onChange(newValue);
 	};
 
-	const onDrag = (clientX) => {
+	const onDrag = (clientX: number): void => {
 		const rect =
-			rectRef.current || trackRef.current?.getBoundingClientRect();
+			rectRef.current ?? trackRef.current?.getBoundingClientRect();
 		if (!rect) return;
 
 		const { offset, thumbWidth } = dragOffsetRef.current;
@@ -55,7 +75,7 @@ export default function Slider({
 			maxValue,
 		);
 		if (newValue !== currentValue) {
-			if (rafRef.current) cancelAnimationFrame(rafRef.current);
+			if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
 			rafRef.current = requestAnimationFrame(() => {
 				setTransientValue(newValue);
 				onChange(newValue);
@@ -63,12 +83,12 @@ export default function Slider({
 		}
 	};
 
-	const onDragStop = () => {
+	const onDragStop = (): void => {
 		rectRef.current = null;
 		setIsDragging(false);
 	};
 
-	const onUp = () => {
+	const onUp = (): void => {
 		const newValue = clamp(
 			minValue,
 			(Math.floor(value / majorStep) + 1) * majorStep,
@@ -89,9 +109,12 @@ export default function Slider({
 						styles.track,
 						isDragging && styles.dragging,
 					)}
-					style={{
-						"--percent": (value - minValue) / (maxValue - minValue),
-					}}
+					style={
+						{
+							"--percent":
+								(value - minValue) / (maxValue - minValue),
+						} as CSSProperties
+					}
 				>
 					<div className={styles.fill} />
 					<div
@@ -99,7 +122,8 @@ export default function Slider({
 						onPointerDown={(e) => {
 							e.currentTarget.setPointerCapture(e.pointerId);
 							rectRef.current =
-								trackRef.current.getBoundingClientRect();
+								trackRef.current?.getBoundingClientRect() ??
+								null;
 							const thumbRect =
 								e.currentTarget.getBoundingClientRect();
 							dragOffsetRef.current = {

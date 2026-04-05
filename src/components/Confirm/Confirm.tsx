@@ -1,15 +1,28 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type ReactNode } from "react";
 import styles from "./confirm.module.css";
 
-export default function Confirm({ children, confirmText, onConfirm }) {
+interface ConfirmProps {
+	children: (args: {
+		isOpen: boolean;
+		setIsOpen: (isOpen: boolean) => void;
+	}) => ReactNode;
+	confirmText: string;
+	onConfirm: () => void;
+}
+
+export default function Confirm({
+	children,
+	confirmText,
+	onConfirm,
+}: ConfirmProps) {
 	const [isOpen, setIsOpen] = useState(false);
-	const containerRef = useRef(null);
+	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		const onClose = (event) => {
+		const onClose = (event: MouseEvent) => {
 			if (
 				containerRef.current &&
-				!containerRef.current.contains(event.target)
+				!containerRef.current.contains(event.target as Node)
 			) {
 				setIsOpen(false);
 			}

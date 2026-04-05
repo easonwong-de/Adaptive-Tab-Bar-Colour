@@ -1,6 +1,14 @@
 import styles from "./glyph.module.css";
 
-export default function Glyph({ highlight }) {
+type GlyphHighlight =
+	| "tab"
+	| "toolbar"
+	| "tab-bar"
+	| "sidebar"
+	| "popup"
+	| "url-bar";
+
+export default function Glyph({ highlight }: { highlight: GlyphHighlight }) {
 	return (
 		<svg
 			className={styles.glyph}

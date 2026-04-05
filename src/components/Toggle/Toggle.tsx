@@ -1,12 +1,19 @@
 import clsx from "clsx";
 import styles from "./toggle.module.css";
 
+interface ToggleProps {
+	isTabToggle?: boolean;
+	itemList: string[];
+	activeIndex?: number;
+	onChange: (newIndex: number) => void;
+}
+
 export default function Toggle({
 	isTabToggle = false,
 	itemList,
 	activeIndex = 0,
 	onChange,
-}) {
+}: ToggleProps) {
 	return (
 		<div className={clsx(styles.toggle, isTabToggle && styles.tabToggle)}>
 			{itemList.map((item, index) => {

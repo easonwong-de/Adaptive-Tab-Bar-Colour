@@ -2,9 +2,15 @@ import { useSyncExternalStore } from "react";
 import clsx from "clsx";
 import Glyph from "@/components/Glyph/Glyph";
 import Slider from "@/components/Slider/Slider";
+import type preference from "@/utils/preference";
 import styles from "./theme.builder.module.css";
 
-export default function ThemeBuilderTab({ pref, ready }) {
+interface ThemeBuilderTabProps {
+	pref: preference;
+	ready: boolean;
+}
+
+export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
@@ -133,7 +139,7 @@ export default function ThemeBuilderTab({ pref, ready }) {
 				<section>
 					<Glyph highlight="sidebar" />
 					<div>
-						<h3>{i18n.t("Sidebar")}</h3>
+						<h3>{i18n.t("sidebar")}</h3>
 						<Slider
 							title={i18n.t("background")}
 							value={pref.sidebar}

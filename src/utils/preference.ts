@@ -1,18 +1,26 @@
 import { addonVersion, defaultPref } from "./constants.js";
 import { supportsThemeAPI } from "./utility.js";
 import colour from "./colour.js";
+import type {
+	PreferenceContent,
+	Rule,
+	RuleList,
+	RuleQueryResult,
+} from "./types.js";
 
 export default class preference {
-	/** The content of the preference */
-	#content = { ...defaultPref };
+	/** The content of the preference. */
+	#content: PreferenceContent = { ...defaultPref };
 
-	/** The listener for preference changes */
-	#listener = () => {};
+	/** The listener for preference changes. */
+	#listener: () => void = () => {};
 
-	/** State for debouncing storage writes */
-	#state = {
+	/** State for debouncing storage writes. */
+	#state: {
+		lastWrite: number;
+		writeTimeout?: ReturnType<typeof setTimeout>;
+	} = {
 		lastWrite: 0,
-		writeTimeout: null,
 	};
 
 	/**
@@ -20,7 +28,7 @@ export default class preference {
 	 *
 	 * @async
 	 */
-	async initialise() {
+	async initialise(): Promise<void> {
 		const { result, removedKeys } = this.#normalise(
 			await browser.storage.local.get(),
 		);
@@ -33,7 +41,10 @@ export default class preference {
 		browser.storage.onChanged.addListener((changes, area) => {
 			if (area !== "local") return;
 			const newLastSave = changes.lastSave?.newValue;
-			if (newLastSave && newLastSave > this.#content.lastSave) {
+			if (
+				typeof newLastSave === "number" &&
+				newLastSave > this.#content.lastSave
+			) {
 				for (const key in changes) {
 					if (key in this.#content) {
 						this.#content[key] = changes[key].newValue;
@@ -47,11 +58,10 @@ export default class preference {
 	/**
 	 * Resets preferences to default values.
 	 *
-	 * @async
 	 * @param {string[]} [keys] - The preference keys to reset. If undefined,
 	 *   resets all.
 	 */
-	async reset(keys = undefined) {
+	async reset(keys?: string[]): Promise<void> {
 		if (keys) {
 			for (const key of keys)
 				if (key in defaultPref) this.#set(key, defaultPref[key]);
@@ -62,13 +72,13 @@ export default class preference {
 	/**
 	 * Saves preferences to storage.
 	 *
-	 * @async
 	 * @private
 	 */
-	async #save() {
+	async #save(): Promise<void> {
 		this.#content.lastSave = Date.now();
 		this.syncUI();
-		if (this.#state.writeTimeout) clearTimeout(this.#state.writeTimeout);
+		if (this.#state.writeTimeout !== undefined)
+			clearTimeout(this.#state.writeTimeout);
 		this.#state.writeTimeout = setTimeout(
 			async () => {
 				this.#state.lastWrite = Date.now();
@@ -85,7 +95,7 @@ export default class preference {
 	 * @param {string} key - The preference key.
 	 * @param {any} value - The value.
 	 */
-	#set(key, value) {
+	#set(key: string, value: any): void {
 		if (typeof value !== typeof defaultPref[key]) value = defaultPref[key];
 		switch (key) {
 			case "tabbar":
@@ -128,10 +138,10 @@ export default class preference {
 	/**
 	 * Validates a rule object structure.
 	 *
-	 * @param {object} rule - The rule to validate.
+	 * @param {Rule} rule - The rule to validate.
 	 * @returns {boolean} `true` if the rule is valid.
 	 */
-	#validateRule(rule) {
+	#validateRule(rule: Rule): boolean {
 		return (
 			rule === null ||
 			(typeof rule === "object" &&
@@ -155,12 +165,17 @@ export default class preference {
 	 *
 	 * @private
 	 * @param {number} num - The number to validate.
-	 * @param {number} min - The minimum allowed value.
-	 * @param {number} max - The maximum allowed value.
-	 * @param {number} step - The step size for rounding.
+	 * @param {{ min: number; max: number; step: number }} range - Numeric
+	 *   constraints.
+	 * @param {number} range.min - The minimum allowed value.
+	 * @param {number} range.max - The maximum allowed value.
+	 * @param {number} range.step - The step size for rounding.
 	 * @returns {number} The validated and adjusted number.
 	 */
-	#normaliseNumericPref(num, { min, max, step }) {
+	#normaliseNumericPref(
+		num: number,
+		{ min, max, step }: { min: number; max: number; step: number },
+	): number {
 		if (-1 < num && num < 1) num = Math.round(num * 100);
 		num = Math.max(min, Math.min(max, num));
 		const remainder = (num - min) % step;
@@ -176,106 +191,52 @@ export default class preference {
 	 * Normalises and migrates preferences from older versions.
 	 *
 	 * @private
-	 * @param {object} content - The stored preference content.
-	 * @returns {{ result: object; removedKeys: string[] }} The normalised
-	 *   preferences and removed keys.
+	 * @param {Record<string, unknown>} content - The stored preference content.
+	 * @returns {{ result: PreferenceContent; removedKeys: string[] }} The
+	 *   normalised preferences and removed keys.
 	 */
-	#normalise(content) {
-		if (
-			!this.#content.version ||
-			this.#isOlderThan([2, 0]) ||
-			JSON.stringify(this.#content.version) === "[2,2,1]"
-		) {
-			return { result: { ...defaultPref }, removedKeys: [] };
-		} else {
-			const result = { ...defaultPref, ...content };
-			if (this.#isOlderThan([2, 2])) {
-				this.#content.allowDarkLight = true;
-				this.#content.dynamic = true;
-				this.#content.noThemeColour = true;
-				const siteList = {};
-				let id = 1;
-				for (const site in result.siteList) {
-					const policy = result.siteList[site];
-					if (typeof policy !== "string") {
-						continue;
-					} else if (policy === "IGNORE_THEME") {
-						siteList[id++] = {
-							headerType: "URL",
-							header: site,
-							type: "THEME_COLOUR",
-							value: false,
-						};
-					} else if (policy === "UN_IGNORE_THEME") {
-						siteList[id++] = {
-							headerType: "URL",
-							header: site,
-							type: "THEME_COLOUR",
-							value: true,
-						};
-					} else if (policy.startsWith("QS_")) {
-						siteList[id++] = {
-							headerType: "URL",
-							header: site,
-							type: "QUERY_SELECTOR",
-							value: policy.replace("QS_", ""),
-						};
-					} else if (site.startsWith("Add-on ID: ")) {
-						siteList[id++] = {
-							headerType: "ADDON_ID",
-							header: site.replace("Add-on ID: ", ""),
-							type: "COLOUR",
-							value: new colour(policy, false).toHex(),
-						};
-					} else {
-						siteList[id++] = {
-							headerType: "URL",
-							header: site,
-							type: "COLOUR",
-							value: new colour(policy, false).toHex(),
-						};
-					}
-				}
-				result.siteList = siteList;
+	#normalise(content: Record<string, unknown>): {
+		result: PreferenceContent;
+		removedKeys: string[];
+	} {
+		const storedVersion = Array.isArray(content.version)
+			? (content.version as number[])
+			: [];
+		const migrateFrom = (version: number[]): boolean => {
+			const maxLength = Math.max(storedVersion.length, version.length);
+			for (let i = 0; i < maxLength; i++) {
+				const current = storedVersion[i] ?? 0;
+				const target = version[i] ?? 0;
+				if (current !== target) return current < target;
 			}
-			if (this.#isOlderThan([2, 4])) {
-				browser.theme.reset();
-				if (result.minContrast_light === 165)
-					result.minContrast_light = 90;
-			}
-			if (this.#isOlderThan([3, 4])) {
-				if (result.siteList) result.ruleList = result.siteList;
-			}
-			const removedKeys = [];
-			for (const key in result) {
-				if (!(key in defaultPref)) {
-					delete result[key];
-					removedKeys.push(key);
-				}
-			}
-			result.version = addonVersion;
-			return { result, removedKeys };
+			return false;
+		};
+		if (!content.version || migrateFrom([2, 2, 1])) {
+			return {
+				result: { ...defaultPref },
+				removedKeys: [],
+			};
 		}
-	}
-
-	/**
-	 * Checks if the current preference version is older than the given version.
-	 *
-	 * @private
-	 * @param {number[]} version - The version array to compare against.
-	 * @returns {boolean} `true` if older, `false` otherwise.
-	 */
-	#isOlderThan(version) {
-		const currentVersion = this.#content.version || [];
-		for (
-			let i = 0;
-			i < Math.max(currentVersion.length, version.length);
-			i++
-		) {
-			if ((currentVersion[i] || 0) !== (version[i] || 0))
-				return (currentVersion[i] || 0) < (version[i] || 0);
+		const result: Record<string, unknown> = {
+			...defaultPref,
+			...content,
+		};
+		if (migrateFrom([2, 4])) {
+			browser.theme?.reset?.();
+			if (result.minContrast_light === 165) result.minContrast_light = 90;
 		}
-		return false;
+		if (migrateFrom([3, 4]) && result.siteList) {
+			result.ruleList = result.siteList as RuleList;
+		}
+		const removedKeys: string[] = [];
+		for (const key in result) {
+			if (!(key in defaultPref)) {
+				delete result[key];
+				removedKeys.push(key);
+			}
+		}
+		result.version = addonVersion;
+		return { result: result as PreferenceContent, removedKeys };
 	}
 
 	/**
@@ -283,18 +244,17 @@ export default class preference {
 	 *
 	 * @returns {string} The JSON string.
 	 */
-	exportJSON() {
+	exportJSON(): string {
 		return JSON.stringify(this.#content);
 	}
 
 	/**
 	 * Imports preferences from JSON.
 	 *
-	 * @async
 	 * @param {string} jsonString - The JSON string.
 	 * @returns {Promise<boolean>} `true` if successful.
 	 */
-	async importPref(jsonString) {
+	async importPref(jsonString: string): Promise<boolean> {
 		try {
 			const parsedPref = this.#normalise(JSON.parse(jsonString)).result;
 			for (const key in parsedPref) this.#set(key, parsedPref[key]);
@@ -308,10 +268,10 @@ export default class preference {
 	/**
 	 * Registers the listener for preference changes.
 	 *
-	 * @param {Function} listener - The callback function.
-	 * @returns {Function} A function to remove the listener.
+	 * @param {() => void} listener - The callback function.
+	 * @returns {() => void} A function to remove the listener.
 	 */
-	setOnChangeListener(listener) {
+	setOnChangeListener(listener: () => void): () => void {
 		this.#listener = listener;
 		return () => (this.#listener = () => {});
 	}
@@ -326,17 +286,16 @@ export default class preference {
 	 *
 	 * @returns {number} Timestamp in ms.
 	 */
-	getLastSave() {
+	getLastSave(): number {
 		return this.#content.lastSave;
 	}
 
 	/**
 	 * Adds a rule to the rule list.
 	 *
-	 * @async
-	 * @param {object} rule - The rule object.
+	 * @param {Rule} rule - The rule object.
 	 */
-	async addRule(rule) {
+	async addRule(rule: Rule) {
 		let id = 1;
 		while (id in this.#content.ruleList) id++;
 		await this.setRule(id, rule);
@@ -345,11 +304,10 @@ export default class preference {
 	/**
 	 * Sets a rule by ID.
 	 *
-	 * @async
 	 * @param {number} id - The rule ID.
-	 * @param {object} rule - The rule object.
+	 * @param {Rule} rule - The rule object.
 	 */
-	async setRule(id, rule) {
+	async setRule(id: number, rule: Rule) {
 		if (!this.#validateRule(rule)) return;
 		this.#content.ruleList[id] = rule;
 		await this.#save();
@@ -372,35 +330,35 @@ export default class preference {
 	 *
 	 * For add-on ID header types, performs exact string matching.
 	 *
-	 * @param {string} query - Site URL or add-on ID.
-	 * @returns {{ id: number; query: string; rule: object | undefined }}
-	 *   Result.
+	 * @param {string | undefined} query - Site URL or add-on ID.
+	 * @returns {RuleQueryResult} Result.
 	 */
-	getRule(query) {
-		let matchedId = 0;
-		let matchedRule;
-		if (typeof query !== "string")
-			return { id: matchedId, query, rule: matchedRule };
-		for (const id in this.#content.ruleList) {
-			const rule = this.#content.ruleList[id];
-			if (!rule || typeof rule.header !== "string") continue;
+	getRule(query?: string): RuleQueryResult {
+		let id = 0;
+		let rule: Rule = null;
+		if (!query) return { id: id, query: "", rule: rule };
+		for (const currentId in this.#content.ruleList) {
+			const currentRule = this.#content.ruleList[currentId];
+			if (!currentRule || typeof currentRule.header !== "string")
+				continue;
 			const cleanQuery = query.replace(/\/$/, "");
-			const cleanHeader = rule.header.replace(/\/$/, "");
+			const cleanHeader = currentRule.header.replace(/\/$/, "");
 			const isMatch =
-				(rule.headerType === "ADDON_ID" && rule.header === query) ||
-				(rule.headerType === "URL" &&
+				(currentRule.headerType === "ADDON_ID" &&
+					currentRule.header === query) ||
+				(currentRule.headerType === "URL" &&
 					(cleanQuery === cleanHeader ||
 						this.#testRegex(cleanQuery, cleanHeader) ||
 						this.#testWildcard(cleanQuery, cleanHeader) ||
 						this.#testHostname(cleanQuery, cleanHeader)));
 			if (isMatch) {
-				matchedId = +id;
-				matchedRule = rule;
+				id = +currentId;
+				rule = currentRule;
 			} else {
 				continue;
 			}
 		}
-		return { id: matchedId, query, rule: matchedRule };
+		return { id: id, query, rule: rule };
 	}
 
 	/**
@@ -408,13 +366,13 @@ export default class preference {
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
-	 * @param {string} regex - The regular expression pattern.
+	 * @param {string} test - The regular expression pattern.
 	 * @returns {boolean} `true` if the URL matches the pattern, `false`
 	 *   otherwise.
 	 */
-	#testRegex(url, regex) {
+	#testRegex(url: string, test: string): boolean {
 		try {
-			return new RegExp(`^${regex}$`, "i").test(url);
+			return new RegExp(`^${test}$`, "i").test(url);
 		} catch (error) {
 			return false;
 		}
@@ -429,14 +387,14 @@ export default class preference {
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
-	 * @param {string} wildcard - The wildcard pattern.
+	 * @param {string} test - The wildcard pattern.
 	 * @returns {boolean} `true` if the URL matches the pattern, `false`
 	 *   otherwise.
 	 */
-	#testWildcard(url, wildcard) {
-		if (wildcard.includes("*") || wildcard.includes("?")) {
+	#testWildcard(url: string, test: string): boolean {
+		if (test.includes("*") || test.includes("?")) {
 			try {
-				const wildcardPattern = wildcard
+				const wildcardPattern = test
 					.replace(/[.+^${}()|[\]\\]/g, "\\$&")
 					.replace(/\*\*/g, "::WILDCARD_MATCH_ALL::")
 					.replace(/\*/g, "[^/.:]*")
@@ -459,18 +417,18 @@ export default class preference {
 	 *
 	 * @private
 	 * @param {string} url - The URL to test.
-	 * @param {string} hostname - The hostname to match.
+	 * @param {string} test - The hostname to match.
 	 * @returns {boolean} `true` if the URL's hostname (with optional
 	 *   subdomains) and path match, `false` otherwise.
 	 */
-	#testHostname(url, hostname) {
+	#testHostname(url: string, test: string): boolean {
 		try {
-			const { hostname: urlHost, pathname } = new URL(url);
-			const hostPart = hostname.split("/")[0];
-			if (urlHost !== hostPart && !urlHost.endsWith(`.${hostPart}`))
+			const { hostname, pathname } = new URL(url);
+			const hostPart = test.split("/")[0];
+			if (hostname !== hostPart && !hostname.endsWith(`.${hostPart}`))
 				return false;
 			const urlPath = hostPart + pathname;
-			return urlPath === hostname || urlPath.startsWith(`${hostname}/`);
+			return urlPath === test || urlPath.startsWith(`${test}/`);
 		} catch (error) {
 			return false;
 		}
@@ -481,7 +439,7 @@ export default class preference {
 	 *
 	 * @returns {boolean} `true` if scheme switching is allowed.
 	 */
-	get allowDarkLight() {
+	get allowDarkLight(): boolean {
 		return this.#content.allowDarkLight;
 	}
 
@@ -490,7 +448,7 @@ export default class preference {
 	 *
 	 * @param {boolean} value - Whether to allow scheme switching.
 	 */
-	set allowDarkLight(value) {
+	set allowDarkLight(value: boolean) {
 		this.#set("allowDarkLight", value);
 		this.#save();
 	}
@@ -500,7 +458,7 @@ export default class preference {
 	 *
 	 * @returns {boolean} `true` if dynamic colour extraction is enabled.
 	 */
-	get dynamic() {
+	get dynamic(): boolean {
 		return this.#content.dynamic;
 	}
 
@@ -509,7 +467,7 @@ export default class preference {
 	 *
 	 * @param {boolean} value - Whether to enable dynamic colour extraction.
 	 */
-	set dynamic(value) {
+	set dynamic(value: boolean) {
 		this.#set("dynamic", value);
 		this.#save();
 	}
@@ -519,7 +477,7 @@ export default class preference {
 	 *
 	 * @returns {boolean} `true` if theme colours are ignored by default.
 	 */
-	get noThemeColour() {
+	get noThemeColour(): boolean {
 		return this.#content.noThemeColour;
 	}
 
@@ -528,7 +486,7 @@ export default class preference {
 	 *
 	 * @param {boolean} value - Whether to ignore theme colours by default.
 	 */
-	set noThemeColour(value) {
+	set noThemeColour(value: boolean) {
 		this.#set("noThemeColour", value);
 		this.#save();
 	}
@@ -538,7 +496,7 @@ export default class preference {
 	 *
 	 * @returns {boolean} `true` if compatibility mode is enabled.
 	 */
-	get compatibilityMode() {
+	get compatibilityMode(): boolean {
 		return this.#content.compatibilityMode;
 	}
 
@@ -547,7 +505,7 @@ export default class preference {
 	 *
 	 * @param {boolean} value - Whether to enable compatibility mode.
 	 */
-	set compatibilityMode(value) {
+	set compatibilityMode(value: boolean) {
 		this.#set("compatibilityMode", value);
 		this.#save();
 	}
@@ -557,7 +515,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get tabbar() {
+	get tabbar(): number {
 		return this.#content.tabbar;
 	}
 
@@ -566,7 +524,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set tabbar(value) {
+	set tabbar(value: number) {
 		this.#set("tabbar", value);
 		this.#save();
 	}
@@ -576,7 +534,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get tabbarBorder() {
+	get tabbarBorder(): number {
 		return this.#content.tabbarBorder;
 	}
 
@@ -585,7 +543,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set tabbarBorder(value) {
+	set tabbarBorder(value: number) {
 		this.#set("tabbarBorder", value);
 		this.#save();
 	}
@@ -595,7 +553,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get tabSelected() {
+	get tabSelected(): number {
 		return this.#content.tabSelected;
 	}
 
@@ -604,7 +562,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set tabSelected(value) {
+	set tabSelected(value: number) {
 		this.#set("tabSelected", value);
 		this.#save();
 	}
@@ -614,7 +572,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get tabSelectedBorder() {
+	get tabSelectedBorder(): number {
 		return this.#content.tabSelectedBorder;
 	}
 
@@ -623,7 +581,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set tabSelectedBorder(value) {
+	set tabSelectedBorder(value: number) {
 		this.#set("tabSelectedBorder", value);
 		this.#save();
 	}
@@ -633,7 +591,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get toolbar() {
+	get toolbar(): number {
 		return this.#content.toolbar;
 	}
 
@@ -642,7 +600,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set toolbar(value) {
+	set toolbar(value: number) {
 		this.#set("toolbar", value);
 		this.#save();
 	}
@@ -652,7 +610,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get toolbarBorder() {
+	get toolbarBorder(): number {
 		return this.#content.toolbarBorder;
 	}
 
@@ -661,7 +619,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set toolbarBorder(value) {
+	set toolbarBorder(value: number) {
 		this.#set("toolbarBorder", value);
 		this.#save();
 	}
@@ -671,7 +629,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get toolbarField() {
+	get toolbarField(): number {
 		return this.#content.toolbarField;
 	}
 
@@ -680,7 +638,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set toolbarField(value) {
+	set toolbarField(value: number) {
 		this.#set("toolbarField", value);
 		this.#save();
 	}
@@ -690,7 +648,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get toolbarFieldBorder() {
+	get toolbarFieldBorder(): number {
 		return this.#content.toolbarFieldBorder;
 	}
 
@@ -699,7 +657,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set toolbarFieldBorder(value) {
+	set toolbarFieldBorder(value: number) {
 		this.#set("toolbarFieldBorder", value);
 		this.#save();
 	}
@@ -709,7 +667,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get toolbarFieldOnFocus() {
+	get toolbarFieldOnFocus(): number {
 		return this.#content.toolbarFieldOnFocus;
 	}
 
@@ -718,7 +676,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set toolbarFieldOnFocus(value) {
+	set toolbarFieldOnFocus(value: number) {
 		this.#set("toolbarFieldOnFocus", value);
 		this.#save();
 	}
@@ -728,7 +686,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get sidebar() {
+	get sidebar(): number {
 		return this.#content.sidebar;
 	}
 
@@ -737,7 +695,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set sidebar(value) {
+	set sidebar(value: number) {
 		this.#set("sidebar", value);
 		this.#save();
 	}
@@ -747,7 +705,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get sidebarBorder() {
+	get sidebarBorder(): number {
 		return this.#content.sidebarBorder;
 	}
 
@@ -756,7 +714,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set sidebarBorder(value) {
+	set sidebarBorder(value: number) {
 		this.#set("sidebarBorder", value);
 		this.#save();
 	}
@@ -766,7 +724,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get popup() {
+	get popup(): number {
 		return this.#content.popup;
 	}
 
@@ -775,7 +733,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set popup(value) {
+	set popup(value: number) {
 		this.#set("popup", value);
 		this.#save();
 	}
@@ -785,7 +743,7 @@ export default class preference {
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get popupBorder() {
+	get popupBorder(): number {
 		return this.#content.popupBorder;
 	}
 
@@ -794,7 +752,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set popupBorder(value) {
+	set popupBorder(value: number) {
 		this.#set("popupBorder", value);
 		this.#save();
 	}
@@ -804,7 +762,7 @@ export default class preference {
 	 *
 	 * @returns {number} The minimum contrast ratio (0-210).
 	 */
-	get minContrast_light() {
+	get minContrast_light(): number {
 		return this.#content.minContrast_light;
 	}
 
@@ -813,7 +771,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The minimum contrast ratio (0-210).
 	 */
-	set minContrast_light(value) {
+	set minContrast_light(value: number) {
 		this.#set("minContrast_light", value);
 		this.#save();
 	}
@@ -823,7 +781,7 @@ export default class preference {
 	 *
 	 * @returns {number} The minimum contrast ratio (0-210).
 	 */
-	get minContrast_dark() {
+	get minContrast_dark(): number {
 		return this.#content.minContrast_dark;
 	}
 
@@ -832,7 +790,7 @@ export default class preference {
 	 *
 	 * @param {number} value - The minimum contrast ratio (0-210).
 	 */
-	set minContrast_dark(value) {
+	set minContrast_dark(value: number) {
 		this.#set("minContrast_dark", value);
 		this.#save();
 	}
@@ -842,7 +800,7 @@ export default class preference {
 	 *
 	 * @returns {string} The background colour as a hex string.
 	 */
-	get homeBackground_light() {
+	get homeBackground_light(): string {
 		return this.#content.homeBackground_light;
 	}
 
@@ -851,7 +809,7 @@ export default class preference {
 	 *
 	 * @param {string} value - The background colour as a hex string.
 	 */
-	set homeBackground_light(value) {
+	set homeBackground_light(value: string) {
 		this.#set("homeBackground_light", value);
 		this.#save();
 	}
@@ -861,7 +819,7 @@ export default class preference {
 	 *
 	 * @returns {string} The background colour as a hex string.
 	 */
-	get homeBackground_dark() {
+	get homeBackground_dark(): string {
 		return this.#content.homeBackground_dark;
 	}
 
@@ -870,7 +828,7 @@ export default class preference {
 	 *
 	 * @param {string} value - The background colour as a hex string.
 	 */
-	set homeBackground_dark(value) {
+	set homeBackground_dark(value: string) {
 		this.#set("homeBackground_dark", value);
 		this.#save();
 	}
@@ -880,7 +838,7 @@ export default class preference {
 	 *
 	 * @returns {string} The fallback colour as a hex string.
 	 */
-	get fallbackColour_light() {
+	get fallbackColour_light(): string {
 		return this.#content.fallbackColour_light;
 	}
 
@@ -889,7 +847,7 @@ export default class preference {
 	 *
 	 * @param {string} value - The fallback colour as a hex string.
 	 */
-	set fallbackColour_light(value) {
+	set fallbackColour_light(value: string) {
 		this.#set("fallbackColour_light", value);
 		this.#save();
 	}
@@ -899,7 +857,7 @@ export default class preference {
 	 *
 	 * @returns {string} The fallback colour as a hex string.
 	 */
-	get fallbackColour_dark() {
+	get fallbackColour_dark(): string {
 		return this.#content.fallbackColour_dark;
 	}
 
@@ -908,7 +866,7 @@ export default class preference {
 	 *
 	 * @param {string} value - The fallback colour as a hex string.
 	 */
-	set fallbackColour_dark(value) {
+	set fallbackColour_dark(value: string) {
 		this.#set("fallbackColour_dark", value);
 		this.#save();
 	}
@@ -916,18 +874,18 @@ export default class preference {
 	/**
 	 * Gets the site-specific policies list.
 	 *
-	 * @returns {object} The rule list containing ID-keyed rule objects.
+	 * @returns {RuleList} The rule list containing ID-keyed rule objects.
 	 */
-	get ruleList() {
+	get ruleList(): RuleList {
 		return this.#content.ruleList;
 	}
 
 	/**
 	 * Sets the site-specific policies list.
 	 *
-	 * @param {object} value - The rule list containing ID-keyed rule objects.
+	 * @param {RuleList} value - The rule list containing ID-keyed rule objects.
 	 */
-	set ruleList(value) {
+	set ruleList(value: RuleList) {
 		this.#set("ruleList", value);
 		this.#save();
 	}
@@ -937,7 +895,7 @@ export default class preference {
 	 *
 	 * @returns {number[]} The version as an array of numbers.
 	 */
-	get version() {
+	get version(): number[] {
 		return this.#content.version;
 	}
 
@@ -946,7 +904,7 @@ export default class preference {
 	 *
 	 * @param {number[]} value - The version as an array of numbers.
 	 */
-	set version(value) {
+	set version(value: number[]) {
 		this.#set("version", value);
 		this.#save();
 	}

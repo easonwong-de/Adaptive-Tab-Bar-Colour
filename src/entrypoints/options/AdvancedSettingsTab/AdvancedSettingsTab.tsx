@@ -6,11 +6,20 @@ import Icon from "@/components/Icon/Icon";
 import Slider from "@/components/Slider/Slider";
 import Switch from "@/components/Switch/Switch";
 import Confirm from "@/components/Confirm/Confirm";
+import type preference from "@/utils/preference";
 import styles from "./advanced.settings.module.css";
 
-export default function AdvancedSettingsTab({ pref, ready }) {
+interface AdvancedSettingsTabProps {
+	pref: preference;
+	ready: boolean;
+}
+
+export default function AdvancedSettingsTab({
+	pref,
+	ready,
+}: AdvancedSettingsTabProps) {
 	const [scheme, setScheme] = useState(getSystemScheme());
-	const fileInputRef = useRef(null);
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
@@ -217,12 +226,14 @@ export default function AdvancedSettingsTab({ pref, ready }) {
 						className="hidden"
 						ref={fileInputRef}
 						onChange={(e) => {
-							const file = e.target.files[0];
+							const file = e.target.files?.[0];
 							if (!file) return;
 							const reader = new FileReader();
-							reader.onload = (event) => {
-								pref.importPref(event.target.result);
-								e.target.value = null;
+							reader.onload = () => {
+								const result = reader.result;
+								if (typeof result !== "string") return;
+								pref.importPref(result);
+								e.target.value = "";
 							};
 							reader.readAsText(file);
 						}}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { getAddonName } from "../../utils/utility";
+import type { Rule as RuleData, RuleType } from "../../utils/types.js";
 import Colour from "../Colour/Colour";
 import Icon from "../Icon/Icon";
 import Text from "../Text/Text";
@@ -13,7 +14,13 @@ const defaultValue = {
 	QUERY_SELECTOR: "",
 };
 
-export default function Rule({ rule, inPopup = false, onChange }) {
+interface RuleProps {
+	rule: RuleData;
+	inPopup?: boolean;
+	onChange: (newRule: RuleData) => void;
+}
+
+export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 	if (!rule) return null;
 
 	const [addonName, setAddonName] = useState(rule?.header);
@@ -43,12 +50,29 @@ export default function Rule({ rule, inPopup = false, onChange }) {
 			<select
 				value={rule.type}
 				onChange={(e) => {
-					const newType = e.target.value;
-					onChange({
-						...rule,
-						type: newType,
-						value: defaultValue[newType],
-					});
+					const newType = e.target.value as RuleType;
+					const urlHeaderType = "URL" as const;
+					if (newType === "COLOUR") {
+						onChange({
+							...rule,
+							type: "COLOUR",
+							value: defaultValue.COLOUR,
+						});
+					} else if (newType === "THEME_COLOUR") {
+						onChange({
+							...rule,
+							headerType: urlHeaderType,
+							type: "THEME_COLOUR",
+							value: defaultValue.THEME_COLOUR,
+						});
+					} else {
+						onChange({
+							...rule,
+							headerType: urlHeaderType,
+							type: "QUERY_SELECTOR",
+							value: defaultValue.QUERY_SELECTOR,
+						});
+					}
 				}}
 			>
 				<option value="COLOUR">{i18n.t("specifyAColour")}</option>

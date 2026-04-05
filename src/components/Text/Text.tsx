@@ -2,12 +2,19 @@ import clsx from "clsx";
 import Icon from "../Icon/Icon";
 import styles from "./text.module.css";
 
+interface TextProps {
+	value?: string;
+	placeholder?: string;
+	warning?: string;
+	onChange: (newValue: string) => void;
+}
+
 export default function Text({
 	value = "",
 	placeholder = "",
 	warning = "",
 	onChange,
-}) {
+}: TextProps) {
 	return (
 		<div
 			className={clsx(
@@ -22,7 +29,7 @@ export default function Text({
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				onKeyDown={(e) => {
-					if (e.key === "Enter") e.target.blur();
+					if (e.key === "Enter") e.currentTarget.blur();
 				}}
 				onBlur={(e) => (e.target.scrollLeft = 0)}
 			/>
