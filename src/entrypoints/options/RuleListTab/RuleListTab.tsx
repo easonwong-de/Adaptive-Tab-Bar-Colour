@@ -1,8 +1,8 @@
-import { useSyncExternalStore } from "react";
 import clsx from "clsx";
 import Rule from "@/components/Rule/Rule";
-import type preference from "@/utils/preference";
 import styles from "./rule.list.module.css";
+import { useSyncExternalStore } from "react";
+import type preference from "@/utils/preference";
 
 interface RuleListTabProps {
 	pref: preference;
@@ -16,12 +16,7 @@ export default function RuleListTab({ pref, ready }: RuleListTabProps) {
 	);
 
 	return (
-		<main
-			className={clsx(
-				styles.ruleListTab,
-				(!ready || pref.compatibilityMode) && "disabled",
-			)}
-		>
+		<main className={clsx(styles.ruleListTab, !ready && "disabled")}>
 			{Object.entries(pref.ruleList).map(([rawId, rule]) => {
 				if (!rule) return null;
 				const id = Number(rawId);

@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
 import clsx from "clsx";
-import { getAddonName } from "../../utils/utility";
-import type { Rule as RuleData, RuleType } from "../../utils/types.js";
-import Colour from "../Colour/Colour";
 import Icon from "../Icon/Icon";
 import Text from "../Text/Text";
+import Colour from "../Colour/Colour";
 import Toggle from "../Toggle/Toggle";
 import styles from "./rule.module.css";
+import { useState, useEffect } from "react";
+import { getAddonName } from "../../utils/utility";
+import type { Rule as RuleData } from "../../utils/types.js";
 
 const defaultValue = {
 	COLOUR: "#000000",
@@ -50,44 +50,52 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 			<select
 				value={rule.type}
 				onChange={(e) => {
-					const newType = e.target.value as RuleType;
-					const urlHeaderType = "URL" as const;
-					if (newType === "COLOUR") {
-						onChange({
-							...rule,
-							type: "COLOUR",
-							value: defaultValue.COLOUR,
-						});
-					} else if (newType === "THEME_COLOUR") {
-						onChange({
-							...rule,
-							headerType: urlHeaderType,
-							type: "THEME_COLOUR",
-							value: defaultValue.THEME_COLOUR,
-						});
-					} else {
-						onChange({
-							...rule,
-							headerType: urlHeaderType,
-							type: "QUERY_SELECTOR",
-							value: defaultValue.QUERY_SELECTOR,
-						});
+					switch (e.target.value) {
+						case "COLOUR":
+							onChange({
+								...rule,
+								type: "COLOUR",
+								value: defaultValue.COLOUR,
+							});
+							break;
+						case "THEME_COLOUR":
+							onChange({
+								...rule,
+								headerType: "URL",
+								type: "THEME_COLOUR",
+								value: defaultValue.THEME_COLOUR,
+							});
+						default:
+							onChange({
+								...rule,
+								headerType: "URL",
+								type: "QUERY_SELECTOR",
+								value: defaultValue.QUERY_SELECTOR,
+							});
+							break;
 					}
 				}}
 			>
 				<option value="COLOUR">{i18n.t("specifyAColour")}</option>
-				<option
-					value="THEME_COLOUR"
-					disabled={rule.headerType === "ADDON_ID"}
-				>
-					{i18n.t("useIgnoreThemeColour")}
-				</option>
-				<option
-					value="QUERY_SELECTOR"
-					disabled={rule.headerType === "ADDON_ID"}
-				>
-					{i18n.t("pickColourFromElement")}
-				</option>
+				{rule.headerType === "URL" ? (
+					<>
+						<option value="THEME_COLOUR">
+							{i18n.t("useIgnoreThemeColour")}
+						</option>
+						<option value="QUERY_SELECTOR">
+							{i18n.t("pickColourFromElement")}
+						</option>
+					</>
+				) : (
+					<>
+						<option disabled>
+							{i18n.t("useIgnoreThemeColour")}
+						</option>
+						<option disabled>
+							{i18n.t("pickColourFromElement")}
+						</option>
+					</>
+				)}
 			</select>
 			{rule.type === "COLOUR" ? (
 				<Colour

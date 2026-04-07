@@ -1,13 +1,13 @@
-import { useEffect, useState, useRef, useSyncExternalStore } from "react";
 import clsx from "clsx";
-import { getSystemScheme, addSchemeChangeListener } from "@/utils/utility";
-import Colour from "@/components/Colour/Colour";
 import Icon from "@/components/Icon/Icon";
+import Colour from "@/components/Colour/Colour";
 import Slider from "@/components/Slider/Slider";
 import Switch from "@/components/Switch/Switch";
-import Confirm from "@/components/Confirm/Confirm";
 import type preference from "@/utils/preference";
+import Confirm from "@/components/Confirm/Confirm";
 import styles from "./advanced.settings.module.css";
+import { useEffect, useState, useRef, useSyncExternalStore } from "react";
+import { getSystemScheme, addSchemeChangeListener } from "@/utils/utility";
 
 interface AdvancedSettingsTabProps {
 	pref: preference;

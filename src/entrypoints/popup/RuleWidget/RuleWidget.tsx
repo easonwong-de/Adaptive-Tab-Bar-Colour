@@ -1,13 +1,13 @@
-import { useSyncExternalStore } from "react";
-import Rule from "@/components/Rule/Rule";
 import Icon from "@/components/Icon/Icon";
+import Rule from "@/components/Rule/Rule";
+import { useSyncExternalStore } from "react";
+import styles from "./rule.widget.module.css";
 import type preference from "@/utils/preference";
 import type {
 	RuleQueryResult,
 	MetaQueryResult,
 	TabMetaReason,
 } from "@/utils/types.js";
-import styles from "./rule.widget.module.css";
 
 interface RuleWidgetProps {
 	pref: preference;

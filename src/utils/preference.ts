@@ -1,6 +1,6 @@
-import { addonVersion, defaultPref } from "./constants.js";
-import { supportsThemeAPI } from "./utility.js";
 import colour from "./colour.js";
+import { supportsThemeAPI } from "./utility.js";
+import { addonVersion, defaultPref } from "./constants.js";
 import type {
 	PreferenceContent,
 	Rule,

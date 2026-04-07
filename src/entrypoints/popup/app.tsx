@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
 import preference from "@/utils/preference";
+import { useState, useEffect } from "react";
+import RuleWidget from "./RuleWidget/RuleWidget";
+import type { MessageForPopup, Cache } from "@/utils/types.js";
+import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
 import {
 	addMessageListener,
 	removeMessageListener,
 	sendMessageToBackground,
 } from "@/utils/utility";
-import type { MessageForPopup, Cache } from "@/utils/types.js";
-import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
-import RuleWidget from "./RuleWidget/RuleWidget";
 
 const pref = new preference();
 
@@ -22,7 +22,7 @@ export default function App() {
 	const [cache, setCache] = useState<Cache | undefined>(undefined);
 
 	function handleMessage(message: MessageForPopup): void {
-		if (message.header === "CACHE_UPDATED") getCache().then(setCache);
+		if (message.header === "CACHE_UPDATE") getCache().then(setCache);
 	}
 
 	useEffect(() => {

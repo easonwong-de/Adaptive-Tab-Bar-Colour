@@ -18,14 +18,24 @@
  * Theme:
  * An object that defines the colour of the Firefox UI.
  */
-
-import preference from "@/utils/preference.js";
 import colour from "@/utils/colour.js";
+import preference from "@/utils/preference.js";
 import {
 	aboutPageColour,
 	mozillaPageColour,
 	presetAddonPageColour,
 } from "@/utils/constants.js";
+import type {
+	ApplyThemeResult,
+	Scheme,
+	Rule,
+	RuleQueryResult,
+	MessageForBackground,
+	MessageForTab,
+	TabColourData,
+	MetaQueryResult,
+	Theme,
+} from "@/utils/types.js";
 import {
 	addMessageListener,
 	addSchemeChangeListener,
@@ -40,18 +50,6 @@ import {
 	sendMessageToTab,
 	updateBrowserTheme,
 } from "@/utils/utility.js";
-import type {
-	ApplyThemeResult,
-	Scheme,
-	Rule,
-	RuleQueryResult,
-	MessageForBackground,
-	MessageForTab,
-	TabColourData,
-	MetaQueryResult,
-	Theme,
-	MessageForPopup,
-} from "@/utils/types.js";
 
 /** Preference instance. */
 const pref = new preference();
@@ -141,8 +139,7 @@ async function handleMessage(
 	sender: Browser.runtime.MessageSender,
 ): Promise<unknown> {
 	const tab = sender.tab;
-	const header = message.header;
-	switch (header) {
+	switch (message.header) {
 		case "SCRIPT_READY":
 			if (tab === undefined) break;
 			updateTab(tab);
@@ -150,24 +147,24 @@ async function handleMessage(
 		case "UPDATE_COLOUR":
 			if (tab === undefined) break;
 			const windowId = tab.windowId;
-			const meta = parseTabColour(
+			const rule = cache.rule[windowId];
+			const meta = (cache.meta[windowId] = parseTabColour(
 				message.colour,
-				cache.rule[windowId]?.rule ?? null,
-			);
-			cache.meta[windowId] = meta;
-			cache.theme[tab.windowId] = setFrameColour(tab, meta);
-			sendMessageToPopup({ header: "CACHE_UPDATED" });
+				rule?.rule ?? null,
+			));
+			cache.theme[windowId] = setFrameColour(tab, meta);
+			sendMessageToPopup({ header: "CACHE_UPDATE" });
 			break;
 		case "SCHEME_REQUEST":
 			return await getCurrentScheme();
 		case "CACHE_REQUEST": {
 			const windowId = await getCurrentWindowId(tab);
 			if (windowId === undefined) return undefined;
-			return {
-				rule: cache.rule[windowId],
-				meta: cache.meta[windowId],
-				theme: cache.theme[windowId],
-			};
+			const rule = cache.rule[windowId];
+			const meta = cache.meta[windowId];
+			const theme = cache.theme[windowId];
+			if (!rule || !meta || !theme) return undefined;
+			return { rule, meta, theme };
 		}
 		default:
 			await run();
@@ -193,12 +190,10 @@ async function run(): Promise<void> {
  */
 async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	const windowId = tab.windowId;
-	const ruleQueryResult = pref.getRule(tab.url);
-	cache.rule[windowId] = ruleQueryResult;
-	const meta = await getTabMeta(tab, ruleQueryResult.rule);
-	cache.meta[windowId] = meta;
+	const rule = (cache.rule[windowId] = pref.getRule(tab.url));
+	const meta = (cache.meta[windowId] = await getTabMeta(tab, rule.rule));
 	cache.theme[windowId] = setFrameColour(tab, meta);
-	sendMessageToPopup({ header: "CACHE_UPDATED" });
+	sendMessageToPopup({ header: "CACHE_UPDATE" });
 }
 
 /**
@@ -206,7 +201,8 @@ async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
  *
  * @param {Browser.tabs.Tab} tab - Target browser tab.
  * @param {Rule} rule - Matched rule for the tab URL.
- * @returns {Promise<MetaQueryResult>} Resolved metadata used for theme application.
+ * @returns {Promise<MetaQueryResult>} Resolved metadata used for theme
+ *   application.
  */
 async function getTabMeta(
 	tab: Browser.tabs.Tab,
@@ -341,7 +337,7 @@ async function getProtectedPageMeta(
 		};
 	}
 	const url = new URL(tab.url);
-	const tabTitle = tab.title || "";
+	const tabTitle = tab.title ?? "";
 	if (
 		["about:firefoxview", "about:home", "about:newtab"].some((href) =>
 			url.href.startsWith(href),
@@ -446,7 +442,7 @@ function getAboutPageMeta(pathname: string): MetaQueryResult {
 			colour:
 				(browserColour as Record<string, colour | undefined>)[
 					currentSchemeValue
-				] || new colour(currentSchemeValue),
+				] ?? new colour(currentSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
 	}
@@ -457,7 +453,7 @@ function getAboutPageMeta(pathname: string): MetaQueryResult {
 			colour:
 				(browserColour as Record<string, colour | undefined>)[
 					reversedSchemeValue
-				] || new colour(reversedSchemeValue),
+				] ?? new colour(reversedSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -481,7 +477,7 @@ function getMozillaPageMeta(hostname: string): MetaQueryResult {
 			colour:
 				(browserColour as Record<string, colour | undefined>)[
 					currentSchemeValue
-				] || new colour(currentSchemeValue),
+				] ?? new colour(currentSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
 	}
@@ -492,7 +488,7 @@ function getMozillaPageMeta(hostname: string): MetaQueryResult {
 			colour:
 				(browserColour as Record<string, colour | undefined>)[
 					reversedSchemeValue
-				] || new colour(reversedSchemeValue),
+				] ?? new colour(reversedSchemeValue),
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -568,14 +564,13 @@ function setFrameColour(
 	pref.compatibilityMode
 		? setTabThemeColour(tab, colour)
 		: applyTheme(windowId, colour, scheme);
-	const themeCache = {
+	return {
 		popupColour: colour
 			.brightness((scheme === "light" ? -1.5 : 1) * pref.popup)
 			.toRGBA(),
 		scheme: scheme,
 		corrected: corrected,
 	};
-	return themeCache;
 }
 
 /**

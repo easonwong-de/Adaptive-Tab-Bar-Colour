@@ -1,11 +1,10 @@
+import { sendMessageToBackground } from "@/utils/utility";
 import type {
-	MessageForBackground,
 	MessageForTab,
 	TabColourData,
 	TabElementColourData,
 	TabThemeColourData,
 } from "@/utils/types.js";
-import { sendMessageToBackground } from "@/utils/utility";
 
 let query: string | undefined;
 
@@ -228,7 +227,7 @@ function setThemeColour(colour: string): void {
 	const newMetaThemeColour = document.createElement("meta");
 	newMetaThemeColour.name = "theme-color";
 	newMetaThemeColour.content = colour;
-	(document.head || document.documentElement).appendChild(newMetaThemeColour);
+	(document.head ?? document.documentElement).appendChild(newMetaThemeColour);
 	metaThemeColourList.forEach((metaThemeColour) => metaThemeColour.remove());
 }
 

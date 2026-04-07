@@ -2,8 +2,6 @@ import colour from "./colour.js";
 
 export type Scheme = "light" | "dark";
 
-export type RuleType = "COLOUR" | "THEME_COLOUR" | "QUERY_SELECTOR";
-
 export interface UrlColourRule {
 	headerType: "URL";
 	header: string;
@@ -153,7 +151,7 @@ export type MessageForBackground =
 	  };
 
 export type MessageForPopup = {
-	header: "CACHE_UPDATED";
+	header: "CACHE_UPDATE";
 };
 
 export type MessageForTab =
