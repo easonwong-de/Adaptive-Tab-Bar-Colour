@@ -8,7 +8,7 @@
 		"build": "npm run format && wxt build",
 		"zip": "npm run format && wxt zip",
 		"format": "prettier --write --list-different src",
-		"test": "node test.cjs"
+		"test": "node test.mjs"
 	},
 	"repository": {
 		"type": "git",

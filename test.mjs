@@ -2,28 +2,29 @@
 /**
  * Integration Tests for Adaptive Tab Bar Colour
  *
- * Usage:
- *   node test.cjs
+ * Usage: node test.mjs
  *
  * Requires: geckodriver, selenium-webdriver, selenium-webext-bridge
  */
-
-const path = require("path");
-const http = require("http");
-const {
+import http from "node:http";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
 	launchBrowser,
 	cleanupBrowser,
 	sleep,
 	TestResults,
 	Command,
-} = require("selenium-webext-bridge");
+} from "selenium-webext-bridge";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const EXT_DIR = path.join(__dirname, "src");
 const EXT_ID = "ATBC@EasonWong";
 
 /**
- * Serves pages with specific background colors.
- * Example: /test-page?bg=%23ff0000
+ * Serves pages with specific background colors. Example:
+ * /test-page?bg=%23ff0000
  */
 function createColorServer(port = 8080) {
 	return new Promise((resolve, reject) => {
@@ -34,17 +35,17 @@ function createColorServer(port = 8080) {
 
 			res.writeHead(200, { "Content-Type": "text/html" });
 			res.end(`<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>${name}</title></head>
-<body style="margin:0; padding:0; background:${bg}; min-height:100vh;">
-  <div id="keepalive"></div>
-  <script>
-    setInterval(() => {
-      document.getElementById('keepalive').textContent = Date.now();
-    }, 5000);
-  </script>
-</body>
-</html>`);
+				<html>
+				<head><meta charset="UTF-8"><title>${name}</title></head>
+				<body style="margin:0; padding:0; background:${bg}; min-height:100vh;">
+					<div id="keepalive"></div>
+					<script>
+						setInterval(() => {
+							document.getElementById('keepalive').textContent = Date.now();
+						}, 5000);
+					</script>
+				</body>
+				</html>`);
 		});
 
 		server.on("error", reject);
@@ -55,9 +56,7 @@ function createColorServer(port = 8080) {
 	});
 }
 
-/**
- * Reads the browser frame's accent color from Firefox chrome context.
- */
+/** Reads the browser frame's accent color from Firefox chrome context. */
 async function getFrameColor(driver) {
 	await driver.execute(
 		new Command("setContext").setParameter("context", "chrome"),
@@ -74,9 +73,7 @@ async function getFrameColor(driver) {
 	}
 }
 
-/**
- * Parses an rgba/rgb color string.
- */
+/** Parses an rgba/rgb color string. */
 function parseRGB(str) {
 	if (!str) {
 		return null;
@@ -85,9 +82,7 @@ function parseRGB(str) {
 	return match ? { r: +match[1], g: +match[2], b: +match[3] } : null;
 }
 
-/**
- * Checks if two color strings are different with tolerance value.
- */
+/** Checks if two color strings are different with tolerance value. */
 function colorsDiffer(a, b, tolerance = 5) {
 	const ca = parseRGB(a),
 		cb = parseRGB(b);
