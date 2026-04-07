@@ -1,2 +1,5 @@
-src/images
-src/manifest.json
+.github
+.wxt
+.output
+assets
+node_modules

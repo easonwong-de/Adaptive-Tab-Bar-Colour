@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/macos,windows,linux,node,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,linux,node,visualstudiocode
+# Created by https://www.toptal.com/developers/gitignore/api/macos,linux,windows,visualstudiocode,node,react
+# Edit at https://www.toptal.com/developers/gitignore?templates=macos,linux,windows,visualstudiocode,node,react
 
 ### Linux ###
 *~
@@ -24,6 +24,7 @@
 
 # Icon must end with two \r
 Icon
+!Icon/
 
 
 # Thumbnails
@@ -93,6 +94,10 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+
+# WXT
+.wxt/
+.output/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -189,6 +194,19 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
+### react ###
+.DS_*
+**/*.backup.*
+**/*.back.*
+
+node_modules
+
+*.sublime*
+
+psd
+thumb
+sketch
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
@@ -196,6 +214,7 @@ dist
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+!.vscode/i18n-ally-custom-framework.yml
 
 # Local History for Visual Studio Code
 .history/
@@ -234,6 +253,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-package-lock.json
-
-# End of https://www.toptal.com/developers/gitignore/api/macos,windows,linux,node,visualstudiocode
+# End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,visualstudiocode,node,react

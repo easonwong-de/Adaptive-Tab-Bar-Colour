@@ -1,0 +1,16 @@
+.glyph {
+	all: unset;
+	max-width: calc(84 * var(--unit));
+
+	.background {
+		fill: var(--glyph-background);
+	}
+
+	.foreground {
+		fill: var(--glyph-foreground);
+	}
+
+	.highlight {
+		fill: var(--accent);
+	}
+}

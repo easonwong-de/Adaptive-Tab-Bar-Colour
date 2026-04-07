@@ -1,6 +1,6 @@
 ---
 name: Compatibility Issue
-description: ATBC should work better with other browsers, add-ons, or CSS themes
+description: ATBC should work better with other browsers, add-ons, or CSS themes.
 title: "Replace With Title"
 labels: ["compatibility"]
 body:
