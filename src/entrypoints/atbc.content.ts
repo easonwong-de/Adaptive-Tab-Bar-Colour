@@ -1,11 +1,46 @@
-let query = null;
+import { sendMessageToBackground } from "@/utils/utility";
+import type {
+	MessageForTab,
+	TabColourData,
+	TabElementColourData,
+	TabThemeColourData,
+} from "@/utils/types.js";
+
+let query: string | undefined;
+
+/**
+ * Handles incoming runtime messages from the background script.
+ *
+ * @param {MessageForTab} message - Runtime message payload.
+ * @param {Browser.runtime.MessageSender} _ - Message sender metadata.
+ * @param {(response?: unknown) => void} sendResponse - Callback used to return
+ *   a response to the sender.
+ */
+function handleMessage(
+	message: MessageForTab,
+	_: Browser.runtime.MessageSender,
+	sendResponse: (response?: unknown) => void,
+): void {
+	switch (message.header) {
+		case "GET_COLOUR":
+			query = message.query;
+			message.dynamic ? enableDynamic() : disableDynamic();
+			sendResponse(getColour());
+			break;
+		case "SET_THEME_COLOUR":
+			setThemeColour(message.colour);
+			break;
+		default:
+			break;
+	}
+}
 
 /**
  * Retrieves the colour data from the current page.
  *
- * @returns {object} The colour data object.
+ * @returns {TabColourData} The colour data object.
  */
-function getColour() {
+function getColour(): TabColourData {
 	return {
 		theme: getThemeColour(),
 		page: getPageColour(),
@@ -17,18 +52,18 @@ function getColour() {
 /**
  * Extracts the theme colour from meta tags.
  *
- * @returns {{ light?: string; dark?: string }} The extracted theme colours.
+ * @returns {TabThemeColourData} The extracted theme colours.
  */
-function getThemeColour() {
-	const metaThemeColour = document.querySelector(
+function getThemeColour(): TabThemeColourData {
+	const metaThemeColour = document.querySelector<HTMLMetaElement>(
 		`meta[name="theme-color"]:not([media])`,
 	);
 	const metaThemeColourLight =
-		document.querySelector(
+		document.querySelector<HTMLMetaElement>(
 			`meta[name="theme-color"][media="(prefers-color-scheme: light)"]`,
 		) ?? metaThemeColour;
 	const metaThemeColourDark =
-		document.querySelector(
+		document.querySelector<HTMLMetaElement>(
 			`meta[name="theme-color"][media="(prefers-color-scheme: dark)"]`,
 		) ?? metaThemeColour;
 	return {
@@ -40,13 +75,14 @@ function getThemeColour() {
 /**
  * Extracts visible element colours from the top of the viewport.
  *
- * @returns {object[]} List of element colour objects.
+ * @returns {TabElementColourData[]} List of element colour objects.
  */
-function getPageColour() {
+function getPageColour(): TabElementColourData[] {
 	return document
 		.elementsFromPoint(window.innerWidth / 2, 3)
 		.filter(
 			(element) =>
+				element instanceof HTMLElement &&
 				element.offsetWidth >= window.innerWidth * 0.9 &&
 				element.offsetHeight >= 20,
 		)
@@ -61,9 +97,9 @@ function getPageColour() {
 /**
  * Extracts colour from an element matching the query.
  *
- * @returns {object | undefined} Element colour object.
+ * @returns {TabElementColourData | undefined} Element colour object.
  */
-function getQueryColour() {
+function getQueryColour(): TabElementColourData | undefined {
 	try {
 		return query
 			? getElementColour(document.querySelector(query))
@@ -73,7 +109,7 @@ function getQueryColour() {
 	}
 }
 
-function isImageViewer() {
+function isImageViewer(): boolean {
 	return (
 		getComputedStyle(document.documentElement).backgroundImage ===
 		'url("chrome://global/skin/media/imagedoc-darknoise.png")'
@@ -83,11 +119,12 @@ function isImageViewer() {
 /**
  * Extracts style properties from an element.
  *
- * @param {Element} element - The target element.
- * @returns {{ colour: string; opacity: string; filter: string } | undefined}
- *   The extracted styles.
+ * @param {Element | null} element - The target element.
+ * @returns {TabElementColourData | undefined} The extracted styles.
  */
-function getElementColour(element) {
+function getElementColour(
+	element: Element | null,
+): TabElementColourData | undefined {
 	if (element instanceof Element) {
 		const style = getComputedStyle(element);
 		const backgroundColor = style.backgroundColor;
@@ -106,7 +143,10 @@ const metaThemeColourObserver = new MutationObserver(sendColour);
 const metaTagObserver = new MutationObserver((mutationList) =>
 	mutationList.forEach((mutation) => {
 		mutation.addedNodes.forEach((node) => {
-			if (node.nodeName === "META" && node.name === "theme-color") {
+			if (
+				node instanceof HTMLMetaElement &&
+				node.name === "theme-color"
+			) {
 				sendColour();
 				metaThemeColourObserver.observe(node, {
 					attributes: true,
@@ -128,7 +168,7 @@ const styleTagObserver = new MutationObserver((mutationList) => {
 });
 
 /** Enables dynamic colour monitoring using event listeners and observers. */
-function enableDynamic() {
+function enableDynamic(): void {
 	["click", "resize", "scroll", "visibilitychange"].forEach((event) =>
 		document.addEventListener(event, sendColour),
 	);
@@ -157,7 +197,7 @@ function enableDynamic() {
 }
 
 /** Disables dynamic colour monitoring. */
-function disableDynamic() {
+function disableDynamic(): void {
 	["click", "resize", "scroll", "visibilitychange"].forEach((event) =>
 		document.removeEventListener(event, sendColour),
 	);
@@ -180,18 +220,18 @@ function disableDynamic() {
  *
  * @param {string} colour - The colour string.
  */
-function setThemeColour(colour) {
+function setThemeColour(colour: string): void {
 	const metaThemeColourList = document.querySelectorAll(
 		`meta[name="theme-color"]`,
 	);
 	const newMetaThemeColour = document.createElement("meta");
 	newMetaThemeColour.name = "theme-color";
 	newMetaThemeColour.content = colour;
-	(document.head || document.documentElement).appendChild(newMetaThemeColour);
+	(document.head ?? document.documentElement).appendChild(newMetaThemeColour);
 	metaThemeColourList.forEach((metaThemeColour) => metaThemeColour.remove());
 }
 
-let dispatchTimeout;
+let dispatchTimeout: ReturnType<typeof setTimeout> | undefined;
 let lastSentAt = 0;
 const throttleIntervalMs = 250;
 
@@ -217,7 +257,9 @@ async function sendColour() {
 	};
 	remaining <= 0
 		? await dispatch()
-		: (dispatchTimeout = setTimeout(dispatch, remaining));
+		: (dispatchTimeout = setTimeout(() => {
+				void dispatch();
+			}, remaining));
 }
 
 /**
@@ -232,30 +274,17 @@ async function sendColourRequiresFocus() {
 export default defineContentScript({
 	matches: ["<all_urls>"],
 	main() {
-		browser.runtime.onMessage.addListener((message, _, sendResponse) => {
-			switch (message.header) {
-				case "GET_COLOUR":
-					query = message.query;
-					message.dynamic ? enableDynamic() : disableDynamic();
-					sendResponse(getColour());
-					break;
-				case "SET_THEME_COLOUR":
-					setThemeColour(message.colour);
-					break;
-				default:
-					break;
-			}
-		});
-
+		addMessageListener(handleMessage);
 		(async function sendMessageOnLoad(attempt = 0) {
 			try {
-				await browser.runtime.sendMessage({ header: "SCRIPT_READY" });
+				await sendMessageToBackground({ header: "SCRIPT_READY" });
 			} catch {
-				attempt >= 3
-					? console.error("Could not connect to ATBC background.")
-					: console.warn("Failed to connect to ATBC background.");
-				if (attempt < 60)
+				if (attempt < 10) {
+					console.warn("Failed to connect to ATBC background.");
 					setTimeout(() => sendMessageOnLoad(++attempt), 1000);
+				} else {
+					console.error("Could not connect to ATBC background.");
+				}
 			}
 		})();
 	},

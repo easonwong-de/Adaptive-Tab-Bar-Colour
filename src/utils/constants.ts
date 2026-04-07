@@ -1,18 +1,19 @@
 import { supportsThemeAPI } from "./utility.js";
+import type { PreferenceContent, Scheme } from "./types.js";
 
-/** The version of ATBC */
+/** The version of ATBC. */
 export const addonVersion = [4, 0];
 
-/** Default light homepage colour */
+/** Default light homepage colour. */
 export const default_homeBackground_light = "#ffffff";
-/** Default dark homepage colour */
+/** Default dark homepage colour. */
 export const default_homeBackground_dark = "#2b2a33";
-/** Default light fallback colours */
+/** Default light fallback colours. */
 export const default_fallbackColour_light = "#ffffff";
-/** Default dark fallback colour */
+/** Default dark fallback colour. */
 export const default_fallbackColour_dark = "#2b2a33";
 
-/** Default compatibility mode setting */
+/** Default compatibility mode setting. */
 export const default_compatibilityMode = !supportsThemeAPI();
 
 /** Colours for about:pages. */
@@ -32,7 +33,7 @@ export const aboutPageColour = Object.freeze({
 	privatebrowsing: { light: undefined, dark: "#25003e" },
 	processes: { light: "#eeeeee", dark: "#32313a" },
 	"sync-log": { light: "#ececec", dark: "#282828" },
-});
+} as Record<string, Record<Scheme, string | undefined>>);
 
 /** Colours for restricted sites. */
 export const mozillaPageColour = Object.freeze({
@@ -44,7 +45,7 @@ export const mozillaPageColour = Object.freeze({
 	"discovery.addons.mozilla.org": { light: "#ececec", dark: undefined },
 	"install.mozilla.org": { light: "DEFAULT", dark: "DEFAULT" },
 	"support.mozilla.org": { light: "#ffffff", dark: undefined },
-});
+} as Record<string, Record<Scheme, string | undefined>>);
 
 // prettier-ignore
 /**
@@ -68,9 +69,9 @@ export const presetAddonPageColour = Object.freeze({
 	"{a8cf72f7-09b7-4cd4-9aaa-7a023bf09916}": { light: undefined, dark: "#191919" }, // Time Tracker
 	"{aecec67f-0d10-4fa7-b7c7-609a2db280cf}": { light: "#ffffff", dark: "#262626" }, // Violentmonkey
 	"{ce9f4b1f-24b8-4e9a-9051-b9e472b1b2f2}": { light: "#ffffff", dark: "#1c1b1f" }, // Clear Browsing Data
-});
+} as Record<string, Record<Scheme, string | undefined>>);
 
-/** Default content of the preference */
+/** Default content of the preference. */
 export const defaultPref = Object.freeze({
 	// theme builder
 	tabbar: 0,
@@ -102,4 +103,4 @@ export const defaultPref = Object.freeze({
 	// state
 	version: addonVersion,
 	lastSave: 0,
-});
+} as PreferenceContent);

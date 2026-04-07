@@ -1,16 +1,25 @@
-import { useEffect, useState, useRef, useSyncExternalStore } from "react";
 import clsx from "clsx";
-import { getSystemScheme, addSchemeChangeListener } from "@/utils/utility";
-import Colour from "@/components/Colour/Colour";
 import Icon from "@/components/Icon/Icon";
+import Colour from "@/components/Colour/Colour";
 import Slider from "@/components/Slider/Slider";
 import Switch from "@/components/Switch/Switch";
+import type preference from "@/utils/preference";
 import Confirm from "@/components/Confirm/Confirm";
 import styles from "./advanced.settings.module.css";
+import { useEffect, useState, useRef, useSyncExternalStore } from "react";
+import { getSystemScheme, addSchemeChangeListener } from "@/utils/utility";
 
-export default function AdvancedSettingsTab({ pref, ready }) {
+interface AdvancedSettingsTabProps {
+	pref: preference;
+	ready: boolean;
+}
+
+export default function AdvancedSettingsTab({
+	pref,
+	ready,
+}: AdvancedSettingsTabProps) {
 	const [scheme, setScheme] = useState(getSystemScheme());
-	const fileInputRef = useRef(null);
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
@@ -217,12 +226,14 @@ export default function AdvancedSettingsTab({ pref, ready }) {
 						className="hidden"
 						ref={fileInputRef}
 						onChange={(e) => {
-							const file = e.target.files[0];
+							const file = e.target.files?.[0];
 							if (!file) return;
 							const reader = new FileReader();
-							reader.onload = (event) => {
-								pref.importPref(event.target.result);
-								e.target.value = null;
+							reader.onload = () => {
+								const result = reader.result;
+								if (typeof result !== "string") return;
+								pref.importPref(result);
+								e.target.value = "";
 							};
 							reader.readAsText(file);
 						}}

@@ -1,4 +1,16 @@
-export default function Icon({ type }) {
+export type IconType =
+	| "moon"
+	| "sun"
+	| "warning"
+	| "delete"
+	| "contrast"
+	| "circle"
+	| "reset"
+	| "upload"
+	| "download"
+	| "info";
+
+export default function Icon({ type }: { type: IconType }) {
 	switch (type) {
 		case "moon":
 			return (

@@ -2,7 +2,12 @@ import { useState } from "react";
 import colour from "@/utils/colour.js";
 import styles from "./colour.module.css";
 
-export default function Colour({ value = "#000000", onChange }) {
+interface ColourProps {
+	value?: string;
+	onChange: (newValue: string) => void;
+}
+
+export default function Colour({ value = "#000000", onChange }: ColourProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [transientValue, setTransientValue] = useState(value);
 
@@ -26,7 +31,7 @@ export default function Colour({ value = "#000000", onChange }) {
 					setIsEditing(false);
 				}}
 				onKeyDown={(e) => {
-					if (e.key === "Enter") e.target.blur();
+					if (e.key === "Enter") e.currentTarget.blur();
 				}}
 			/>
 			<label style={{ backgroundColor: value }}>
