@@ -65,9 +65,7 @@ export async function getCurrentScheme(): Promise<Scheme> {
 export function addTabChangeListener(listener: () => void): void {
 	browser.tabs.onAttached.addListener(listener);
 	browser.tabs.onActivated.addListener(listener);
-	(browser.tabs.onUpdated.addListener as any)(listener, {
-		properties: ["status"],
-	});
+	browser.tabs.onUpdated.addListener(listener, { properties: ["status"] });
 	browser.windows.onFocusChanged.addListener(listener);
 	browser.windows.onBoundsChanged?.addListener(listener);
 }

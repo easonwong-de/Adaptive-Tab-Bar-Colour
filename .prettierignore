@@ -1,5 +1,6 @@
 .github
-.wxt
 .output
-assets
+.wxt
+LICENSE
 node_modules
+README.md
