@@ -18,12 +18,13 @@ export default class colour {
 	 * @param {string | colour} [initialiser] - A CSS string, or `colour`
 	 *   instance.
 	 */
-	constructor(initialiser = undefined) {
+	constructor(initialiser: string | colour | undefined = undefined) {
 		if (typeof initialiser === "string") {
 			const canvas = document.createElement("canvas");
 			canvas.width = 1;
 			canvas.height = 1;
 			const canvasContext = canvas.getContext("2d");
+			if (!canvasContext) return;
 			canvasContext.fillStyle = initialiser;
 			const parsedColour = canvasContext.fillStyle;
 			canvas.remove();
@@ -35,7 +36,14 @@ export default class colour {
 					1,
 				);
 			} else {
-				this.rgba(...parsedColour.match(/[.?\d]+/g).map(Number));
+				const rgbaValues =
+					parsedColour.match(/[.?\d]+/g)?.map(Number) ?? [];
+				this.rgba(
+					rgbaValues[0] ?? 0,
+					rgbaValues[1] ?? 0,
+					rgbaValues[2] ?? 0,
+					rgbaValues[3] ?? 1,
+				);
 			}
 		} else if (initialiser instanceof colour) {
 			this.rgba(
@@ -56,7 +64,7 @@ export default class colour {
 	 * @param {number} a - Alpha (0-1).
 	 * @returns {colour} This instance.
 	 */
-	rgba(r, g, b, a) {
+	rgba(r: number, g: number, b: number, a: number): this {
 		this.r = r;
 		this.g = g;
 		this.b = b;
@@ -70,7 +78,7 @@ export default class colour {
 	 * @param {number} opacity - The opacity factor to apply (0-1).
 	 * @returns {colour} This colour instance for method chaining.
 	 */
-	opacity(opacity) {
+	opacity(opacity: number): this {
 		this.#a *= Math.max(0, Math.min(1, opacity));
 		return this;
 	}
@@ -88,28 +96,30 @@ export default class colour {
 	 *
 	 * @returns {colour} A new colour instance with adjusted brightness.
 	 */
-	brightness(percentage) {
+	brightness(percentage: number): colour {
 		const cent = percentage / 100;
 		if (1 < cent) {
-			return new this.constructor().rgba(255, 255, 255, this.#a);
+			return new colour().rgba(255, 255, 255, this.#a);
 		} else if (0 < cent && cent <= 1) {
-			return new this.constructor().rgba(
+			return new colour().rgba(
 				cent * 255 + (1 - cent) * this.#r,
 				cent * 255 + (1 - cent) * this.#g,
 				cent * 255 + (1 - cent) * this.#b,
 				this.#a,
 			);
 		} else if (cent === 0) {
-			return this;
+			return new colour(this);
 		} else if (-1 <= cent && cent < 0) {
-			return new this.constructor().rgba(
+			return new colour().rgba(
 				(cent + 1) * this.#r,
 				(cent + 1) * this.#g,
 				(cent + 1) * this.#b,
 				this.#a,
 			);
 		} else if (cent < -1) {
-			return new this.constructor().rgba(0, 0, 0, this.#a);
+			return new colour().rgba(0, 0, 0, this.#a);
+		} else {
+			return new colour(this);
 		}
 	}
 
@@ -119,16 +129,19 @@ export default class colour {
 	 * @param {colour} colour - The colour underneath.
 	 * @returns {colour} The result of the mix.
 	 */
-	mix(colour) {
-		const a = this.#a + colour.a * (1 - this.#a);
+	mix(colourValue: colour): colour {
+		const a = this.#a + colourValue.a * (1 - this.#a);
 		return a === 0
-			? new this.constructor()
-			: new this.constructor().rgba(
-					(this.#a * this.#r + colour.a * (1 - this.#a) * colour.r) /
+			? new colour()
+			: new colour().rgba(
+					(this.#a * this.#r +
+						colourValue.a * (1 - this.#a) * colourValue.r) /
 						a,
-					(this.#a * this.#g + colour.a * (1 - this.#a) * colour.g) /
+					(this.#a * this.#g +
+						colourValue.a * (1 - this.#a) * colourValue.g) /
 						a,
-					(this.#a * this.#b + colour.a * (1 - this.#a) * colour.b) /
+					(this.#a * this.#b +
+						colourValue.a * (1 - this.#a) * colourValue.b) /
 						a,
 					a,
 				);
@@ -152,12 +165,12 @@ export default class colour {
 	 * @throws {Error} If correction fails.
 	 */
 	contrastCorrection(
-		preferredScheme,
-		allowDarkLight,
-		minContrastLightX10,
-		minContrastDarkX10,
-		contrastColourLight = new this.constructor().rgba(0, 0, 0, 1),
-		contrastColourDark = new this.constructor().rgba(255, 255, 255, 1),
+		preferredScheme: "light" | "dark",
+		allowDarkLight: boolean,
+		minContrastLightX10: number,
+		minContrastDarkX10: number,
+		contrastColourLight = new colour().rgba(0, 0, 0, 1),
+		contrastColourDark = new colour().rgba(255, 255, 255, 1),
 	) {
 		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
 		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
@@ -210,9 +223,9 @@ export default class colour {
 	 *   21).
 	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
 	 */
-	#contrastRatio(colour) {
+	#contrastRatio(colourValue: colour): number {
 		const luminance1X255 = this.#luminanceX255();
-		const luminance2X255 = colour.#luminanceX255();
+		const luminance2X255 = colourValue.#luminanceX255();
 		return luminance1X255 > luminance2X255
 			? (luminance1X255 + 12.75) / (luminance2X255 + 12.75)
 			: (luminance2X255 + 12.75) / (luminance1X255 + 12.75);
@@ -225,7 +238,7 @@ export default class colour {
 	 * @returns {number} The relative luminance of the colour (0-255).
 	 * @see https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
 	 */
-	#luminanceX255() {
+	#luminanceX255(): number {
 		return (
 			0.2126 * this.#channelLuminance(this.#r) +
 			0.7152 * this.#channelLuminance(this.#g) +
@@ -241,7 +254,7 @@ export default class colour {
 	 * @returns {number} The linear approximation of the channel's luminance
 	 *   (times 255).
 	 */
-	#channelLuminance(value) {
+	#channelLuminance(value: number): number {
 		if (value < 0) {
 			return 0;
 		} else if (value < 32) {
@@ -270,7 +283,7 @@ export default class colour {
 	 *
 	 * @returns {string} The RGB CSS string.
 	 */
-	toRGB() {
+	toRGB(): string {
 		return `rgb(${this.#r}, ${this.#g}, ${this.#b})`;
 	}
 
@@ -279,7 +292,7 @@ export default class colour {
 	 *
 	 * @returns {string} The RGBA CSS string.
 	 */
-	toRGBA() {
+	toRGBA(): string {
 		return `rgba(${this.#r}, ${this.#g}, ${this.#b}, ${this.#a})`;
 	}
 
@@ -288,7 +301,7 @@ export default class colour {
 	 *
 	 * @returns {string} The hex string.
 	 */
-	toHex() {
+	toHex(): string {
 		const hexR = Math.round(this.#r).toString(16).padStart(2, "0");
 		const hexG = Math.round(this.#g).toString(16).padStart(2, "0");
 		const hexB = Math.round(this.#b).toString(16).padStart(2, "0");
@@ -300,7 +313,7 @@ export default class colour {
 	 *
 	 * @returns {string} The hex string with alpha.
 	 */
-	toHexa() {
+	toHexa(): string {
 		const hexR = Math.round(this.#r).toString(16).padStart(2, "0");
 		const hexG = Math.round(this.#g).toString(16).padStart(2, "0");
 		const hexB = Math.round(this.#b).toString(16).padStart(2, "0");
@@ -316,7 +329,7 @@ export default class colour {
 	 * @returns {boolean} `true` if the colour is opaque (alpha = 1), `false`
 	 *   otherwise.
 	 */
-	isOpaque() {
+	isOpaque(): boolean {
 		return this.#a === 1;
 	}
 
@@ -335,7 +348,7 @@ export default class colour {
 	 * @param {number} value - The red channel value to set.
 	 * @throws {Error} If the value is invalid.
 	 */
-	set r(value) {
+	set r(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for r");
 		this.#r = Math.max(0, Math.min(255, num));
@@ -356,7 +369,7 @@ export default class colour {
 	 * @param {number} value - The green channel value to set.
 	 * @throws {Error} If the value is invalid.
 	 */
-	set g(value) {
+	set g(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for g");
 		this.#g = Math.max(0, Math.min(255, num));
@@ -377,7 +390,7 @@ export default class colour {
 	 * @param {number} value - The blue channel value to set.
 	 * @throws {Error} If the value is invalid.
 	 */
-	set b(value) {
+	set b(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for b");
 		this.#b = Math.max(0, Math.min(255, num));
@@ -398,7 +411,7 @@ export default class colour {
 	 * @param {number} value - The alpha channel value to set (0-1).
 	 * @throws {Error} If the value is invalid.
 	 */
-	set a(value) {
+	set a(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for a");
 		this.#a = Math.max(0, Math.min(1, num));

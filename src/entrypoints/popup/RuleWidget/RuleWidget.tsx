@@ -1,9 +1,21 @@
-import { useSyncExternalStore } from "react";
-import Rule from "@/components/Rule/Rule";
 import Icon from "@/components/Icon/Icon";
+import Rule from "@/components/Rule/Rule";
+import { useSyncExternalStore } from "react";
 import styles from "./rule.widget.module.css";
+import type preference from "@/utils/preference";
+import type {
+	RuleQueryResult,
+	MetaQueryResult,
+	TabMetaReason,
+} from "@/utils/types.js";
 
-export default function RuleWidget({ pref, rule, meta }) {
+interface RuleWidgetProps {
+	pref: preference;
+	rule: RuleQueryResult;
+	meta: MetaQueryResult;
+}
+
+export default function RuleWidget({ pref, rule, meta }: RuleWidgetProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
@@ -20,7 +32,13 @@ export default function RuleWidget({ pref, rule, meta }) {
 	);
 }
 
-function ReasonText({ reason, info }) {
+function ReasonText({
+	reason,
+	info,
+}: {
+	reason: TabMetaReason;
+	info?: string;
+}) {
 	switch (reason) {
 		case "COLOUR_PICKED":
 			return i18n.t("colourPickedFromWebpage");
@@ -107,7 +125,15 @@ function ReasonText({ reason, info }) {
 	}
 }
 
-function RuleControls({ pref, rule, meta }) {
+function RuleControls({
+	pref,
+	rule,
+	meta,
+}: {
+	pref: preference;
+	rule: RuleQueryResult;
+	meta: MetaQueryResult;
+}) {
 	if (rule.id !== 0) {
 		return (
 			<>
