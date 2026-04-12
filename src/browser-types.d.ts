@@ -24,5 +24,18 @@ declare module "@wxt-dev/browser" {
 			update(windowId: number, theme: Theme): Promise<void>;
 			reset(windowId?: number): Promise<void>;
 		};
+		const browserSettings: {
+			overrideContentColorScheme?: {
+				get(details: {}): Promise<{ value?: string }>;
+				onChange?: {
+					addListener(
+						listener: (details: {
+							value: "dark" | "light" | "auto";
+							levelOfControl: string;
+						}) => void,
+					): void;
+				};
+			};
+		};
 	}
 }
