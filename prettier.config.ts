@@ -1,6 +1,7 @@
 import { type Config } from "prettier";
 
 const config: Config = {
+	endOfLine: "lf",
 	importOrderSortByLength: "asc",
 	plugins: [
 		"@trivago/prettier-plugin-sort-imports",

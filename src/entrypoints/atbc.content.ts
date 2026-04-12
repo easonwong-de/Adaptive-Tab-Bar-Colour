@@ -46,6 +46,7 @@ function getColour(): TabColourData {
 		page: getPageColour(),
 		query: getQueryColour(),
 		image: isImageViewer(),
+		plaintext: isPlainText(),
 	};
 }
 
@@ -109,10 +110,33 @@ function getQueryColour(): TabElementColourData | undefined {
 	}
 }
 
+/**
+ * Checks whether the current document is the browser image viewer.
+ *
+ * @returns {boolean} True if the page matches the image viewer background.
+ */
 function isImageViewer(): boolean {
 	return (
 		getComputedStyle(document.documentElement).backgroundImage ===
 		'url("chrome://global/skin/media/imagedoc-darknoise.png")'
+	);
+}
+
+/**
+ * Checks whether the current document is rendered as plain text.
+ *
+ * @returns {boolean} True if the head has exactly one stylesheet link to the
+ *   plaintext stylesheet.
+ */
+function isPlainText(): boolean {
+	if (!document.head) return false;
+	const stylesheetLinks = document.head.querySelectorAll(
+		'link[rel="stylesheet"][href]',
+	);
+	return (
+		stylesheetLinks.length === 1 &&
+		stylesheetLinks[0]?.getAttribute("href") ===
+			"resource://content-accessible/plaintext.css"
 	);
 }
 

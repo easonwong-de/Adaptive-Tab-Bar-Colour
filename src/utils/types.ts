@@ -2,6 +2,24 @@ import colour from "./colour.js";
 
 export type Scheme = "light" | "dark";
 
+export type BrowserColour =
+	| "ADDON"
+	| "COMPAT"
+	| "DEFAULT"
+	| "FALLBACK"
+	| "HOME"
+	| "IMAGE_VIEWER"
+	| "JSON_VIEWER"
+	| "LOG"
+	| "MOTTO"
+	| "PDF_VIEWER"
+	| "PLAINTEXT"
+	| "PRIVATE"
+	| "PROCESS"
+	| "PROFILE"
+	| "SYSTEM"
+	| "TOOLBOX";
+
 export interface UrlColourRule {
 	headerType: "URL";
 	header: string;
@@ -40,6 +58,11 @@ export type Rule =
 export type RuleList = Record<number, Rule>;
 
 export interface PreferenceContent {
+	// theme builder
+	popup: number;
+	popupBorder: number;
+	sidebar: number;
+	sidebarBorder: number;
 	tabbar: number;
 	tabbarBorder: number;
 	tabSelected: number;
@@ -49,30 +72,22 @@ export interface PreferenceContent {
 	toolbarField: number;
 	toolbarFieldBorder: number;
 	toolbarFieldOnFocus: number;
-	sidebar: number;
-	sidebarBorder: number;
-	popup: number;
-	popupBorder: number;
+	// rule list
 	ruleList: RuleList;
-	minContrast_light: number;
-	minContrast_dark: number;
+	// advanced
 	allowDarkLight: boolean;
-	dynamic: boolean;
-	noThemeColour: boolean;
 	compatibilityMode: boolean;
-	homeBackground_light: string;
-	homeBackground_dark: string;
-	fallbackColour_light: string;
+	dynamic: boolean;
 	fallbackColour_dark: string;
-	version: number[];
+	fallbackColour_light: string;
+	homeBackground_dark: string;
+	homeBackground_light: string;
+	minContrast_dark: number;
+	minContrast_light: number;
+	noThemeColour: boolean;
+	// state
 	lastSave: number;
-	[key: string]: unknown;
-}
-
-export interface RuleQueryResult {
-	id: number;
-	query: string;
-	rule: Rule;
+	version: number[];
 }
 
 export interface TabThemeColourData {
@@ -91,6 +106,7 @@ export interface TabColourData {
 	page: TabElementColourData[];
 	query?: TabElementColourData;
 	image: boolean;
+	plaintext: boolean;
 }
 
 export type TabMetaReason =
@@ -114,6 +130,12 @@ export type TabMetaReason =
 	| "TEXT_VIEWER"
 	| "FALLBACK_COLOUR"
 	| "ERROR_OCCURRED";
+
+export interface RuleQueryResult {
+	id: number;
+	query: string;
+	rule: Rule;
+}
 
 export interface MetaQueryResult {
 	colour: colour;

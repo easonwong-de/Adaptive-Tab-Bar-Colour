@@ -1,12 +1,12 @@
 import type {
-	Scheme,
-	Theme,
+	BackgroundMessageListener,
 	MessageForBackground,
 	MessageForPopup,
 	MessageForTab,
-	BackgroundMessageListener,
 	PopupMessageListener,
+	Scheme,
 	TabMessageListener,
+	Theme,
 } from "./types.js";
 
 /** Match media for dark mode detection. */
@@ -77,10 +77,30 @@ export function addTabChangeListener(listener: () => void): void {
  * @param {Browser.tabs.Tab | undefined} tab - Sender tab, if available.
  * @returns {Promise<number | undefined>} Resolved window id.
  */
-export async function getCurrentWindowId(
+export async function getWindowId(
 	tab?: Browser.tabs.Tab,
 ): Promise<number | undefined> {
 	return tab?.windowId ?? (await browser.windows.getLastFocused()).id;
+}
+
+/**
+ * Checks whether the tab's window is incognito.
+ *
+ * @async
+ * @param {Browser.tabs.Tab | undefined} tab - Sender tab, if available.
+ * @returns {Promise<boolean>} `true` if the window is incognito.
+ */
+export async function isWindowIncognito(
+	tab?: Browser.tabs.Tab,
+): Promise<boolean> {
+	const windowId = tab?.windowId;
+	if (windowId) {
+		try {
+			return (await browser.windows.get(windowId)).incognito;
+		} catch (e) {
+			return false;
+		}
+	} else return false;
 }
 
 /**
