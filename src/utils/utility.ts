@@ -28,9 +28,7 @@ export function getSystemScheme(): Scheme {
  */
 export function addSchemeChangeListener(listener: () => void): void {
 	darkSchemeDetection?.addEventListener("change", listener);
-	(
-		browser as any
-	).browserSettings?.overrideContentColorScheme?.onChange?.addListener(
+	browser.browserSettings?.overrideContentColorScheme?.onChange?.addListener(
 		listener,
 	);
 }
@@ -45,9 +43,8 @@ export function addSchemeChangeListener(listener: () => void): void {
  */
 export async function getCurrentScheme(): Promise<Scheme> {
 	try {
-		const webAppearanceSetting = await (
-			browser as any
-		).browserSettings?.overrideContentColorScheme?.get({});
+		const webAppearanceSetting =
+			await browser.browserSettings?.overrideContentColorScheme?.get({});
 		const webAppearance = webAppearanceSetting?.value;
 		return webAppearance === "light" || webAppearance === "dark"
 			? webAppearance

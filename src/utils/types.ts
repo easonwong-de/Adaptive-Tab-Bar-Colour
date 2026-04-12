@@ -17,6 +17,7 @@ export type BrowserColour =
 	| "PRIVATE"
 	| "PROCESS"
 	| "PROFILE"
+	| "SVG"
 	| "SYSTEM"
 	| "TOOLBOX";
 
@@ -88,6 +89,7 @@ export interface PreferenceContent {
 	// state
 	lastSave: number;
 	version: number[];
+	[key: string]: PreferenceContent[keyof PreferenceContent];
 }
 
 export interface TabThemeColourData {
@@ -102,11 +104,10 @@ export interface TabElementColourData {
 }
 
 export interface TabColourData {
-	theme: TabThemeColourData;
 	page: TabElementColourData[];
+	theme: TabThemeColourData;
 	query?: TabElementColourData;
-	image: boolean;
-	plaintext: boolean;
+	special: "image" | "plaintext" | "svg" | "none";
 }
 
 export type TabMetaReason =

@@ -1,4 +1,3 @@
-import colour from "./colour.js";
 import { supportsThemeAPI } from "./utility.js";
 import { addonVersion, defaultPref } from "./constants.js";
 import type {
@@ -47,7 +46,9 @@ export default class preference {
 			) {
 				for (const key in changes) {
 					if (key in this.#content) {
-						this.#content[key] = changes[key].newValue;
+						const prefKey = key as keyof PreferenceContent;
+						this.#content[prefKey] = changes[prefKey]!
+							.newValue as PreferenceContent[typeof prefKey];
 					}
 				}
 				this.syncUI();
@@ -314,7 +315,7 @@ export default class preference {
 	}
 
 	/**
-	 * Finds a rule matching the query.
+	 * Finds the last matching rule for a URL or add-on ID.
 	 *
 	 * For URL header types, supports:
 	 *
@@ -354,21 +355,17 @@ export default class preference {
 			if (isMatch) {
 				id = +currentId;
 				rule = currentRule;
-			} else {
-				continue;
 			}
 		}
 		return { id: id, query, rule: rule };
 	}
 
 	/**
-	 * Tests if a URL matches a regular expression pattern.
+	 * Tests whether a URL matches a regex pattern.
 	 *
-	 * @private
-	 * @param {string} url - The URL to test.
-	 * @param {string} test - The regular expression pattern.
-	 * @returns {boolean} `true` if the URL matches the pattern, `false`
-	 *   otherwise.
+	 * @param {string} url - URL to test.
+	 * @param {string} test - Regex pattern.
+	 * @returns {boolean} Whether it matches.
 	 */
 	#testRegex(url: string, test: string): boolean {
 		try {
@@ -379,17 +376,11 @@ export default class preference {
 	}
 
 	/**
-	 * Tests if a URL matches a wildcard pattern.
+	 * Tests whether a URL matches a wildcard pattern.
 	 *
-	 * Converts wildcard patterns to regular expressions and tests the URL.
-	 * Supports `**` (match all), `*` (match except `/.:`) and `?` (single
-	 * char).
-	 *
-	 * @private
-	 * @param {string} url - The URL to test.
-	 * @param {string} test - The wildcard pattern.
-	 * @returns {boolean} `true` if the URL matches the pattern, `false`
-	 *   otherwise.
+	 * @param {string} url - URL to test.
+	 * @param {string} test - Wildcard pattern.
+	 * @returns {boolean} Whether it matches.
 	 */
 	#testWildcard(url: string, test: string): boolean {
 		if (test.includes("*") || test.includes("?")) {

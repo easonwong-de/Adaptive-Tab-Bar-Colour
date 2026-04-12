@@ -7,6 +7,7 @@ import type {
 } from "@/utils/types.js";
 
 let query: string | undefined;
+let colourDataCache: TabColourData | undefined;
 
 /**
  * Handles incoming runtime messages from the background script.
@@ -24,8 +25,13 @@ function handleMessage(
 	switch (message.header) {
 		case "GET_COLOUR":
 			query = message.query;
-			message.dynamic ? enableDynamic() : disableDynamic();
-			sendResponse(getColour());
+			if (message.dynamic) {
+				enableDynamic();
+				sendResponse(getColourData());
+			} else {
+				disableDynamic();
+				sendResponse(colourDataCache ?? getColourData());
+			}
 			break;
 		case "SET_THEME_COLOUR":
 			setThemeColour(message.colour);
@@ -40,14 +46,16 @@ function handleMessage(
  *
  * @returns {TabColourData} The colour data object.
  */
-function getColour(): TabColourData {
-	return {
+function getColourData(): TabColourData {
+	const page = getPageColour();
+	const tabColourData: TabColourData = {
+		page,
 		theme: getThemeColour(),
-		page: getPageColour(),
 		query: getQueryColour(),
-		image: isImageViewer(),
-		plaintext: isPlainText(),
+		special: page.length > 0 ? "none" : getSpecial(),
 	};
+	colourDataCache = tabColourData;
+	return tabColourData;
 }
 
 /**
@@ -111,33 +119,29 @@ function getQueryColour(): TabElementColourData | undefined {
 }
 
 /**
- * Checks whether the current document is the browser image viewer.
+ * Determines the special page type when no page colour candidates are found.
  *
- * @returns {boolean} True if the page matches the image viewer background.
+ * @returns {"image" | "plaintext" | "svg" | "none"} The detected special page
+ *   type.
  */
-function isImageViewer(): boolean {
-	return (
+function getSpecial(): "image" | "plaintext" | "svg" | "none" {
+	if (
 		getComputedStyle(document.documentElement).backgroundImage ===
 		'url("chrome://global/skin/media/imagedoc-darknoise.png")'
-	);
-}
-
-/**
- * Checks whether the current document is rendered as plain text.
- *
- * @returns {boolean} True if the head has exactly one stylesheet link to the
- *   plaintext stylesheet.
- */
-function isPlainText(): boolean {
-	if (!document.head) return false;
-	const stylesheetLinks = document.head.querySelectorAll(
-		'link[rel="stylesheet"][href]',
-	);
-	return (
-		stylesheetLinks.length === 1 &&
-		stylesheetLinks[0]?.getAttribute("href") ===
-			"resource://content-accessible/plaintext.css"
-	);
+	)
+		return "image";
+	if (document.head) {
+		const stylesheetLinks = document.head.querySelectorAll(
+			'link[rel="stylesheet"][href]',
+		);
+		if (
+			stylesheetLinks.length === 1 &&
+			stylesheetLinks[0]?.getAttribute("href") ===
+				"resource://content-accessible/plaintext.css"
+		)
+			return "plaintext";
+	}
+	return document.documentElement instanceof SVGSVGElement ? "svg" : "none";
 }
 
 /**
@@ -273,7 +277,7 @@ async function sendColour() {
 		try {
 			await browser.runtime.sendMessage({
 				header: "UPDATE_COLOUR",
-				colour: getColour(),
+				colour: getColourData(),
 			});
 		} catch (error) {
 			console.warn("Failed to send colour to ATBC background.");
