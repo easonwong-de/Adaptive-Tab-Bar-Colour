@@ -2,7 +2,15 @@ import { type Config } from "prettier";
 
 const config: Config = {
 	endOfLine: "lf",
-	importOrderSortByLength: "asc",
+	importOrder: [
+		"<BUILTIN_MODULES>",
+		"<THIRD_PARTY_MODULES>",
+		"^@/utils/(.*)$",
+		"^@/(.*)$",
+		"^[./](?!.*\\.css$)",
+		"^[./]",
+	],
+	importOrderSortSpecifiers: true,
 	plugins: [
 		"@trivago/prettier-plugin-sort-imports",
 		"prettier-plugin-css-order",

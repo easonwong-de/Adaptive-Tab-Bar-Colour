@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import Icon from "../Icon/Icon";
-import Text from "../Text/Text";
-import Colour from "../Colour/Colour";
-import Toggle from "../Toggle/Toggle";
+import { useEffect, useState } from "react";
+import type { Rule as RuleData } from "@/utils/types";
+import { getAddonName } from "@/utils/utility";
+import Colour from "@/components/Colour/Colour";
+import Icon from "@/components/Icon/Icon";
+import Text from "@/components/Text/Text";
+import Toggle from "@/components/Toggle/Toggle";
 import styles from "./rule.module.css";
-import { useState, useEffect } from "react";
-import { getAddonName } from "../../utils/utility";
-import type { Rule as RuleData } from "../../utils/types.js";
 
 const defaultValue = {
 	COLOUR: "#000000",

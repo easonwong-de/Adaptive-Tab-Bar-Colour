@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import Icon from "../Icon/Icon";
+import Icon from "@/components/Icon/Icon";
 import styles from "./text.module.css";
 
 interface TextProps {

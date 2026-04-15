@@ -1,5 +1,5 @@
 import "@wxt-dev/browser";
-import type { Theme } from "./utils/types.js";
+import type { Theme } from "./utils/types";
 
 declare module "@wxt-dev/browser" {
 	namespace Browser {
@@ -26,7 +26,7 @@ declare module "@wxt-dev/browser" {
 		};
 		const browserSettings: {
 			overrideContentColorScheme?: {
-				get(details: {}): Promise<{ value?: string }>;
+				get(details: {}): Promise<{ value: "dark" | "light" | "auto" }>;
 				onChange?: {
 					addListener(
 						listener: (details: {

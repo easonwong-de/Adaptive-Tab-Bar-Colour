@@ -1,11 +1,11 @@
-import { supportsThemeAPI } from "./utility.js";
-import { addonVersion, defaultPref } from "./constants.js";
+import { addonVersion, defaultPref } from "./constants";
 import type {
 	PreferenceContent,
 	Rule,
 	RuleList,
 	RuleQueryResult,
-} from "./types.js";
+} from "./types";
+import { supportsThemeAPI } from "./utility";
 
 export default class preference {
 	/** The content of the preference. */

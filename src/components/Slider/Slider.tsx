@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import Icon from "../Icon/Icon.js";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { clamp } from "@/utils/utility";
+import Icon from "@/components/Icon/Icon";
 import styles from "./slider.module.css";
-import { clamp } from "@/utils/utility.js";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 interface SliderProps {
 	className?: string;
