@@ -1,5 +1,5 @@
 import { useState } from "react";
-import colour from "@/utils/colour.js";
+import colour from "@/utils/colour";
 import styles from "./colour.module.css";
 
 interface ColourProps {

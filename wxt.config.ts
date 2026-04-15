@@ -8,7 +8,6 @@ export default defineConfig({
 			gecko: {
 				id: "ATBC@EasonWong",
 				strict_min_version: "57.0",
-				// @ts-ignore
 				data_collection_permissions: { required: ["none"] },
 			},
 		},

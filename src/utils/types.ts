@@ -1,4 +1,4 @@
-import colour from "./colour.js";
+import colour from "./colour";
 
 export type Scheme = "light" | "dark";
 

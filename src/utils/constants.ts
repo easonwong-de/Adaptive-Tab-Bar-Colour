@@ -1,6 +1,6 @@
-import colour from "./colour.js";
-import { supportsThemeAPI } from "./utility.js";
-import type { PreferenceContent, Scheme, BrowserColour } from "./types.js";
+import colour from "./colour";
+import type { BrowserColour, PreferenceContent, Scheme } from "./types";
+import { supportsThemeAPI } from "./utility";
 
 /** The version of ATBC. */
 export const addonVersion = [4, 0];

@@ -1,10 +1,10 @@
-import { sendMessageToBackground } from "@/utils/utility";
 import type {
 	MessageForTab,
 	TabColourData,
 	TabElementColourData,
 	TabThemeColourData,
-} from "@/utils/types.js";
+} from "@/utils/types";
+import { sendMessageToBackground } from "@/utils/utility";
 
 let query: string | undefined;
 let colourDataCache: TabColourData | undefined;

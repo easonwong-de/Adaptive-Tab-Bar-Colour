@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import Rule from "@/components/Rule/Rule";
-import styles from "./rule.list.module.css";
 import { useSyncExternalStore } from "react";
 import type preference from "@/utils/preference";
+import Rule from "@/components/Rule/Rule";
+import styles from "./rule.list.module.css";
 
 interface RuleListTabProps {
 	pref: preference;

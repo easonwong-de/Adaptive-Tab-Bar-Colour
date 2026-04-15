@@ -7,7 +7,7 @@ import type {
 	Scheme,
 	TabMessageListener,
 	Theme,
-} from "./types.js";
+} from "./types";
 
 /** Match media for dark mode detection. */
 const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
