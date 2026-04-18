@@ -144,6 +144,21 @@ export async function updateBrowserTheme(
 }
 
 /**
+ * Enables an installed browser theme.
+ *
+ * @param {string} themeId - The theme add-on ID to enable.
+ * @returns {Promise<boolean>} `true` if enabling succeeds.
+ */
+export async function enableBrowserTheme(themeId: string): Promise<boolean> {
+	try {
+		await browser.management.setEnabled(themeId, true);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
  * Resolves the extension ID from a `moz-extension:` URL.
  *
  * @param {string} url - The URL to resolve.
@@ -175,6 +190,33 @@ export async function getWebExtName(id: string): Promise<string | undefined> {
 	try {
 		const addon = await browser.management.get(id);
 		if (addon.type === "extension") return addon.name;
+	} catch {}
+}
+
+/**
+ * Retrieves all installed themes.
+ *
+ * @async
+ * @returns {Promise<{ id: string; name: string }[]>} List of themes with IDs
+ *   and names.
+ */
+export async function getThemeList(): Promise<{ id: string; name: string }[]> {
+	const addonList = await browser.management.getAll();
+	return addonList
+		.filter((addon) => addon.type === "theme")
+		.map((theme) => ({ id: theme.id, name: theme.name }));
+}
+
+/**
+ * Resolves a theme name from an add-on ID.
+ *
+ * @param {string} id - The theme add-on ID.
+ * @returns {Promise<string | undefined>} Theme name, if found.
+ */
+export async function getThemeName(id: string): Promise<string | undefined> {
+	try {
+		const addon = await browser.management.get(id);
+		if (addon.type === "theme") return addon.name;
 	} catch {}
 }
 

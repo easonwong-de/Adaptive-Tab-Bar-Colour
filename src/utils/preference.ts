@@ -152,7 +152,7 @@ export default class preference {
 							typeof rule.value === "string"))) ||
 					((rule.headerType === "URL" ||
 						rule.headerType === "ADDON_ID") &&
-						rule.type === "COLOUR" &&
+						(rule.type === "COLOUR" || rule.type === "THEME") &&
 						typeof rule.value === "string")))
 		);
 	}

@@ -28,6 +28,13 @@ export interface ColourRule {
 	value: string;
 }
 
+export interface ThemeRule {
+	headerType: "URL" | "ADDON_ID";
+	header: string;
+	type: "THEME";
+	value: string | "ATBC";
+}
+
 export interface ThemeColourRule {
 	headerType: "URL";
 	header: string;
@@ -42,7 +49,12 @@ export interface QuerySelectorRule {
 	value: string;
 }
 
-export type Rule = ColourRule | ThemeColourRule | QuerySelectorRule | null;
+export type Rule =
+	| ColourRule
+	| ThemeRule
+	| ThemeColourRule
+	| QuerySelectorRule
+	| null;
 
 export type RuleList = Record<number, Rule>;
 
@@ -100,14 +112,14 @@ export interface TabColourData {
 	special: TabSpecialColourData;
 }
 
-export interface RuleQueryResult {
+export type RuleQueryResult = {
 	id: number;
 	url: string;
 	webExtId?: string;
 	result: Rule;
-}
+};
 
-export type TabMetaReason =
+export type ColourMetaReason =
 	| "COLOUR_PICKED"
 	| "COLOUR_SPECIFIED"
 	| "THEME_USED"
@@ -129,17 +141,17 @@ export type TabMetaReason =
 	| "FALLBACK_COLOUR"
 	| "ERROR_OCCURRED";
 
-export interface MetaQueryResult {
-	colour: colour;
-	reason: TabMetaReason;
-	info?: string;
-}
+export type ThemeMetaReason = "THEME_SPECIFIED";
 
-export interface ApplyThemeResult {
+export type MetaQueryResult =
+	| { colour: colour; reason: ColourMetaReason; info?: string }
+	| { theme: string; reason: ThemeMetaReason; info: string };
+
+export type ApplyThemeResult = {
 	popupColour: string;
 	scheme: Scheme;
 	corrected: boolean;
-}
+};
 
 export interface Cache {
 	rule: RuleQueryResult;

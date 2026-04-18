@@ -42,9 +42,11 @@ import {
 	addMessageListener,
 	addSchemeChangeListener,
 	addTabChangeListener,
+	enableBrowserTheme,
 	getActiveTabList,
 	getCurrentScheme,
 	getSystemScheme,
+	getThemeName,
 	getWebExtName,
 	getWindowId,
 	isWindowIncognito,
@@ -257,6 +259,10 @@ async function getTabMeta(
 				reason: "ADDON_SPECIFIED",
 				info,
 			};
+	} else if (result?.type === "THEME" && result.value !== "ATBC") {
+		const info = await getThemeName(result.value);
+		if (info)
+			return { theme: result.value, reason: "THEME_SPECIFIED", info };
 	}
 	try {
 		return parseTabColourData(
@@ -514,22 +520,31 @@ function setFrameColour(
 	meta: MetaQueryResult,
 ): ApplyThemeResult {
 	const windowId = tab.windowId;
-	const { colour, scheme, corrected } = meta.colour.contrastCorrection(
-		cache.scheme,
-		!pref.compatibilityMode && pref.allowDarkLight,
-		pref.minContrast_light,
-		pref.minContrast_dark,
-	);
-	pref.compatibilityMode
-		? setTabThemeColour(tab, colour)
-		: applyTheme(windowId, colour, scheme);
-	return {
-		popupColour: colour
-			.brightness((scheme === "light" ? -1.5 : 1) * pref.popup)
-			.toRGBA(),
-		scheme: scheme,
-		corrected: corrected,
-	};
+	if ("colour" in meta) {
+		const { colour, scheme, corrected } = meta.colour.contrastCorrection(
+			cache.scheme,
+			!pref.compatibilityMode && pref.allowDarkLight,
+			pref.minContrast_light,
+			pref.minContrast_dark,
+		);
+		pref.compatibilityMode
+			? setTabThemeColour(tab, colour)
+			: applyTheme(windowId, colour, scheme);
+		return {
+			popupColour: colour
+				.brightness((scheme === "light" ? -1.5 : 1) * pref.popup)
+				.toRGBA(),
+			scheme: scheme,
+			corrected: corrected,
+		};
+	} else {
+		enableBrowserTheme(meta.theme);
+		return {
+			popupColour: "transparent",
+			scheme: cache.scheme,
+			corrected: false,
+		};
+	}
 }
 
 /**

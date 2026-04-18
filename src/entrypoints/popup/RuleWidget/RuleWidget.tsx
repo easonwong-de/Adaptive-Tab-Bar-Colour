@@ -1,9 +1,10 @@
 import { useSyncExternalStore } from "react";
 import type preference from "@/utils/preference";
 import type {
+	ColourMetaReason,
 	MetaQueryResult,
 	RuleQueryResult,
-	TabMetaReason,
+	ThemeMetaReason,
 } from "@/utils/types";
 import Icon from "@/components/Icon/Icon";
 import Rule from "@/components/Rule/Rule";
@@ -36,7 +37,7 @@ function ReasonText({
 	reason,
 	info,
 }: {
-	reason: TabMetaReason;
+	reason: ColourMetaReason | ThemeMetaReason;
 	info?: string;
 }) {
 	switch (reason) {
@@ -104,6 +105,13 @@ function ReasonText({
 					{i18n.t("usingDefaultColourForAddon")}
 					<strong>{info}</strong>
 					{i18n.t("usingDefaultColourForAddonEnd")}
+				</>
+			);
+		case "THEME_SPECIFIED":
+			return (
+				<>
+					{"Using theme:"}
+					<strong>{info}</strong>
 				</>
 			);
 		case "HOME_PAGE":

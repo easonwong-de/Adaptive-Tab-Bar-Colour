@@ -51,6 +51,10 @@
 		height: calc(32 * var(--unit));
 		color: var(--text-primary);
 
+		&.select-theme {
+			width: auto;
+		}
+
 		&:hover {
 			background-color: var(--control-hover);
 		}

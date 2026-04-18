@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import type { Rule as RuleData } from "@/utils/types";
-import { getWebExtName } from "@/utils/utility";
+import { getThemeList, getWebExtName } from "@/utils/utility";
 import Colour from "@/components/Colour/Colour";
 import Icon from "@/components/Icon/Icon";
 import Text from "@/components/Text/Text";
@@ -10,6 +10,7 @@ import styles from "./rule.module.css";
 
 const defaultValue = {
 	COLOUR: "#000000",
+	THEME: "ATBC",
 	THEME_COLOUR: true,
 	QUERY_SELECTOR: "",
 };
@@ -24,6 +25,9 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 	if (!rule) return null;
 
 	const [webExtName, setWebExtName] = useState(rule?.header);
+	const [themeList, setThemeList] = useState<{ id: string; name: string }[]>(
+		[],
+	);
 
 	useEffect(() => {
 		if (rule?.headerType === "ADDON_ID")
@@ -31,6 +35,10 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 				setWebExtName(name ?? i18n.t("addonNotFound")),
 			);
 	}, [rule?.header, rule?.headerType]);
+
+	useEffect(() => {
+		getThemeList().then(setThemeList);
+	}, []);
 
 	return (
 		<section
@@ -60,6 +68,13 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 								value: defaultValue.COLOUR,
 							});
 							break;
+						case "THEME":
+							onChange({
+								...rule,
+								type: "THEME",
+								value: defaultValue.THEME,
+							});
+							break;
 						case "THEME_COLOUR":
 							onChange({
 								...rule,
@@ -80,6 +95,7 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 				}}
 			>
 				<option value="COLOUR">{i18n.t("specifyAColour")}</option>
+				<option value="THEME">{i18n.t("useATheme")}</option>
 				{rule.headerType === "URL" ? (
 					<>
 						<option value="THEME_COLOUR">
@@ -110,6 +126,28 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 									onChange({ ...rule, value: newValue })
 								}
 							/>
+						);
+					case "THEME":
+						return (
+							<select
+								className={styles.selectTheme}
+								value={rule.value}
+								onChange={(e) =>
+									onChange({ ...rule, value: e.target.value })
+								}
+							>
+								<option value="ATBC">
+									{i18n.t("useAdaptiveColour")}
+								</option>
+								{themeList.map((theme) => (
+									<option
+										key={`theme${theme.id}`}
+										value={theme.id}
+									>
+										{theme.name}
+									</option>
+								))}
+							</select>
 						);
 					case "THEME_COLOUR":
 						return (
