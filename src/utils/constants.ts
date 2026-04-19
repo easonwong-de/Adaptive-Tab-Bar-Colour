@@ -72,6 +72,24 @@ export const presetAddonPageColour = Object.freeze({
 	"uBlock0@raymondhill.net": { light: new colour("#f0f0f2"), dark: new colour("#1b1b24") }, // uBlock Origin
 } as Record<string, Record<Scheme, colour> | undefined>);
 
+/** Protocols of Firefox source pages. */
+export const sourcePageProtocol = [
+	"chrome:",
+	"jar:",
+	"resource:",
+	"view-source:",
+];
+
+/** Extensions of files that is rendered as plaintext. */
+export const plainTextExtension = [
+	".css",
+	".ftl",
+	".js",
+	".locale",
+	".mjs",
+	".txt",
+];
+
 /** Default content of the preference. */
 export const defaultPref = Object.freeze({
 	// theme builder

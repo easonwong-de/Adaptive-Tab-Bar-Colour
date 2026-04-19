@@ -113,7 +113,7 @@ function getQueryColour(): TabElementColourData | undefined {
 		return query
 			? getElementColour(document.querySelector(query))
 			: undefined;
-	} catch (error) {
+	} catch {
 		return undefined;
 	}
 }
@@ -176,9 +176,7 @@ const metaTagObserver = new MutationObserver((mutationList) =>
 				node.name === "theme-color"
 			) {
 				sendColour();
-				metaThemeColourObserver.observe(node, {
-					attributes: true,
-				});
+				metaThemeColourObserver.observe(node, { attributes: true });
 			}
 		});
 	}),
@@ -279,7 +277,7 @@ async function sendColour() {
 				header: "UPDATE_COLOUR",
 				colour: getColourData(),
 			});
-		} catch (error) {
+		} catch {
 			console.warn("Failed to send colour to ATBC background.");
 		}
 	};

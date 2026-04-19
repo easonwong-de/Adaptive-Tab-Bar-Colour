@@ -5,7 +5,7 @@ import type {
 	RuleList,
 	RuleQueryResult,
 } from "./types";
-import { supportsThemeAPI } from "./utility";
+import { getWebExtId, supportsThemeAPI } from "./utility";
 
 export default class preference {
 	/** The content of the preference. */
@@ -18,9 +18,7 @@ export default class preference {
 	#state: {
 		lastWrite: number;
 		writeTimeout?: ReturnType<typeof setTimeout>;
-	} = {
-		lastWrite: 0,
-	};
+	} = { lastWrite: 0 };
 
 	/**
 	 * Initialises preferences from storage.
@@ -189,6 +187,24 @@ export default class preference {
 	}
 
 	/**
+	 * Determines if the stored version is older than the target version.
+	 *
+	 * @private
+	 * @param {number[]} storedVersion - The stored version array.
+	 * @param {number[]} version - The target version array.
+	 * @returns {boolean} True if the stored version is older.
+	 */
+	#migrateFrom(storedVersion: number[], version: number[]): boolean {
+		const maxLength = Math.max(storedVersion.length, version.length);
+		for (let i = 0; i < maxLength; i++) {
+			const current = storedVersion[i] ?? 0;
+			const target = version[i] ?? 0;
+			if (current !== target) return current < target;
+		}
+		return false;
+	}
+
+	/**
 	 * Normalises and migrates preferences from older versions.
 	 *
 	 * @private
@@ -203,30 +219,15 @@ export default class preference {
 		const storedVersion = Array.isArray(content.version)
 			? (content.version as number[])
 			: [];
-		const migrateFrom = (version: number[]): boolean => {
-			const maxLength = Math.max(storedVersion.length, version.length);
-			for (let i = 0; i < maxLength; i++) {
-				const current = storedVersion[i] ?? 0;
-				const target = version[i] ?? 0;
-				if (current !== target) return current < target;
-			}
-			return false;
-		};
-		if (!content.version || migrateFrom([2, 2, 1])) {
-			return {
-				result: { ...defaultPref },
-				removedKeys: [],
-			};
+		if (!content.version || this.#migrateFrom(storedVersion, [2, 2, 1])) {
+			return { result: { ...defaultPref }, removedKeys: [] };
 		}
-		const result: Record<string, unknown> = {
-			...defaultPref,
-			...content,
-		};
-		if (migrateFrom([2, 4])) {
+		const result: Record<string, unknown> = { ...defaultPref, ...content };
+		if (this.#migrateFrom(storedVersion, [2, 4])) {
 			browser.theme?.reset?.();
 			if (result.minContrast_light === 165) result.minContrast_light = 90;
 		}
-		if (migrateFrom([3, 4]) && result.siteList) {
+		if (this.#migrateFrom(storedVersion, [3, 4]) && result.siteList) {
 			result.ruleList = result.siteList as RuleList;
 		}
 		const removedKeys: string[] = [];
@@ -261,7 +262,7 @@ export default class preference {
 			for (const key in parsedPref) this.#set(key, parsedPref[key]);
 			await this.#save();
 			return true;
-		} catch (error) {
+		} catch {
 			return false;
 		}
 	}
@@ -277,8 +278,12 @@ export default class preference {
 		return () => (this.#listener = () => {});
 	}
 
-	/** Synchronises the UI with the current preference state. */
-	syncUI() {
+	/**
+	 * Synchronises the UI with the current preference state.
+	 *
+	 * @returns {void}
+	 */
+	syncUI(): void {
 		this.#listener();
 	}
 
@@ -295,8 +300,9 @@ export default class preference {
 	 * Adds a rule to the rule list.
 	 *
 	 * @param {Rule} rule - The rule object.
+	 * @returns {Promise<void>} Resolves when the rule is saved.
 	 */
-	async addRule(rule: Rule) {
+	async addRule(rule: Rule): Promise<void> {
 		let id = 1;
 		while (id in this.#content.ruleList) id++;
 		await this.setRule(id, rule);
@@ -307,57 +313,69 @@ export default class preference {
 	 *
 	 * @param {number} id - The rule ID.
 	 * @param {Rule} rule - The rule object.
+	 * @returns {Promise<void>} Resolves when the rule is saved.
 	 */
-	async setRule(id: number, rule: Rule) {
+	async setRule(id: number, rule: Rule): Promise<void> {
 		if (!this.#validateRule(rule)) return;
 		this.#content.ruleList[id] = rule;
 		await this.#save();
 	}
 
 	/**
-	 * Finds the last matching rule for a URL or add-on ID.
+	 * Finds the last matching rule for a URL.
 	 *
-	 * For URL header types, supports:
+	 * Supports rule header being:
 	 *
-	 * - Full URL with or without trailing slash
-	 * - Regular expressions
-	 * - Wildcard patterns:
+	 * - ID of web extension
+	 * - Full URL (& trailing slash)
+	 * - Regular expression
+	 * - Wildcard pattern:
 	 *
 	 *   - `**` matches any string of any length
 	 *   - `*` matches any characters except `/`, `.`, and `:`
 	 *   - `?` matches any single character
 	 *   - Scheme (e.g., `https://`) is optional
-	 * - Hostname & path matching
+	 * - Hostname (& path)
 	 *
-	 * For add-on ID header types, performs exact string matching.
-	 *
-	 * @param {string | undefined} query - Site URL or add-on ID.
-	 * @returns {RuleQueryResult} Result.
+	 * @param {string} [url=""] - Site URL. Default is `""`
+	 * @returns {Promise<RuleQueryResult>} Result.
 	 */
-	getRule(query?: string): RuleQueryResult {
+	async getRule(url: string = ""): Promise<RuleQueryResult> {
 		let id = 0;
-		let rule: Rule = null;
-		if (!query) return { id: id, query: "", rule: rule };
-		for (const currentId in this.#content.ruleList) {
-			const currentRule = this.#content.ruleList[currentId];
-			if (!currentRule || typeof currentRule.header !== "string")
+		let result: Rule = null;
+		if (url === "") return { id, url, result };
+		const webExtId = await getWebExtId(url);
+		for (const ruleId in this.#content.ruleList) {
+			const rule = this.#content.ruleList[ruleId];
+			if (
+				rule === null ||
+				typeof rule.header !== "string" ||
+				rule.header === ""
+			) {
 				continue;
-			const cleanQuery = query.replace(/\/$/, "");
-			const cleanHeader = currentRule.header.replace(/\/$/, "");
-			const isMatch =
-				(currentRule.headerType === "ADDON_ID" &&
-					currentRule.header === query) ||
-				(currentRule.headerType === "URL" &&
-					(cleanQuery === cleanHeader ||
-						this.#testRegex(cleanQuery, cleanHeader) ||
-						this.#testWildcard(cleanQuery, cleanHeader) ||
-						this.#testHostname(cleanQuery, cleanHeader)));
-			if (isMatch) {
-				id = +currentId;
-				rule = currentRule;
+			} else if (
+				webExtId !== undefined &&
+				rule.headerType === "ADDON_ID" &&
+				rule.header === webExtId
+			) {
+				id = +ruleId;
+				result = rule;
+			} else {
+				const cleanUrl = url.replace(/\/$/, "");
+				const cleanHeader = rule.header.replace(/\/$/, "");
+				if (
+					rule.headerType === "URL" &&
+					(cleanUrl === cleanHeader ||
+						this.#testRegex(cleanUrl, cleanHeader) ||
+						this.#testWildcard(cleanUrl, cleanHeader) ||
+						this.#testHostname(cleanUrl, cleanHeader))
+				) {
+					id = +ruleId;
+					result = rule;
+				}
 			}
 		}
-		return { id: id, query, rule: rule };
+		return { id, url, webExtId, result };
 	}
 
 	/**
@@ -370,7 +388,7 @@ export default class preference {
 	#testRegex(url: string, test: string): boolean {
 		try {
 			return new RegExp(`^${test}$`, "i").test(url);
-		} catch (error) {
+		} catch {
 			return false;
 		}
 	}
@@ -394,7 +412,7 @@ export default class preference {
 					.replace(/^([a-z]+:\/\/)/i, "$1")
 					.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
 				return new RegExp(`^${wildcardPattern}/?$`, "i").test(url);
-			} catch (error) {
+			} catch {
 				return false;
 			}
 		} else {
@@ -420,7 +438,7 @@ export default class preference {
 				return false;
 			const urlPath = hostPart + pathname;
 			return urlPath === test || urlPath.startsWith(`${test}/`);
-		} catch (error) {
+		} catch {
 			return false;
 		}
 	}

@@ -15,7 +15,7 @@ const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 /**
  * Detects the system colour scheme.
  *
- * @returns {"dark" | "light"} The current system colour scheme.
+ * @returns {Scheme} The current system colour scheme.
  */
 export function getSystemScheme(): Scheme {
 	return darkSchemeDetection?.matches ? "dark" : "light";
@@ -39,7 +39,7 @@ export function addSchemeChangeListener(listener: () => void): void {
  * Falls back to the system scheme if no browser preference is set.
  *
  * @async
- * @returns {Promise<"light" | "dark">} The current colour scheme.
+ * @returns {Promise<Scheme>} The current colour scheme.
  */
 export async function getCurrentScheme(): Promise<Scheme> {
 	try {
@@ -47,7 +47,7 @@ export async function getCurrentScheme(): Promise<Scheme> {
 			await browser.browserSettings?.overrideContentColorScheme?.get({});
 		const webAppearance = webAppearanceSetting?.value;
 		return webAppearance === "light" || webAppearance === "dark"
-			? webAppearance
+			? (webAppearance as Scheme)
 			: getSystemScheme();
 	} catch {
 		return getSystemScheme();
@@ -84,20 +84,15 @@ export async function getWindowId(
  * Checks whether the tab's window is incognito.
  *
  * @async
- * @param {Browser.tabs.Tab | undefined} tab - Sender tab, if available.
+ * @param {number} windowId - Window ID.
  * @returns {Promise<boolean>} `true` if the window is incognito.
  */
-export async function isWindowIncognito(
-	tab?: Browser.tabs.Tab,
-): Promise<boolean> {
-	const windowId = tab?.windowId;
-	if (windowId) {
-		try {
-			return (await browser.windows.get(windowId)).incognito;
-		} catch (e) {
-			return false;
-		}
-	} else return false;
+export async function isWindowIncognito(windowId: number): Promise<boolean> {
+	try {
+		return (await browser.windows.get(windowId)).incognito;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -107,14 +102,8 @@ export async function isWindowIncognito(
  * @returns {Promise<Browser.tabs.Tab[]>} List of active and complete tabs.
  */
 export async function getActiveTabList(): Promise<Browser.tabs.Tab[]> {
-	return await browser.tabs.query({
-		active: true,
-		status: "complete",
-	});
+	return await browser.tabs.query({ active: true, status: "complete" });
 }
-
-/** Browser capability detection. */
-let _supportsThemeAPI: boolean;
 
 /**
  * Checks if the browser supports the theme API.
@@ -122,19 +111,14 @@ let _supportsThemeAPI: boolean;
  * @returns {boolean} `true` if supported.
  */
 export function supportsThemeAPI(): boolean {
-	if (_supportsThemeAPI === undefined) {
-		const runtimeBrowser = (
-			globalThis as {
-				browser?: {
-					theme?: {
-						update?: (...args: unknown[]) => unknown;
-					};
-				};
-			}
-		).browser;
-		_supportsThemeAPI = typeof runtimeBrowser?.theme?.update === "function";
-	}
-	return _supportsThemeAPI;
+	const runtimeBrowser = (
+		globalThis as {
+			browser?: {
+				theme?: { update?: (windowId: number, theme: Theme) => void };
+			};
+		}
+	).browser;
+	return typeof runtimeBrowser?.theme?.update === "function";
 }
 
 /**
@@ -142,19 +126,31 @@ export function supportsThemeAPI(): boolean {
  *
  * @param {number} windowId - The ID of the window.
  * @param {Theme} theme - The theme object to apply.
+ * @returns {Promise<boolean>} `true` if the theme update succeeds.
  */
-export function updateBrowserTheme(windowId: number, theme: Theme): void {
-	browser.theme?.update(windowId, theme);
+export async function updateBrowserTheme(
+	windowId: number,
+	theme: Theme,
+): Promise<boolean> {
+	try {
+		await browser.theme?.update(windowId, theme);
+		return true;
+	} catch {
+		console.error(
+			"Failed to update browser theme. Theme API might not be supported.",
+		);
+		return false;
+	}
 }
 
 /**
- * Retrieves the add-on ID from a given URL.
+ * Resolves the extension ID from a `moz-extension:` URL.
  *
- * @async
- * @param {string} url - The URL containing the UUID.
- * @returns {Promise<string | undefined>} The add-on ID if found.
+ * @param {string} url - The URL to resolve.
+ * @returns {Promise<string | undefined>} Matching extension ID, if found.
  */
-export async function getAddonId(url: string): Promise<string | undefined> {
+export async function getWebExtId(url: string): Promise<string | undefined> {
+	if (!url.startsWith("moz-extension:")) return;
 	const addonList = await browser.management.getAll();
 	for (const addon of addonList) {
 		if (addon.type !== "extension") continue;
@@ -170,19 +166,16 @@ export async function getAddonId(url: string): Promise<string | undefined> {
 }
 
 /**
- * Retrieves the name of an add-on.
+ * Resolves the extension name from an add-on ID.
  *
- * @async
- * @param {string} addonId - The ID of the add-on.
- * @returns {Promise<string>} The name of the add-on.
+ * @param {string} id - The extension add-on ID.
+ * @returns {Promise<string | undefined>} Extension name, if found.
  */
-export async function getAddonName(addonId: string): Promise<string> {
+export async function getWebExtName(id: string): Promise<string | undefined> {
 	try {
-		const info = await browser.management.get(addonId);
-		return info.name;
-	} catch (error) {
-		return i18n.t("addonNotFound");
-	}
+		const addon = await browser.management.get(id);
+		if (addon.type === "extension") return addon.name;
+	} catch {}
 }
 
 /**
