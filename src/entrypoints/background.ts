@@ -22,7 +22,9 @@ import colour from "@/utils/colour";
 import {
 	aboutPageColour,
 	mozillaPageColour,
+	plainTextExtension,
 	presetAddonPageColour,
+	sourcePageProtocol,
 } from "@/utils/constants";
 import preference from "@/utils/preference";
 import type {
@@ -41,10 +43,9 @@ import {
 	addSchemeChangeListener,
 	addTabChangeListener,
 	getActiveTabList,
-	getAddonId,
-	getAddonName,
 	getCurrentScheme,
 	getSystemScheme,
+	getWebExtName,
 	getWindowId,
 	isWindowIncognito,
 	sendMessageToPopup,
@@ -183,9 +184,9 @@ async function handleMessage(
 			if (tab === undefined || !tab.active) break;
 			const windowId = tab.windowId;
 			const rule = cache.rule[windowId];
-			const meta = (cache.meta[windowId] = parseTabColour(
+			const meta = (cache.meta[windowId] = parseTabColourData(
 				message.colour,
-				rule?.rule ?? null,
+				rule?.result ?? null,
 			));
 			cache.theme[windowId] = setFrameColour(tab, meta);
 			sendMessageToPopup({ header: "CACHE_UPDATE" });
@@ -225,8 +226,10 @@ async function run(): Promise<void> {
  */
 async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	const windowId = tab.windowId;
-	const rule = (cache.rule[windowId] = pref.getRule(tab.url));
-	const meta = (cache.meta[windowId] = await getTabMeta(tab, rule.rule));
+	const rule = (cache.rule[windowId] = await pref.getRule(tab.url));
+	const meta = (cache.meta[windowId] =
+		(await getTabMeta(tab, rule)) ??
+		(await getProtectedTabMeta(tab, rule)));
 	cache.theme[windowId] = setFrameColour(tab, meta);
 	sendMessageToPopup({ header: "CACHE_UPDATE" });
 }
@@ -234,42 +237,57 @@ async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 /**
  * Gets colour metadata for a tab.
  *
- * @param {Browser.tabs.Tab} tab - Target browser tab.
- * @param {Rule} rule - Matched rule for the tab URL.
- * @returns {Promise<MetaQueryResult>} Metadata used for theme application.
+ * @param {Browser.tabs.Tab} tab - Target tab.
+ * @param {RuleQueryResult} rule - Rule query result for the tab URL.
+ * @returns {Promise<MetaQueryResult | void>} Tab metadata.
  */
 async function getTabMeta(
 	tab: Browser.tabs.Tab,
-	rule: Rule,
-): Promise<MetaQueryResult> {
-	const getFallbackMeta = async (): Promise<MetaQueryResult> => {
-		console.warn("Failed to connect to", tab.url);
-		if (rule?.headerType === "URL" && rule?.type === "COLOUR") {
+	rule: RuleQueryResult,
+): Promise<MetaQueryResult | void> {
+	if (!tab.id) return console.warn("Failed to get tab ID of", tab.url);
+	const result = rule.result;
+	if (result?.type === "COLOUR" && result.headerType === "URL") {
+		return { colour: new colour(result.value), reason: "COLOUR_SPECIFIED" };
+	} else if (result?.type === "COLOUR" && result.headerType === "ADDON_ID") {
+		const info = await getWebExtName(result.header);
+		if (info)
 			return {
-				colour: new colour(rule.value),
-				reason: "COLOUR_SPECIFIED",
+				colour: new colour(result.value),
+				reason: "ADDON_SPECIFIED",
+				info,
 			};
-		}
-		return getProtectedPageMeta(tab);
-	};
-
-	if (!tab.id) return getFallbackMeta();
+	}
 	try {
-		const tabColour = await sendMessageToTab<TabColourData>(tab.id, {
-			header: "GET_COLOUR",
-			dynamic: rule?.type === "COLOUR" ? false : pref.dynamic,
-			query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
-		});
-		return parseTabColour(tabColour, rule);
-	} catch (error) {
-		return getFallbackMeta();
+		return parseTabColourData(
+			await sendMessageToTab<TabColourData>(tab.id, {
+				header: "GET_COLOUR",
+				dynamic: pref.dynamic,
+				query:
+					result?.type === "QUERY_SELECTOR"
+						? result.value
+						: undefined,
+			}),
+			result,
+		);
+	} catch {
+		return console.warn("Failed to connect to", tab.url);
 	}
 }
 
-function parseTabColour(
-	{ page, theme, query, special }: TabColourData,
+/**
+ * Parses raw tab colour data to determine final colour metadata.
+ *
+ * @param {TabColourData} tabColourData - Raw colour data extracted from the
+ *   tab.
+ * @param {Rule} rule - Matching rule for the tab.
+ * @returns {MetaQueryResult} Tab metadata.
+ */
+function parseTabColourData(
+	tabColourData: TabColourData,
 	rule: Rule,
 ): MetaQueryResult {
+	const { page, theme, query, special } = tabColourData;
 	const parsePageColour = () => {
 		let pageColour = new colour();
 		for (const element of page) {
@@ -285,10 +303,16 @@ function parseTabColour(
 	const parseThemeColour = () => new colour(theme[cache.scheme]);
 	const parseQueryColour = () => new colour(query?.colour);
 	const getFallbackColour = () => {
-		if (special === "image") return browserColour.IMAGE_VIEWER;
-		else if (special === "plaintext") return browserColour.PLAINTEXT;
-		else if (special === "svg") return browserColour.SVG;
-		else return parsePageColour();
+		switch (special) {
+			case "image":
+				return browserColour.IMAGE_VIEWER;
+			case "plaintext":
+				return browserColour.PLAINTEXT;
+			case "svg":
+				return browserColour.SVG;
+			default:
+				return parsePageColour();
+		}
 	};
 
 	switch (rule?.type) {
@@ -302,16 +326,12 @@ function parseTabColour(
 								? "THEME_UNIGNORED"
 								: "THEME_USED",
 						}
-					: {
-							colour: getFallbackColour(),
-							reason: "THEME_IGNORED",
-						}
+					: { colour: getFallbackColour(), reason: "THEME_IGNORED" }
 				: {
 						colour: getFallbackColour(),
 						reason: rule?.value ? "THEME_MISSING" : "COLOUR_PICKED",
 					};
 		}
-
 		case "QUERY_SELECTOR": {
 			const queryColour = parseQueryColour();
 			return queryColour.isOpaque()
@@ -326,24 +346,12 @@ function parseTabColour(
 						info: rule?.value || "🕳️",
 					};
 		}
-		case "COLOUR": {
-			return {
-				colour: new colour(rule?.value),
-				reason: "COLOUR_SPECIFIED",
-			};
-		}
 		default: {
 			const themeColour = parseThemeColour();
 			return themeColour.isOpaque()
 				? !pref.noThemeColour
-					? {
-							colour: themeColour,
-							reason: "THEME_USED",
-						}
-					: {
-							colour: getFallbackColour(),
-							reason: "THEME_IGNORED",
-						}
+					? { colour: themeColour, reason: "THEME_USED" }
+					: { colour: getFallbackColour(), reason: "THEME_IGNORED" }
 				: {
 						colour: getFallbackColour(),
 						reason:
@@ -358,65 +366,47 @@ function parseTabColour(
 }
 
 /**
- * Gets colour metadata for protected and internal pages.
+ * Gets colour metadata for a tab displaying a protected or internal page.
  *
  * @param {Browser.tabs.Tab} tab - Target tab.
- * @returns {Promise<MetaQueryResult>} Metadata for the page.
+ * @param {RuleQueryResult} rule - Rule query result for the tab URL.
+ * @returns {Promise<MetaQueryResult>} Tab metadata.
  */
-async function getProtectedPageMeta(
+async function getProtectedTabMeta(
 	tab: Browser.tabs.Tab,
+	rule: RuleQueryResult,
 ): Promise<MetaQueryResult> {
-	if (!tab.url) {
-		return {
-			colour: browserColour.FALLBACK,
-			reason: "ERROR_OCCURRED",
-		};
+	if (!tab.url || !URL.canParse(tab.url)) {
+		console.warn("Failed to get URL of tab", tab.id);
+		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
 	}
-	const url = new URL(tab.url);
-	const hostname = url.hostname;
-	const href = url.href;
-	const protocol = url.protocol;
+	const { hostname, href, pathname, protocol } = new URL(tab.url);
 	const title = tab.title ?? "";
 	if (protocol === "about:") {
-		return await getAboutPageMeta(tab, url, title);
+		return await getAboutPageMeta(tab.windowId, href, pathname, title);
 	} else if (protocol === "moz-extension:") {
-		return await getAddonPageMeta(tab, href);
-	} else if (
-		["view-source:", "chrome:", "resource:", "jar:"].includes(protocol)
-	) {
+		return await getWebExtPageMeta(rule.webExtId);
+	} else if (sourcePageProtocol.includes(protocol)) {
 		return getSourcePageMeta(protocol, href);
 	} else if (href.startsWith("data:image")) {
-		return {
-			colour: browserColour.IMAGE_VIEWER,
-			reason: "IMAGE_VIEWER",
-		};
+		return { colour: browserColour.IMAGE_VIEWER, reason: "IMAGE_VIEWER" };
 	} else if (href.endsWith(".pdf") || title.endsWith(".pdf")) {
 		return { colour: browserColour.PDF_VIEWER, reason: "PDF_VIEWER" };
 	} else if (href.endsWith(".json") || title.endsWith(".json")) {
 		return { colour: browserColour.JSON_VIEWER, reason: "JSON_VIEWER" };
 	} else if (tab.favIconUrl?.startsWith("chrome:")) {
-		return {
-			colour: browserColour.DEFAULT,
-			reason: "PROTECTED_PAGE",
-		};
+		return { colour: browserColour.DEFAULT, reason: "PROTECTED_PAGE" };
 	} else if (href.match(new RegExp(`https?:\\/\\/${title}$`, "i"))) {
-		return {
-			colour: browserColour.PLAINTEXT,
-			reason: "TEXT_VIEWER",
-		};
+		return { colour: browserColour.PLAINTEXT, reason: "TEXT_VIEWER" };
 	} else if (hostname in mozillaPageColour) {
-		const colour =
-			mozillaPageColour[hostname]?.[cache.scheme] ??
-			browserColour.FALLBACK;
 		return {
-			colour: colour,
+			colour:
+				mozillaPageColour[hostname]?.[cache.scheme] ??
+				browserColour.FALLBACK,
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
-		return {
-			colour: browserColour.FALLBACK,
-			reason: "FALLBACK_COLOUR",
-		};
+		return { colour: browserColour.FALLBACK, reason: "FALLBACK_COLOUR" };
 	}
 }
 
@@ -431,9 +421,7 @@ function getSourcePageMeta(protocol: string, href: string): MetaQueryResult {
 	const reason = "PROTECTED_PAGE";
 	if (
 		protocol === "view-source:" ||
-		[".txt", ".css", ".mjs", ".js", ".ftl", ".locale"].some((extension) =>
-			href.endsWith(extension),
-		)
+		plainTextExtension.some((extension) => href.endsWith(extension))
 	) {
 		return { colour: browserColour.PLAINTEXT, reason };
 	} else if ([".png", ".jpg"].some((extension) => href.endsWith(extension))) {
@@ -446,18 +434,18 @@ function getSourcePageMeta(protocol: string, href: string): MetaQueryResult {
 /**
  * Gets colour metadata for an about page.
  *
- * @param {Browser.tabs.Tab} tab - The protected about page tab.
- * @param {URL} url - Parsed tab URL.
+ * @param {number} windowId - The window ID of the tab.
+ * @param {string} href - Parsed tab href.
+ * @param {string} pathname - Parsed tab pathname.
  * @param {string} title - Tab title.
  * @returns {Promise<MetaQueryResult>} Metadata of the about page tab.
  */
 async function getAboutPageMeta(
-	tab: Browser.tabs.Tab,
-	url: URL,
+	windowId: number,
+	href: string,
+	pathname: string,
 	title: string,
 ): Promise<MetaQueryResult> {
-	const href = url.href;
-	const pathname = url.pathname;
 	if (
 		["about:firefoxview", "about:home", "about:newtab"].some((homeHref) =>
 			href.startsWith(homeHref),
@@ -466,7 +454,7 @@ async function getAboutPageMeta(
 		return { colour: browserColour.HOME, reason: "HOME_PAGE" };
 	} else if (href === "about:privatebrowsing") {
 		return {
-			colour: (await isWindowIncognito(tab))
+			colour: (await isWindowIncognito(windowId))
 				? browserColour.PRIVATE
 				: browserColour.DEFAULT,
 			reason: "PROTECTED_PAGE",
@@ -491,44 +479,21 @@ async function getAboutPageMeta(
 /**
  * Gets the colour metadata for an extension page.
  *
- * @param {Browser.tabs.Tab} tab - The extension tab.
- * @param {string} href - The extension page URL.
+ * @param {string | undefined} webExtId - Extension ID parsed from the page URL.
  * @returns {Promise<MetaQueryResult>} Metadata of the extension page.
  */
-async function getAddonPageMeta(
-	tab: Browser.tabs.Tab,
-	href: string,
-): Promise<MetaQueryResult> {
-	const addonId = await getAddonId(href);
-	if (addonId) {
-		const ruleQueryResult = pref.getRule(addonId);
-		cache.rule[tab.windowId] = ruleQueryResult;
-		const addonName = await getAddonName(addonId);
-		if (
-			ruleQueryResult.id !== 0 &&
-			ruleQueryResult.rule?.type === "COLOUR"
-		) {
-			return {
-				colour: new colour(ruleQueryResult.rule.value),
-				reason: "ADDON_SPECIFIED",
-				info: addonName,
-			};
-		} else {
-			const colour = presetAddonPageColour[addonId]?.[cache.scheme];
-			return colour !== undefined
-				? {
-						colour: colour,
-						reason: "ADDON_PRESET",
-						info: addonName,
-					}
-				: {
-						colour: browserColour.ADDON,
-						reason: "ADDON_DEFAULT",
-						info: addonName,
-					};
-		}
+async function getWebExtPageMeta(webExtId?: string): Promise<MetaQueryResult> {
+	if (webExtId !== undefined) {
+		const addonName = await getWebExtName(webExtId);
+		const colour = presetAddonPageColour[webExtId]?.[cache.scheme];
+		return colour !== undefined
+			? { colour: colour, reason: "ADDON_PRESET", info: addonName }
+			: {
+					colour: browserColour.ADDON,
+					reason: "ADDON_DEFAULT",
+					info: addonName,
+				};
 	} else {
-		cache.rule[tab.windowId] = { id: 0, query: "", rule: null };
 		return {
 			colour: browserColour.ADDON,
 			reason: "ADDON_DEFAULT",
@@ -549,15 +514,12 @@ function setFrameColour(
 	meta: MetaQueryResult,
 ): ApplyThemeResult {
 	const windowId = tab.windowId;
-	const correctionResult = meta.colour.contrastCorrection(
+	const { colour, scheme, corrected } = meta.colour.contrastCorrection(
 		cache.scheme,
 		!pref.compatibilityMode && pref.allowDarkLight,
 		pref.minContrast_light,
 		pref.minContrast_dark,
 	);
-	const colour = correctionResult.colour;
-	const scheme = correctionResult.scheme as Scheme;
-	const corrected = correctionResult.corrected;
 	pref.compatibilityMode
 		? setTabThemeColour(tab, colour)
 		: applyTheme(windowId, colour, scheme);
@@ -589,7 +551,7 @@ async function setTabThemeColour(
 			header: "SET_THEME_COLOUR",
 			colour: colour.brightness(pref.tabbar).toRGBA(),
 		});
-	} catch (error) {
+	} catch {
 		console.warn("Could not apply theme colour to tab:", tab.url);
 	}
 }
@@ -650,10 +612,7 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 			sidebar_highlight: "AccentColor",
 			icons_attention: "AccentColor",
 		},
-		properties: {
-			color_scheme: "system",
-			content_color_scheme: "system",
-		},
+		properties: { color_scheme: "system", content_color_scheme: "system" },
 	};
 	updateBrowserTheme(windowId, theme);
 }

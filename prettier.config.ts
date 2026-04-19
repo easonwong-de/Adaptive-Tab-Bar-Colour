@@ -11,6 +11,7 @@ const config: Config = {
 		"^[./]",
 	],
 	importOrderSortSpecifiers: true,
+	objectWrap: "collapse",
 	plugins: [
 		"@trivago/prettier-plugin-sort-imports",
 		"prettier-plugin-css-order",

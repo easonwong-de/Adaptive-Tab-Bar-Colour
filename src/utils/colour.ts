@@ -1,3 +1,5 @@
+import { ColourCorrectionResult } from "./types";
+
 /**
  * Represents a colour with RGBA channels.
  *
@@ -62,7 +64,7 @@ export default class colour {
 	 * @param {number} g - Green (0-255).
 	 * @param {number} b - Blue (0-255).
 	 * @param {number} a - Alpha (0-1).
-	 * @returns {colour} This instance.
+	 * @returns {this} This instance.
 	 */
 	rgba(r: number, g: number, b: number, a: number): this {
 		this.r = r;
@@ -126,7 +128,7 @@ export default class colour {
 	/**
 	 * Mixes this colour with another underneath.
 	 *
-	 * @param {colour} colour - The colour underneath.
+	 * @param {colour} colourValue - The colour underneath.
 	 * @returns {colour} The result of the mix.
 	 */
 	mix(colourValue: colour): colour {
@@ -150,28 +152,23 @@ export default class colour {
 	/**
 	 * Adjusts colour to meet minimum contrast.
 	 *
-	 * @param {"light" | "dark"} preferredScheme - Preferred scheme.
+	 * @param {Scheme} preferredScheme - Preferred scheme.
 	 * @param {boolean} allowDarkLight - Allow opposite scheme.
 	 * @param {number} minContrastLightX10 - Min contrast for light (x10).
 	 * @param {number} minContrastDarkX10 - Min contrast for dark (x10).
 	 * @param {colour} [contrastColourLight] - Light mode contrast target.
 	 * @param {colour} [contrastColourDark] - Dark mode contrast target.
-	 * @returns {{
-	 * 	colour: colour;
-	 * 	scheme: "light" | "dark";
-	 * 	corrected: boolean;
-	 * }}
-	 *   Correction result.
+	 * @returns {ColourCorrectionResult} Correction result.
 	 * @throws {Error} If correction fails.
 	 */
 	contrastCorrection(
-		preferredScheme: "light" | "dark",
+		preferredScheme: Scheme,
 		allowDarkLight: boolean,
 		minContrastLightX10: number,
 		minContrastDarkX10: number,
-		contrastColourLight = new colour().rgba(0, 0, 0, 1),
-		contrastColourDark = new colour().rgba(255, 255, 255, 1),
-	) {
+		contrastColourLight: colour = new colour().rgba(0, 0, 0, 1),
+		contrastColourDark: colour = new colour().rgba(255, 255, 255, 1),
+	): ColourCorrectionResult {
 		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
 		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
 		const eligibilityLight = contrastRatioLight > minContrastLightX10 / 10;
@@ -218,7 +215,7 @@ export default class colour {
 	 * Contrast ratio over 4.5 is considered adequate for accessibility.
 	 *
 	 * @private
-	 * @param {colour} colour - The colour to compare against.
+	 * @param {colour} colourValue - The colour to compare against.
 	 * @returns {number} The contrast ratio between the two colours (1.05 to
 	 *   21).
 	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
@@ -338,7 +335,7 @@ export default class colour {
 	 *
 	 * @returns {number} The red channel value (0-255).
 	 */
-	get r() {
+	get r(): number {
 		return this.#r;
 	}
 
@@ -359,7 +356,7 @@ export default class colour {
 	 *
 	 * @returns {number} The green channel value (0-255).
 	 */
-	get g() {
+	get g(): number {
 		return this.#g;
 	}
 
@@ -380,7 +377,7 @@ export default class colour {
 	 *
 	 * @returns {number} The blue channel value (0-255).
 	 */
-	get b() {
+	get b(): number {
 		return this.#b;
 	}
 
@@ -401,7 +398,7 @@ export default class colour {
 	 *
 	 * @returns {number} The alpha channel value (0-1).
 	 */
-	get a() {
+	get a(): number {
 		return this.#a;
 	}
 

@@ -64,7 +64,7 @@
 		}
 	}
 
-	.addon-header {
+	.web-ext-header {
 		display: block;
 		padding-inline-start: calc(8 * var(--unit));
 		height: calc(32 * var(--unit));

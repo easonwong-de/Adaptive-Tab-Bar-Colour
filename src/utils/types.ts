@@ -21,40 +21,28 @@ export type BrowserColour =
 	| "SYSTEM"
 	| "TOOLBOX";
 
-export interface UrlColourRule {
-	headerType: "URL";
+export interface ColourRule {
+	headerType: "URL" | "ADDON_ID";
 	header: string;
 	type: "COLOUR";
 	value: string;
 }
 
-export interface UrlThemeColourRule {
+export interface ThemeColourRule {
 	headerType: "URL";
 	header: string;
 	type: "THEME_COLOUR";
 	value: boolean;
 }
 
-export interface UrlQuerySelectorRule {
+export interface QuerySelectorRule {
 	headerType: "URL";
 	header: string;
 	type: "QUERY_SELECTOR";
 	value: string;
 }
 
-export interface AddonColourRule {
-	headerType: "ADDON_ID";
-	header: string;
-	type: "COLOUR";
-	value: string;
-}
-
-export type Rule =
-	| UrlColourRule
-	| UrlThemeColourRule
-	| UrlQuerySelectorRule
-	| AddonColourRule
-	| null;
+export type Rule = ColourRule | ThemeColourRule | QuerySelectorRule | null;
 
 export type RuleList = Record<number, Rule>;
 
@@ -103,11 +91,20 @@ export interface TabElementColourData {
 	filter: string;
 }
 
+export type TabSpecialColourData = "image" | "plaintext" | "svg" | "none";
+
 export interface TabColourData {
 	page: TabElementColourData[];
 	theme: TabThemeColourData;
 	query?: TabElementColourData;
-	special: "image" | "plaintext" | "svg" | "none";
+	special: TabSpecialColourData;
+}
+
+export interface RuleQueryResult {
+	id: number;
+	url: string;
+	webExtId?: string;
+	result: Rule;
 }
 
 export type TabMetaReason =
@@ -132,12 +129,6 @@ export type TabMetaReason =
 	| "FALLBACK_COLOUR"
 	| "ERROR_OCCURRED";
 
-export interface RuleQueryResult {
-	id: number;
-	query: string;
-	rule: Rule;
-}
-
 export interface MetaQueryResult {
 	colour: colour;
 	reason: TabMetaReason;
@@ -156,37 +147,26 @@ export interface Cache {
 	theme: ApplyThemeResult;
 }
 
+export interface ColourCorrectionResult {
+	colour: colour;
+	scheme: Scheme;
+	corrected: boolean;
+}
+
 export interface Theme {
 	colors: Record<string, string>;
-	properties: {
-		color_scheme: "system";
-		content_color_scheme: "system";
-	};
+	properties: { color_scheme: "system"; content_color_scheme: "system" };
 }
 
 export type MessageForBackground =
-	| {
-			header: "UPDATE_COLOUR";
-			colour: TabColourData;
-	  }
-	| {
-			header: "SCRIPT_READY" | "SCHEME_REQUEST" | "CACHE_REQUEST";
-	  };
+	| { header: "UPDATE_COLOUR"; colour: TabColourData }
+	| { header: "SCRIPT_READY" | "SCHEME_REQUEST" | "CACHE_REQUEST" };
 
-export type MessageForPopup = {
-	header: "CACHE_UPDATE";
-};
+export type MessageForPopup = { header: "CACHE_UPDATE" };
 
 export type MessageForTab =
-	| {
-			header: "GET_COLOUR";
-			dynamic: boolean;
-			query: string | undefined;
-	  }
-	| {
-			header: "SET_THEME_COLOUR";
-			colour: string;
-	  };
+	| { header: "GET_COLOUR"; dynamic: boolean; query?: string }
+	| { header: "SET_THEME_COLOUR"; colour: string };
 
 export type BackgroundMessageListener = (
 	message: MessageForBackground,

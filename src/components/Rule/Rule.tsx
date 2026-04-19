@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import type { Rule as RuleData } from "@/utils/types";
-import { getAddonName } from "@/utils/utility";
+import { getWebExtName } from "@/utils/utility";
 import Colour from "@/components/Colour/Colour";
 import Icon from "@/components/Icon/Icon";
 import Text from "@/components/Text/Text";
@@ -23,11 +23,13 @@ interface RuleProps {
 export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 	if (!rule) return null;
 
-	const [addonName, setAddonName] = useState(rule?.header);
+	const [webExtName, setWebExtName] = useState(rule?.header);
 
 	useEffect(() => {
 		if (rule?.headerType === "ADDON_ID")
-			getAddonName(rule.header).then(setAddonName);
+			getWebExtName(rule.header).then((name) =>
+				setWebExtName(name ?? i18n.t("addonNotFound")),
+			);
 	}, [rule?.header, rule?.headerType]);
 
 	return (
@@ -36,7 +38,7 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 		>
 			{!inPopup &&
 				(rule.headerType === "ADDON_ID" ? (
-					<div className={styles.addonHeader}>{addonName}</div>
+					<div className={styles.webExtHeader}>{webExtName}</div>
 				) : (
 					<Text
 						value={rule.header}
@@ -65,6 +67,7 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 								type: "THEME_COLOUR",
 								value: defaultValue.THEME_COLOUR,
 							});
+							break;
 						default:
 							onChange({
 								...rule,
@@ -97,30 +100,41 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 					</>
 				)}
 			</select>
-			{rule.type === "COLOUR" ? (
-				<Colour
-					value={rule.value}
-					onChange={(newValue) =>
-						onChange({ ...rule, value: newValue })
-					}
-				/>
-			) : rule.type === "THEME_COLOUR" ? (
-				<Toggle
-					itemList={[i18n.t("use"), i18n.t("ignore")]}
-					activeIndex={rule.value ? 0 : 1}
-					onChange={(newIndex) =>
-						onChange({ ...rule, value: newIndex === 0 })
-					}
-				/>
-			) : rule.type === "QUERY_SELECTOR" ? (
-				<Text
-					value={rule.value}
-					placeholder={i18n.t("querySelector")}
-					onChange={(newValue) =>
-						onChange({ ...rule, value: newValue })
-					}
-				/>
-			) : null}
+			{(() => {
+				switch (rule.type) {
+					case "COLOUR":
+						return (
+							<Colour
+								value={rule.value}
+								onChange={(newValue) =>
+									onChange({ ...rule, value: newValue })
+								}
+							/>
+						);
+					case "THEME_COLOUR":
+						return (
+							<Toggle
+								itemList={[i18n.t("use"), i18n.t("ignore")]}
+								activeIndex={rule.value ? 0 : 1}
+								onChange={(newIndex) =>
+									onChange({ ...rule, value: newIndex === 0 })
+								}
+							/>
+						);
+					case "QUERY_SELECTOR":
+						return (
+							<Text
+								value={rule.value}
+								placeholder={i18n.t("querySelector")}
+								onChange={(newValue) =>
+									onChange({ ...rule, value: newValue })
+								}
+							/>
+						);
+					default:
+						return null;
+				}
+			})()}
 			{!inPopup && (
 				<button
 					className={styles.deleteButton}

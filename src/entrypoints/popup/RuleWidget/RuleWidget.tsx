@@ -139,7 +139,7 @@ function RuleControls({
 			<>
 				<Rule
 					inPopup
-					rule={rule.rule}
+					rule={rule.result}
 					onChange={(newRule) => pref.setRule(rule.id, newRule)}
 				/>
 				<button
@@ -152,34 +152,33 @@ function RuleControls({
 			</>
 		);
 	} else if (
-		["THEME_IGNORED", "THEME_USED", "COLOUR_PICKED"].includes(meta.reason)
+		["THEME_IGNORED", "THEME_USED", "COLOUR_PICKED"].includes(
+			meta.reason,
+		) &&
+		URL.canParse(rule.url)
 	) {
-		try {
-			const { hostname } = new URL(rule.query);
-			return (
-				<button
-					onClick={() => {
-						pref.addRule({
-							headerType: "URL",
-							header: hostname,
-							type: "COLOUR",
-							value: "#000000",
-						});
-					}}
-				>
-					{i18n.t("addANewRule")}
-				</button>
-			);
-		} catch (e) {
-			return null;
-		}
+		const { hostname } = new URL(rule.url);
+		return (
+			<button
+				onClick={() => {
+					pref.addRule({
+						headerType: "URL",
+						header: hostname,
+						type: "COLOUR",
+						value: "#000000",
+					});
+				}}
+			>
+				{i18n.t("addANewRule")}
+			</button>
+		);
 	} else if (["ADDON_DEFAULT", "ADDON_PRESET"].includes(meta.reason)) {
 		return (
 			<button
 				onClick={() => {
 					pref.addRule({
 						headerType: "ADDON_ID",
-						header: rule.query,
+						header: rule.url,
 						type: "COLOUR",
 						value: "#000000",
 					});
