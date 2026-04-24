@@ -1,31 +1,32 @@
 :root {
 	--unit: 0.0769rem;
 
-	--app: hsl(247, 12%, 100%);
-	--panel: hsl(247, 12%, 78%);
-	--panel-alt: hsl(247, 12%, 76%);
-	--panel-hover: hsl(247, 12%, 73%);
-	--panel-active: hsl(247, 12%, 75%);
-	--panel-selected: hsl(247, 12%, 65%);
-	--panel-selected-hover: hsl(247, 12%, 50%);
-	--panel-selected-active: hsl(247, 12%, 62%);
+	--app: hsl(0, 0%, 100%);
+	--panel: hsl(0, 0%, 97%);
+	--panel-alt: hsl(0, 0%, 95%);
+	--panel-hover: hsl(0, 0%, 90%);
+	--panel-active: hsl(0, 0%, 93%);
+	--panel-selected: hsl(0, 0%, 88%);
+	--panel-selected-hover: hsl(0, 0%, 85%);
+	--panel-selected-active: hsl(0, 0%, 87%);
 
-	--control: hsl(247, 12%, 49%);
-	--control-hover: hsl(247, 12%, 47%);
-	--control-active: hsl(247, 12%, 52%);
-	--control-selected: hsl(247, 12%, 64%);
-	--control-selected-hover: hsl(247, 12%, 60%);
-	--control-selected-active: hsl(247, 12%, 62%);
-
-	--glyph-foreground: hsl(247, 12%, 49%);
-	--glyph-background: hsl(247, 12%, 66%);
+	--control: hsl(0, 0%, 87%);
+	--control-hover: hsl(0, 0%, 83%);
+	--control-active: hsl(0, 0%, 85%);
+	--control-selected: hsl(0, 0%, 80%);
+	--control-selected-hover: hsl(0, 0%, 77%);
+	--control-selected-active: hsl(0, 0%, 79%);
 
 	--text-primary: hsl(0 0% 0%);
 	--text-secondary: hsl(0 0% 20%);
 
-	--accent: hsl(216, 100%, 49%);
-	--accent-hover: hsl(215, 100%, 40%);
-	--accent-active: hsl(216, 100%, 69%);
+	--accent: oklch(55% 0.24 260);
+	--accent-hover: oklch(50% 0.24 260);
+	--accent-active: oklch(70% 0.24 260);
+
+	--shadow-small: 0 0 calc(2 * var(--unit)) rgba(0, 0, 0, 0.15);
+	--shadow-large: 0 calc(2 * var(--unit)) calc(4 * var(--unit))
+		rgba(0, 0, 0, 0.1);
 
 	@media (prefers-color-scheme: dark) {
 		--app: hsl(247, 12%, 15%);
@@ -44,15 +45,12 @@
 		--control-selected-hover: hsl(247, 12%, 53%);
 		--control-selected-active: hsl(247, 12%, 48%);
 
-		--glyph-foreground: hsl(247, 12%, 51%);
-		--glyph-background: hsl(247, 12%, 34%);
-
 		--text-primary: hsl(0, 0%, 100%);
 		--text-secondary: hsl(0, 0%, 80%);
 
-		--accent: hsl(185, 100%, 43%);
-		--accent-hover: hsl(186, 100%, 65%);
-		--accent-active: hsl(186, 100%, 80%);
+		--accent: oklch(76% 0.14 205);
+		--accent-hover: oklch(86% 0.14 205);
+		--accent-active: oklch(90% 0.14 205);
 	}
 }
 
@@ -79,7 +77,7 @@ html {
 
 body {
 	margin: 0;
-	padding: 0;
+	padding: 0 calc(4 * var(--unit));
 	width: 100%;
 	height: 100%;
 	min-height: calc(250 * var(--unit));
@@ -118,6 +116,8 @@ button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	transition-duration: 0.1s;
+	transition-property: background-color, border-color, color;
 	border-radius: calc(12 * var(--unit));
 	background-color: var(--control);
 	color: var(--text-primary);

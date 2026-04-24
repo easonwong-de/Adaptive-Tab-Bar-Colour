@@ -2,6 +2,7 @@ import type {
 	MessageForTab,
 	TabColourData,
 	TabElementColourData,
+	TabSpecialColourData,
 	TabThemeColourData,
 } from "@/utils/types";
 import { sendMessageToBackground } from "@/utils/utility";
@@ -47,12 +48,12 @@ function handleMessage(
  * @returns {TabColourData} The colour data object.
  */
 function getColourData(): TabColourData {
-	const page = getPageColour();
+	const page = getPageColourData();
 	const tabColourData: TabColourData = {
 		page,
-		theme: getThemeColour(),
-		query: getQueryColour(),
-		special: page.length > 0 ? "none" : getSpecial(),
+		theme: getThemeColourData(),
+		query: getQueryColourData(),
+		special: page.length > 0 ? "none" : getSpecialColourData(),
 	};
 	colourDataCache = tabColourData;
 	return tabColourData;
@@ -63,7 +64,7 @@ function getColourData(): TabColourData {
  *
  * @returns {TabThemeColourData} The extracted theme colours.
  */
-function getThemeColour(): TabThemeColourData {
+function getThemeColourData(): TabThemeColourData {
 	const metaThemeColour = document.querySelector<HTMLMetaElement>(
 		`meta[name="theme-color"]:not([media])`,
 	);
@@ -86,7 +87,7 @@ function getThemeColour(): TabThemeColourData {
  *
  * @returns {TabElementColourData[]} List of element colour objects.
  */
-function getPageColour(): TabElementColourData[] {
+function getPageColourData(): TabElementColourData[] {
 	return document
 		.elementsFromPoint(window.innerWidth / 2, 3)
 		.filter(
@@ -100,7 +101,7 @@ function getPageColour(): TabElementColourData[] {
 			getElementColour(document.body),
 			getElementColour(document.documentElement),
 		)
-		.filter((colour) => colour !== undefined);
+		.filter((colourData) => colourData !== undefined);
 }
 
 /**
@@ -108,7 +109,7 @@ function getPageColour(): TabElementColourData[] {
  *
  * @returns {TabElementColourData | undefined} Element colour object.
  */
-function getQueryColour(): TabElementColourData | undefined {
+function getQueryColourData(): TabElementColourData | undefined {
 	try {
 		return query
 			? getElementColour(document.querySelector(query))
@@ -121,10 +122,9 @@ function getQueryColour(): TabElementColourData | undefined {
 /**
  * Determines the special page type when no page colour candidates are found.
  *
- * @returns {"image" | "plaintext" | "svg" | "none"} The detected special page
- *   type.
+ * @returns {TabSpecialColourData} The detected special page type.
  */
-function getSpecial(): "image" | "plaintext" | "svg" | "none" {
+function getSpecialColourData(): TabSpecialColourData {
 	if (
 		getComputedStyle(document.documentElement).backgroundImage ===
 		'url("chrome://global/skin/media/imagedoc-darknoise.png")'
@@ -244,15 +244,15 @@ function disableDynamic(): void {
 /**
  * Sets the theme colour by adding a meta tag.
  *
- * @param {string} colour - The colour string.
+ * @param {string} themeColour - The colour string.
  */
-function setThemeColour(colour: string): void {
+function setThemeColour(themeColour: string): void {
 	const metaThemeColourList = document.querySelectorAll(
 		`meta[name="theme-color"]`,
 	);
 	const newMetaThemeColour = document.createElement("meta");
 	newMetaThemeColour.name = "theme-color";
-	newMetaThemeColour.content = colour;
+	newMetaThemeColour.content = themeColour;
 	(document.head ?? document.documentElement).appendChild(newMetaThemeColour);
 	metaThemeColourList.forEach((metaThemeColour) => metaThemeColour.remove());
 }

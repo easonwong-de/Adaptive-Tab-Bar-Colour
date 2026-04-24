@@ -30,16 +30,6 @@
 		background-color: var(--panel-alt);
 	}
 
-	:is(&:first-of-type) {
-		border-top-right-radius: calc(16 * var(--unit));
-		border-top-left-radius: calc(16 * var(--unit));
-	}
-
-	:is(&:last-of-type) {
-		border-bottom-right-radius: calc(16 * var(--unit));
-		border-bottom-left-radius: calc(16 * var(--unit));
-	}
-
 	select {
 		display: flex;
 		vertical-align: middle;

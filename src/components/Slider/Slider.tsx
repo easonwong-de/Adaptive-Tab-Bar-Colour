@@ -15,7 +15,8 @@ interface SliderProps {
 	value?: number;
 	leftIconType?: Parameters<typeof Icon>[0]["type"];
 	rightIconType?: Parameters<typeof Icon>[0]["type"];
-	onChange: (nextValue: number) => void;
+	onChange?: (newValue: number) => void;
+	onCommit?: (oldValue: number, newValue: number) => void;
 	onDisplay?: (value: number) => string;
 }
 
@@ -30,16 +31,17 @@ export default function Slider({
 	value = minValue,
 	leftIconType = "moon",
 	rightIconType = "sun",
-	onChange,
-	onDisplay = (value) => `${value} %`,
+	onChange = () => {},
+	onCommit = () => {},
+	onDisplay = (value) => `${value}%`,
 }: SliderProps) {
 	const rafRef = useRef<number | null>(null);
 	const rectRef = useRef<DOMRect | null>(null);
 	const trackRef = useRef<HTMLDivElement | null>(null);
 	const dragOffsetRef = useRef({ offset: 0, thumbWidth: 0 });
+	const dragStartValueRef = useRef(value);
 	const [isDragging, setIsDragging] = useState(false);
 	const [transientValue, setTransientValue] = useState(value);
-	const currentValue = isDragging ? transientValue : value;
 
 	useEffect(
 		() => () => {
@@ -48,14 +50,7 @@ export default function Slider({
 		[],
 	);
 
-	const onDown = (): void => {
-		const newValue = clamp(
-			minValue,
-			(Math.ceil(value / majorStep) - 1) * majorStep,
-			maxValue,
-		);
-		if (newValue !== value) onChange(newValue);
-	};
+	const currentValue = isDragging ? transientValue : value;
 
 	const onDrag = (clientX: number): void => {
 		const rect =
@@ -85,22 +80,31 @@ export default function Slider({
 
 	const onDragStop = (): void => {
 		rectRef.current = null;
+		const oldValue = dragStartValueRef.current;
+		const newValue = transientValue;
 		setIsDragging(false);
-	};
-
-	const onUp = (): void => {
-		const newValue = clamp(
-			minValue,
-			(Math.floor(value / majorStep) + 1) * majorStep,
-			maxValue,
-		);
-		if (newValue !== value) onChange(newValue);
+		if (oldValue !== newValue) {
+			onChange(newValue);
+			onCommit(oldValue, newValue);
+		}
 	};
 
 	return (
 		<div className={clsx(styles.slider, className)}>
 			<div className={styles.body}>
-				<button onPointerDown={onDown}>
+				<button
+					onPointerDown={() => {
+						const newValue = clamp(
+							minValue,
+							(Math.ceil(value / majorStep) - 1) * majorStep,
+							maxValue,
+						);
+						if (value !== newValue) {
+							onChange(newValue);
+							onCommit(value, newValue);
+						}
+					}}
+				>
 					<Icon type={leftIconType} />
 				</button>
 				<div
@@ -130,6 +134,7 @@ export default function Slider({
 								offset: e.clientX - thumbRect.left,
 								thumbWidth: thumbRect.width,
 							};
+							dragStartValueRef.current = value;
 							setTransientValue(value);
 							setIsDragging(true);
 							onDrag(e.clientX);
@@ -144,7 +149,19 @@ export default function Slider({
 						{onDisplay(currentValue)}
 					</div>
 				</div>
-				<button onPointerDown={onUp}>
+				<button
+					onPointerDown={() => {
+						const newValue = clamp(
+							minValue,
+							(Math.floor(value / majorStep) + 1) * majorStep,
+							maxValue,
+						);
+						if (value !== newValue) {
+							onChange(newValue);
+							onCommit(value, newValue);
+						}
+					}}
+				>
 					<Icon type={rightIconType} />
 				</button>
 			</div>

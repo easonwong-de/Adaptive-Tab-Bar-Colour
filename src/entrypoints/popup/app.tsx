@@ -7,6 +7,7 @@ import {
 	sendMessageToBackground,
 } from "@/utils/utility";
 import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
+import LoadingWidget from "./LoadingWidget/LoadingWidget";
 import RuleWidget from "./RuleWidget/RuleWidget";
 
 const pref = new preference();
@@ -19,10 +20,10 @@ async function getCache(): Promise<Cache | undefined> {
 
 export default function App() {
 	const [ready, setReady] = useState(false);
-	const [cache, setCache] = useState<Cache | undefined>(undefined);
+	const [cache, setCache] = useState<Cache | undefined>();
 
 	function handleMessage(message: MessageForPopup): void {
-		if (message.header === "CACHE_UPDATE") getCache().then(setCache);
+		if (message.header === "CACHE_UPDATE") setCache(message.cache);
 	}
 
 	useEffect(() => {
@@ -34,22 +35,24 @@ export default function App() {
 
 	return (
 		<>
-			{cache ? (
+			<div
+				className="background"
+				style={{
+					backgroundColor: cache?.theme?.popupColour ?? "transparent",
+				}}
+			/>
+			{ready && cache ? (
 				<>
-					<div
-						className="background"
-						style={{ backgroundColor: cache.theme.popupColour }}
+					<RuleWidget
+						pref={pref}
+						rule={cache.rule}
+						meta={cache.meta}
 					/>
-					{ready && (
-						<RuleWidget
-							pref={pref}
-							rule={cache.rule}
-							meta={cache.meta}
-						/>
-					)}
 					{cache.theme.corrected && <CorrectionWidget />}
 				</>
-			) : null}
+			) : (
+				<LoadingWidget />
+			)}
 			<button onClick={() => browser.runtime.openOptionsPage()}>
 				{i18n.t("moreSettings")}
 			</button>

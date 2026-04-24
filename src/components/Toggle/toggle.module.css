@@ -27,6 +27,7 @@
 	}
 
 	&.tab-toggle {
+		box-shadow: var(--shadow-small), var(--shadow-large);
 		border-radius: calc(16 * var(--unit));
 		font-weight: 800;
 

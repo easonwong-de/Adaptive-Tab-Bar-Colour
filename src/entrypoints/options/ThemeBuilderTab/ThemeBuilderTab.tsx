@@ -1,7 +1,10 @@
 import clsx from "clsx";
-import { useSyncExternalStore } from "react";
+import { useMemo, useRef, useSyncExternalStore } from "react";
 import type preference from "@/utils/preference";
+import { ThemeBuilderPreferenceContent } from "@/utils/types";
+import Confirm from "@/components/Confirm/Confirm";
 import Glyph from "@/components/Glyph/Glyph";
+import Icon from "@/components/Icon/Icon";
 import Slider from "@/components/Slider/Slider";
 import styles from "./theme.builder.module.css";
 
@@ -10,11 +13,40 @@ interface ThemeBuilderTabProps {
 	ready: boolean;
 }
 
+interface History {
+	handle: keyof ThemeBuilderPreferenceContent;
+	oldValue: number;
+	newValue: number;
+}
+
 export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
+
+	const historyRef = useRef<History[]>([]);
+	const headRef = useRef(-1);
+
+	const canUndo = headRef.current >= 0;
+	const canRedo = headRef.current < historyRef.current.length - 1;
+
+	const addHistory = (
+		handle: keyof ThemeBuilderPreferenceContent,
+		oldValue: number,
+		newValue: number,
+	) => {
+		if (oldValue === newValue) return;
+		if (headRef.current < historyRef.current.length - 1) {
+			historyRef.current = historyRef.current.slice(
+				0,
+				headRef.current + 1,
+			);
+		}
+		historyRef.current.push({ handle, oldValue, newValue });
+		if (historyRef.current.length > 100) historyRef.current.shift();
+		headRef.current = historyRef.current.length - 1;
+	};
 
 	return (
 		<main className={clsx(styles.themeBuilderTab, !ready && "disabled")}>
@@ -26,13 +58,25 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						<Slider
 							title={i18n.t("background")}
 							value={pref.tabSelected}
-							onChange={(value) => (pref.tabSelected = value)}
+							onChange={(newValue) =>
+								(pref.tabSelected = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("tabSelected", oldValue, newValue)
+							}
 						/>
 						<Slider
 							title={i18n.t("border")}
 							value={pref.tabSelectedBorder}
-							onChange={(value) =>
-								(pref.tabSelectedBorder = value)
+							onChange={(newValue) =>
+								(pref.tabSelectedBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory(
+									"tabSelectedBorder",
+									oldValue,
+									newValue,
+								)
 							}
 						/>
 					</div>
@@ -44,9 +88,10 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						<Slider
 							title={i18n.t("background")}
 							value={pref.tabbar}
-							onChange={(value) => {
-								pref.tabbar = value;
-							}}
+							onChange={(newValue) => (pref.tabbar = newValue)}
+							onCommit={(oldValue, newValue) =>
+								addHistory("tabbar", oldValue, newValue)
+							}
 						/>
 						<Slider
 							className={clsx(
@@ -55,9 +100,12 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 							title={i18n.t("border")}
 							warning={i18n.t("ifVerticalTabsAreEnabled")}
 							value={pref.tabbarBorder}
-							onChange={(value) => {
-								pref.tabbarBorder = value;
-							}}
+							onChange={(newValue) =>
+								(pref.tabbarBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("tabbarBorder", oldValue, newValue)
+							}
 						/>
 					</div>
 				</section>
@@ -68,9 +116,10 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						<Slider
 							title={i18n.t("background")}
 							value={pref.popup}
-							onChange={(value) => {
-								pref.popup = value;
-							}}
+							onChange={(newValue) => (pref.popup = newValue)}
+							onCommit={(oldValue, newValue) =>
+								addHistory("popup", oldValue, newValue)
+							}
 						/>
 						<Slider
 							className={clsx(
@@ -78,11 +127,71 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 							)}
 							title={i18n.t("border")}
 							value={pref.popupBorder}
-							onChange={(value) => {
-								pref.popupBorder = value;
-							}}
+							onChange={(newValue) =>
+								(pref.popupBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("popupBorder", oldValue, newValue)
+							}
 						/>
 					</div>
+				</section>
+				<section className={styles.toolboxSection}>
+					<button
+						className={clsx(!canUndo && styles.unavailable)}
+						onClick={() => {
+							if (!canUndo) return;
+							const item = historyRef.current[headRef.current];
+							pref[item.handle] = item.oldValue;
+							headRef.current -= 1;
+						}}
+					>
+						<Icon type="undo" />
+					</button>
+					<button
+						className={clsx(!canRedo && styles.unavailable)}
+						onClick={() => {
+							if (!canRedo) return;
+							const item =
+								historyRef.current[headRef.current + 1];
+							pref[item.handle] = item.newValue;
+							headRef.current += 1;
+						}}
+					>
+						<Icon type="redo" />
+					</button>
+					<Confirm
+						position="up"
+						confirmText={i18n.t("confirmResetThemeBuilder")}
+						onConfirm={() => {
+							pref.reset([
+								"tabbar",
+								"tabbarBorder",
+								"tabSelected",
+								"tabSelectedBorder",
+								"toolbar",
+								"toolbarBorder",
+								"toolbarField",
+								"toolbarFieldBorder",
+								"toolbarFieldOnFocus",
+								"sidebar",
+								"sidebarBorder",
+								"popup",
+								"popupBorder",
+							]);
+							historyRef.current = [];
+							headRef.current = -1;
+						}}
+					>
+						{(open) => (
+							<button
+								className={styles.resetButton}
+								onClick={open}
+							>
+								{i18n.t("resetAll")}
+							</button>
+						)}
+					</Confirm>
 				</section>
 			</div>
 			<div
@@ -98,23 +207,40 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						<Slider
 							title={i18n.t("background")}
 							value={pref.toolbarField}
-							onChange={(value) => {
-								pref.toolbarField = value;
-							}}
+							onChange={(newValue) =>
+								(pref.toolbarField = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("toolbarField", oldValue, newValue)
+							}
 						/>
 						<Slider
 							title={i18n.t("backgroundOnFocus")}
 							value={pref.toolbarFieldOnFocus}
-							onChange={(value) => {
-								pref.toolbarFieldOnFocus = value;
-							}}
+							onChange={(newValue) =>
+								(pref.toolbarFieldOnFocus = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory(
+									"toolbarFieldOnFocus",
+									oldValue,
+									newValue,
+								)
+							}
 						/>
 						<Slider
 							title={i18n.t("border")}
 							value={pref.toolbarFieldBorder}
-							onChange={(value) => {
-								pref.toolbarFieldBorder = value;
-							}}
+							onChange={(newValue) =>
+								(pref.toolbarFieldBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory(
+									"toolbarFieldBorder",
+									oldValue,
+									newValue,
+								)
+							}
 						/>
 					</div>
 				</section>
@@ -125,14 +251,20 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						<Slider
 							title={i18n.t("background")}
 							value={pref.toolbar}
-							onChange={(value) => (pref.toolbar = value)}
+							onChange={(newValue) => (pref.toolbar = newValue)}
+							onCommit={(oldValue, newValue) =>
+								addHistory("toolbar", oldValue, newValue)
+							}
 						/>
 						<Slider
 							title={i18n.t("border")}
 							value={pref.toolbarBorder}
-							onChange={(value) => {
-								pref.toolbarBorder = value;
-							}}
+							onChange={(newValue) =>
+								(pref.toolbarBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("toolbarBorder", oldValue, newValue)
+							}
 						/>
 					</div>
 				</section>
@@ -143,16 +275,20 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						<Slider
 							title={i18n.t("background")}
 							value={pref.sidebar}
-							onChange={(value) => {
-								pref.sidebar = value;
-							}}
+							onChange={(newValue) => (pref.sidebar = newValue)}
+							onCommit={(oldValue, newValue) =>
+								addHistory("sidebar", oldValue, newValue)
+							}
 						/>
 						<Slider
 							title={i18n.t("border")}
 							value={pref.sidebarBorder}
-							onChange={(value) => {
-								pref.sidebarBorder = value;
-							}}
+							onChange={(newValue) =>
+								(pref.sidebarBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("sidebarBorder", oldValue, newValue)
+							}
 						/>
 					</div>
 				</section>

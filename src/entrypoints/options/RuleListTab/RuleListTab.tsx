@@ -15,21 +15,30 @@ export default function RuleListTab({ pref, ready }: RuleListTabProps) {
 		() => pref.getLastSave(),
 	);
 
+	const ruleList = Object.entries(pref.ruleList).filter(
+		([_, rule]) => rule !== null,
+	);
+
 	return (
 		<main className={clsx(styles.ruleListTab, !ready && "disabled")}>
-			{Object.entries(pref.ruleList).map(([rawId, rule]) => {
-				if (!rule) return null;
-				const id = Number(rawId);
-				return (
-					<Rule
-						key={`rule${id}`}
-						rule={rule}
-						onChange={(newRule) => pref.setRule(id, newRule)}
-					/>
-				);
-			})}
+			<div className={styles.ruleList}>
+				{ruleList.map(([rawId, rule]) => {
+					return (
+						<Rule
+							key={`rule${rawId}`}
+							rule={rule}
+							onChange={(newRule) =>
+								pref.setRule(Number(rawId), newRule)
+							}
+						/>
+					);
+				})}
+			</div>
 			<button
-				className={styles.addRuleButton}
+				className={clsx(
+					styles.addRuleButton,
+					ruleList.length > 0 && styles.marginTop,
+				)}
 				onClick={() => {
 					pref.addRule({
 						headerType: "URL",

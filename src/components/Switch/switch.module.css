@@ -22,7 +22,7 @@
 			background-color: var(--control-active);
 		}
 
-		&:before {
+		&::before {
 			position: absolute;
 			top: calc(2 * var(--unit));
 			right: auto;
@@ -46,7 +46,7 @@
 			background-color: var(--accent-active);
 		}
 
-		&.selected:before {
+		&.selected::before {
 			right: calc(2 * var(--unit));
 			left: auto;
 		}

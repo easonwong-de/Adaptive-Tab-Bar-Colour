@@ -183,13 +183,20 @@ async function handleMessage(
 		case "UPDATE_COLOUR":
 			if (tab === undefined || !tab.active) break;
 			const windowId = tab.windowId;
-			const rule = cache.rule[windowId];
+			const rule = cache.rule[windowId] ?? {
+				id: 0,
+				url: tab.url ?? "",
+				result: null,
+			};
 			const meta = (cache.meta[windowId] = parseTabColourData(
 				message.colour,
-				rule?.result ?? null,
+				rule.result,
 			));
-			cache.theme[windowId] = setFrameColour(tab, meta);
-			sendMessageToPopup({ header: "CACHE_UPDATE" });
+			const theme = (cache.theme[windowId] = setFrameColour(tab, meta));
+			sendMessageToPopup({
+				header: "CACHE_UPDATE",
+				cache: { rule, meta, theme },
+			});
 			break;
 		case "SCHEME_REQUEST":
 			return getCurrentScheme();
@@ -199,8 +206,7 @@ async function handleMessage(
 			const rule = cache.rule[windowId];
 			const meta = cache.meta[windowId];
 			const theme = cache.theme[windowId];
-			if (!rule || !meta || !theme) return undefined;
-			return { rule, meta, theme };
+			return rule && meta && theme ? { rule, meta, theme } : undefined;
 		}
 		default:
 			await run();
@@ -230,8 +236,11 @@ async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	const meta = (cache.meta[windowId] =
 		(await getTabMeta(tab, rule)) ??
 		(await getProtectedTabMeta(tab, rule)));
-	cache.theme[windowId] = setFrameColour(tab, meta);
-	sendMessageToPopup({ header: "CACHE_UPDATE" });
+	const theme = (cache.theme[windowId] = setFrameColour(tab, meta));
+	sendMessageToPopup({
+		header: "CACHE_UPDATE",
+		cache: { rule, meta, theme },
+	});
 }
 
 /**
@@ -250,12 +259,12 @@ async function getTabMeta(
 	if (result?.type === "COLOUR" && result.headerType === "URL") {
 		return { colour: new colour(result.value), reason: "COLOUR_SPECIFIED" };
 	} else if (result?.type === "COLOUR" && result.headerType === "ADDON_ID") {
-		const info = await getWebExtName(result.header);
-		if (info)
+		const webExtName = await getWebExtName(result.header);
+		if (webExtName)
 			return {
 				colour: new colour(result.value),
 				reason: "ADDON_SPECIFIED",
-				info,
+				info: webExtName,
 			};
 	}
 	try {
@@ -484,14 +493,15 @@ async function getAboutPageMeta(
  */
 async function getWebExtPageMeta(webExtId?: string): Promise<MetaQueryResult> {
 	if (webExtId !== undefined) {
-		const addonName = await getWebExtName(webExtId);
+		const webExtName =
+			(await getWebExtName(webExtId)) ?? i18n.t("addonNotFound");
 		const colour = presetAddonPageColour[webExtId]?.[cache.scheme];
 		return colour !== undefined
-			? { colour: colour, reason: "ADDON_PRESET", info: addonName }
+			? { colour: colour, reason: "ADDON_PRESET", info: webExtName }
 			: {
 					colour: browserColour.ADDON,
 					reason: "ADDON_DEFAULT",
-					info: addonName,
+					info: webExtName,
 				};
 	} else {
 		return {
@@ -503,7 +513,7 @@ async function getWebExtPageMeta(webExtId?: string): Promise<MetaQueryResult> {
 }
 
 /**
- * Applies the colour to the browser frame and updates cache.
+ * Applies the colour to the browser frame.
  *
  * @param {Browser.tabs.Tab} tab - Target tab.
  * @param {MetaQueryResult} meta - Parsed tab metadata.

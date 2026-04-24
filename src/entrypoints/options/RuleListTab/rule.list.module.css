@@ -2,13 +2,25 @@ main.rule-list-tab {
 	display: flex;
 	flex-direction: column;
 
+	.rule-list {
+		display: flex;
+		flex-direction: column;
+		box-shadow: var(--shadow-small), var(--shadow-large);
+		border-radius: calc(16 * var(--unit));
+		overflow: hidden;
+	}
+
 	.add-rule-button {
-		margin-top: calc(16 * var(--unit));
+		box-shadow: var(--shadow-small), var(--shadow-large);
 		border-radius: calc(16 * var(--unit));
 		background-color: var(--panel);
 		width: 100%;
 		height: calc(48 * var(--unit));
 		text-align: center;
+
+		&.margin-top {
+			margin-top: calc(16 * var(--unit));
+		}
 
 		&:hover {
 			background-color: var(--panel-hover);
@@ -16,10 +28,6 @@ main.rule-list-tab {
 
 		&:active {
 			background-color: var(--panel-active);
-		}
-
-		&:only-child {
-			margin-top: 0rem;
 		}
 	}
 }

@@ -5,6 +5,8 @@ export type IconType =
 	| "delete"
 	| "contrast"
 	| "circle"
+	| "undo"
+	| "redo"
 	| "reset"
 	| "upload"
 	| "download"
@@ -30,17 +32,15 @@ export default function Icon({ type }: { type: IconType }) {
 		case "sun":
 			return (
 				<svg
-					width="16"
-					height="16"
-					viewBox="0 0 16 16"
-					fill="none"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="currentColor"
 					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path
-						fill="currentColor"
-						fillRule="evenodd"
-						clipRule="evenodd"
-						d="M8.66666 12.6667V15.3333H7.33331V12.6667H8.66666ZM11.7712 10.8284L13.6568 12.714L12.714 13.6568L10.8284 11.7712L11.7712 10.8284ZM4.22875 10.8284L5.17156 11.7712L3.28594 13.6568L2.34313 12.714L4.22875 10.8284ZM8 4.35478C10.0132 4.35478 11.6452 5.98678 11.6452 8C11.6452 10.0132 10.0132 11.6452 8 11.6452C7.52105 11.6461 7.04663 11.5525 6.60395 11.3696C6.16128 11.1867 5.75907 10.9183 5.4204 10.5796C5.08173 10.2409 4.81325 9.83871 4.63038 9.39604C4.44751 8.95337 4.35384 8.47895 4.35475 8C4.35475 5.98678 5.98678 4.35478 8 4.35478ZM15.3333 7.33331V8.66666H12.6667V7.33331H15.3333ZM3.33331 7.33331V8.66666H0.666656V7.33331H3.33331ZM3.28594 2.34313L5.17156 4.22875L4.22875 5.17156L2.34313 3.28594L3.28594 2.34313ZM12.7141 2.34313L13.6568 3.28594L11.7712 5.17156L10.8284 4.22875L12.7141 2.34313ZM8.66663 0.666656V3.33331H7.33328V0.666656H8.66663Z"
+						stroke="currentColor"
+						d="M12 2V4M12 20V22M4 12H2M6.31412 6.31412L4.8999 4.8999M17.6859 6.31412L19.1001 4.8999M6.31412 17.69L4.8999 19.1042M17.6859 17.69L19.1001 19.1042M22 12H20M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"
 					/>
 				</svg>
 			);
@@ -108,7 +108,7 @@ export default function Icon({ type }: { type: IconType }) {
 					/>
 				</svg>
 			);
-		case "reset":
+		case "undo":
 			return (
 				<svg
 					width="24"
@@ -120,6 +120,36 @@ export default function Icon({ type }: { type: IconType }) {
 					<path
 						stroke="currentColor"
 						d="M3 9H16.5C18.9853 9 21 11.0147 21 13.5C21 15.9853 18.9853 18 16.5 18H12M3 9L7 5M3 9L7 13"
+					/>
+				</svg>
+			);
+		case "redo":
+			return (
+				<svg
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke="currentColor"
+						d="M21 9H7.5C5.01472 9 3 11.0147 3 13.5C3 15.9853 5.01472 18 7.5 18H12M21 9L17 5M21 9L17 13"
+					/>
+				</svg>
+			);
+		case "reset":
+			return (
+				<svg
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke="currentColor"
+						d="M2 10C2 10 4.00498 7.26822 5.63384 5.63824C7.26269 4.00827 9.5136 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.89691 21 4.43511 18.2543 3.35177 14.5M2 10V4M2 10H8"
 					/>
 				</svg>
 			);

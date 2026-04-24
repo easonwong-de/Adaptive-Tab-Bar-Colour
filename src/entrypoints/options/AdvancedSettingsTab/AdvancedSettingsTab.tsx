@@ -94,8 +94,8 @@ export default function AdvancedSettingsTab({
 						pref.compatibilityMode && "disabled",
 					)}
 				>
-					<div>{i18n.t("homepageColourLight")}</div>
 					<div>
+						<h3>{i18n.t("homepageColourLight")}</h3>
 						<Colour
 							value={pref.homeBackground_light}
 							onChange={(value) =>
@@ -104,15 +104,7 @@ export default function AdvancedSettingsTab({
 						/>
 					</div>
 					<div>
-						<button
-							className={styles.resetButton}
-							onClick={() => pref.reset(["homeBackground_light"])}
-						>
-							<Icon type="reset" />
-						</button>
-					</div>
-					<div>{i18n.t("homepageColourDark")}</div>
-					<div>
+						<h3>{i18n.t("homepageColourDark")}</h3>
 						<Colour
 							value={pref.homeBackground_dark}
 							onChange={(value) =>
@@ -121,15 +113,7 @@ export default function AdvancedSettingsTab({
 						/>
 					</div>
 					<div>
-						<button
-							className={styles.resetButton}
-							onClick={() => pref.reset(["homeBackground_dark"])}
-						>
-							<Icon type="reset" />
-						</button>
-					</div>
-					<div>{i18n.t("fallbackColourLight")}</div>
-					<div>
+						<h3>{i18n.t("fallbackColourLight")}</h3>
 						<Colour
 							value={pref.fallbackColour_light}
 							onChange={(value) =>
@@ -138,29 +122,13 @@ export default function AdvancedSettingsTab({
 						/>
 					</div>
 					<div>
-						<button
-							className={styles.resetButton}
-							onClick={() => pref.reset(["fallbackColour_light"])}
-						>
-							<Icon type="reset" />
-						</button>
-					</div>
-					<div>{i18n.t("fallbackColourDark")}</div>
-					<div>
+						<h3>{i18n.t("fallbackColourDark")}</h3>
 						<Colour
 							value={pref.fallbackColour_dark}
 							onChange={(value) =>
 								(pref.fallbackColour_dark = value)
 							}
 						/>
-					</div>
-					<div>
-						<button
-							className={styles.resetButton}
-							onClick={() => pref.reset(["fallbackColour_dark"])}
-						>
-							<Icon type="reset" />
-						</button>
 					</div>
 				</section>
 			</div>
@@ -194,7 +162,7 @@ export default function AdvancedSettingsTab({
 					/>
 				</section>
 				<section className={styles.cardSection}>
-					<h3>{i18n.t("backup")}</h3>
+					<h3>{i18n.t("backupAndReset")}</h3>
 					<button
 						className={styles.textButton}
 						onClick={() => {
@@ -238,77 +206,17 @@ export default function AdvancedSettingsTab({
 							reader.readAsText(file);
 						}}
 					/>
-				</section>
-				<section className={styles.cardSection}>
-					<h3>{i18n.t("reset")}</h3>
 					<Confirm
-						confirmText={i18n.t("confirmResetThemeBuilder")}
-						onConfirm={() =>
-							pref.reset([
-								"tabbar",
-								"tabbarBorder",
-								"tabSelected",
-								"tabSelectedBorder",
-								"toolbar",
-								"toolbarBorder",
-								"toolbarField",
-								"toolbarFieldBorder",
-								"toolbarFieldOnFocus",
-								"sidebar",
-								"sidebarBorder",
-								"popup",
-								"popupBorder",
-							])
-						}
+						confirmText={i18n.t("confirmResetAll")}
+						onConfirm={() => pref.reset()}
 					>
-						{({ setIsOpen, isOpen }) => (
+						{(open) => (
 							<button
 								className={styles.textButton}
-								onClick={() => setIsOpen(!isOpen)}
+								onClick={open}
 							>
 								<Icon type="reset" />
-								{i18n.t("resetThemeBuilder")}
-							</button>
-						)}
-					</Confirm>
-					<Confirm
-						confirmText={i18n.t("confirmResetRuleList")}
-						onConfirm={() => pref.reset(["ruleList"])}
-					>
-						{({ setIsOpen, isOpen }) => (
-							<button
-								className={styles.textButton}
-								onClick={() => setIsOpen(!isOpen)}
-							>
-								<Icon type="reset" />
-								{i18n.t("resetRuleList")}
-							</button>
-						)}
-					</Confirm>
-					<Confirm
-						confirmText={i18n.t("confirmResetAdvanced")}
-						onConfirm={() =>
-							pref.reset([
-								"minContrast_light",
-								"minContrast_dark",
-								"allowDarkLight",
-								"dynamic",
-								"noThemeColour",
-								"compatibilityMode",
-								"homeBackground_light",
-								"homeBackground_dark",
-								"fallbackColour_light",
-								"fallbackColour_dark",
-							])
-						}
-					>
-						{({ setIsOpen, isOpen }) => (
-							<button
-								className={styles.textButton}
-								onClick={() => setIsOpen(!isOpen)}
-							>
-								<Icon type="reset" />
-								{i18n.t("resetAdvanced")}
+								{i18n.t("resetAllSettings")}
 							</button>
 						)}
 					</Confirm>

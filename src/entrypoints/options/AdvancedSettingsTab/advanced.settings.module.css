@@ -19,6 +19,7 @@ main.advanced-settings-tab {
 		justify-content: center;
 		align-items: center;
 		gap: calc(8 * var(--unit));
+		box-shadow: var(--shadow-small), var(--shadow-large);
 		border-radius: calc(16 * var(--unit));
 		background-color: var(--panel);
 		padding: calc(16 * var(--unit));
@@ -26,36 +27,34 @@ main.advanced-settings-tab {
 
 	.list-section {
 		display: grid;
-		grid-template-columns: 1fr auto max-content;
+		grid-template-columns: auto 1fr;
+		box-shadow: var(--shadow-small), var(--shadow-large);
 		border-radius: calc(16 * var(--unit));
 		overflow: hidden;
 
 		& > div {
-			display: flex;
-			align-items: center;
+			display: grid;
+			grid-template-columns: subgrid;
+			grid-column: 1 / -1;
+			gap: calc(8 * var(--unit));
 			background-color: var(--panel);
-			padding: calc(8 * var(--unit)) 0;
-			padding-inline-start: calc(8 * var(--unit));
+			padding: calc(8 * var(--unit));
+			white-space: nowrap;
 
-			&:nth-of-type(3n + 1) {
-				padding-inline-start: calc(16 * var(--unit));
-				white-space: nowrap;
-			}
-
-			&:nth-of-type(3n) {
-				padding-inline-end: calc(8 * var(--unit));
-			}
-
-			&:nth-of-type(6n + 4),
-			&:nth-of-type(6n + 5),
-			&:nth-of-type(6n + 6) {
+			&:nth-of-type(even) {
 				background-color: var(--panel-alt);
 			}
-		}
 
-		.reset-button {
-			width: calc(32 * var(--unit));
-			height: calc(32 * var(--unit));
+			& > :first-child {
+				display: block;
+				align-self: center;
+				padding-inline-start: calc(8 * var(--unit));
+				min-width: 0;
+				overflow: hidden;
+				font-weight: inherit;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
 		}
 	}
 

@@ -1,4 +1,5 @@
 .confirm {
+	--width: calc(240 * var(--unit));
 	position: relative;
 	width: 100%;
 
@@ -6,17 +7,18 @@
 		display: flex;
 		position: absolute;
 		top: 100%;
-		left: 0;
+		left: calc((100% - var(--width)) / 2);
 		flex-direction: column;
 		gap: calc(8 * var(--unit));
 		z-index: 10;
-		filter: drop-shadow(0 0 calc(4 * var(--unit)) rgba(0, 0, 0, 0.25));
+		filter: drop-shadow(var(--shadow-small))
+			drop-shadow(var(--shadow-large));
 		box-sizing: border-box;
 		margin-top: calc(8.6 * var(--unit));
 		border-radius: calc(16 * var(--unit));
 		background-color: var(--panel);
 		padding: calc(8 * var(--unit));
-		width: 100%;
+		width: var(--width);
 
 		&::before {
 			position: absolute;
@@ -24,12 +26,22 @@
 			left: calc(50% - 6 * var(--unit));
 			transform: rotate(45deg);
 			z-index: -1;
-			border-radius: calc(4 * var(--unit)) calc(1 * var(--unit)) 0
-				calc(1 * var(--unit));
+			border-radius: calc(4 * var(--unit)) calc(1 * var(--unit));
 			background-color: var(--panel);
 			width: calc(12 * var(--unit));
 			height: calc(12 * var(--unit));
 			content: "";
+		}
+
+		&.up {
+			top: auto;
+			bottom: 100%;
+			margin-top: 0;
+			margin-bottom: calc(8.6 * var(--unit));
+
+			&::before {
+				top: calc(100% + -6 * var(--unit));
+			}
 		}
 	}
 

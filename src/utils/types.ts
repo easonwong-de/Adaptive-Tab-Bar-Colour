@@ -46,8 +46,7 @@ export type Rule = ColourRule | ThemeColourRule | QuerySelectorRule | null;
 
 export type RuleList = Record<number, Rule>;
 
-export interface PreferenceContent {
-	// theme builder
+export interface ThemeBuilderPreferenceContent {
 	popup: number;
 	popupBorder: number;
 	sidebar: number;
@@ -61,6 +60,9 @@ export interface PreferenceContent {
 	toolbarField: number;
 	toolbarFieldBorder: number;
 	toolbarFieldOnFocus: number;
+}
+
+export interface PreferenceContent extends ThemeBuilderPreferenceContent {
 	// rule list
 	ruleList: RuleList;
 	// advanced
@@ -162,7 +164,7 @@ export type MessageForBackground =
 	| { header: "UPDATE_COLOUR"; colour: TabColourData }
 	| { header: "SCRIPT_READY" | "SCHEME_REQUEST" | "CACHE_REQUEST" };
 
-export type MessageForPopup = { header: "CACHE_UPDATE" };
+export type MessageForPopup = { header: "CACHE_UPDATE"; cache: Cache };
 
 export type MessageForTab =
 	| { header: "GET_COLOUR"; dynamic: boolean; query?: string }

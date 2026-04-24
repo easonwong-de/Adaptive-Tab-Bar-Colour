@@ -1,17 +1,17 @@
+import clsx from "clsx";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import styles from "./confirm.module.css";
 
 interface ConfirmProps {
-	children: (args: {
-		isOpen: boolean;
-		setIsOpen: (isOpen: boolean) => void;
-	}) => ReactNode;
+	children: (open: () => void) => ReactNode;
 	confirmText: string;
+	position?: "up" | "down";
 	onConfirm: () => void;
 }
 
 export default function Confirm({
 	children,
+	position = "down",
 	confirmText,
 	onConfirm,
 }: ConfirmProps) {
@@ -33,9 +33,14 @@ export default function Confirm({
 
 	return (
 		<div className={styles.confirm} ref={containerRef}>
-			{children({ isOpen, setIsOpen })}
+			{children(() => setIsOpen(!isOpen))}
 			{isOpen && (
-				<div className={styles.confirmMenu}>
+				<div
+					className={clsx(
+						styles.confirmMenu,
+						position === "up" && styles.up,
+					)}
+				>
 					<div className={styles.confirmText}>{confirmText}</div>
 					<div className={styles.confirmActions}>
 						<button

@@ -12,6 +12,7 @@
 		background-color: var(--control);
 		padding-inline: calc(32 * var(--unit)) calc(8 * var(--unit));
 		width: 100%;
+		min-width: 6em;
 		height: calc(32 * var(--unit));
 		color: var(--text-primary);
 		line-height: 100%;
