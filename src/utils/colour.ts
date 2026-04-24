@@ -75,6 +75,54 @@ export default class colour {
 	}
 
 	/**
+	 * Assigns HSLA values.
+	 *
+	 * @param {number} h - Hue in degrees (0-360).
+	 * @param {number} s - Saturation percentage (0-100).
+	 * @param {number} l - Lightness percentage (0-100).
+	 * @param {number} a - Alpha (0-1).
+	 * @returns {this} This instance.
+	 */
+	hsl(h: number, s: number, l: number, a: number): this {
+		let c = (1 - Math.abs(0.02 * l - 1)) * (s / 100),
+			x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+			m = l / 100 - c / 2,
+			r = 0,
+			g = 0,
+			b = 0;
+		if (0 <= h && h < 60) {
+			r = c;
+			g = x;
+			b = 0;
+		} else if (60 <= h && h < 120) {
+			r = x;
+			g = c;
+			b = 0;
+		} else if (120 <= h && h < 180) {
+			r = 0;
+			g = c;
+			b = x;
+		} else if (180 <= h && h < 240) {
+			r = 0;
+			g = x;
+			b = c;
+		} else if (240 <= h && h < 300) {
+			r = x;
+			g = 0;
+			b = c;
+		} else if (300 <= h && h < 360) {
+			r = c;
+			g = 0;
+			b = x;
+		}
+		this.r = Math.round((r + m) * 255);
+		this.g = Math.round((g + m) * 255);
+		this.b = Math.round((b + m) * 255);
+		this.a = a;
+		return this;
+	}
+
+	/**
 	 * Applies an opacity factor to the current colour.
 	 *
 	 * @param {number} opacity - The opacity factor to apply (0-1).
@@ -318,6 +366,31 @@ export default class colour {
 			.toString(16)
 			.padStart(2, "0");
 		return `#${hexR}${hexG}${hexB}${hexA}`;
+	}
+
+	/**
+	 * Returns the colour as HSL channel values.
+	 *
+	 * @returns {{ h: number; s: number; l: number }} HSL values where `h` is in
+	 *   degrees (0-360), and `s`/`l` are normalised values (0-1).
+	 */
+	toHSL(): { h: number; s: number; l: number } {
+		const r = this.#r / 255;
+		const g = this.#g / 255;
+		const b = this.#b / 255;
+		const cmin = Math.min(r, g, b),
+			cmax = Math.max(r, g, b),
+			delta = cmax - cmin;
+		let { h, s, l } = { h: 0, s: 0, l: 0 };
+		if (delta === 0) h = 0;
+		else if (cmax === r) h = ((g - b) / delta) % 6;
+		else if (cmax === g) h = (b - r) / delta + 2;
+		else h = (r - g) / delta + 4;
+		h = Math.round(h * 60);
+		if (h < 0) h += 360;
+		l = (cmax + cmin) / 2;
+		s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+		return { h, s, l };
 	}
 
 	/**
