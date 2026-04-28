@@ -43,6 +43,7 @@ html {
 	margin: 0;
 	padding: 0;
 	color: var(--text-primary);
+	color-scheme: light dark;
 	font: menu;
 	line-height: 1.5;
 	font-family:

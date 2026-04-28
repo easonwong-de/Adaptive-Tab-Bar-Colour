@@ -59,6 +59,7 @@ html {
 	margin: 0;
 	padding: 0;
 	color: var(--text-primary);
+	color-scheme: light dark;
 	font: caption;
 	line-height: 1.5;
 	font-family:
