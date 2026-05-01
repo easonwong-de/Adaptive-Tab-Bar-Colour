@@ -10,9 +10,9 @@
 		border: none;
 		border-radius: var(--component-border-radius, calc(12 * var(--unit)));
 		background-color: var(--control);
-		padding-inline: calc(8 * var(--unit));
+		padding-inline: var(--unit-8);
 		width: 100%;
-		height: calc(32 * var(--unit));
+		height: var(--unit-32);
 		color: var(--text-primary);
 		line-height: 100%;
 		font-family: monospace;
@@ -31,16 +31,16 @@
 		display: none;
 		position: absolute;
 		top: 50%;
-		right: calc(8 * var(--unit));
+		right: var(--unit-8);
 		transform: translateY(-50%);
 		cursor: help;
-		width: calc(16 * var(--unit));
-		height: calc(16 * var(--unit));
+		width: var(--unit-16);
+		height: var(--unit-16);
 	}
 
 	&.warning {
 		input[type="text"] {
-			padding-inline-end: calc(32 * var(--unit));
+			padding-inline-end: var(--unit-32);
 		}
 
 		& > div {

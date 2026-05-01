@@ -1,16 +1,16 @@
 .loading-widget {
 	display: flex;
 	flex-direction: column;
-	gap: calc(8 * var(--unit));
+	gap: var(--unit-8);
 	border: 1px solid var(--transparent-0);
-	border-radius: calc(4 * var(--unit));
-	padding: calc(8 * var(--unit));
+	border-radius: var(--unit-4);
+	padding: var(--unit-8);
 
 	.loading-message {
 		svg {
 			display: inline-block;
 			vertical-align: text-bottom;
-			padding-inline-end: calc(4 * var(--unit));
+			padding-inline-end: var(--unit-4);
 			width: auto;
 			height: 1em;
 		}

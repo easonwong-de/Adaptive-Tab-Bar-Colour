@@ -3,16 +3,16 @@
 	flex-direction: row;
 	justify-content: start;
 	align-items: center;
-	gap: calc(16 * var(--unit));
+	gap: var(--unit-16);
 	width: 100%;
 
 	button {
 		position: relative;
 		flex: 0 0 auto;
-		border-radius: calc(8 * var(--unit));
+		border-radius: var(--unit-8);
 		background-color: var(--control);
-		width: calc(32 * var(--unit));
-		height: calc(16 * var(--unit));
+		width: var(--unit-32);
+		height: var(--unit-16);
 
 		&:hover {
 			background-color: var(--control-hover);
@@ -24,9 +24,9 @@
 
 		&::before {
 			position: absolute;
-			top: calc(2 * var(--unit));
+			top: var(--unit-2);
 			right: auto;
-			left: calc(2 * var(--unit));
+			left: var(--unit-2);
 			border-radius: calc(12 * var(--unit));
 			background-color: var(--panel);
 			width: calc(12 * var(--unit));
@@ -47,7 +47,7 @@
 		}
 
 		&.selected::before {
-			right: calc(2 * var(--unit));
+			right: var(--unit-2);
 			left: auto;
 		}
 	}

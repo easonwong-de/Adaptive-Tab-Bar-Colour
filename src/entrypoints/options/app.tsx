@@ -8,7 +8,7 @@ import ThemeBuilderTab from "./ThemeBuilderTab/ThemeBuilderTab";
 const pref = new preference();
 
 export default function App() {
-	const [activeTab, setActiveTab] = useState(0);
+	const [activeTab, setActiveTab] = useState(1);
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => {

@@ -1,5 +1,10 @@
 :root {
 	--unit: 0.0769rem;
+	--unit-2: 0.1538rem;
+	--unit-4: 0.3076rem;
+	--unit-8: 0.6152rem;
+	--unit-16: 1.2304rem;
+	--unit-32: 2.4608rem;
 
 	--app: hsl(247, 12%, 100%);
 
@@ -76,8 +81,8 @@ body {
 	position: relative;
 	flex-direction: column;
 	align-items: stretch;
-	gap: calc(8 * var(--unit));
-	padding: calc(8 * var(--unit));
+	gap: var(--unit-8);
+	padding: var(--unit-8);
 	width: 100%;
 	height: 100%;
 }
@@ -116,10 +121,10 @@ button {
 	justify-content: start;
 	align-items: center;
 	box-sizing: border-box;
-	border-radius: calc(4 * var(--unit));
-	padding: calc(8 * var(--unit));
+	border-radius: var(--unit-4);
+	padding: var(--unit-8);
 	width: 100%;
-	height: calc(32 * var(--unit));
+	height: var(--unit-32);
 	color: var(--text-primary);
 	text-align: start;
 
@@ -141,7 +146,7 @@ h6 {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	gap: calc(4 * var(--unit));
+	gap: var(--unit-4);
 	font: inherit;
 	font-size: inherit;
 	text-wrap: balance;
@@ -182,8 +187,8 @@ svg {
 	stroke-linejoin: round;
 	stroke-width: calc(1.5 * var(--unit));
 	margin: 0;
-	width: calc(16 * var(--unit));
-	height: calc(16 * var(--unit));
+	width: var(--unit-16);
+	height: var(--unit-16);
 }
 
 .hidden {

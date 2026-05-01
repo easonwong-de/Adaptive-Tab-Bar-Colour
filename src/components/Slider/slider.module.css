@@ -1,15 +1,15 @@
 .slider {
 	display: flex;
 	flex-direction: column;
-	gap: calc(8 * var(--unit));
-	padding-top: calc(8 * var(--unit));
+	gap: var(--unit-8);
+	padding-top: var(--unit-8);
 	width: 100%;
 
 	.body {
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
-		gap: calc(4 * var(--unit));
+		gap: var(--unit-4);
 	}
 
 	.track {
@@ -21,7 +21,7 @@
 		border-radius: calc(12 * var(--unit));
 		background-color: var(--control);
 		max-width: calc(120 * var(--unit));
-		height: calc(32 * var(--unit));
+		height: var(--unit-32);
 		overflow: hidden;
 		line-height: 100%;
 		font-variant-numeric: tabular-nums;
@@ -109,8 +109,8 @@
 	button {
 		flex-shrink: 0;
 		border-radius: calc(12 * var(--unit));
-		width: calc(32 * var(--unit));
-		height: calc(32 * var(--unit));
+		width: var(--unit-32);
+		height: var(--unit-32);
 		color: var(--text-primary);
 	}
 
