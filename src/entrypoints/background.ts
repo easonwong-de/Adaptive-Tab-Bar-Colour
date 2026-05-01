@@ -309,37 +309,38 @@ async function getTabMeta(
 	} catch {
 		console.info("Could not connect to", url);
 
-		if (protocol === "about:")
+		if (protocol === "about:") {
 			return await getAboutPageMeta(windowId, href, pathname, title);
-		else if (protocol === "moz-extension:")
+		} else if (protocol === "moz-extension:") {
 			return await getWebExtPageMeta(webExtId);
-		else if (sourcePageProtocol.includes(protocol))
+		} else if (sourcePageProtocol.includes(protocol)) {
 			return getSourcePageMeta(protocol, href);
-		else if (href.startsWith("data:image"))
+		} else if (href.startsWith("data:image")) {
 			return {
 				colour: browserColour.IMAGE_VIEWER,
 				reason: "IMAGE_VIEWER",
 			};
-		else if (href.endsWith(".pdf") || title?.endsWith(".pdf"))
+		} else if (href.endsWith(".pdf") || title?.endsWith(".pdf")) {
 			return { colour: browserColour.PDF_VIEWER, reason: "PDF_VIEWER" };
-		else if (href.endsWith(".json") || title?.endsWith(".json"))
+		} else if (href.endsWith(".json") || title?.endsWith(".json")) {
 			return { colour: browserColour.JSON_VIEWER, reason: "JSON_VIEWER" };
-		else if (favIconUrl?.startsWith("chrome:"))
+		} else if (favIconUrl?.startsWith("chrome:")) {
 			return { colour: browserColour.DEFAULT, reason: "PROTECTED_PAGE" };
-		else if (href.match(new RegExp(`https?:\\/\\/${title}$`, "i")))
+		} else if (href.match(new RegExp(`https?:\\/\\/${title}$`, "i"))) {
 			return { colour: browserColour.PLAINTEXT, reason: "TEXT_VIEWER" };
-		else if (hostname in mozillaPageColour)
+		} else if (hostname in mozillaPageColour) {
 			return {
 				colour:
 					mozillaPageColour[hostname]?.[cache.scheme] ??
 					browserColour.FALLBACK,
 				reason: "PROTECTED_PAGE",
 			};
-		else
+		} else {
 			return {
 				colour: browserColour.FALLBACK,
 				reason: "FALLBACK_COLOUR",
 			};
+		}
 	}
 }
 
