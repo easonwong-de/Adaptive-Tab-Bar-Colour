@@ -106,7 +106,7 @@ export interface RuleQueryResult {
 	id: number;
 	url: string;
 	webExtId?: string;
-	result: Rule;
+	rule: Rule;
 }
 
 export type TabMetaReason =
@@ -144,9 +144,9 @@ export interface ApplyThemeResult {
 }
 
 export interface Cache {
-	rule: RuleQueryResult;
-	meta: MetaQueryResult;
-	theme: ApplyThemeResult;
+	ruleData: RuleQueryResult;
+	metaData: MetaQueryResult;
+	themeData: ApplyThemeResult;
 }
 
 export interface ColourCorrectionResult {
@@ -167,7 +167,11 @@ export type MessageForBackground =
 export type MessageForPopup = { header: "CACHE_UPDATE"; cache: Cache };
 
 export type MessageForTab =
-	| { header: "GET_COLOUR"; dynamic: boolean; query?: string }
+	| {
+			header: "SETUP_SCRIPT";
+			mode: "suspend" | "static" | "dynamic";
+			query?: string;
+	  }
 	| { header: "SET_THEME_COLOUR"; colour: string };
 
 export type BackgroundMessageListener = (

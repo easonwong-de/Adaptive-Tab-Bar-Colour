@@ -23,22 +23,24 @@ function handleMessage(
 	_: Browser.runtime.MessageSender,
 	sendResponse: (response?: unknown) => void,
 ): void {
-	switch (message.header) {
-		case "GET_COLOUR":
-			query = message.query;
-			if (message.dynamic) {
-				enableDynamic();
-				sendResponse(getColourData());
-			} else {
+	if (message.header === "SETUP_SCRIPT") {
+		query = message.query;
+		switch (message.mode) {
+			case "suspend":
+				disableDynamic();
+				sendResponse();
+				break;
+			case "static":
 				disableDynamic();
 				sendResponse(colourDataCache ?? getColourData());
-			}
-			break;
-		case "SET_THEME_COLOUR":
-			setThemeColour(message.colour);
-			break;
-		default:
-			break;
+				break;
+			case "dynamic":
+				enableDynamic();
+				sendResponse(getColourData());
+				break;
+		}
+	} else if (message.header === "SET_THEME_COLOUR") {
+		setThemeColour(message.colour);
 	}
 }
 

@@ -139,27 +139,27 @@ const browserColour: Record<BrowserColour, colour> = Object.freeze({
 
 /** Runtime cache. */
 const cache: {
-	rule: Record<number, RuleQueryResult | undefined>;
-	meta: Record<number, MetaQueryResult | undefined>;
-	theme: Record<number, ApplyThemeResult | undefined>;
+	ruleData: Record<number, RuleQueryResult | undefined>;
+	metaData: Record<number, MetaQueryResult | undefined>;
+	themeData: Record<number, ApplyThemeResult | undefined>;
 	scheme: Scheme;
 	readonly reversedScheme: Scheme;
 	clear: () => Promise<void>;
 } = {
-	rule: {},
-	meta: {},
-	theme: {},
+	ruleData: {},
+	metaData: {},
+	themeData: {},
 	scheme: "light",
 	/** The reversed colour theme. */
 	get reversedScheme() {
 		return this.scheme === "light" ? "dark" : "light";
 	},
-	/** Updates `scheme` and clears `rule`, `meta`, and `theme`. */
+	/** Updates `scheme` and clears `ruleData`, `metaData`, and `themeData`. */
 	async clear() {
 		this.scheme = await getCurrentScheme();
-		this.rule = {};
-		this.meta = {};
-		this.theme = {};
+		this.ruleData = {};
+		this.metaData = {};
+		this.themeData = {};
 	},
 };
 
@@ -183,19 +183,22 @@ async function handleMessage(
 		case "UPDATE_COLOUR":
 			if (tab === undefined || !tab.active) break;
 			const windowId = tab.windowId;
-			const rule = cache.rule[windowId] ?? {
+			const ruleData = cache.ruleData[windowId] ?? {
 				id: 0,
 				url: tab.url ?? "",
-				result: null,
+				rule: null,
 			};
-			const meta = (cache.meta[windowId] = parseTabColourData(
+			const metaData = (cache.metaData[windowId] = parseTabColourData(
 				message.colour,
-				rule.result,
+				ruleData.rule,
 			));
-			const theme = (cache.theme[windowId] = setFrameColour(tab, meta));
+			const themeData = (cache.themeData[windowId] = setFrameColour(
+				tab,
+				metaData,
+			));
 			sendMessageToPopup({
 				header: "CACHE_UPDATE",
-				cache: { rule, meta, theme },
+				cache: { ruleData, metaData, themeData },
 			});
 			break;
 		case "SCHEME_REQUEST":
@@ -203,10 +206,12 @@ async function handleMessage(
 		case "CACHE_REQUEST": {
 			const windowId = await getWindowId(tab);
 			if (windowId === undefined) return undefined;
-			const rule = cache.rule[windowId];
-			const meta = cache.meta[windowId];
-			const theme = cache.theme[windowId];
-			return rule && meta && theme ? { rule, meta, theme } : undefined;
+			const ruleData = cache.ruleData[windowId];
+			const metaData = cache.metaData[windowId];
+			const themeData = cache.themeData[windowId];
+			return ruleData && metaData && themeData
+				? { ruleData, metaData, themeData }
+				: undefined;
 		}
 		default:
 			await run();
@@ -232,14 +237,18 @@ async function run(): Promise<void> {
  */
 async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	const windowId = tab.windowId;
-	const rule = (cache.rule[windowId] = await pref.getRule(tab.url));
-	const meta = (cache.meta[windowId] =
-		(await getTabMeta(tab, rule)) ??
-		(await getProtectedTabMeta(tab, rule)));
-	const theme = (cache.theme[windowId] = setFrameColour(tab, meta));
+	const ruleData = (cache.ruleData[windowId] = await pref.getRule(tab.url));
+	const metaData = (cache.metaData[windowId] = await getTabMeta(
+		tab,
+		ruleData,
+	));
+	const themeData = (cache.themeData[windowId] = setFrameColour(
+		tab,
+		metaData,
+	));
 	sendMessageToPopup({
 		header: "CACHE_UPDATE",
-		cache: { rule, meta, theme },
+		cache: { ruleData, metaData, themeData },
 	});
 }
 
@@ -247,40 +256,91 @@ async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
  * Gets colour metadata for a tab.
  *
  * @param {Browser.tabs.Tab} tab - Target tab.
- * @param {RuleQueryResult} rule - Rule query result for the tab URL.
- * @returns {Promise<MetaQueryResult | void>} Tab metadata.
+ * @param {RuleQueryResult} ruleData - Rule query result for the tab URL.
+ * @returns {Promise<MetaQueryResult>} Tab metadata.
  */
 async function getTabMeta(
 	tab: Browser.tabs.Tab,
-	rule: RuleQueryResult,
-): Promise<MetaQueryResult | void> {
-	if (!tab.id) return console.warn("Failed to get tab ID of", tab.url);
-	const result = rule.result;
-	if (result?.type === "COLOUR" && result.headerType === "URL") {
-		return { colour: new colour(result.value), reason: "COLOUR_SPECIFIED" };
-	} else if (result?.type === "COLOUR" && result.headerType === "ADDON_ID") {
-		const webExtName = await getWebExtName(result.header);
-		if (webExtName)
-			return {
-				colour: new colour(result.value),
-				reason: "ADDON_SPECIFIED",
-				info: webExtName,
-			};
+	ruleData: RuleQueryResult,
+): Promise<MetaQueryResult> {
+	const { id, windowId, url, title, favIconUrl } = tab;
+
+	if (!id) {
+		console.warn("Failed to get tab ID of", url);
+		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
+	} else if (!url || !URL.canParse(url)) {
+		console.warn("Failed to get URL of tab", id);
+		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
 	}
+
+	const { hostname, href, pathname, protocol } = new URL(url);
+	const { rule, webExtId } = ruleData;
+
+	if (rule?.type === "COLOUR") {
+		sendMessageToTab(id, { header: "SETUP_SCRIPT", mode: "suspend" }).catch(
+			() => {},
+		);
+
+		if (rule.headerType === "URL") {
+			return {
+				colour: new colour(rule.value),
+				reason: "COLOUR_SPECIFIED",
+			};
+		} else if (rule.headerType === "ADDON_ID") {
+			const info = await getWebExtName(rule.header);
+			if (info)
+				return {
+					colour: new colour(rule.value),
+					reason: "ADDON_SPECIFIED",
+					info,
+				};
+		}
+	}
+
 	try {
 		return parseTabColourData(
-			await sendMessageToTab<TabColourData>(tab.id, {
-				header: "GET_COLOUR",
-				dynamic: pref.dynamic,
-				query:
-					result?.type === "QUERY_SELECTOR"
-						? result.value
-						: undefined,
+			await sendMessageToTab<TabColourData>(id, {
+				header: "SETUP_SCRIPT",
+				mode: pref.dynamic ? "dynamic" : "static",
+				query: rule?.type === "QUERY_SELECTOR" ? rule.value : undefined,
 			}),
-			result,
+			rule,
 		);
 	} catch {
-		return console.warn("Failed to connect to", tab.url);
+		console.info("Could not connect to", url);
+
+		if (protocol === "about:") {
+			return await getAboutPageMeta(windowId, href, pathname, title);
+		} else if (protocol === "moz-extension:") {
+			return await getWebExtPageMeta(webExtId);
+		} else if (sourcePageProtocol.includes(protocol)) {
+			return getSourcePageMeta(protocol, href);
+		} else if (href.startsWith("data:image")) {
+			return {
+				colour: browserColour.IMAGE_VIEWER,
+				reason: "IMAGE_VIEWER",
+			};
+		} else if (href.endsWith(".pdf") || title?.endsWith(".pdf")) {
+			return { colour: browserColour.PDF_VIEWER, reason: "PDF_VIEWER" };
+		} else if (href.endsWith(".json") || title?.endsWith(".json")) {
+			return { colour: browserColour.JSON_VIEWER, reason: "JSON_VIEWER" };
+		} else if (favIconUrl?.startsWith("chrome:")) {
+			return { colour: browserColour.DEFAULT, reason: "PROTECTED_PAGE" };
+		} else if (href.match(new RegExp(`https?:\\/\\/${title}$`, "i"))) {
+			return { colour: browserColour.PLAINTEXT, reason: "TEXT_VIEWER" };
+		} else if (hostname in mozillaPageColour) {
+			return {
+				colour:
+					mozillaPageColour[hostname]?.[cache.scheme] ??
+					browserColour.FALLBACK,
+				reason: "PROTECTED_PAGE",
+			};
+		} else {
+			return {
+				colour: browserColour.FALLBACK,
+				reason: "FALLBACK_COLOUR",
+			};
+		}
 	}
 }
 
@@ -375,51 +435,6 @@ function parseTabColourData(
 }
 
 /**
- * Gets colour metadata for a tab displaying a protected or internal page.
- *
- * @param {Browser.tabs.Tab} tab - Target tab.
- * @param {RuleQueryResult} rule - Rule query result for the tab URL.
- * @returns {Promise<MetaQueryResult>} Tab metadata.
- */
-async function getProtectedTabMeta(
-	tab: Browser.tabs.Tab,
-	rule: RuleQueryResult,
-): Promise<MetaQueryResult> {
-	if (!tab.url || !URL.canParse(tab.url)) {
-		console.warn("Failed to get URL of tab", tab.id);
-		return { colour: browserColour.FALLBACK, reason: "ERROR_OCCURRED" };
-	}
-	const { hostname, href, pathname, protocol } = new URL(tab.url);
-	const title = tab.title ?? "";
-	if (protocol === "about:") {
-		return await getAboutPageMeta(tab.windowId, href, pathname, title);
-	} else if (protocol === "moz-extension:") {
-		return await getWebExtPageMeta(rule.webExtId);
-	} else if (sourcePageProtocol.includes(protocol)) {
-		return getSourcePageMeta(protocol, href);
-	} else if (href.startsWith("data:image")) {
-		return { colour: browserColour.IMAGE_VIEWER, reason: "IMAGE_VIEWER" };
-	} else if (href.endsWith(".pdf") || title.endsWith(".pdf")) {
-		return { colour: browserColour.PDF_VIEWER, reason: "PDF_VIEWER" };
-	} else if (href.endsWith(".json") || title.endsWith(".json")) {
-		return { colour: browserColour.JSON_VIEWER, reason: "JSON_VIEWER" };
-	} else if (tab.favIconUrl?.startsWith("chrome:")) {
-		return { colour: browserColour.DEFAULT, reason: "PROTECTED_PAGE" };
-	} else if (href.match(new RegExp(`https?:\\/\\/${title}$`, "i"))) {
-		return { colour: browserColour.PLAINTEXT, reason: "TEXT_VIEWER" };
-	} else if (hostname in mozillaPageColour) {
-		return {
-			colour:
-				mozillaPageColour[hostname]?.[cache.scheme] ??
-				browserColour.FALLBACK,
-			reason: "PROTECTED_PAGE",
-		};
-	} else {
-		return { colour: browserColour.FALLBACK, reason: "FALLBACK_COLOUR" };
-	}
-}
-
-/**
  * Gets the colour metadata for source pages.
  *
  * @param {string} protocol - The page protocol.
@@ -446,14 +461,14 @@ function getSourcePageMeta(protocol: string, href: string): MetaQueryResult {
  * @param {number} windowId - The window ID of the tab.
  * @param {string} href - Parsed tab href.
  * @param {string} pathname - Parsed tab pathname.
- * @param {string} title - Tab title.
+ * @param {string} [title] - Tab title.
  * @returns {Promise<MetaQueryResult>} Metadata of the about page tab.
  */
 async function getAboutPageMeta(
 	windowId: number,
 	href: string,
 	pathname: string,
-	title: string,
+	title?: string,
 ): Promise<MetaQueryResult> {
 	if (
 		["about:firefoxview", "about:home", "about:newtab"].some((homeHref) =>
@@ -470,11 +485,13 @@ async function getAboutPageMeta(
 		};
 	} else if (
 		href === "about:blank" &&
-		title.startsWith("about:") &&
-		title.endsWith("profile")
+		title?.startsWith("about:") &&
+		title?.endsWith("profile")
 	) {
 		return {
-			colour: browserColour[aboutPageColour[title.slice(6)] ?? "DEFAULT"],
+			colour: browserColour[
+				aboutPageColour[title?.slice(6)] ?? "DEFAULT"
+			],
 			reason: "PROTECTED_PAGE",
 		};
 	} else {
@@ -488,7 +505,7 @@ async function getAboutPageMeta(
 /**
  * Gets the colour metadata for an extension page.
  *
- * @param {string | undefined} webExtId - Extension ID parsed from the page URL.
+ * @param {string} [webExtId] - Extension ID parsed from the page URL.
  * @returns {Promise<MetaQueryResult>} Metadata of the extension page.
  */
 async function getWebExtPageMeta(webExtId?: string): Promise<MetaQueryResult> {
