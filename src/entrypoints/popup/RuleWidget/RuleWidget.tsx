@@ -11,11 +11,15 @@ import styles from "./rule.widget.module.css";
 
 interface RuleWidgetProps {
 	pref: preference;
-	rule: RuleQueryResult;
-	meta: MetaQueryResult;
+	ruleData: RuleQueryResult;
+	metaData: MetaQueryResult;
 }
 
-export default function RuleWidget({ pref, rule, meta }: RuleWidgetProps) {
+export default function RuleWidget({
+	pref,
+	ruleData,
+	metaData,
+}: RuleWidgetProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
@@ -25,9 +29,9 @@ export default function RuleWidget({ pref, rule, meta }: RuleWidgetProps) {
 		<section className={styles.ruleWidget}>
 			<div className={styles.infoMessage}>
 				<Icon type="info" />
-				<ReasonText reason={meta.reason} info={meta.info} />
+				<ReasonText reason={metaData.reason} info={metaData.info} />
 			</div>
-			<RuleControls pref={pref} rule={rule} meta={meta} />
+			<RuleControls pref={pref} ruleData={ruleData} metaData={metaData} />
 		</section>
 	);
 }
@@ -127,24 +131,24 @@ function ReasonText({
 
 function RuleControls({
 	pref,
-	rule,
-	meta,
+	ruleData,
+	metaData,
 }: {
 	pref: preference;
-	rule: RuleQueryResult;
-	meta: MetaQueryResult;
+	ruleData: RuleQueryResult;
+	metaData: MetaQueryResult;
 }) {
-	if (rule.id !== 0) {
+	if (ruleData.id !== 0) {
 		return (
 			<>
 				<Rule
 					inPopup
-					rule={rule.result}
-					onChange={(newRule) => pref.setRule(rule.id, newRule)}
+					rule={ruleData.rule}
+					onChange={(newRule) => pref.setRule(ruleData.id, newRule)}
 				/>
 				<button
 					onClick={() => {
-						pref.setRule(rule.id, null);
+						pref.setRule(ruleData.id, null);
 					}}
 				>
 					{i18n.t("deleteRule")}
@@ -153,11 +157,11 @@ function RuleControls({
 		);
 	} else if (
 		["THEME_IGNORED", "THEME_USED", "COLOUR_PICKED"].includes(
-			meta.reason,
+			metaData.reason,
 		) &&
-		URL.canParse(rule.url)
+		URL.canParse(ruleData.url)
 	) {
-		const { hostname } = new URL(rule.url);
+		const { hostname } = new URL(ruleData.url);
 		return (
 			<button
 				onClick={() => {
@@ -172,13 +176,13 @@ function RuleControls({
 				{i18n.t("addANewRule")}
 			</button>
 		);
-	} else if (["ADDON_DEFAULT", "ADDON_PRESET"].includes(meta.reason)) {
+	} else if (["ADDON_DEFAULT", "ADDON_PRESET"].includes(metaData.reason)) {
 		return (
 			<button
 				onClick={() => {
 					pref.addRule({
 						headerType: "ADDON_ID",
-						header: rule.url,
+						header: ruleData.url,
 						type: "COLOUR",
 						value: "#000000",
 					});

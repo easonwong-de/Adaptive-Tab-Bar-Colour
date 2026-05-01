@@ -38,17 +38,18 @@ export default function App() {
 			<div
 				className="background"
 				style={{
-					backgroundColor: cache?.theme?.popupColour ?? "transparent",
+					backgroundColor:
+						cache?.themeData?.popupColour ?? "transparent",
 				}}
 			/>
 			{ready && cache ? (
 				<>
 					<RuleWidget
 						pref={pref}
-						rule={cache.rule}
-						meta={cache.meta}
+						ruleData={cache.ruleData}
+						metaData={cache.metaData}
 					/>
-					{cache.theme.corrected && <CorrectionWidget />}
+					{cache.themeData.corrected && <CorrectionWidget />}
 				</>
 			) : (
 				<LoadingWidget />

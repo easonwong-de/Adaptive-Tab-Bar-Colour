@@ -342,40 +342,40 @@ export default class preference {
 	 */
 	async getRule(url: string = ""): Promise<RuleQueryResult> {
 		let id = 0;
-		let result: Rule = null;
-		if (url === "") return { id, url, result };
+		let rule: Rule = null;
+		if (url === "") return { id, url, rule };
 		const webExtId = await getWebExtId(url);
-		for (const ruleId in this.#content.ruleList) {
-			const rule = this.#content.ruleList[ruleId];
+		for (const forId in this.#content.ruleList) {
+			const forRule = this.#content.ruleList[forId];
 			if (
-				rule === null ||
-				typeof rule.header !== "string" ||
-				rule.header === ""
+				forRule === null ||
+				typeof forRule.header !== "string" ||
+				forRule.header === ""
 			) {
 				continue;
 			} else if (
 				webExtId !== undefined &&
-				rule.headerType === "ADDON_ID" &&
-				rule.header === webExtId
+				forRule.headerType === "ADDON_ID" &&
+				forRule.header === webExtId
 			) {
-				id = +ruleId;
-				result = rule;
+				id = +forId;
+				rule = forRule;
 			} else {
 				const cleanUrl = url.replace(/\/$/, "");
-				const cleanHeader = rule.header.replace(/\/$/, "");
+				const cleanHeader = forRule.header.replace(/\/$/, "");
 				if (
-					rule.headerType === "URL" &&
+					forRule.headerType === "URL" &&
 					(cleanUrl === cleanHeader ||
 						this.#testRegex(cleanUrl, cleanHeader) ||
 						this.#testWildcard(cleanUrl, cleanHeader) ||
 						this.#testHostname(cleanUrl, cleanHeader))
 				) {
-					id = +ruleId;
-					result = rule;
+					id = +forId;
+					rule = forRule;
 				}
 			}
 		}
-		return { id, url, webExtId, result };
+		return { id, url, webExtId, rule };
 	}
 
 	/**
