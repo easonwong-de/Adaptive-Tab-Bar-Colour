@@ -1,4 +1,4 @@
-main.advanced-settings-tab {
+main.advanced-tab {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: calc(16 * var(--unit));

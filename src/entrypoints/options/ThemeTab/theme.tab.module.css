@@ -1,4 +1,4 @@
-main.theme-builder-tab {
+main.theme-tab {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: calc(16 * var(--unit));
@@ -35,7 +35,7 @@ main.theme-builder-tab {
 				flex: 2 1 0;
 				flex-direction: column;
 				align-items: center;
-				gap: calc(8 * var(--unit));
+				gap: calc(16 * var(--unit));
 			}
 		}
 

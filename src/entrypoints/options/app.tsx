@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import preference from "@/utils/preference";
 import Toggle from "@/components/Toggle/Toggle";
-import AdvancedSettingsTab from "./AdvancedSettingsTab/AdvancedSettingsTab";
-import RuleListTab from "./RuleListTab/RuleListTab";
-import ThemeBuilderTab from "./ThemeBuilderTab/ThemeBuilderTab";
+import AdvancedTab from "./AdvancedTab/AdvancedTab";
+import RuleTab from "./RuleTab/RuleTab";
+import ThemeTab from "./ThemeTab/ThemeTab";
 
 const pref = new preference();
 
@@ -33,13 +33,11 @@ export default function App() {
 			{(() => {
 				switch (activeTab) {
 					case 0:
-						return <ThemeBuilderTab pref={pref} ready={ready} />;
+						return <ThemeTab pref={pref} ready={ready} />;
 					case 1:
-						return <RuleListTab pref={pref} ready={ready} />;
+						return <RuleTab pref={pref} ready={ready} />;
 					case 2:
-						return (
-							<AdvancedSettingsTab pref={pref} ready={ready} />
-						);
+						return <AdvancedTab pref={pref} ready={ready} />;
 					default:
 						return null;
 				}

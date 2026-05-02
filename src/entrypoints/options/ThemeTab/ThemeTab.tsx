@@ -1,14 +1,14 @@
 import clsx from "clsx";
-import { useMemo, useRef, useSyncExternalStore } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import type preference from "@/utils/preference";
 import { ThemeBuilderPreferenceContent } from "@/utils/types";
 import Confirm from "@/components/Confirm/Confirm";
 import Glyph from "@/components/Glyph/Glyph";
 import Icon from "@/components/Icon/Icon";
 import Slider from "@/components/Slider/Slider";
-import styles from "./theme.builder.module.css";
+import styles from "./theme.tab.module.css";
 
-interface ThemeBuilderTabProps {
+interface ThemeTabProps {
 	pref: preference;
 	ready: boolean;
 }
@@ -19,7 +19,7 @@ interface History {
 	newValue: number;
 }
 
-export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
+export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
@@ -49,10 +49,10 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 	};
 
 	return (
-		<main className={clsx(styles.themeBuilderTab, !ready && "disabled")}>
+		<main className={clsx(styles.themeTab, !ready && "disabled")}>
 			<div className={styles.column}>
 				<section className={clsx(pref.compatibilityMode && "disabled")}>
-					<Glyph highlight="tab" />
+					<Glyph highlight="selectedTab" />
 					<div>
 						<h3>{i18n.t("selectedTab")}</h3>
 						<Slider
@@ -81,57 +81,50 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 						/>
 					</div>
 				</section>
-				<section>
-					<Glyph highlight="tab-bar" />
+				<section className={clsx(pref.compatibilityMode && "disabled")}>
+					<Glyph highlight="toolbar" />
 					<div>
-						<h3>{i18n.t("tabBar")}</h3>
+						<h3>{i18n.t("toolbar")}</h3>
 						<Slider
 							title={i18n.t("background")}
-							value={pref.tabbar}
-							onChange={(newValue) => (pref.tabbar = newValue)}
+							value={pref.toolbar}
+							onChange={(newValue) => (pref.toolbar = newValue)}
 							onCommit={(oldValue, newValue) =>
-								addHistory("tabbar", oldValue, newValue)
+								addHistory("toolbar", oldValue, newValue)
 							}
 						/>
 						<Slider
-							className={clsx(
-								pref.compatibilityMode && "disabled",
-							)}
 							title={i18n.t("border")}
-							warning={i18n.t("ifVerticalTabsAreEnabled")}
-							value={pref.tabbarBorder}
+							value={pref.toolbarBorder}
 							onChange={(newValue) =>
-								(pref.tabbarBorder = newValue)
+								(pref.toolbarBorder = newValue)
 							}
 							onCommit={(oldValue, newValue) =>
-								addHistory("tabbarBorder", oldValue, newValue)
+								addHistory("toolbarBorder", oldValue, newValue)
 							}
 						/>
 					</div>
 				</section>
-				<section>
-					<Glyph highlight="popup" />
+				<section className={clsx(pref.compatibilityMode && "disabled")}>
+					<Glyph highlight="sidebar" />
 					<div>
-						<h3>{i18n.t("popUp")}</h3>
+						<h3>{i18n.t("sidebar")}</h3>
 						<Slider
 							title={i18n.t("background")}
-							value={pref.popup}
-							onChange={(newValue) => (pref.popup = newValue)}
+							value={pref.sidebar}
+							onChange={(newValue) => (pref.sidebar = newValue)}
 							onCommit={(oldValue, newValue) =>
-								addHistory("popup", oldValue, newValue)
+								addHistory("sidebar", oldValue, newValue)
 							}
 						/>
 						<Slider
-							className={clsx(
-								pref.compatibilityMode && "disabled",
-							)}
 							title={i18n.t("border")}
-							value={pref.popupBorder}
+							value={pref.sidebarBorder}
 							onChange={(newValue) =>
-								(pref.popupBorder = newValue)
+								(pref.sidebarBorder = newValue)
 							}
 							onCommit={(oldValue, newValue) =>
-								addHistory("popupBorder", oldValue, newValue)
+								addHistory("sidebarBorder", oldValue, newValue)
 							}
 						/>
 					</div>
@@ -194,14 +187,35 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 					</Confirm>
 				</section>
 			</div>
-			<div
-				className={clsx(
-					styles.column,
-					pref.compatibilityMode && "disabled",
-				)}
-			>
+			<div className={styles.column}>
 				<section>
-					<Glyph highlight="url-bar" />
+					<Glyph highlight="tabBar" />
+					<div>
+						<h3>{i18n.t("tabBar")}</h3>
+						<Slider
+							title={i18n.t("background")}
+							value={pref.tabbar}
+							onChange={(newValue) => (pref.tabbar = newValue)}
+							onCommit={(oldValue, newValue) =>
+								addHistory("tabbar", oldValue, newValue)
+							}
+						/>
+						<Slider
+							disabled={pref.compatibilityMode}
+							title={i18n.t("border")}
+							warning={i18n.t("ifVerticalTabsAreEnabled")}
+							value={pref.tabbarBorder}
+							onChange={(newValue) =>
+								(pref.tabbarBorder = newValue)
+							}
+							onCommit={(oldValue, newValue) =>
+								addHistory("tabbarBorder", oldValue, newValue)
+							}
+						/>
+					</div>
+				</section>
+				<section className={clsx(pref.compatibilityMode && "disabled")}>
+					<Glyph highlight="urlBar" />
 					<div>
 						<h3>{i18n.t("urlBar")}</h3>
 						<Slider
@@ -245,49 +259,26 @@ export default function ThemeBuilderTab({ pref, ready }: ThemeBuilderTabProps) {
 					</div>
 				</section>
 				<section>
-					<Glyph highlight="toolbar" />
+					<Glyph highlight="popup" />
 					<div>
-						<h3>{i18n.t("toolbar")}</h3>
+						<h3>{i18n.t("popUp")}</h3>
 						<Slider
 							title={i18n.t("background")}
-							value={pref.toolbar}
-							onChange={(newValue) => (pref.toolbar = newValue)}
+							value={pref.popup}
+							onChange={(newValue) => (pref.popup = newValue)}
 							onCommit={(oldValue, newValue) =>
-								addHistory("toolbar", oldValue, newValue)
+								addHistory("popup", oldValue, newValue)
 							}
 						/>
 						<Slider
+							disabled={pref.compatibilityMode}
 							title={i18n.t("border")}
-							value={pref.toolbarBorder}
+							value={pref.popupBorder}
 							onChange={(newValue) =>
-								(pref.toolbarBorder = newValue)
+								(pref.popupBorder = newValue)
 							}
 							onCommit={(oldValue, newValue) =>
-								addHistory("toolbarBorder", oldValue, newValue)
-							}
-						/>
-					</div>
-				</section>
-				<section>
-					<Glyph highlight="sidebar" />
-					<div>
-						<h3>{i18n.t("sidebar")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.sidebar}
-							onChange={(newValue) => (pref.sidebar = newValue)}
-							onCommit={(oldValue, newValue) =>
-								addHistory("sidebar", oldValue, newValue)
-							}
-						/>
-						<Slider
-							title={i18n.t("border")}
-							value={pref.sidebarBorder}
-							onChange={(newValue) =>
-								(pref.sidebarBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("sidebarBorder", oldValue, newValue)
+								addHistory("popupBorder", oldValue, newValue)
 							}
 						/>
 					</div>

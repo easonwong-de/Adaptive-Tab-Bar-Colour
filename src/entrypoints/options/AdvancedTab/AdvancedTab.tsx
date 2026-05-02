@@ -7,32 +7,28 @@ import Confirm from "@/components/Confirm/Confirm";
 import Icon from "@/components/Icon/Icon";
 import Slider from "@/components/Slider/Slider";
 import Switch from "@/components/Switch/Switch";
-import styles from "./advanced.settings.module.css";
+import styles from "./advanced.tab.module.css";
 
-interface AdvancedSettingsTabProps {
+interface AdvancedTabProps {
 	pref: preference;
 	ready: boolean;
 }
 
-export default function AdvancedSettingsTab({
-	pref,
-	ready,
-}: AdvancedSettingsTabProps) {
-	const [scheme, setScheme] = useState(getSystemScheme());
-	const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
+
+	const [scheme, setScheme] = useState(getSystemScheme());
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
+
 	useEffect(() => {
 		addSchemeChangeListener(() => setScheme(getSystemScheme()));
 	}, []);
 
 	return (
-		<main
-			className={clsx(styles.advancedSettingsTab, !ready && "disabled")}
-		>
+		<main className={clsx(styles.advancedTab, !ready && "disabled")}>
 			<div className={styles.column}>
 				<section
 					className={clsx(

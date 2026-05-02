@@ -196,6 +196,7 @@ hr {
 }
 
 svg {
+	flex-shrink: 0;
 	align-self: center;
 	stroke-linecap: round;
 	stroke-linejoin: round;

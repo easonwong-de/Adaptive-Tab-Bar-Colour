@@ -2,14 +2,14 @@ import clsx from "clsx";
 import { useSyncExternalStore } from "react";
 import type preference from "@/utils/preference";
 import Rule from "@/components/Rule/Rule";
-import styles from "./rule.list.module.css";
+import styles from "./rule.tab.module.css";
 
-interface RuleListTabProps {
+interface RuleTabProps {
 	pref: preference;
 	ready: boolean;
 }
 
-export default function RuleListTab({ pref, ready }: RuleListTabProps) {
+export default function RuleTab({ pref, ready }: RuleTabProps) {
 	useSyncExternalStore(
 		(listener) => pref.setOnChangeListener(listener),
 		() => pref.getLastSave(),
@@ -20,7 +20,7 @@ export default function RuleListTab({ pref, ready }: RuleListTabProps) {
 	);
 
 	return (
-		<main className={clsx(styles.ruleListTab, !ready && "disabled")}>
+		<main className={clsx(styles.ruleTab, !ready && "disabled")}>
 			<div className={styles.ruleList}>
 				{ruleList.map(([rawId, rule]) => {
 					return (
