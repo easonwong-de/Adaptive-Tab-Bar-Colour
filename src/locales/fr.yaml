@@ -1,4 +1,3 @@
----
 addANewRule: "Ajouter une nouvelle règle"
 addonNotFound: "Extension non trouvée"
 advanced: "Avancé"
@@ -56,6 +55,7 @@ importFailed: "Échec de l'importation des paramètres. Veuillez réessayer."
 importSettings: "Importer les paramètres"
 inDarkMode: "En mode sombre"
 inLightMode: "En mode clair"
+loading: "Chargement…"
 minimumContrast: "Contraste minimum"
 minimumContrastTooltip: >-
     Défini le ratio de contraste minimal entre la barre d'onglets et le texte. La couleur de la barre d'onglets s'ajuste automatiquement si le ratio n'est pas respecté.

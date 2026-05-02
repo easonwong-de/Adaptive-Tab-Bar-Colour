@@ -1,0 +1,224 @@
+import clsx from "clsx";
+import { useSyncExternalStore } from "react";
+import Glyph from "@/components/Glyph/Glyph";
+import Icon from "@/components/Icon/Icon";
+import Slider from "@/components/Slider/Slider";
+import styles from "./theme.widget.module.css";
+
+interface ThemeWidgetProps {
+	ready: boolean;
+	pref: preference;
+}
+
+export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
+	useSyncExternalStore(
+		(listener) => pref.setOnChangeListener(listener),
+		() => pref.getLastSave(),
+	);
+
+	const [hover, setHover] = useState<GlyphHighlight>("none");
+
+	return (
+		<section className={clsx(styles.themeWidget, !ready && "disabled")}>
+			<h2>{i18n.t("themeBuilder")}</h2>
+			<div className={styles.glyphWrapper}>
+				<Glyph highlight={hover} scale={1.5} />
+				<div>
+					<p>
+						<Icon type="background" />
+						{i18n.t("background")}
+					</p>
+					<p>
+						<Icon type="backgroundOnFocus" />
+						{i18n.t("backgroundOnFocus")}
+					</p>
+
+					<p>
+						<Icon type="border" />
+						{i18n.t("border")}
+					</p>
+				</div>
+			</div>
+			<hr />
+			<div
+				className={styles.panelWrapper}
+				onMouseLeave={() => setHover("none")}
+			>
+				<div>
+					<div
+						className={styles.panel}
+						onMouseEnter={() => setHover("selectedTab")}
+					>
+						<h3>{i18n.t("selectedTab")}</h3>
+						<div>
+							<Icon type="background" />
+							<Slider
+								inPopup
+								value={pref.tabSelected}
+								onChange={(newValue) =>
+									(pref.tabSelected = newValue)
+								}
+							/>
+						</div>
+						<div>
+							<Icon type="border" />
+							<Slider
+								inPopup
+								value={pref.tabSelectedBorder}
+								onChange={(newValue) =>
+									(pref.tabSelectedBorder = newValue)
+								}
+							/>
+						</div>
+					</div>
+					<div
+						className={styles.panel}
+						onMouseEnter={() => setHover("toolbar")}
+					>
+						<h3>{i18n.t("toolbar")}</h3>
+						<div>
+							<Icon type="background" />
+							<Slider
+								inPopup
+								value={pref.toolbar}
+								onChange={(newValue) =>
+									(pref.toolbar = newValue)
+								}
+							/>
+						</div>
+						<div>
+							<Icon type="border" />
+							<Slider
+								inPopup
+								value={pref.toolbarBorder}
+								onChange={(newValue) =>
+									(pref.toolbarBorder = newValue)
+								}
+							/>
+						</div>
+					</div>
+					<div
+						className={styles.panel}
+						onMouseEnter={() => setHover("sidebar")}
+					>
+						<h3>{i18n.t("sidebar")}</h3>
+						<div>
+							<Icon type="background" />
+							<Slider
+								inPopup
+								value={pref.sidebar}
+								onChange={(newValue) =>
+									(pref.sidebar = newValue)
+								}
+							/>
+						</div>
+						<div>
+							<Icon type="border" />
+							<Slider
+								inPopup
+								value={pref.sidebarBorder}
+								onChange={(newValue) =>
+									(pref.sidebarBorder = newValue)
+								}
+							/>
+						</div>
+					</div>
+					<button
+						className={styles.moreSettingsButton}
+						onClick={() => browser.runtime.openOptionsPage()}
+					>
+						{i18n.t("moreSettings")}
+					</button>
+				</div>
+				<div>
+					<div
+						className={styles.panel}
+						onMouseEnter={() => setHover("tabBar")}
+					>
+						<h3>{i18n.t("tabBar")}</h3>
+						<div>
+							<Icon type="background" />
+							<Slider
+								inPopup
+								value={pref.tabbar}
+								onChange={(newValue) =>
+									(pref.tabbar = newValue)
+								}
+							/>
+						</div>
+						<div>
+							<Icon type="border" />
+							<Slider
+								inPopup
+								value={pref.tabbarBorder}
+								onChange={(newValue) =>
+									(pref.tabbarBorder = newValue)
+								}
+							/>
+						</div>
+					</div>
+					<div
+						className={styles.panel}
+						onMouseEnter={() => setHover("urlBar")}
+					>
+						<h3>{i18n.t("urlBar")}</h3>
+						<div>
+							<Icon type="background" />
+							<Slider
+								inPopup
+								value={pref.toolbarField}
+								onChange={(newValue) =>
+									(pref.toolbarField = newValue)
+								}
+							/>
+						</div>
+						<div>
+							<Icon type="backgroundOnFocus" />
+							<Slider
+								inPopup
+								value={pref.toolbarFieldOnFocus}
+								onChange={(newValue) =>
+									(pref.toolbarFieldOnFocus = newValue)
+								}
+							/>
+						</div>
+						<div>
+							<Icon type="border" />
+							<Slider
+								inPopup
+								value={pref.toolbarFieldBorder}
+								onChange={(newValue) =>
+									(pref.toolbarFieldBorder = newValue)
+								}
+							/>
+						</div>
+					</div>
+					<div
+						className={styles.panel}
+						onMouseEnter={() => setHover("popup")}
+					>
+						<h3>{i18n.t("popUp")}</h3>
+						<div>
+							<Icon type="background" />
+							<Slider
+								inPopup
+								value={pref.popup}
+								onChange={(newValue) => (pref.popup = newValue)}
+							/>
+						</div>
+						<div>
+							<Icon type="border" />
+							<Slider
+								inPopup
+								value={pref.popupBorder}
+								onChange={(newValue) =>
+									(pref.popupBorder = newValue)
+								}
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	);
+}

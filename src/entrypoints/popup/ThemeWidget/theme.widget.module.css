@@ -1,0 +1,72 @@
+.theme-widget {
+	display: flex;
+	flex-direction: column;
+	gap: calc(16 * var(--unit));
+
+	.glyph-wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: calc(16 * var(--unit));
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: calc(8 * var(--unit));
+
+			& > p {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: calc(8 * var(--unit));
+			}
+		}
+	}
+
+	.panel-wrapper {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: calc(16 * var(--unit));
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			gap: calc(16 * var(--unit));
+		}
+
+		.panel {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: calc(8 * var(--unit));
+			box-shadow: var(--shadow-small), var(--shadow-large);
+			border-radius: calc(16 * var(--unit));
+			background-color: var(--app-0);
+			padding: calc(8 * var(--unit));
+
+			& > div {
+				display: flex;
+				flex-direction: row;
+				gap: calc(16 * var(--unit));
+			}
+		}
+	}
+
+	.more-settings-button {
+		flex: 1;
+		box-shadow: var(--shadow-small), var(--shadow-large);
+		background-color: var(--app-0);
+		color: var(--text-secondary);
+		font-size: 80%;
+
+		&:hover {
+			background-color: var(--app-1);
+		}
+
+		&:active {
+			background-color: var(--app-2);
+		}
+	}
+}

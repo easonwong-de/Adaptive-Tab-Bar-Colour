@@ -191,3 +191,29 @@ export type TabMessageListener = (
 	sender: Browser.runtime.MessageSender,
 	sendResponse: (response?: unknown) => void,
 ) => unknown;
+
+export type GlyphHighlight =
+	| "selectedTab"
+	| "toolbar"
+	| "tabBar"
+	| "sidebar"
+	| "popup"
+	| "urlBar"
+	| "none";
+
+export type IconType =
+	| "moon"
+	| "sun"
+	| "warning"
+	| "delete"
+	| "contrast"
+	| "circle"
+	| "undo"
+	| "redo"
+	| "reset"
+	| "upload"
+	| "download"
+	| "info"
+	| "border"
+	| "background"
+	| "backgroundOnFocus";

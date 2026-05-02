@@ -93,8 +93,8 @@ export const plainTextExtension = [
 /** Default content of the preference. */
 export const defaultPref = Object.freeze({
 	// theme builder
-	popup: 5,
-	popupBorder: 5,
+	popup: 0,
+	popupBorder: 0,
 	sidebar: 5,
 	sidebarBorder: 5,
 	tabbar: 0,

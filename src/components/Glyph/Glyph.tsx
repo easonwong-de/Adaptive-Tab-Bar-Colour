@@ -1,27 +1,27 @@
 import styles from "./glyph.module.css";
 
-type GlyphHighlight =
-	| "tab"
-	| "toolbar"
-	| "tab-bar"
-	| "sidebar"
-	| "popup"
-	| "url-bar";
-
-export default function Glyph({ highlight }: { highlight: GlyphHighlight }) {
+export default function Glyph({
+	highlight,
+	scale = 1,
+}: {
+	highlight: GlyphHighlight;
+	scale?: number;
+}) {
 	return (
 		<svg
+			width={scale * 84}
+			height={scale * 56}
 			className={styles.glyph}
-			width="84"
-			height="56"
 			viewBox="0 0 84 56"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<rect className={styles.background} width="84" height="56" rx="4" />
+			<rect className={styles.background} width={84} height={56} rx={4} />
 			<path
 				className={
-					highlight === "tab" ? styles.highlight : styles.foreground
+					highlight === "selectedTab"
+						? styles.highlight
+						: styles.foreground
 				}
 				d="M5 7C5 5.34315 6.34315 4 8 4H22.5C23.8807 4 25 5.11929 25 6.5C25 7.88071 23.8807 9 22.5 9H6C5.44772 9 5 8.55228 5 8V7Z"
 			/>
@@ -35,7 +35,7 @@ export default function Glyph({ highlight }: { highlight: GlyphHighlight }) {
 			/>
 			<path
 				className={
-					highlight === "tab-bar"
+					highlight === "tabBar"
 						? styles.highlight
 						: styles.foreground
 				}
@@ -50,33 +50,28 @@ export default function Glyph({ highlight }: { highlight: GlyphHighlight }) {
 				}
 				d="M5 19C5 18.4477 5.44772 18 6 18H28C28.5523 18 29 18.4477 29 19V50C29 50.5523 28.5523 51 28 51H8C6.34315 51 5 49.6569 5 48V19Z"
 			/>
-			{(() => {
-				if (highlight === "popup") {
-					return (
-						<>
-							<path
-								className={styles.foreground}
-								d="M38 13.5C38 12.1193 39.1193 11 40.5 11H58V16H40.5C39.1193 16 38 14.8807 38 13.5V13.5Z"
-							/>
-							<path
-								className={styles.highlight}
-								d="M60 11H78C78.5523 11 79 11.4477 79 12V35C79 35.5523 78.5523 36 78 36H61C60.4477 36 60 35.5523 60 35V11Z"
-							/>
-						</>
-					);
-				} else {
-					return (
-						<path
-							className={
-								highlight === "url-bar"
-									? styles.highlight
-									: styles.foreground
-							}
-							d="M38 13.5C38 12.1193 39.1193 11 40.5 11H78C78.5523 11 79 11.4477 79 12V15C79 15.5523 78.5523 16 78 16H40.5C39.1193 16 38 14.8807 38 13.5Z"
-						/>
-					);
-				}
-			})()}
+
+			{highlight === "popup" ? (
+				<>
+					<path
+						className={styles.foreground}
+						d="M38 13.5C38 12.1193 39.1193 11 40.5 11H58V16H40.5C39.1193 16 38 14.8807 38 13.5V13.5Z"
+					/>
+					<path
+						className={styles.highlight}
+						d="M60 11H78C78.5523 11 79 11.4477 79 12V35C79 35.5523 78.5523 36 78 36H61C60.4477 36 60 35.5523 60 35V11Z"
+					/>
+				</>
+			) : (
+				<path
+					className={
+						highlight === "urlBar"
+							? styles.highlight
+							: styles.foreground
+					}
+					d="M38 13.5C38 12.1193 39.1193 11 40.5 11H78C78.5523 11 79 11.4477 79 12V15C79 15.5523 78.5523 16 78 16H40.5C39.1193 16 38 14.8807 38 13.5Z"
+				/>
+			)}
 		</svg>
 	);
 }

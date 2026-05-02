@@ -6,7 +6,7 @@ export default function LoadingWidget() {
 		<section className={styles.loadingWidget}>
 			<div className={styles.loadingMessage}>
 				<Icon type="info" />
-				Loading
+				{i18n.t("loading")}
 			</div>
 		</section>
 	);

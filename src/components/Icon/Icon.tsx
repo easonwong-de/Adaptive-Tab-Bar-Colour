@@ -1,24 +1,8 @@
-export type IconType =
-	| "moon"
-	| "sun"
-	| "warning"
-	| "delete"
-	| "contrast"
-	| "circle"
-	| "undo"
-	| "redo"
-	| "reset"
-	| "upload"
-	| "download"
-	| "info";
-
 export default function Icon({ type }: { type: IconType }) {
 	switch (type) {
 		case "moon":
 			return (
 				<svg
-					width="16"
-					height="16"
 					viewBox="0 0 16 16"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -32,8 +16,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "sun":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="currentColor"
 					xmlns="http://www.w3.org/2000/svg"
@@ -47,8 +29,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "warning":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -62,8 +42,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "delete":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -77,8 +55,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "contrast":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -96,8 +72,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "circle":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -111,8 +85,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "undo":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -126,8 +98,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "redo":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -141,8 +111,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "reset":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -156,8 +124,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "upload":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -171,8 +137,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "download":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -186,8 +150,6 @@ export default function Icon({ type }: { type: IconType }) {
 		case "info":
 			return (
 				<svg
-					width="24"
-					height="24"
 					viewBox="0 0 24 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
@@ -195,6 +157,58 @@ export default function Icon({ type }: { type: IconType }) {
 					<path
 						stroke="currentColor"
 						d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+					/>
+				</svg>
+			);
+		case "border":
+			return (
+				<svg
+					viewBox="0 0 10 10"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<rect
+						x={0.25}
+						y={2.25}
+						width={9.5}
+						height={5.5}
+						rx={2.75}
+						strokeWidth={0.5}
+						stroke="currentColor"
+					/>
+				</svg>
+			);
+		case "background":
+			return (
+				<svg
+					viewBox="0 0 10 10"
+					fill="currentColor"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<rect
+						x={0}
+						y={2}
+						width={10}
+						height={6}
+						rx={3}
+						opacity={0.75}
+					/>
+				</svg>
+			);
+		case "backgroundOnFocus":
+			return (
+				<svg
+					viewBox="0 0 10 10"
+					fill="currentColor"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<rect
+						x={0}
+						y={2}
+						width={10}
+						height={6}
+						rx={3}
+						opacity={0.5}
 					/>
 				</svg>
 			);

@@ -1,4 +1,3 @@
----
 addANewRule: "Add a new rule"
 addonNotFound: "Add-on not found"
 advanced: "Advanced"
@@ -51,6 +50,7 @@ importFailed: "Failed to import settings. Please try again."
 importSettings: "Import settings"
 inDarkMode: "In dark mode"
 inLightMode: "In light mode"
+loading: "Loading…"
 minimumContrast: "Minimum contrast"
 minimumContrastTooltip: >-
     Set the minimum contrast ratio between the tab bar and text. The tab bar color adjusts automatically if the ratio is not met.

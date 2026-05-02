@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: calc(8 * var(--unit));
-	border: 1px solid var(--transparent-0);
+	border: 1px solid var(--app-0);
 	border-radius: calc(4 * var(--unit));
 	padding: calc(8 * var(--unit));
 
@@ -22,14 +22,14 @@
 
 	button {
 		justify-content: center;
-		background-color: var(--transparent-0);
+		background-color: var(--app-0);
 
 		&:hover {
-			background-color: var(--transparent-1);
+			background-color: var(--app-1);
 		}
 
 		&:active {
-			background-color: var(--transparent-2);
+			background-color: var(--app-2);
 		}
 	}
 }

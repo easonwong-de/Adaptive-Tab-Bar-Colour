@@ -1,6 +1,5 @@
 .glyph {
 	all: unset;
-	max-width: calc(84 * var(--unit));
 
 	.background {
 		fill: var(--control);

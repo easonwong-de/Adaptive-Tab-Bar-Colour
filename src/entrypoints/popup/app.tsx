@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import preference from "@/utils/preference";
 import type { Cache, MessageForPopup } from "@/utils/types";
 import {
@@ -9,6 +9,7 @@ import {
 import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
 import LoadingWidget from "./LoadingWidget/LoadingWidget";
 import RuleWidget from "./RuleWidget/RuleWidget";
+import ThemeWidget from "./ThemeWidget/ThemeWidget";
 
 const pref = new preference();
 
@@ -34,14 +35,14 @@ export default function App() {
 	}, []);
 
 	return (
-		<>
-			<div
-				className="background"
-				style={{
-					backgroundColor:
-						cache?.themeData?.popupColour ?? "transparent",
-				}}
-			/>
+		<div
+			id="background"
+			style={
+				{
+					"--app": cache?.themeData?.popupColour ?? "inherit",
+				} as CSSProperties
+			}
+		>
 			{ready && cache ? (
 				<>
 					<RuleWidget
@@ -54,9 +55,7 @@ export default function App() {
 			) : (
 				<LoadingWidget />
 			)}
-			<button onClick={() => browser.runtime.openOptionsPage()}>
-				{i18n.t("moreSettings")}
-			</button>
-		</>
+			<ThemeWidget ready={ready} pref={pref} />
+		</div>
 	);
 }

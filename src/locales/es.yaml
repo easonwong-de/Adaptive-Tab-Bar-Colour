@@ -1,4 +1,3 @@
----
 addANewRule: "Agregar una nueva regla"
 addonNotFound: "Extensión no encontrada"
 advanced: "Avanzado"
@@ -56,6 +55,7 @@ importFailed: "Error al importar configuraciones. Por favor, inténtalo de nuevo
 importSettings: "Importar configuraciones"
 inDarkMode: "En modo oscuro"
 inLightMode: "En modo claro"
+loading: "Cargando…"
 minimumContrast: "Contraste mínimo"
 minimumContrastTooltip: >-
     Establece la relación de contraste mínima entre la barra de pestañas y el texto. El color de la barra de pestañas se ajusta automáticamente si no se cumple la relación.

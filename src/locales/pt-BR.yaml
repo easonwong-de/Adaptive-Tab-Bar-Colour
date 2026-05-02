@@ -1,4 +1,3 @@
----
 addANewRule: "Adicionar nova regra"
 addonNotFound: "Extensão não encontrada"
 advanced: "Avançado"
@@ -50,6 +49,7 @@ importFailed: "Erro ao importar configurações. Por favor, tente novamente."
 importSettings: "Importar configurações"
 inDarkMode: "Em modo escuro"
 inLightMode: "Em modo claro"
+loading: "Carregando…"
 minimumContrast: "Contraste mínimo"
 minimumContrastTooltip: >-
     Ajuste o contraste mínimo entre a aba e o texto. A cor da aba é ajustada automaticamente se o contraste mínimo não for alcançado.

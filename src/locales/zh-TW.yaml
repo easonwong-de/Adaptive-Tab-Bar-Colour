@@ -1,4 +1,3 @@
----
 addANewRule: "新建自訂規則"
 addonNotFound: "未找到該套件"
 advanced: "進階設定"
@@ -48,6 +47,7 @@ importFailed: "載入偏好設定失敗。請重試。"
 importSettings: "載入偏好設定"
 inDarkMode: "在暗色模式下"
 inLightMode: "在亮色模式下"
+loading: "載入中⋯⋯"
 minimumContrast: "最小對比度設定"
 minimumContrastTooltip: "在此設定標題列和文字的最小對比度。若該指標未達到，標題列會調整其顏色，使之達到設定的最小對比度。"
 moreSettings: "更多設定"

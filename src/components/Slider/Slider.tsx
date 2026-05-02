@@ -5,7 +5,8 @@ import Icon from "@/components/Icon/Icon";
 import styles from "./slider.module.css";
 
 interface SliderProps {
-	className?: string;
+	disabled?: boolean;
+	inPopup?: boolean;
 	title?: string;
 	warning?: string;
 	minValue?: number;
@@ -13,15 +14,26 @@ interface SliderProps {
 	minorStep?: number;
 	majorStep?: number;
 	value?: number;
-	leftIconType?: Parameters<typeof Icon>[0]["type"];
-	rightIconType?: Parameters<typeof Icon>[0]["type"];
+	leftIconType?: IconType;
+	rightIconType?: IconType;
 	onChange?: (newValue: number) => void;
 	onCommit?: (oldValue: number, newValue: number) => void;
 	onDisplay?: (value: number) => string;
 }
 
+interface SliderTrackProps {
+	minValue: number;
+	maxValue: number;
+	minorStep: number;
+	value: number;
+	onChange: (newValue: number) => void;
+	onCommit: (oldValue: number, newValue: number) => void;
+	onDisplay: (value: number) => string;
+}
+
 export default function Slider({
-	className = "",
+	disabled = false,
+	inPopup = false,
 	title = "",
 	warning = "",
 	minValue = -50,
@@ -35,6 +47,80 @@ export default function Slider({
 	onCommit = () => {},
 	onDisplay = (value) => `${value}%`,
 }: SliderProps) {
+	return (
+		<div className={clsx(styles.slider, disabled && "disabled")}>
+			<div className={styles.body}>
+				<button
+					className={clsx(inPopup && styles.popupButton)}
+					onPointerDown={() => {
+						const newValue = clamp(
+							minValue,
+							(Math.ceil(value / majorStep) - 1) * majorStep,
+							maxValue,
+						);
+						if (value !== newValue) {
+							onChange(newValue);
+							onCommit(value, newValue);
+						}
+					}}
+				>
+					<Icon type={leftIconType} />
+				</button>
+				{inPopup ? (
+					<div className={styles.popupDisplay}>
+						{onDisplay(value)}
+					</div>
+				) : (
+					<SliderTrack
+						minValue={minValue}
+						maxValue={maxValue}
+						minorStep={minorStep}
+						value={value}
+						onChange={onChange}
+						onCommit={onCommit}
+						onDisplay={onDisplay}
+					/>
+				)}
+				<button
+					className={clsx(inPopup && styles.popupButton)}
+					onPointerDown={() => {
+						const newValue = clamp(
+							minValue,
+							(Math.floor(value / majorStep) + 1) * majorStep,
+							maxValue,
+						);
+						if (value !== newValue) {
+							onChange(newValue);
+							onCommit(value, newValue);
+						}
+					}}
+				>
+					<Icon type={rightIconType} />
+				</button>
+			</div>
+			{!inPopup && (
+				<h4>
+					{title}
+					{warning && (
+						<span className={styles.warning} title={warning}>
+							<Icon type="warning" />
+						</span>
+					)}
+				</h4>
+			)}
+		</div>
+	);
+}
+
+function SliderTrack({
+	minValue,
+	maxValue,
+	minorStep,
+	value,
+	onChange,
+	onCommit,
+	onDisplay,
+}: SliderTrackProps) {
 	const rafRef = useRef<number | null>(null);
 	const rectRef = useRef<DOMRect | null>(null);
 	const trackRef = useRef<HTMLDivElement | null>(null);
@@ -90,89 +176,39 @@ export default function Slider({
 	};
 
 	return (
-		<div className={clsx(styles.slider, className)}>
-			<div className={styles.body}>
-				<button
-					onPointerDown={() => {
-						const newValue = clamp(
-							minValue,
-							(Math.ceil(value / majorStep) - 1) * majorStep,
-							maxValue,
-						);
-						if (value !== newValue) {
-							onChange(newValue);
-							onCommit(value, newValue);
-						}
-					}}
-				>
-					<Icon type={leftIconType} />
-				</button>
-				<div
-					ref={trackRef}
-					className={clsx(
-						styles.track,
-						isDragging && styles.dragging,
-					)}
-					style={
-						{
-							"--percent":
-								(value - minValue) / (maxValue - minValue),
-						} as CSSProperties
-					}
-				>
-					<div className={styles.fill} />
-					<div
-						className={styles.thumb}
-						onPointerDown={(e) => {
-							e.currentTarget.setPointerCapture(e.pointerId);
-							rectRef.current =
-								trackRef.current?.getBoundingClientRect() ??
-								null;
-							const thumbRect =
-								e.currentTarget.getBoundingClientRect();
-							dragOffsetRef.current = {
-								offset: e.clientX - thumbRect.left,
-								thumbWidth: thumbRect.width,
-							};
-							dragStartValueRef.current = value;
-							setTransientValue(value);
-							setIsDragging(true);
-							onDrag(e.clientX);
-						}}
-						onPointerMove={(e) => {
-							if (isDragging) onDrag(e.clientX);
-						}}
-						onPointerUp={onDragStop}
-						onPointerCancel={onDragStop}
-					/>
-					<div className={styles.display}>
-						{onDisplay(currentValue)}
-					</div>
-				</div>
-				<button
-					onPointerDown={() => {
-						const newValue = clamp(
-							minValue,
-							(Math.floor(value / majorStep) + 1) * majorStep,
-							maxValue,
-						);
-						if (value !== newValue) {
-							onChange(newValue);
-							onCommit(value, newValue);
-						}
-					}}
-				>
-					<Icon type={rightIconType} />
-				</button>
-			</div>
-			<h4>
-				{title}
-				{warning && (
-					<span className={styles.warning} title={warning}>
-						<Icon type="warning" />
-					</span>
-				)}
-			</h4>
+		<div
+			ref={trackRef}
+			className={clsx(styles.track, isDragging && styles.dragging)}
+			style={
+				{
+					"--percent": (value - minValue) / (maxValue - minValue),
+				} as CSSProperties
+			}
+		>
+			<div className={styles.fill} />
+			<div
+				className={styles.thumb}
+				onPointerDown={(e) => {
+					e.currentTarget.setPointerCapture(e.pointerId);
+					rectRef.current =
+						trackRef.current?.getBoundingClientRect() ?? null;
+					const thumbRect = e.currentTarget.getBoundingClientRect();
+					dragOffsetRef.current = {
+						offset: e.clientX - thumbRect.left,
+						thumbWidth: thumbRect.width,
+					};
+					dragStartValueRef.current = value;
+					setTransientValue(value);
+					setIsDragging(true);
+					onDrag(e.clientX);
+				}}
+				onPointerMove={(e) => {
+					if (isDragging) onDrag(e.clientX);
+				}}
+				onPointerUp={onDragStop}
+				onPointerCancel={onDragStop}
+			/>
+			<div className={styles.display}>{onDisplay(currentValue)}</div>
 		</div>
 	);
 }
