@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
 import colour from "@/utils/colour";
 import styles from "./colour.module.css";
 
@@ -9,89 +9,49 @@ interface ColourProps {
 }
 
 export default function Colour({ value = "#000000", onChange }: ColourProps) {
-	const colourRef = useRef<colour>(new colour(value));
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const textRef = useRef<HTMLInputElement | null>(null);
 	const previewRef = useRef<HTMLDivElement | null>(null);
-	const popupRef = useRef<HTMLDivElement | null>(null);
-	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
-	const hSliderRef = useRef<HTMLDivElement | null>(null);
-	const lastXRef = useRef(0);
+	const colourRef = useRef<colour>(new colour(value));
 	const [isEditing, setIsEditing] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
 	const [text, setText] = useState(value);
-	const [hwb, setHwb] = useState({ h: 0, w: 0, b: 0 });
-
-	const handleWBMove = useCallback(
-		(e: MouseEvent | React.MouseEvent) => {
-			if (!wbPlaneRef.current) return;
-			const rect = wbPlaneRef.current.getBoundingClientRect();
-			const x = clamp(0, (e.clientX - rect.left) / rect.width, 1);
-			const y = clamp(0, (e.clientY - rect.top) / rect.height, 1);
-			lastXRef.current = x;
-			const w = 100 * (1 - x) * (1 - y);
-			const b = 100 * y;
-			setHwb((prev) => ({ ...prev, w, b }));
-			const hex = colourRef.current.hwb(hwb.h, w, b).toHex();
-			setText(hex);
-			onChange(hex);
-		},
-		[hwb.h, onChange],
-	);
-
-	const handleHMove = useCallback(
-		(e: MouseEvent | React.MouseEvent) => {
-			if (!hSliderRef.current) return;
-			const rect = hSliderRef.current.getBoundingClientRect();
-			const h = 360 * clamp(0, (e.clientX - rect.left) / rect.width, 1);
-			setHwb((prev) => ({ ...prev, h }));
-			const hex = colourRef.current.hwb(h, hwb.w, hwb.b).toHex();
-			setText(hex);
-			onChange(hex);
-		},
-		[hwb.w, hwb.b, onChange],
-	);
-
-	const attachListeners = useCallback(
-		(moveHandler: (e: MouseEvent) => void) => {
-			const handleUp = () => {
-				window.removeEventListener("mousemove", moveHandler);
-				window.removeEventListener("mouseup", handleUp);
-			};
-			window.addEventListener("mousemove", moveHandler);
-			window.addEventListener("mouseup", handleUp);
-		},
-		[],
-	);
 
 	useEffect(() => {
-		const parsed = colourRef.current?.parse(value).toHWB();
-		setHwb(parsed);
-		if (parsed.b !== 100)
-			lastXRef.current = 1 - parsed.w / (100 - parsed.b);
-		const onMouseDown = (event: MouseEvent) => {
+		const onPointerDown = (event: PointerEvent) => {
 			if (
-				!popupRef.current?.contains(event.target as Node) &&
-				!previewRef.current?.contains(event.target as Node)
+				!containerRef.current?.contains(event.target as Node) ||
+				textRef.current?.contains(event.target as Node)
 			)
 				setIsOpen(false);
 		};
 		if (isOpen) {
-			document.addEventListener("mousedown", onMouseDown);
-			return () => document.removeEventListener("mousedown", onMouseDown);
+			document.addEventListener("pointerdown", onPointerDown);
+			return () =>
+				document.removeEventListener("pointerdown", onPointerDown);
 		}
+		colourRef.current.parse(value);
 	}, [isOpen]);
 
+	useEffect(() => {
+		const onBlur = () => setIsOpen(false);
+		document.addEventListener("blur", onBlur);
+		return () => document.removeEventListener("blur", onBlur);
+	}, []);
+
 	return (
-		<div className={styles.colour}>
+		<div className={styles.colour} ref={containerRef}>
 			<input
 				type="text"
+				ref={textRef}
 				placeholder={i18n.t("anyCSSColour")}
 				title={i18n.t("anyCSSColour")}
 				value={isEditing ? text : value}
 				onFocus={() => setIsEditing(true)}
 				onChange={(e) => {
-					const value = e.target.value;
-					setText(value);
-					onChange(colourRef.current.parse(value).toHex());
+					const val = e.target.value;
+					setText(val);
+					onChange(colourRef.current.parse(val).toHex());
 				}}
 				onBlur={(e) => {
 					const hex = colourRef.current.parse(e.target.value).toHex();
@@ -105,52 +65,118 @@ export default function Colour({ value = "#000000", onChange }: ColourProps) {
 				}}
 			/>
 			<div
+				className={styles.preview}
 				ref={previewRef}
-				className={styles.colourPreview}
 				style={{ backgroundColor: value }}
 				onClick={() => setIsOpen(!isOpen)}
 			/>
 			{isOpen && (
-				<div className={clsx(styles.colourPopup)} ref={popupRef}>
-					<div
-						className={styles.wbPlane}
-						ref={wbPlaneRef}
-						onMouseDown={(e) => {
-							handleWBMove(e);
-							attachListeners(handleWBMove);
-						}}
-						style={{ backgroundColor: `hwb(${hwb.h} 0% 0%)` }}
-					>
-						<div
-							className={styles.wbThumb}
-							style={{
-								backgroundColor: `hwb(${hwb.h} ${hwb.w}% ${hwb.b}%)`,
-								left:
-									`clamp(var(--unit-8),` +
-									`${hwb.b === 100 ? lastXRef.current * 100 : (1 - hwb.w / (100 - hwb.b)) * 100}%,` +
-									`calc(100% - var(--unit-8)))`,
-								top: `clamp(var(--unit-8), ${hwb.b}%, calc(100% - var(--unit-8)))`,
-							}}
-						/>
-					</div>
-					<div
-						className={styles.hSlider}
-						ref={hSliderRef}
-						onMouseDown={(e) => {
-							handleHMove(e);
-							attachListeners(handleHMove);
-						}}
-					>
-						<div
-							className={styles.hThumb}
-							style={{
-								backgroundColor: `hwb(${hwb.h} 0% 0%)`,
-								left: `clamp(var(--unit-8), ${(hwb.h / 360) * 100}%, calc(100% - var(--unit-8)))`,
-							}}
-						/>
-					</div>
-				</div>
+				<ColourPopup
+					value={colourRef.current}
+					onChange={(hex) => {
+						setText(hex);
+						onChange(hex);
+					}}
+				/>
 			)}
+		</div>
+	);
+}
+
+interface ColourPopupProps {
+	value: colour;
+	onChange: (hex: string) => void;
+}
+
+function ColourPopup({ value, onChange }: ColourPopupProps) {
+	const colourRef = useRef<colour>(new colour(value));
+	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
+	const hSliderRef = useRef<HTMLDivElement | null>(null);
+	const lastXRef = useRef(0);
+	const [hwb, setHwb] = useState(colourRef.current.toHWB());
+
+	const onDrag = useCallback((onMove: (e: PointerEvent) => void) => {
+		const onUp = () => {
+			document.removeEventListener("pointermove", onMoveCheckButton);
+			document.removeEventListener("pointerup", onUp);
+		};
+		const onMoveCheckButton = (e: PointerEvent) =>
+			e.buttons === 0 ? onUp() : onMove(e);
+		document.addEventListener("pointermove", onMoveCheckButton);
+		document.addEventListener("pointerup", onUp);
+	}, []);
+
+	const handleWBMove = useCallback(
+		(e: PointerEvent | React.PointerEvent) => {
+			if (!wbPlaneRef.current) return;
+			const rect = wbPlaneRef.current.getBoundingClientRect();
+			const x = clamp(0, (e.clientX - rect.left) / rect.width, 1);
+			const y = clamp(0, (e.clientY - rect.top) / rect.height, 1);
+			lastXRef.current = x;
+			const w = 100 * (1 - x) * (1 - y);
+			const b = 100 * y;
+			setHwb((prev) => ({ ...prev, w, b }));
+			onChange(colourRef.current.hwb(hwb.h, w, b).toHex());
+		},
+		[hwb.h, onChange],
+	);
+
+	const handleHMove = useCallback(
+		(e: PointerEvent | React.PointerEvent) => {
+			if (!hSliderRef.current) return;
+			const rect = hSliderRef.current.getBoundingClientRect();
+			const h = 360 * clamp(0, (e.clientX - rect.left) / rect.width, 1);
+			setHwb((prev) => ({ ...prev, h }));
+			onChange(colourRef.current.hwb(h, hwb.w, hwb.b).toHex());
+		},
+		[hwb.w, hwb.b, onChange],
+	);
+
+	useEffect(() => {
+		const newHWB = colourRef.current?.parse(value).toHWB();
+		setHwb(newHWB);
+		if (newHWB.b !== 100)
+			lastXRef.current = 1 - newHWB.w / (100 - newHWB.b);
+	}, [value]);
+
+	return (
+		<div className={clsx(styles.popup)}>
+			<div
+				className={styles.wbPlane}
+				ref={wbPlaneRef}
+				onPointerDown={(e) => {
+					handleWBMove(e);
+					onDrag(handleWBMove);
+				}}
+				style={{ "--hue": `hwb(${hwb.h} 0% 0%)` } as CSSProperties}
+			>
+				<div
+					className={styles.wbThumb}
+					style={{
+						backgroundColor: `hwb(${hwb.h} ${hwb.w}% ${hwb.b}%)`,
+						left: `clamp(var(--unit-8),
+							${hwb.b === 100 ? lastXRef.current * 100 : (1 - hwb.w / (100 - hwb.b)) * 100}%,
+							calc(100% - var(--unit-8)))`,
+						top: `clamp(var(--unit-8), ${hwb.b}%, calc(100% - var(--unit-8)))`,
+					}}
+				/>
+			</div>
+			<div
+				className={styles.hSlider}
+				ref={hSliderRef}
+				onPointerDown={(e) => {
+					handleHMove(e);
+					onDrag(handleHMove);
+				}}
+			>
+				<div
+					className={styles.hThumb}
+					style={{
+						backgroundColor: `hwb(${hwb.h} 0% 0%)`,
+						left: `clamp(var(--unit-8), ${(hwb.h / 360) * 100}%, calc(100% - var(--unit-8)))`,
+					}}
+				/>
+			</div>
 		</div>
 	);
 }

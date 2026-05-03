@@ -29,7 +29,7 @@
 		}
 	}
 
-	.colour-preview {
+	.preview {
 		position: absolute;
 		top: var(--unit-8);
 		left: var(--unit-8);
@@ -42,7 +42,7 @@
 		height: var(--unit-16);
 	}
 
-	.colour-popup {
+	.popup {
 		--width: calc(148 * var(--unit));
 		display: flex;
 		position: absolute;
@@ -76,15 +76,8 @@
 			position: relative;
 			border-radius: var(--unit-8);
 			background-image:
-				linear-gradient(
-					transparent calc(0% + 8 * var(--unit)),
-					#000 calc(100% - 8 * var(--unit))
-				),
-				linear-gradient(
-					to left,
-					transparent calc(0% + 8 * var(--unit)),
-					#fff calc(100% - 8 * var(--unit))
-				);
+				linear-gradient(transparent 0%, #000 100%),
+				linear-gradient(to left, var(--hue, transparent) 0%, #fff 100%);
 			padding: var(--unit-8);
 			aspect-ratio: 1/1;
 
