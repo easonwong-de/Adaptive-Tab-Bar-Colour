@@ -95,20 +95,17 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 	const lastXRef = useRef(0);
 	const [hwb, setHwb] = useState(colourRef.current.toHWB());
 
-	const onDrag = useCallback((onMove: (e: PointerEvent) => void) => {
-		const onUp = () => {
-			document.removeEventListener("pointermove", onMoveCheckButton);
-			document.removeEventListener("pointerup", onUp);
-		};
-		const onMoveCheckButton = (e: PointerEvent) =>
-			e.buttons === 0 ? onUp() : onMove(e);
-		document.addEventListener("pointermove", onMoveCheckButton);
-		document.addEventListener("pointerup", onUp);
+	const onMoveStop = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+		if (e.currentTarget.hasPointerCapture(e.pointerId))
+			e.currentTarget.releasePointerCapture(e.pointerId);
 	}, []);
 
-	const handleWBMove = useCallback(
-		(e: PointerEvent | React.PointerEvent) => {
+	const onWBMove = useCallback(
+		(e: React.PointerEvent<HTMLDivElement>) => {
+			if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+			if (e.buttons === 0) return onMoveStop(e);
 			if (!wbPlaneRef.current) return;
+
 			const rect = wbPlaneRef.current.getBoundingClientRect();
 			const x = clamp(0, (e.clientX - rect.left) / rect.width, 1);
 			const y = clamp(0, (e.clientY - rect.top) / rect.height, 1);
@@ -121,9 +118,12 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 		[hwb.h, onChange],
 	);
 
-	const handleHMove = useCallback(
-		(e: PointerEvent | React.PointerEvent) => {
+	const onHMove = useCallback(
+		(e: React.PointerEvent<HTMLDivElement>) => {
+			if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+			if (e.buttons === 0) return onMoveStop(e);
 			if (!hSliderRef.current) return;
+
 			const rect = hSliderRef.current.getBoundingClientRect();
 			const h = 360 * clamp(0, (e.clientX - rect.left) / rect.width, 1);
 			setHwb((prev) => ({ ...prev, h }));
@@ -145,9 +145,12 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 				className={styles.wbPlane}
 				ref={wbPlaneRef}
 				onPointerDown={(e) => {
-					handleWBMove(e);
-					onDrag(handleWBMove);
+					e.currentTarget.setPointerCapture(e.pointerId);
+					onWBMove(e);
 				}}
+				onPointerMove={onWBMove}
+				onPointerUp={onMoveStop}
+				onPointerCancel={onMoveStop}
 				style={{ "--hue": `hwb(${hwb.h} 0% 0%)` } as CSSProperties}
 			>
 				<div
@@ -157,7 +160,9 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 						left: `clamp(var(--unit-8),
 							${hwb.b === 100 ? lastXRef.current * 100 : (1 - hwb.w / (100 - hwb.b)) * 100}%,
 							calc(100% - var(--unit-8)))`,
-						top: `clamp(var(--unit-8), ${hwb.b}%, calc(100% - var(--unit-8)))`,
+						top: `clamp(var(--unit-8),
+							${hwb.b}%,
+							calc(100% - var(--unit-8)))`,
 					}}
 				/>
 			</div>
@@ -165,15 +170,20 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 				className={styles.hSlider}
 				ref={hSliderRef}
 				onPointerDown={(e) => {
-					handleHMove(e);
-					onDrag(handleHMove);
+					e.currentTarget.setPointerCapture(e.pointerId);
+					onHMove(e);
 				}}
+				onPointerMove={onHMove}
+				onPointerUp={onMoveStop}
+				onPointerCancel={onMoveStop}
 			>
 				<div
 					className={styles.hThumb}
 					style={{
 						backgroundColor: `hwb(${hwb.h} 0% 0%)`,
-						left: `clamp(var(--unit-8), ${(hwb.h / 360) * 100}%, calc(100% - var(--unit-8)))`,
+						left: `clamp(var(--unit-8),
+							${(hwb.h / 360) * 100}%,
+							calc(100% - var(--unit-8)))`,
 					}}
 				/>
 			</div>
