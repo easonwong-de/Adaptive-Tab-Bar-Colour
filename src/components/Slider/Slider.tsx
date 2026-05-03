@@ -1,5 +1,11 @@
 import clsx from "clsx";
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import {
+	type CSSProperties,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { clamp } from "@/utils/utility";
 import Icon from "@/components/Icon/Icon";
 import styles from "./slider.module.css";
@@ -19,16 +25,6 @@ interface SliderProps {
 	onChange?: (newValue: number) => void;
 	onCommit?: (oldValue: number, newValue: number) => void;
 	onDisplay?: (value: number) => string;
-}
-
-interface SliderTrackProps {
-	minValue: number;
-	maxValue: number;
-	minorStep: number;
-	value: number;
-	onChange: (newValue: number) => void;
-	onCommit: (oldValue: number, newValue: number) => void;
-	onDisplay: (value: number) => string;
 }
 
 export default function Slider({
@@ -112,6 +108,16 @@ export default function Slider({
 	);
 }
 
+interface SliderTrackProps {
+	minValue: number;
+	maxValue: number;
+	minorStep: number;
+	value: number;
+	onChange: (newValue: number) => void;
+	onCommit: (oldValue: number, newValue: number) => void;
+	onDisplay: (value: number) => string;
+}
+
 function SliderTrack({
 	minValue,
 	maxValue,
@@ -122,10 +128,14 @@ function SliderTrack({
 	onDisplay,
 }: SliderTrackProps) {
 	const rafRef = useRef<number | null>(null);
-	const rectRef = useRef<DOMRect | null>(null);
 	const trackRef = useRef<HTMLDivElement | null>(null);
-	const dragOffsetRef = useRef({ offset: 0, thumbWidth: 0 });
-	const dragStartValueRef = useRef(value);
+	const dragRef = useRef({
+		rect: null as DOMRect | null,
+		offset: 0,
+		thumbWidth: 0,
+		startValue: value,
+		transientValue: value,
+	});
 	const [isDragging, setIsDragging] = useState(false);
 	const [transientValue, setTransientValue] = useState(value);
 
@@ -136,44 +146,61 @@ function SliderTrack({
 		[],
 	);
 
-	const currentValue = isDragging ? transientValue : value;
+	const displayValue = isDragging ? transientValue : value;
 
-	const onDrag = (clientX: number): void => {
-		const rect =
-			rectRef.current ?? trackRef.current?.getBoundingClientRect();
-		if (!rect) return;
+	const onDragStop = useCallback(
+		(e: React.PointerEvent<HTMLDivElement>): void => {
+			if (e.currentTarget.hasPointerCapture(e.pointerId))
+				e.currentTarget.releasePointerCapture(e.pointerId);
+			const state = dragRef.current;
+			state.rect = null;
+			setIsDragging(false);
+			if (state.startValue !== state.transientValue) {
+				onChange(state.transientValue);
+				onCommit(state.startValue, state.transientValue);
+			}
+		},
+		[onChange, onCommit],
+	);
 
-		const { offset, thumbWidth } = dragOffsetRef.current;
-		const targetLeft = clientX - offset - rect.left;
-		const availableWidth = rect.width - thumbWidth;
-		const percent = clamp(0, targetLeft / availableWidth, 1);
+	const onDrag = useCallback(
+		(e: React.PointerEvent<HTMLDivElement>): void => {
+			if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+			if (e.buttons === 0) return onDragStop(e);
 
-		const newValue = clamp(
-			minValue,
-			Math.round(
-				(percent * (maxValue - minValue) + minValue) / minorStep,
-			) * minorStep,
-			maxValue,
-		);
-		if (newValue !== currentValue) {
-			if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-			rafRef.current = requestAnimationFrame(() => {
-				setTransientValue(newValue);
-				onChange(newValue);
-			});
-		}
-	};
+			const state = dragRef.current;
+			const rect =
+				state.rect ?? trackRef.current?.getBoundingClientRect();
+			if (!rect) return;
 
-	const onDragStop = (): void => {
-		rectRef.current = null;
-		const oldValue = dragStartValueRef.current;
-		const newValue = transientValue;
-		setIsDragging(false);
-		if (oldValue !== newValue) {
-			onChange(newValue);
-			onCommit(oldValue, newValue);
-		}
-	};
+			const newValue = clamp(
+				minValue,
+				Math.round(
+					(clamp(
+						0,
+						(e.clientX - state.offset - rect.left) /
+							(rect.width - state.thumbWidth),
+						1,
+					) *
+						(maxValue - minValue) +
+						minValue) /
+						minorStep,
+				) * minorStep,
+				maxValue,
+			);
+
+			if (newValue !== state.transientValue) {
+				if (rafRef.current !== null)
+					cancelAnimationFrame(rafRef.current);
+				rafRef.current = requestAnimationFrame(() => {
+					state.transientValue = newValue;
+					setTransientValue(newValue);
+					onChange(newValue);
+				});
+			}
+		},
+		[minValue, maxValue, minorStep, onChange, onDragStop],
+	);
 
 	return (
 		<div
@@ -190,25 +217,24 @@ function SliderTrack({
 				className={styles.thumb}
 				onPointerDown={(e) => {
 					e.currentTarget.setPointerCapture(e.pointerId);
-					rectRef.current =
+					const state = dragRef.current;
+					state.rect =
 						trackRef.current?.getBoundingClientRect() ?? null;
 					const thumbRect = e.currentTarget.getBoundingClientRect();
-					dragOffsetRef.current = {
-						offset: e.clientX - thumbRect.left,
-						thumbWidth: thumbRect.width,
-					};
-					dragStartValueRef.current = value;
+					state.offset = e.clientX - thumbRect.left;
+					state.thumbWidth = thumbRect.width;
+					state.startValue = value;
+					state.transientValue = value;
+
 					setTransientValue(value);
 					setIsDragging(true);
-					onDrag(e.clientX);
+					onDrag(e);
 				}}
-				onPointerMove={(e) => {
-					if (isDragging) onDrag(e.clientX);
-				}}
+				onPointerMove={onDrag}
 				onPointerUp={onDragStop}
 				onPointerCancel={onDragStop}
 			/>
-			<div className={styles.display}>{onDisplay(currentValue)}</div>
+			<div className={styles.display}>{onDisplay(displayValue)}</div>
 		</div>
 	);
 }
