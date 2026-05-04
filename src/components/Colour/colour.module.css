@@ -43,7 +43,7 @@
 	}
 
 	.popup {
-		--width: calc(148 * var(--unit));
+		--width: calc(152 * var(--unit));
 		display: flex;
 		position: absolute;
 		top: calc(100% - 8 * var(--unit));
@@ -72,23 +72,65 @@
 			content: "";
 		}
 
+		& > div {
+			--scale: 0.5;
+			--factor: calc(0.7071 * (1 - var(--scale)));
+			--r-iris: var(--unit-8);
+			--r-pupil: calc(var(--scale) * var(--r-iris));
+			--x-iris: clamp(
+				var(--r-iris),
+				var(--x),
+				calc(100% - var(--r-iris))
+			);
+			--x-pupil: calc(
+				var(--x-iris) - var(--factor) *
+					max(0%, calc(var(--r-iris) - var(--x))) + var(--factor) *
+					max(0%, calc(var(--r-iris) + var(--x) - 100%))
+			);
+			--y-iris: clamp(
+				var(--r-iris),
+				var(--y),
+				calc(100% - var(--r-iris))
+			);
+			--y-pupil: calc(
+				var(--y-iris) - var(--factor) *
+					max(0%, calc(var(--r-iris) - var(--y))) + var(--factor) *
+					max(0%, calc(var(--r-iris) + var(--y) - 100%))
+			);
+		}
+
 		.wb-plane {
 			position: relative;
 			border-radius: var(--unit-8);
 			background-image:
 				linear-gradient(transparent 0%, #000 100%),
-				linear-gradient(to left, var(--hue, transparent) 0%, #fff 100%);
-			padding: var(--unit-8);
+				linear-gradient(to left, var(--h) 0%, #fff 100%);
 			aspect-ratio: 1/1;
 
-			.wb-thumb {
+			.wb-iris {
 				position: absolute;
+				top: var(--y-iris);
+				left: var(--x-iris);
 				transform: translate(-50%, -50%);
 				box-shadow: var(--shadow-small), var(--shadow-large);
-				border: var(--unit-2) solid white;
 				border-radius: 50%;
-				width: var(--unit-16);
-				height: var(--unit-16);
+				background-color: #fff;
+				width: calc(2 * var(--r-iris));
+				height: calc(2 * var(--r-iris));
+				pointer-events: none;
+			}
+
+			.wb-pupil {
+				position: absolute;
+				top: var(--y-pupil);
+				left: var(--x-pupil);
+				transform: translate(-50%, -50%);
+				box-shadow:
+					inset var(--shadow-small),
+					inset var(--shadow-large);
+				border-radius: 50%;
+				width: calc(2 * var(--r-pupil));
+				height: calc(2 * var(--r-pupil));
 				pointer-events: none;
 			}
 		}
@@ -106,18 +148,32 @@
 				#f0f 83%,
 				#f00 100%
 			);
-			padding-inline: var(--unit-8);
 			height: var(--unit-16);
 
-			.h-thumb {
+			.h-iris {
 				position: absolute;
 				top: 50%;
+				left: var(--x-iris);
 				transform: translate(-50%, -50%);
 				box-shadow: var(--shadow-small), var(--shadow-large);
-				border: var(--unit-2) solid white;
 				border-radius: 50%;
-				width: var(--unit-16);
-				height: var(--unit-16);
+				background-color: #fff;
+				width: calc(2 * var(--r-iris));
+				height: calc(2 * var(--r-iris));
+				pointer-events: none;
+			}
+
+			.h-pupil {
+				position: absolute;
+				top: 50%;
+				left: var(--x-pupil);
+				transform: translate(-50%, -50%);
+				box-shadow:
+					inset var(--shadow-small),
+					inset var(--shadow-large);
+				border-radius: 50%;
+				width: calc(2 * var(--r-pupil));
+				height: calc(2 * var(--r-pupil));
 				pointer-events: none;
 			}
 		}

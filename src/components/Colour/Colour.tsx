@@ -151,18 +151,19 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 				onPointerMove={onWBMove}
 				onPointerUp={onMoveStop}
 				onPointerCancel={onMoveStop}
-				style={{ "--hue": `hwb(${hwb.h} 0% 0%)` } as CSSProperties}
+				style={
+					{
+						"--h": `hwb(${hwb.h} 0% 0%)`,
+						"--x": `${hwb.b === 100 ? lastXRef.current * 100 : (1 - hwb.w / (100 - hwb.b)) * 100}%`,
+						"--y": `${hwb.b}%`,
+					} as CSSProperties
+				}
 			>
+				<div className={styles.wbIris} />
 				<div
-					className={styles.wbThumb}
+					className={styles.wbPupil}
 					style={{
 						backgroundColor: `hwb(${hwb.h} ${hwb.w}% ${hwb.b}%)`,
-						left: `clamp(var(--unit-8),
-							${hwb.b === 100 ? lastXRef.current * 100 : (1 - hwb.w / (100 - hwb.b)) * 100}%,
-							calc(100% - var(--unit-8)))`,
-						top: `clamp(var(--unit-8),
-							${hwb.b}%,
-							calc(100% - var(--unit-8)))`,
 					}}
 				/>
 			</div>
@@ -176,15 +177,12 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 				onPointerMove={onHMove}
 				onPointerUp={onMoveStop}
 				onPointerCancel={onMoveStop}
+				style={{ "--x": `${(hwb.h / 360) * 100}%` } as CSSProperties}
 			>
+				<div className={styles.hIris} />
 				<div
-					className={styles.hThumb}
-					style={{
-						backgroundColor: `hwb(${hwb.h} 0% 0%)`,
-						left: `clamp(var(--unit-8),
-							${(hwb.h / 360) * 100}%,
-							calc(100% - var(--unit-8)))`,
-					}}
+					className={styles.hPupil}
+					style={{ backgroundColor: `hwb(${hwb.h} 0% 0%)` }}
 				/>
 			</div>
 		</div>
