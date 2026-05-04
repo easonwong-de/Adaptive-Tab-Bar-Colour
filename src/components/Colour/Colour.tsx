@@ -92,6 +92,7 @@ export default function Colour({
 			{isOpen && (
 				<ColourPopup
 					value={colourRef.current}
+					inPopup={inPopup}
 					onChange={(hex) => {
 						setText(hex);
 						onChange(hex);
@@ -104,12 +105,13 @@ export default function Colour({
 
 interface ColourPopupProps {
 	value: colour;
+	inPopup: boolean;
 	onChange: (hex: string) => void;
 }
 
 type ColourFormat = "HEX" | "RGB" | "HWB" | "CSS";
 
-function ColourPopup({ value, onChange }: ColourPopupProps) {
+function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
 	const colourRef = useRef<colour>(new colour(value));
 	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
 	const hSliderRef = useRef<HTMLDivElement | null>(null);
@@ -167,7 +169,7 @@ function ColourPopup({ value, onChange }: ColourPopupProps) {
 	};
 
 	return (
-		<div className={clsx(styles.popup)}>
+		<div className={clsx(styles.popup, inPopup && styles.inPopup)}>
 			<div
 				className={styles.wbPlane}
 				ref={wbPlaneRef}

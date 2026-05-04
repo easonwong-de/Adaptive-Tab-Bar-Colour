@@ -9,11 +9,6 @@
 
 	&.in-popup {
 		display: contents;
-		--component-border-radius: var(--unit-4);
-
-		select {
-			border-radius: var(--unit-4);
-		}
 	}
 
 	@media screen and (max-width: 550px) {

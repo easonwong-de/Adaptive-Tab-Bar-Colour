@@ -106,6 +106,7 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 						return (
 							<Colour
 								value={rule.value}
+								inPopup={inPopup}
 								onChange={(newValue) =>
 									onChange({ ...rule, value: newValue })
 								}

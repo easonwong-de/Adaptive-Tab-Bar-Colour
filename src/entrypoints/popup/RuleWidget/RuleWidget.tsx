@@ -147,6 +147,7 @@ function RuleControls({
 					onChange={(newRule) => pref.setRule(ruleData.id, newRule)}
 				/>
 				<button
+					className={styles.controlButton}
 					onClick={() => {
 						pref.setRule(ruleData.id, null);
 					}}
@@ -164,6 +165,7 @@ function RuleControls({
 		const { hostname } = new URL(ruleData.url);
 		return (
 			<button
+				className={styles.controlButton}
 				onClick={() => {
 					pref.addRule({
 						headerType: "URL",
@@ -179,6 +181,7 @@ function RuleControls({
 	} else if (["ADDON_DEFAULT", "ADDON_PRESET"].includes(metaData.reason)) {
 		return (
 			<button
+				className={styles.controlButton}
 				onClick={() => {
 					pref.addRule({
 						headerType: "ADDON_ID",

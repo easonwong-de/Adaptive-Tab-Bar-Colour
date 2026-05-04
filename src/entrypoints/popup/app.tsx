@@ -34,15 +34,15 @@ export default function App() {
 		return () => removeMessageListener(handleMessage);
 	}, []);
 
+	useEffect(() => {
+		document.documentElement.style.setProperty(
+			"--app",
+			cache?.themeData?.popupColour ?? "inherit",
+		);
+	}, [cache?.themeData?.popupColour]);
+
 	return (
-		<div
-			id="background"
-			style={
-				{
-					"--app": cache?.themeData?.popupColour ?? "inherit",
-				} as CSSProperties
-			}
-		>
+		<>
 			{ready && cache ? (
 				<>
 					<RuleWidget
@@ -56,6 +56,6 @@ export default function App() {
 				<LoadingWidget />
 			)}
 			<ThemeWidget ready={ready} pref={pref} />
-		</div>
+		</>
 	);
 }

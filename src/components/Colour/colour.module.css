@@ -9,7 +9,7 @@
 		outline: none;
 		outline-offset: calc(-1 * var(--unit));
 		border: none;
-		border-radius: var(--component-border-radius, var(--unit-12));
+		border-radius: var(--popup-border-radius, var(--unit-12));
 		background-color: var(--control);
 		padding-inline: var(--unit-32) var(--unit-8);
 		width: 100%;
@@ -58,7 +58,7 @@
 		filter: drop-shadow(var(--shadow-small))
 			drop-shadow(var(--shadow-large));
 		margin-top: calc(8.6 * var(--unit));
-		border-radius: var(--component-border-radius, var(--unit-12));
+		border-radius: var(--popup-border-radius, var(--unit-12));
 		background-color: var(--panel, var(--app));
 		padding: var(--unit-12);
 		width: var(--width);
@@ -74,6 +74,14 @@
 			width: var(--unit-12);
 			height: var(--unit-12);
 			content: "";
+		}
+
+		&.in-popup {
+			left: 0;
+		}
+
+		&.in-popup::before {
+			left: calc(10.4 * var(--unit));
 		}
 
 		& > div {
