@@ -19,16 +19,15 @@ export default function Confirm({
 	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		const onClose = (event: MouseEvent) => {
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
-			) {
+		const onPointerDown = (event: PointerEvent) => {
+			if (!containerRef.current?.contains(event.target as Node))
 				setIsOpen(false);
-			}
 		};
-		if (isOpen) document.addEventListener("mousedown", onClose);
-		return () => document.removeEventListener("mousedown", onClose);
+		if (isOpen) {
+			document.addEventListener("pointerdown", onPointerDown);
+			return () =>
+				document.removeEventListener("pointerdown", onPointerDown);
+		}
 	}, [isOpen]);
 
 	return (

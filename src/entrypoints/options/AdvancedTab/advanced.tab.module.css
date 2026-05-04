@@ -1,7 +1,7 @@
 main.advanced-tab {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: calc(16 * var(--unit));
+	gap: var(--unit-16);
 
 	@media screen and (max-width: 600px) {
 		grid-template-columns: 1fr;
@@ -10,7 +10,7 @@ main.advanced-tab {
 	.column {
 		display: flex;
 		flex-direction: column;
-		gap: calc(16 * var(--unit));
+		gap: var(--unit-16);
 	}
 
 	.card-section {
@@ -18,28 +18,37 @@ main.advanced-tab {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		gap: calc(8 * var(--unit));
+		gap: var(--unit-8);
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		border-radius: calc(16 * var(--unit));
+		border-radius: var(--unit-16);
 		background-color: var(--panel);
-		padding: calc(16 * var(--unit));
+		padding: var(--unit-16);
 	}
 
 	.list-section {
 		display: grid;
 		grid-template-columns: auto 1fr;
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		border-radius: calc(16 * var(--unit));
-		overflow: hidden;
+		border-radius: var(--unit-16);
 
 		& > div {
 			display: grid;
 			grid-template-columns: subgrid;
 			grid-column: 1 / -1;
-			gap: calc(8 * var(--unit));
+			gap: var(--unit-8);
 			background-color: var(--panel);
-			padding: calc(8 * var(--unit));
+			padding: var(--unit-8);
 			white-space: nowrap;
+
+			&:first-of-type {
+				border-start-start-radius: inherit;
+				border-start-end-radius: inherit;
+			}
+
+			&:last-of-type {
+				border-end-start-radius: inherit;
+				border-end-end-radius: inherit;
+			}
 
 			&:nth-of-type(even) {
 				background-color: var(--panel-alt);
@@ -48,7 +57,7 @@ main.advanced-tab {
 			& > :first-child {
 				display: block;
 				align-self: center;
-				padding-inline-start: calc(8 * var(--unit));
+				padding-inline-start: var(--unit-8);
 				min-width: 0;
 				overflow: hidden;
 				font-weight: inherit;
@@ -61,10 +70,10 @@ main.advanced-tab {
 	.text-button {
 		justify-content: start;
 		vertical-align: text-bottom;
-		gap: calc(8 * var(--unit));
+		gap: var(--unit-8);
 		box-sizing: border-box;
-		padding-inline: calc(8 * var(--unit));
+		padding-inline: var(--unit-8);
 		width: 100%;
-		min-height: calc(32 * var(--unit));
+		min-height: var(--unit-32);
 	}
 }

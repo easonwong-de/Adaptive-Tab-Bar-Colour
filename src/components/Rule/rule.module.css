@@ -3,16 +3,16 @@
 	grid-template-columns:
 		minmax(0, 1fr) max-content calc(120 * var(--unit))
 		max-content;
-	gap: calc(8 * var(--unit));
+	gap: var(--unit-8);
 	background-color: var(--panel);
-	padding: calc(8 * var(--unit));
+	padding: var(--unit-8);
 
 	&.in-popup {
 		display: contents;
-		--component-border-radius: calc(4 * var(--unit));
+		--component-border-radius: var(--unit-4);
 
 		select {
-			border-radius: calc(4 * var(--unit));
+			border-radius: var(--unit-4);
 		}
 	}
 
@@ -33,20 +33,22 @@
 	select {
 		display: flex;
 		vertical-align: middle;
+		outline: solid var(--unit) var(--control);
+		outline-offset: calc(-1 * var(--unit));
 		border: none;
-		border-radius: calc(12 * var(--unit));
-		background-color: var(--control);
-		padding-inline: calc(8 * var(--unit)) 0;
+		border-radius: var(--unit-12);
+		background-color: transparent;
+		padding-inline: var(--unit-8) 0;
 		width: max-content;
-		height: calc(32 * var(--unit));
+		height: var(--unit-32);
 		color: var(--text-primary);
 
 		&:hover {
-			background-color: var(--control-hover);
+			outline-color: var(--control-hover);
 		}
 
 		&:active {
-			background-color: var(--control-active);
+			outline-color: var(--control-active);
 		}
 
 		@media screen and (max-width: 550px) {
@@ -56,16 +58,16 @@
 
 	.web-ext-header {
 		display: block;
-		padding-inline-start: calc(8 * var(--unit));
-		height: calc(32 * var(--unit));
+		padding-inline-start: var(--unit-8);
+		height: var(--unit-32);
 		overflow: hidden;
-		line-height: calc(32 * var(--unit));
+		line-height: var(--unit-32);
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
 	.delete-button {
-		width: calc(32 * var(--unit));
-		height: calc(32 * var(--unit));
+		width: var(--unit-32);
+		height: var(--unit-32);
 	}
 }

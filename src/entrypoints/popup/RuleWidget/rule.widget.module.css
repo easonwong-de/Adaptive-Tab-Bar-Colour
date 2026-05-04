@@ -1,22 +1,22 @@
 .rule-widget {
 	display: flex;
 	flex-direction: column;
-	gap: calc(8 * var(--unit));
-	border: 1px solid var(--app-0);
-	border-radius: calc(4 * var(--unit));
-	padding: calc(8 * var(--unit));
+	gap: var(--unit-8);
+	border: var(--unit) solid var(--app-0);
+	border-radius: var(--unit-4);
+	padding: var(--unit-8);
 
 	.info-message {
 		svg {
 			display: inline-block;
 			vertical-align: text-bottom;
-			padding-inline-end: calc(4 * var(--unit));
+			padding-inline-end: var(--unit-4);
 			width: auto;
 			height: 1em;
 		}
 
 		strong {
-			padding-inline: calc(4 * var(--unit));
+			padding-inline: var(--unit-4);
 		}
 	}
 

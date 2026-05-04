@@ -6,20 +6,29 @@ main.rule-tab {
 		display: flex;
 		flex-direction: column;
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		border-radius: calc(16 * var(--unit));
-		overflow: hidden;
+		border-radius: var(--unit-16);
+
+		& > :first-child {
+			border-start-start-radius: inherit;
+			border-start-end-radius: inherit;
+		}
+
+		& > :last-child {
+			border-end-start-radius: inherit;
+			border-end-end-radius: inherit;
+		}
 	}
 
 	.add-rule-button {
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		border-radius: calc(16 * var(--unit));
+		border-radius: var(--unit-16);
 		background-color: var(--panel);
 		width: 100%;
 		height: calc(48 * var(--unit));
 		text-align: center;
 
 		&.margin-top {
-			margin-top: calc(16 * var(--unit));
+			margin-top: var(--unit-16);
 		}
 
 		&:hover {

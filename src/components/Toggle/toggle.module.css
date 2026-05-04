@@ -2,7 +2,7 @@
 	display: grid;
 	grid-auto-columns: minmax(0, 1fr);
 	grid-auto-flow: column;
-	border-radius: var(--component-border-radius, calc(12 * var(--unit)));
+	border-radius: var(--component-border-radius, var(--unit-12));
 	width: 100%;
 	height: auto;
 	overflow: hidden;
@@ -28,12 +28,12 @@
 
 	&.tab-toggle {
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		border-radius: calc(16 * var(--unit));
+		border-radius: var(--unit-16);
 		font-weight: 800;
 
 		button {
 			background-color: var(--panel);
-			padding: calc(8 * var(--unit)) calc(32 * var(--unit));
+			padding: var(--unit-8) var(--unit-32);
 
 			&:hover {
 				background-color: var(--panel-hover);

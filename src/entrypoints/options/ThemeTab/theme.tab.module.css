@@ -1,7 +1,7 @@
 main.theme-tab {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: calc(16 * var(--unit));
+	gap: var(--unit-16);
 
 	@media screen and (max-width: 600px) {
 		grid-template-columns: 1fr;
@@ -10,7 +10,7 @@ main.theme-tab {
 	.column {
 		display: flex;
 		flex-direction: column;
-		gap: calc(16 * var(--unit));
+		gap: var(--unit-16);
 	}
 
 	section {
@@ -18,13 +18,13 @@ main.theme-tab {
 		flex-direction: row;
 		justify-content: center;
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		border-radius: calc(16 * var(--unit));
+		border-radius: var(--unit-16);
 		background-color: var(--panel);
 
 		&:not(.toolbox-section) {
 			align-items: center;
-			gap: calc(16 * var(--unit));
-			padding: calc(16 * var(--unit));
+			gap: var(--unit-16);
+			padding: var(--unit-16);
 
 			& > :first-child {
 				flex: 1 1 0;
@@ -35,15 +35,15 @@ main.theme-tab {
 				flex: 2 1 0;
 				flex-direction: column;
 				align-items: center;
-				gap: calc(16 * var(--unit));
+				gap: var(--unit-16);
 			}
 		}
 
 		&.toolbox-section {
 			flex: 1;
 			align-items: stretch;
-			gap: calc(8 * var(--unit));
-			padding: calc(12 * var(--unit));
+			gap: var(--unit-8);
+			padding: var(--unit-12);
 
 			& > button {
 				border: var(--unit) solid transparent;
@@ -62,7 +62,7 @@ main.theme-tab {
 				width: auto;
 
 				.reset-button {
-					padding-inline: calc(8 * var(--unit));
+					padding-inline: var(--unit-8);
 					aspect-ratio: unset;
 					height: 100%;
 					color: var(--accent);
