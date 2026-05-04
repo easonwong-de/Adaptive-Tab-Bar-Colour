@@ -18,7 +18,7 @@
 		flex: 1;
 		justify-content: center;
 		align-items: center;
-		border-radius: calc(12 * var(--unit));
+		border-radius: var(--unit-12);
 		background-color: var(--control);
 		max-width: calc(120 * var(--unit));
 		height: var(--unit-32);
@@ -41,20 +41,20 @@
 			z-index: 0;
 			transition: width 0.1s ease-in;
 			background-color: var(--control-selected);
-			width: calc(var(--percent, 0) * (100% - calc(12 * var(--unit))));
+			width: calc(var(--percent, 0) * (100% - var(--unit-12)));
 		}
 
 		.thumb {
 			position: absolute;
 			top: 0;
 			bottom: 0;
-			left: calc(var(--percent, 0) * (100% - calc(12 * var(--unit))));
+			left: calc(var(--percent, 0) * (100% - var(--unit-12)));
 			z-index: 0;
 			transition: left 0.1s ease-in;
 			cursor: grab;
-			border-radius: 0 calc(12 * var(--unit)) calc(12 * var(--unit)) 0;
+			border-radius: 0 var(--unit-12) var(--unit-12) 0;
 			background-color: var(--control-selected);
-			width: calc(12 * var(--unit));
+			width: var(--unit-12);
 
 			&::after {
 				position: absolute;
@@ -63,7 +63,7 @@
 					opacity 0.1s,
 					background-color 0.1s;
 				inset: 30% 35%;
-				border-radius: calc(infinity * 1px);
+				border-radius: calc(infinity * var(--unit));
 				background-color: rgba(0, 0, 0, 0.25);
 				content: "";
 			}
@@ -108,7 +108,7 @@
 
 	button {
 		flex-shrink: 0;
-		border-radius: calc(12 * var(--unit));
+		border-radius: var(--unit-12);
 		width: var(--unit-32);
 		height: var(--unit-32);
 		color: var(--text-primary);

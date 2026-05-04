@@ -33,20 +33,22 @@
 	select {
 		display: flex;
 		vertical-align: middle;
+		outline: solid var(--unit) var(--control);
+		outline-offset: calc(-1 * var(--unit));
 		border: none;
-		border-radius: calc(12 * var(--unit));
-		background-color: var(--control);
+		border-radius: var(--unit-12);
+		background-color: transparent;
 		padding-inline: var(--unit-8) 0;
 		width: max-content;
 		height: var(--unit-32);
 		color: var(--text-primary);
 
 		&:hover {
-			background-color: var(--control-hover);
+			outline-color: var(--control-hover);
 		}
 
 		&:active {
-			background-color: var(--control-active);
+			outline-color: var(--control-active);
 		}
 
 		@media screen and (max-width: 550px) {

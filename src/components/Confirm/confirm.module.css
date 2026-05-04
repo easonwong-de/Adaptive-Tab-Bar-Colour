@@ -22,14 +22,14 @@
 
 		&::before {
 			position: absolute;
-			top: calc(-6 * var(--unit));
-			left: calc(50% - 6 * var(--unit));
+			top: calc(-1 * var(--unit-6));
+			left: calc(50% - var(--unit-6));
 			transform: rotate(45deg);
 			z-index: -1;
-			border-radius: var(--unit-4) calc(1 * var(--unit));
+			border-radius: var(--unit-4) var(--unit);
 			background-color: var(--panel);
-			width: calc(12 * var(--unit));
-			height: calc(12 * var(--unit));
+			width: var(--unit-12);
+			height: var(--unit-12);
 			content: "";
 		}
 
@@ -40,7 +40,7 @@
 			margin-bottom: calc(8.6 * var(--unit));
 
 			&::before {
-				top: calc(100% + -6 * var(--unit));
+				top: calc(100% - var(--unit-6));
 			}
 		}
 	}

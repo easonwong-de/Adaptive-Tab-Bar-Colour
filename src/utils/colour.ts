@@ -81,6 +81,21 @@ export default class colour {
 	}
 
 	/**
+	 * Assigns RGB values.
+	 *
+	 * @param {number} r - Red (0-255).
+	 * @param {number} g - Green (0-255).
+	 * @param {number} b - Blue (0-255).
+	 * @returns {this} This instance.
+	 */
+	rgb(r: number, g: number, b: number): this {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		return this;
+	}
+
+	/**
 	 * Assigns HWB values.
 	 *
 	 * @param {number} h - Hue in degrees (0-360).

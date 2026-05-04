@@ -2,8 +2,11 @@
 	--unit: 0.0769rem;
 	--unit-2: 0.1538rem;
 	--unit-4: 0.3076rem;
+	--unit-6: 0.4614rem;
 	--unit-8: 0.6152rem;
+	--unit-12: 0.9228rem;
 	--unit-16: 1.2304rem;
+	--unit-20: 1.5385rem;
 	--unit-32: 2.4608rem;
 
 	--app: hsl(247, 12%, 100%);
@@ -178,7 +181,7 @@ hr {
 	border-width: 0;
 	background-color: var(--panel-active);
 	width: 100%;
-	height: calc(1 * var(--unit));
+	height: var(--unit);
 }
 
 svg {

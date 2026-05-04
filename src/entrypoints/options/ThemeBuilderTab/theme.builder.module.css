@@ -43,7 +43,7 @@ main.theme-builder-tab {
 			flex: 1;
 			align-items: stretch;
 			gap: var(--unit-8);
-			padding: calc(12 * var(--unit));
+			padding: var(--unit-12);
 
 			& > button {
 				border: var(--unit) solid transparent;

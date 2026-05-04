@@ -1,5 +1,5 @@
 .correction-widget {
-	border: 1px solid var(--transparent-0);
+	border: var(--unit) solid var(--transparent-0);
 	border-radius: var(--unit-4);
 	padding: var(--unit-8);
 

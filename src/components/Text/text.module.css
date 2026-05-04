@@ -6,9 +6,9 @@
 		vertical-align: middle;
 		box-sizing: border-box;
 		outline: none;
-		outline-offset: -1px;
+		outline-offset: calc(-1 * var(--unit));
 		border: none;
-		border-radius: var(--component-border-radius, calc(12 * var(--unit)));
+		border-radius: var(--component-border-radius, var(--unit-12));
 		background-color: var(--control);
 		padding-inline: var(--unit-8);
 		width: 100%;
@@ -22,7 +22,7 @@
 		}
 
 		&:focus-visible {
-			outline: solid 1px var(--control-hover);
+			outline: solid var(--unit) var(--control-hover);
 			background-color: transparent;
 		}
 	}

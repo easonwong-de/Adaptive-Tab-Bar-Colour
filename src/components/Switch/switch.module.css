@@ -27,10 +27,10 @@
 			top: var(--unit-2);
 			right: auto;
 			left: var(--unit-2);
-			border-radius: calc(12 * var(--unit));
+			border-radius: var(--unit-12);
 			background-color: var(--panel);
-			width: calc(12 * var(--unit));
-			height: calc(12 * var(--unit));
+			width: var(--unit-12);
+			height: var(--unit-12);
 			content: "";
 		}
 
