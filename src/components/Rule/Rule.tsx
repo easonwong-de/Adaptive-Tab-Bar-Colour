@@ -32,6 +32,19 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 			);
 	}, [rule?.header, rule?.headerType]);
 
+	const selectedOptionTitle = (() => {
+		switch (rule.type) {
+			case "COLOUR":
+				return i18n.t("specifyAColour");
+			case "THEME_COLOUR":
+				return i18n.t("useIgnoreThemeColour");
+			case "QUERY_SELECTOR":
+				return i18n.t("pickColourFromElement");
+			default:
+				return "";
+		}
+	})();
+
 	return (
 		<section
 			className={clsx(styles.ruleSection, inPopup && styles.inPopup)}
@@ -51,6 +64,7 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 				))}
 			<select
 				value={rule.type}
+				title={selectedOptionTitle}
 				onChange={(e) => {
 					switch (e.target.value) {
 						case "COLOUR":

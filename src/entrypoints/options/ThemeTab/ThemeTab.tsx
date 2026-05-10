@@ -154,7 +154,6 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<Icon type="redo" />
 					</button>
 					<Confirm
-						position="up"
 						confirmText={i18n.t("confirmResetThemeBuilder")}
 						onConfirm={() => {
 							pref.reset([

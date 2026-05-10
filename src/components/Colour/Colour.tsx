@@ -1,5 +1,12 @@
 import clsx from "clsx";
-import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
+import {
+	CSSProperties,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import colour from "@/utils/colour";
 import styles from "./colour.module.css";
 
@@ -16,11 +23,20 @@ export default function Colour({
 }: ColourProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const inputRef = useRef<HTMLInputElement | null>(null);
-	const previewRef = useRef<HTMLDivElement | null>(null);
-	const colourRef = useRef<colour>(new colour(value));
 	const [isEditing, setIsEditing] = useState(false);
 	const [text, setText] = useState(value);
-	const [isOpen, setIsOpen] = useState(false);
+	const [isPopupOpen, setIsPopupOpen] = useState(false);
+	const [popupValue, setPopupValue] = useState(value);
+
+	const displayValue = isPopupOpen ? popupValue : value;
+	const displayColour = useMemo(
+		() => new colour().parse(displayValue),
+		[displayValue],
+	);
+
+	useEffect(() => {
+		if (!isPopupOpen) setPopupValue(value);
+	}, [isPopupOpen, value]);
 
 	useEffect(() => {
 		const onPointerDown = (event: PointerEvent) => {
@@ -28,18 +44,17 @@ export default function Colour({
 				!containerRef.current?.contains(event.target as Node) ||
 				inputRef.current?.contains(event.target as Node)
 			)
-				setIsOpen(false);
+				setIsPopupOpen(false);
 		};
-		if (isOpen) {
+		if (isPopupOpen) {
 			document.addEventListener("pointerdown", onPointerDown);
 			return () =>
 				document.removeEventListener("pointerdown", onPointerDown);
 		}
-		colourRef.current.parse(value);
-	}, [isOpen]);
+	}, [isPopupOpen]);
 
 	useEffect(() => {
-		const onBlur = () => setIsOpen(false);
+		const onBlur = () => setIsPopupOpen(false);
 		document.addEventListener("blur", onBlur);
 		return () => document.removeEventListener("blur", onBlur);
 	}, []);
@@ -51,10 +66,10 @@ export default function Colour({
 				ref={inputRef}
 				placeholder={i18n.t("anyCSSColour")}
 				title={i18n.t("anyCSSColour")}
-				value={isEditing ? text : value}
+				value={isEditing ? text : displayValue}
 				onFocus={(e) => {
 					setIsEditing(true);
-					setText(value);
+					setText(displayValue);
 					e.target.select();
 				}}
 				onBlur={(e) => {
@@ -63,8 +78,9 @@ export default function Colour({
 				}}
 				onChange={(e) => {
 					const value = e.target.value;
-					const hex = colourRef.current.parse(value).toHex();
+					const hex = new colour().parse(value).toHex();
 					setText(value);
+					setPopupValue(hex);
 					onChange(hex);
 				}}
 				onKeyDown={(e) => {
@@ -73,28 +89,29 @@ export default function Colour({
 			/>
 			<div
 				className={styles.preview}
-				ref={previewRef}
-				style={{ backgroundColor: value }}
-				onClick={() => setIsOpen(!isOpen)}
+				style={{ backgroundColor: displayValue }}
+				onClick={() => setIsPopupOpen(!isPopupOpen)}
 			/>
 			{!inPopup && (
 				<input
 					type="color"
-					value={value}
+					value={displayValue}
 					onChange={(e) => {
 						const value = e.target.value;
-						const hex = colourRef.current.parse(value).toHex();
-						setText(hex);
+						const hex = new colour().parse(value).toHex();
+						setText(value);
+						setPopupValue(hex);
 						onChange(hex);
 					}}
 				/>
 			)}
-			{isOpen && (
+			{isPopupOpen && (
 				<ColourPopup
-					value={colourRef.current}
+					value={displayColour}
 					inPopup={inPopup}
 					onChange={(hex) => {
 						setText(hex);
+						setPopupValue(hex);
 						onChange(hex);
 					}}
 				/>
@@ -112,12 +129,29 @@ interface ColourPopupProps {
 type ColourFormat = "HEX" | "RGB" | "HWB" | "CSS";
 
 function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
-	const colourRef = useRef<colour>(new colour(value));
 	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
 	const hSliderRef = useRef<HTMLDivElement | null>(null);
 	const lastXRef = useRef(0);
-	const [hwb, setHwb] = useState(colourRef.current.toHWB());
+	const [hwb, setHwb] = useState(() => value.toHWB());
 	const [format, setFormat] = useState<ColourFormat>("HEX");
+
+	useEffect(() => {
+		setHwb((previousHwb) => {
+			const previousHex = new colour()
+				.hwb(previousHwb.h, previousHwb.w, previousHwb.b)
+				.toHex();
+			if (value.toHex() === previousHex) return previousHwb;
+			const nextHwb = value.toHWB();
+			if (nextHwb.w + nextHwb.b >= 100) {
+				return { h: previousHwb.h, w: nextHwb.w, b: nextHwb.b };
+			}
+			return nextHwb;
+		});
+	}, [value]);
+
+	useEffect(() => {
+		if (hwb.b !== 100) lastXRef.current = 1 - hwb.w / (100 - hwb.b);
+	}, [hwb]);
 
 	const onMoveStop = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
 		if (e.currentTarget.hasPointerCapture(e.pointerId))
@@ -127,46 +161,32 @@ function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
 	const onWBMove = useCallback(
 		(e: React.PointerEvent<HTMLDivElement>) => {
 			if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-			if (e.buttons === 0) return onMoveStop(e);
 			if (!wbPlaneRef.current) return;
-
+			if (e.buttons === 0) return onMoveStop(e);
 			const rect = wbPlaneRef.current.getBoundingClientRect();
 			const x = clamp(0, (e.clientX - rect.left) / rect.width, 1);
 			const y = clamp(0, (e.clientY - rect.top) / rect.height, 1);
 			lastXRef.current = x;
 			const w = 100 * (1 - x) * (1 - y);
 			const b = 100 * y;
-			setHwb((prev) => ({ ...prev, w, b }));
-			onChange(colourRef.current.hwb(hwb.h, w, b).toHex());
+			setHwb({ h: hwb.h, w, b });
+			onChange(new colour().hwb(hwb.h, w, b).toHex());
 		},
-		[hwb.h, onChange],
+		[hwb.h, onChange, onMoveStop],
 	);
 
 	const onHMove = useCallback(
 		(e: React.PointerEvent<HTMLDivElement>) => {
 			if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-			if (e.buttons === 0) return onMoveStop(e);
 			if (!hSliderRef.current) return;
-
+			if (e.buttons === 0) return onMoveStop(e);
 			const rect = hSliderRef.current.getBoundingClientRect();
 			const h = 360 * clamp(0, (e.clientX - rect.left) / rect.width, 1);
-			setHwb((prev) => ({ ...prev, h }));
-			onChange(colourRef.current.hwb(h, hwb.w, hwb.b).toHex());
+			setHwb({ h, w: hwb.w, b: hwb.b });
+			onChange(new colour().hwb(h, hwb.w, hwb.b).toHex());
 		},
-		[hwb.w, hwb.b, onChange],
+		[hwb.w, hwb.b, onChange, onMoveStop],
 	);
-
-	useEffect(() => {
-		const newHWB = colourRef.current?.parse(value).toHWB();
-		setHwb(newHWB);
-		if (newHWB.b !== 100)
-			lastXRef.current = 1 - newHWB.w / (100 - newHWB.b);
-	}, [value]);
-
-	const onInputChange = (hex: string) => {
-		setHwb(colourRef.current.parse(hex).toHWB());
-		onChange(hex);
-	};
 
 	return (
 		<div className={clsx(styles.popup, inPopup && styles.inPopup)}>
@@ -224,45 +244,65 @@ function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
 					<option value="HWB">HWB</option>
 					<option value="CSS">CSS</option>
 				</select>
-				{format === "HEX" && (
-					<HEXInput
-						value={colourRef.current}
-						onChange={onInputChange}
-					/>
-				)}
-				{format === "RGB" && (
-					<RGBInput
-						value={colourRef.current}
-						onChange={onInputChange}
-					/>
-				)}
-				{format === "HWB" && (
-					<HWBInput
-						value={colourRef.current}
-						onChange={onInputChange}
-					/>
-				)}
-				{format === "CSS" && (
-					<CSSInput
-						value={colourRef.current}
-						onChange={onInputChange}
-					/>
-				)}
+				{(() => {
+					switch (format) {
+						case "HEX":
+							return (
+								<HEXInput
+									hex={value.toHex().slice(1)}
+									onChange={onChange}
+								/>
+							);
+						case "RGB":
+							return (
+								<RGBInput
+									rgb={value}
+									onChange={(rgb) => {
+										onChange(
+											new colour()
+												.rgb(rgb.r, rgb.g, rgb.b)
+												.toHex(),
+										);
+									}}
+								/>
+							);
+						case "HWB":
+							return (
+								<HWBInput
+									hwb={hwb}
+									onChange={(hwb) => {
+										setHwb(hwb);
+										onChange(
+											new colour()
+												.hwb(hwb.h, hwb.w, hwb.b)
+												.toHex(),
+										);
+									}}
+								/>
+							);
+						case "CSS":
+							return (
+								<CSSInput
+									css={value.toHex()}
+									onChange={onChange}
+								/>
+							);
+					}
+				})()}
 			</div>
 		</div>
 	);
 }
 
-interface InputProps {
-	value: colour;
+function HEXInput({
+	hex,
+	onChange,
+}: {
+	hex: string;
 	onChange: (hex: string) => void;
-}
-
-function HEXInput({ value, onChange }: InputProps) {
+}) {
 	const [isEditing, setIsEditing] = useState(false);
-	const [text, setText] = useState("");
-
-	const hex = value.toHex().slice(1);
+	const [text, setText] = useState(hex);
 
 	return (
 		<div className={styles.hex}>
@@ -280,7 +320,7 @@ function HEXInput({ value, onChange }: InputProps) {
 					if (value !== "" && !/^[0-9A-Fa-f]*$/.test(value)) return;
 					setText(value);
 					if (value.length === 3 || value.length === 6)
-						onChange(new colour().parse(`#${value}`).toHex());
+						onChange(`#${value}`);
 				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") e.currentTarget.blur();
@@ -290,13 +330,18 @@ function HEXInput({ value, onChange }: InputProps) {
 	);
 }
 
-function RGBInput({ value, onChange }: InputProps) {
+function RGBInput({
+	rgb,
+	onChange,
+}: {
+	rgb: { r: number; g: number; b: number };
+	onChange: (rgb: { r: number; g: number; b: number }) => void;
+}) {
+	const r = Math.round(rgb.r).toString();
+	const g = Math.round(rgb.g).toString();
+	const b = Math.round(rgb.b).toString();
 	const [isEditing, setIsEditing] = useState(false);
-	const [text, setText] = useState({ r: "", g: "", b: "" });
-
-	const r = Math.round(value.r).toString();
-	const g = Math.round(value.g).toString();
-	const b = Math.round(value.b).toString();
+	const [text, setText] = useState({ r, g, b });
 
 	const getNum = (value: string, fallback: string) =>
 		parseFloat(value || fallback || "0");
@@ -329,15 +374,11 @@ function RGBInput({ value, onChange }: InputProps) {
 					onBlur={() => setIsEditing(false)}
 					onChange={(e) =>
 						onNumberChange("r", e.target.value, (nr) => {
-							onChange(
-								new colour()
-									.rgb(
-										nr,
-										getNum(text.g, g),
-										getNum(text.b, b),
-									)
-									.toHex(),
-							);
+							onChange({
+								r: nr,
+								g: getNum(text.g, g),
+								b: getNum(text.b, b),
+							});
 						})
 					}
 					onKeyDown={(e) => {
@@ -353,15 +394,11 @@ function RGBInput({ value, onChange }: InputProps) {
 					onBlur={() => setIsEditing(false)}
 					onChange={(e) =>
 						onNumberChange("g", e.target.value, (ng) => {
-							onChange(
-								new colour()
-									.rgb(
-										getNum(text.r, r),
-										ng,
-										getNum(text.b, b),
-									)
-									.toHex(),
-							);
+							onChange({
+								r: getNum(text.r, r),
+								g: ng,
+								b: getNum(text.b, b),
+							});
 						})
 					}
 					onKeyDown={(e) => {
@@ -377,15 +414,11 @@ function RGBInput({ value, onChange }: InputProps) {
 					onBlur={() => setIsEditing(false)}
 					onChange={(e) =>
 						onNumberChange("b", e.target.value, (nb) => {
-							onChange(
-								new colour()
-									.rgb(
-										getNum(text.r, r),
-										getNum(text.g, g),
-										nb,
-									)
-									.toHex(),
-							);
+							onChange({
+								r: getNum(text.r, r),
+								g: getNum(text.g, g),
+								b: nb,
+							});
 						})
 					}
 					onKeyDown={(e) => {
@@ -397,14 +430,18 @@ function RGBInput({ value, onChange }: InputProps) {
 	);
 }
 
-function HWBInput({ value, onChange }: InputProps) {
-	const [isEditing, setIsEditing] = useState(false);
-	const [text, setText] = useState({ h: "", w: "", b: "" });
-
-	const hwb = value.toHWB();
+function HWBInput({
+	hwb,
+	onChange,
+}: {
+	hwb: { h: number; w: number; b: number };
+	onChange: (hwb: { h: number; w: number; b: number }) => void;
+}) {
 	const h = Math.round(hwb.h).toString();
 	const w = Math.round(hwb.w).toString();
 	const b = Math.round(hwb.b).toString();
+	const [isEditing, setIsEditing] = useState(false);
+	const [text, setText] = useState({ h, w, b });
 
 	const getNum = (value: string, fallback: string) =>
 		parseFloat(value || fallback || "0");
@@ -437,15 +474,11 @@ function HWBInput({ value, onChange }: InputProps) {
 					onBlur={() => setIsEditing(false)}
 					onChange={(e) =>
 						onNumberChange("h", e.target.value, (nh) => {
-							onChange(
-								new colour()
-									.hwb(
-										nh,
-										getNum(text.w, w),
-										getNum(text.b, b),
-									)
-									.toHex(),
-							);
+							onChange({
+								h: nh,
+								w: getNum(text.w, w),
+								b: getNum(text.b, b),
+							});
 						})
 					}
 					onKeyDown={(e) => {
@@ -461,15 +494,11 @@ function HWBInput({ value, onChange }: InputProps) {
 					onBlur={() => setIsEditing(false)}
 					onChange={(e) =>
 						onNumberChange("w", e.target.value, (nw) => {
-							onChange(
-								new colour()
-									.hwb(
-										getNum(text.h, h),
-										nw,
-										getNum(text.b, b),
-									)
-									.toHex(),
-							);
+							onChange({
+								h: getNum(text.h, h),
+								w: nw,
+								b: getNum(text.b, b),
+							});
 						})
 					}
 					onKeyDown={(e) => {
@@ -485,15 +514,11 @@ function HWBInput({ value, onChange }: InputProps) {
 					onBlur={() => setIsEditing(false)}
 					onChange={(e) =>
 						onNumberChange("b", e.target.value, (nb) => {
-							onChange(
-								new colour()
-									.hwb(
-										getNum(text.h, h),
-										getNum(text.w, w),
-										nb,
-									)
-									.toHex(),
-							);
+							onChange({
+								h: getNum(text.h, h),
+								w: getNum(text.w, w),
+								b: nb,
+							});
 						})
 					}
 					onKeyDown={(e) => {
@@ -505,11 +530,15 @@ function HWBInput({ value, onChange }: InputProps) {
 	);
 }
 
-function CSSInput({ value, onChange }: InputProps) {
+function CSSInput({
+	css,
+	onChange,
+}: {
+	css: string;
+	onChange: (hex: string) => void;
+}) {
 	const [isEditing, setIsEditing] = useState(false);
-	const [text, setText] = useState("");
-
-	const css = value.toHex();
+	const [text, setText] = useState(css);
 
 	return (
 		<div className={styles.css}>
@@ -527,9 +556,8 @@ function CSSInput({ value, onChange }: InputProps) {
 				}}
 				onChange={(e) => {
 					const value = e.target.value;
-					const hex = new colour().parse(value).toHex();
 					setText(value);
-					onChange(hex);
+					onChange(new colour().parse(value).toHex());
 				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") e.currentTarget.blur();

@@ -1,5 +1,4 @@
 .rule-widget {
-	--popup-border-radius: var(--unit-8);
 	display: flex;
 	flex-direction: column;
 	gap: var(--unit-8);
@@ -23,19 +22,10 @@
 
 	button {
 		justify-content: center;
-		background-color: var(--app-0);
 		height: var(--unit-32);
 
-		&:hover {
-			background-color: var(--app-1);
-		}
-
-		&:active {
-			background-color: var(--app-2);
-		}
-
 		&.control-button {
-			border-radius: var(--popup-border-radius);
+			border-radius: var(--unit-8);
 		}
 	}
 }

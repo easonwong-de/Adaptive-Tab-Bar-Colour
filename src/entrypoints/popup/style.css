@@ -122,17 +122,17 @@ button {
 	align-items: center;
 	box-sizing: border-box;
 	border-radius: var(--unit-8);
-	background-color: var(--app-1);
+	background-color: var(--control);
 	width: 100%;
 	color: var(--text-primary);
 	text-align: start;
 
 	&:hover {
-		background-color: var(--app-2);
+		background-color: var(--control-hover);
 	}
 
 	&:active {
-		background-color: var(--app-3);
+		background-color: var(--control-active);
 	}
 }
 
@@ -187,6 +187,25 @@ svg {
 	margin: 0;
 	width: var(--unit-16);
 	height: var(--unit-16);
+}
+
+select {
+	display: flex;
+	vertical-align: middle;
+	outline: solid var(--unit) var(--control);
+	outline-offset: calc(-1 * var(--unit));
+	border: none;
+	background-color: transparent;
+	padding-inline: var(--unit-8) 0;
+	color: var(--text-primary);
+
+	&:hover {
+		outline-color: var(--control-hover);
+	}
+
+	&:active {
+		outline-color: var(--control-active);
+	}
 }
 
 .hidden {

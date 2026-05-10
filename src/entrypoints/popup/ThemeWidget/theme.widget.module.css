@@ -26,6 +26,9 @@
 	}
 
 	.panel-wrapper {
+		--control: var(--app-1);
+		--control-hover: var(--app-2);
+		--control-active: var(--app-3);
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: var(--unit-16);
@@ -57,16 +60,7 @@
 	.more-settings-button {
 		flex: 1;
 		box-shadow: var(--shadow-small), var(--shadow-large);
-		background-color: var(--app-0);
 		color: var(--text-secondary);
 		font-size: 80%;
-
-		&:hover {
-			background-color: var(--app-1);
-		}
-
-		&:active {
-			background-color: var(--app-2);
-		}
 	}
 }

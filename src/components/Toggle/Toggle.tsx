@@ -20,6 +20,7 @@ export default function Toggle({
 				return (
 					<button
 						key={`toggle${item}${index}`}
+						title={item}
 						className={clsx(
 							activeIndex === index && styles.selected,
 						)}

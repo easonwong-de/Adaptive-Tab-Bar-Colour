@@ -125,6 +125,7 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 					</div>
 					<button
 						className={styles.moreSettingsButton}
+						onMouseEnter={() => setHover("none")}
 						onClick={() => browser.runtime.openOptionsPage()}
 					>
 						{i18n.t("moreSettings")}

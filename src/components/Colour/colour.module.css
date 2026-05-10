@@ -9,7 +9,7 @@
 		outline: none;
 		outline-offset: calc(-1 * var(--unit));
 		border: none;
-		border-radius: var(--popup-border-radius, var(--unit-12));
+		border-radius: var(--radius, var(--unit-12));
 		background-color: var(--control);
 		padding-inline: var(--unit-32) var(--unit-8);
 		width: 100%;
@@ -37,7 +37,6 @@
 		cursor: pointer;
 		outline: solid var(--unit) var(--control-hover);
 		border-radius: 50%;
-		background-color: #000000;
 		width: var(--unit-16);
 		height: var(--unit-16);
 	}
@@ -47,7 +46,7 @@
 	}
 
 	.popup {
-		--width: calc(192 * var(--unit));
+		--width: calc(12 * var(--unit-16));
 		display: flex;
 		position: absolute;
 		top: calc(100% - var(--unit-8));
@@ -57,31 +56,31 @@
 		z-index: 20;
 		filter: drop-shadow(var(--shadow-small))
 			drop-shadow(var(--shadow-large));
-		margin-top: calc(8.6 * var(--unit));
-		border-radius: var(--popup-border-radius, var(--unit-12));
-		background-color: var(--panel, var(--app));
+		margin-top: var(--unit-12);
+		border-radius: var(--unit-12);
+		background-color: var(--panel-alt, var(--app-0));
 		padding: var(--unit-12);
 		width: var(--width);
 
 		&::before {
 			position: absolute;
-			top: calc(-1 * var(--unit-6));
-			left: calc(50% - var(--unit-6));
-			transform: rotate(45deg);
-			z-index: -1;
-			border-radius: var(--unit-4) var(--unit);
+			top: calc(-1 * var(--unit-12));
+			left: 50%;
+			transform: translateX(-50%);
+			mask-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iMzAiIHZpZXdCb3g9IjAgMCA2MCAzMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMzAgMEMzNS41IDAgMzkuNSAxMC4yNDYzIDQyLjUgMTUuNUM0My45Mjc2IDE4IDUxIDI5Ljk5OTkgNjAgMjkuOTk5OUwzMCAzMEwwIDI5Ljk5OTlDOC45OTk5OCAyOS45OTk5IDE2LjA3MjQgMTggMTcuNSAxNS41QzIwLjUgMTAuMjQ2MyAyNC41IDAgMzAgMFoiIGZpbGw9ImJsYWNrIi8+PC9zdmc+");
+			mask-size: contain;
+			mask-repeat: no-repeat;
 			background-color: inherit;
-			width: var(--unit-12);
+			width: calc(2 * var(--unit-12));
 			height: var(--unit-12);
 			content: "";
 		}
 
 		&.in-popup {
-			left: 0;
-		}
-
-		&.in-popup::before {
-			left: calc(10.4 * var(--unit));
+			--control: var(--app-1);
+			--control-hover: var(--app-2);
+			--control-active: var(--app-3);
+			border-radius: var(--unit-8);
 		}
 
 		& > div {

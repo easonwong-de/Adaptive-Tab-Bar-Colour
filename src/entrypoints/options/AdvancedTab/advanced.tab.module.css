@@ -54,7 +54,7 @@ main.advanced-tab {
 				background-color: var(--panel-alt);
 			}
 
-			& > :first-child {
+			& > input:first-child {
 				display: block;
 				align-self: center;
 				padding-inline-start: var(--unit-8);

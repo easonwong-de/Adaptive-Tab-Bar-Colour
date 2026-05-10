@@ -1,6 +1,6 @@
 .correction-widget {
 	border: var(--unit) solid var(--app-0);
-	border-radius: var(--unit-4);
+	border-radius: var(--unit-16);
 	padding: var(--unit-8);
 
 	svg {

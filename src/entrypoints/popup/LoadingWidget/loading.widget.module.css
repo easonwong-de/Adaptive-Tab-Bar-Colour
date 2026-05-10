@@ -3,7 +3,7 @@
 	flex-direction: column;
 	gap: var(--unit-8);
 	border: var(--unit) solid var(--app-0);
-	border-radius: var(--unit-4);
+	border-radius: var(--unit-16);
 	padding: var(--unit-8);
 
 	.loading-message {
