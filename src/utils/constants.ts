@@ -3,7 +3,7 @@ import type { BrowserColour, PreferenceContent, Scheme } from "./types";
 import { supportsThemeAPI } from "./utility";
 
 /** The version of ATBC. */
-export const addonVersion = [4, 0];
+export const version = [4, 0];
 
 /** Default light homepage colour. */
 export const default_homeBackground_light = "#ffffff";
@@ -91,7 +91,7 @@ export const plainTextExtension = [
 ];
 
 /** Default content of the preference. */
-export const defaultPref = Object.freeze({
+export const defaultPreferenceContent = Object.freeze({
 	// theme builder
 	popup: 5,
 	popupBorder: 5,
@@ -121,5 +121,5 @@ export const defaultPref = Object.freeze({
 	noThemeColour: true,
 	// state
 	lastSave: 0,
-	version: addonVersion,
+	version,
 } as PreferenceContent);

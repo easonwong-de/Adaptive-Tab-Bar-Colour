@@ -55,6 +55,87 @@ export async function getCurrentScheme(): Promise<Scheme> {
 }
 
 /**
+ * Retrieves local storage content.
+ *
+ * @async
+ * @returns {Promise<Record<string, unknown>>} The stored content.
+ */
+export async function getStorageContent(): Promise<Record<string, unknown>> {
+	try {
+		return await browser.storage.local.get();
+	} catch {
+		return {};
+	}
+}
+
+/**
+ * Saves content to local storage.
+ *
+ * @async
+ * @param {Record<string, unknown>} content - The content to save.
+ * @returns {Promise<boolean>} `true` if saved successfully.
+ */
+export async function setStorageContent(
+	content: Record<string, unknown>,
+): Promise<boolean> {
+	try {
+		await browser.storage.local.set(content);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Removes local storage keys.
+ *
+ * @async
+ * @param {string[]} keys - The keys to remove.
+ * @returns {Promise<void>} Resolves when complete.
+ */
+export async function removeStorageKeys(keys: string[]): Promise<void> {
+	await Promise.all(
+		keys.map(async (key) => await browser.storage.local.remove(key)),
+	);
+}
+
+/**
+ * Registers a listener for local storage changes.
+ *
+ * @param {(
+ * 	changes: { [key: string]: Browser.storage.StorageChange },
+ * 	areaName: Browser.storage.AreaName,
+ * ) => void} listener
+ *   - The listener to register.
+ */
+export function addStorageChangeListener(
+	listener: (
+		changes: { [key: string]: Browser.storage.StorageChange },
+		areaName: Browser.storage.AreaName,
+	) => void,
+): void {
+	browser.storage.onChanged.addListener(listener);
+}
+
+/**
+ * Removes a listener for local storage changes.
+ *
+ * @param {(
+ * 	changes: { [key: string]: Browser.storage.StorageChange },
+ * 	areaName: Browser.storage.AreaName,
+ * ) => void} listener
+ *   - The listener to remove.
+ */
+export function removeStorageChangeListener(
+	listener: (
+		changes: { [key: string]: Browser.storage.StorageChange },
+		areaName: Browser.storage.AreaName,
+	) => void,
+): void {
+	browser.storage.onChanged.removeListener(listener);
+}
+
+/**
  * Registers a listener for tab and window change events.
  *
  * @param {() => void} listener - The function to call on tab changes.
