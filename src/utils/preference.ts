@@ -1,57 +1,78 @@
-import { addonVersion, defaultPref } from "./constants";
+import {
+	defaultPreferenceContent as defaultContent,
+	version,
+} from "./constants";
 import type {
 	PreferenceContent,
 	Rule,
 	RuleList,
 	RuleQueryResult,
 } from "./types";
-import { getWebExtId, supportsThemeAPI } from "./utility";
+import {
+	addStorageChangeListener,
+	getStorageContent,
+	getWebExtId,
+	removeStorageChangeListener,
+	removeStorageKeys,
+	setStorageContent,
+	supportsThemeAPI,
+} from "./utility";
 
 export default class preference {
 	/** The content of the preference. */
-	#content: PreferenceContent = { ...defaultPref };
+	#content: PreferenceContent = { ...defaultContent };
 
-	/** The listener for preference changes. */
-	#listener: () => void = () => {};
-
-	/** State for debouncing storage writes. */
+	/** State for storage writes and lifecycle. */
 	#state: {
 		lastWrite: number;
+		isDisposed: boolean;
 		writeTimeout?: ReturnType<typeof setTimeout>;
-	} = { lastWrite: 0 };
+	} = { lastWrite: 0, isDisposed: false };
+
+	/** The listener for preference changes. */
+	#onChangeListener: () => void = () => {};
+
+	/** Listener for storage changes. */
+	#storageListener?: (
+		changes: { [key: string]: Browser.storage.StorageChange },
+		areaName: Browser.storage.AreaName,
+	) => void;
 
 	/**
-	 * Initialises preferences from storage.
+	 * Initialises preferences from storage, normalises them, and registers
+	 * storage listeners.
 	 *
 	 * @async
 	 */
 	async initialise(): Promise<void> {
-		const { result, removedKeys } = this.#normalise(
-			await browser.storage.local.get(),
-		);
-		for (const key in result) this.#set(key, result[key]);
-		removedKeys.forEach(
-			async (key) => await browser.storage.local.remove(key),
-		);
+		this.#state.isDisposed = false;
+		if (this.#storageListener)
+			removeStorageChangeListener(this.#storageListener);
+		const storedContent = await getStorageContent();
+		const { result, removedKeys } = this.#normalise(storedContent);
+		await removeStorageKeys(removedKeys);
+		for (const key in result)
+			this.#set(key as keyof PreferenceContent, result[key]);
 		if (!supportsThemeAPI()) this.#set("compatibilityMode", true);
 		await this.#save();
-		browser.storage.onChanged.addListener((changes, area) => {
-			if (area !== "local") return;
-			const newLastSave = changes.lastSave?.newValue;
+
+		this.#storageListener = (changes, areaName) => {
+			if (areaName !== "local" || this.#state.isDisposed) return;
+			const nextLastSave = changes.lastSave?.newValue;
 			if (
-				typeof newLastSave === "number" &&
-				newLastSave > this.#content.lastSave
-			) {
-				for (const key in changes) {
-					if (key in this.#content) {
-						const prefKey = key as keyof PreferenceContent;
-						this.#content[prefKey] = changes[prefKey]!
-							.newValue as PreferenceContent[typeof prefKey];
-					}
-				}
-				this.syncUI();
+				typeof nextLastSave !== "number" ||
+				nextLastSave <= this.#content.lastSave
+			)
+				return;
+			let hasUpdates = false;
+			for (const [key, change] of Object.entries(changes)) {
+				if (!(key in this.#content)) continue;
+				this.#set(key as keyof PreferenceContent, change.newValue);
+				hasUpdates = true;
 			}
-		});
+			if (hasUpdates) this.syncUI();
+		};
+		addStorageChangeListener(this.#storageListener);
 	}
 
 	/**
@@ -63,145 +84,184 @@ export default class preference {
 	async reset(keys?: string[]): Promise<void> {
 		if (keys) {
 			for (const key of keys)
-				if (key in defaultPref) this.#set(key, defaultPref[key]);
-		} else this.#content = { ...defaultPref };
+				if (key in defaultContent) this.#set(key, defaultContent[key]);
+		} else this.#content = { ...defaultContent };
 		await this.#save();
 	}
 
 	/**
-	 * Saves preferences to storage.
+	 * Saves preferences to storage with a debounce.
 	 *
 	 * @private
 	 */
 	async #save(): Promise<void> {
-		this.#content.lastSave = Date.now();
+		if (this.#state.isDisposed) return;
 		this.syncUI();
 		if (this.#state.writeTimeout !== undefined)
 			clearTimeout(this.#state.writeTimeout);
 		this.#state.writeTimeout = setTimeout(
 			async () => {
+				if (this.#state.isDisposed) return;
 				this.#state.lastWrite = Date.now();
-				await browser.storage.local.set(this.#content);
+				const lastSave = Date.now();
+				const contentToSave = { ...this.#content, lastSave };
+				const didSave = await setStorageContent(contentToSave);
+				if (!didSave) return;
+				this.#content.lastSave = lastSave;
+				this.syncUI();
 			},
 			Math.max(0, 50 + this.#state.lastWrite - Date.now()),
 		);
 	}
 
 	/**
-	 * Sets a preference value.
+	 * Sets and normalises a preference value.
 	 *
 	 * @private
-	 * @param {string} key - The preference key.
-	 * @param {any} value - The value.
+	 * @param {keyof PreferenceContent} key - The preference key.
+	 * @param {unknown} value - The value.
 	 */
-	#set(key: string, value: any): void {
-		if (typeof value !== typeof defaultPref[key]) value = defaultPref[key];
+	#set(key: keyof PreferenceContent, value: unknown): void {
 		switch (key) {
-			case "tabbar":
-			case "tabbarBorder":
+			case "popup":
+			case "popupBorder":
+			case "sidebar":
+			case "sidebarBorder":
 			case "tabSelected":
 			case "tabSelectedBorder":
+			case "tabbar":
+			case "tabbarBorder":
 			case "toolbar":
 			case "toolbarBorder":
 			case "toolbarField":
 			case "toolbarFieldBorder":
 			case "toolbarFieldOnFocus":
-			case "sidebar":
-			case "sidebarBorder":
-			case "popup":
-			case "popupBorder":
-				value = this.#normaliseNumericPref(value, {
-					min: -50,
-					max: 50,
-					step: 1,
-				});
+				this.#content[key] =
+					typeof value === "number"
+						? this.#normaliseNumber(value, {
+								min: -50,
+								max: 50,
+								step: 1,
+							})
+						: defaultContent[key];
+				break;
+			case "ruleList":
+				this.#content[key] = this.#normaliseRuleList(value);
+				break;
+			case "allowDarkLight":
+			case "compatibilityMode":
+			case "dynamic":
+			case "noThemeColour":
+				this.#content[key] =
+					typeof value === "boolean" ? value : defaultContent[key];
+				break;
+			case "fallbackColour_dark":
+			case "fallbackColour_light":
+			case "homeBackground_dark":
+			case "homeBackground_light":
+				this.#content[key] =
+					typeof value === "string" ? value : defaultContent[key];
 				break;
 			case "minContrast_light":
 			case "minContrast_dark":
-				value = this.#normaliseNumericPref(value, {
-					min: 0,
-					max: 210,
-					step: 5,
-				});
-				break;
-			case "ruleList":
-				for (const id in value)
-					if (!this.#validateRule(value[id])) value[id] = null;
+				this.#content[key] =
+					typeof value === "number"
+						? this.#normaliseNumber(value, {
+								min: 0,
+								max: 210,
+								step: 5,
+							})
+						: defaultContent[key];
 				break;
 			default:
 				break;
 		}
-		this.#content[key] = value;
 	}
 
 	/**
-	 * Validates a rule object structure.
+	 * Checks whether a value is a valid rule or `null`.
 	 *
-	 * @param {Rule} rule - The rule to validate.
-	 * @returns {boolean} `true` if the rule is valid.
+	 * @private
+	 * @param {unknown} value - The value to validate.
+	 * @returns {boolean} `true` if the value is a valid rule.
 	 */
-	#validateRule(rule: Rule): boolean {
+	#isRule(value: unknown): value is Rule {
 		return (
-			rule === null ||
-			(typeof rule === "object" &&
-				typeof rule?.header === "string" &&
-				((rule.headerType === "URL" &&
-					((rule.type === "THEME_COLOUR" &&
-						typeof rule.value === "boolean") ||
-						(rule.type === "QUERY_SELECTOR" &&
-							typeof rule.value === "string"))) ||
-					((rule.headerType === "URL" ||
-						rule.headerType === "ADDON_ID") &&
-						rule.type === "COLOUR" &&
-						typeof rule.value === "string")))
+			value === null ||
+			(this.#isRecord(value) &&
+				typeof value.header === "string" &&
+				(((value.headerType === "URL" ||
+					value.headerType === "ADDON_ID") &&
+					value.type === "COLOUR" &&
+					typeof value.value === "string") ||
+					(value.headerType === "URL" &&
+						((value.type === "THEME_COLOUR" &&
+							typeof value.value === "boolean") ||
+							(value.type === "QUERY_SELECTOR" &&
+								typeof value.value === "string")))))
 		);
 	}
 
 	/**
-	 * Normalises a numeric preference within constraints.
-	 *
-	 * Applies min/max bounds, and rounds to the nearest step.
+	 * Checks whether a value is a plain record.
 	 *
 	 * @private
-	 * @param {number} num - The number to validate.
-	 * @param {{ min: number; max: number; step: number }} range - Numeric
-	 *   constraints.
-	 * @param {number} range.min - The minimum allowed value.
-	 * @param {number} range.max - The maximum allowed value.
-	 * @param {number} range.step - The step size for rounding.
-	 * @returns {number} The validated and adjusted number.
+	 * @param {unknown} value - The value to check.
+	 * @returns {boolean} `true` if the value is a non-null, non-array object.
 	 */
-	#normaliseNumericPref(
-		num: number,
-		{ min, max, step }: { min: number; max: number; step: number },
-	): number {
-		if (-1 < num && num < 1) num = Math.round(num * 100);
-		num = Math.max(min, Math.min(max, num));
-		const remainder = (num - min) % step;
-		if (remainder !== 0)
-			num =
-				remainder >= step / 2
-					? num + (step - remainder)
-					: num - remainder;
-		return Math.round(num);
+	#isRecord(
+		value: unknown,
+	): value is Record<string | number | symbol, unknown> {
+		return (
+			value !== undefined &&
+			value !== null &&
+			typeof value === "object" &&
+			!Array.isArray(value)
+		);
 	}
 
 	/**
-	 * Determines if the stored version is older than the target version.
+	 * Checks whether a value is a numeric array.
 	 *
 	 * @private
-	 * @param {number[]} storedVersion - The stored version array.
-	 * @param {number[]} version - The target version array.
-	 * @returns {boolean} True if the stored version is older.
+	 * @param {unknown} value - The value to validate.
+	 * @returns {boolean} `true` if the value is an array of numbers.
 	 */
-	#migrateFrom(storedVersion: number[], version: number[]): boolean {
-		const maxLength = Math.max(storedVersion.length, version.length);
-		for (let i = 0; i < maxLength; i++) {
-			const current = storedVersion[i] ?? 0;
-			const target = version[i] ?? 0;
-			if (current !== target) return current < target;
+	#isNumberArray(value: unknown): value is number[] {
+		return (
+			value !== undefined &&
+			value !== null &&
+			Array.isArray(value) &&
+			value.every((item) => typeof item === "number")
+		);
+	}
+
+	/**
+	 * Runs a migration callback when content version is older.
+	 *
+	 * @private
+	 * @param {Record<string, unknown>} content - The stored content.
+	 * @param {number[]} version - The target version threshold.
+	 * @param {() => void} callback - The migration logic to run.
+	 */
+	#migrate(
+		content: Record<string, unknown>,
+		version: number[],
+		callback: () => void,
+	): void {
+		if (this.#isNumberArray(content.version)) {
+			for (let i = 0; i < 3; i++) {
+				const contentPart = content.version[i] ?? 0;
+				const targetPart = version[i] ?? 0;
+				if (contentPart > targetPart) return;
+				if (contentPart < targetPart) {
+					callback();
+					return;
+				}
+			}
+			return;
 		}
-		return false;
+		callback();
 	}
 
 	/**
@@ -216,29 +276,83 @@ export default class preference {
 		result: PreferenceContent;
 		removedKeys: string[];
 	} {
-		const storedVersion = Array.isArray(content.version)
-			? (content.version as number[])
-			: [];
-		if (!content.version || this.#migrateFrom(storedVersion, [2, 2, 1])) {
-			return { result: { ...defaultPref }, removedKeys: [] };
-		}
-		const result: Record<string, unknown> = { ...defaultPref, ...content };
-		if (this.#migrateFrom(storedVersion, [2, 4])) {
-			browser.theme?.reset?.();
-			if (result.minContrast_light === 165) result.minContrast_light = 90;
-		}
-		if (this.#migrateFrom(storedVersion, [3, 4]) && result.siteList) {
-			result.ruleList = result.siteList as RuleList;
-		}
+		let merged: Record<string, unknown> = { ...defaultContent, ...content };
 		const removedKeys: string[] = [];
-		for (const key in result) {
-			if (!(key in defaultPref)) {
-				delete result[key];
+
+		this.#migrate(content, [2, 2, 3], () => {
+			merged = { ...content, ...defaultContent };
+		});
+		this.#migrate(content, [2, 4], () => {
+			if (merged.minContrast_light === 165) merged.minContrast_light = 90;
+		});
+		this.#migrate(content, [4, 0], () => {
+			merged.ruleList = this.#isRecord(content.siteList)
+				? content.siteLit
+				: {};
+		});
+
+		for (const key in merged) {
+			if (!(key in defaultContent)) {
+				delete merged[key];
 				removedKeys.push(key);
 			}
 		}
-		result.version = addonVersion;
-		return { result: result as PreferenceContent, removedKeys };
+
+		return {
+			result: { ...merged, version } as PreferenceContent,
+			removedKeys,
+		};
+	}
+
+	/**
+	 * Normalises a numeric preference within constraints.
+	 *
+	 * @param {number} num - The numeric input to evaluate.
+	 * @param {Object} range - The bounding constraints.
+	 * @param {number} range.min - The strict minimum threshold.
+	 * @param {number} range.max - The strict maximum threshold.
+	 * @param {number} range.step - The discrete interval for valid values.
+	 * @returns {number} The constrained and rounded integer.
+	 */
+	#normaliseNumber(
+		num: number,
+		{ min, max, step }: { min: number; max: number; step: number },
+	): number {
+		if (-1 < num && num < 1) num = Math.round(num * 100);
+		let clamped = clamp(min, num, max);
+		const remainder = (clamped - min) % step;
+		if (remainder !== 0) {
+			clamped =
+				remainder >= step / 2
+					? clamped + (step - remainder)
+					: clamped - remainder;
+		}
+		return Math.round(clamped);
+	}
+
+	/**
+	 * Normalises a rule list.
+	 *
+	 * @private
+	 * @param {unknown} value - The value to normalise.
+	 * @returns {RuleList} The normalised rule list.
+	 */
+	#normaliseRuleList(value: unknown): RuleList {
+		if (!this.#isRecord(value)) return {};
+		const entries = Object.entries(value)
+			.map(([id, rule]) => ({ id: Number(id), rule }))
+			.filter(
+				({ id, rule }) =>
+					Number.isInteger(id) && id > 0 && this.#isRule(rule),
+			)
+			.sort((first, second) => first.id - second.id);
+		const ruleList: RuleList = {};
+		let id = 1;
+		for (const entry of entries) {
+			ruleList[id] = entry.rule as Rule;
+			id++;
+		}
+		return ruleList;
 	}
 
 	/**
@@ -274,8 +388,8 @@ export default class preference {
 	 * @returns {() => void} A function to remove the listener.
 	 */
 	setOnChangeListener(listener: () => void): () => void {
-		this.#listener = listener;
-		return () => (this.#listener = () => {});
+		this.#onChangeListener = listener;
+		return () => (this.#onChangeListener = () => {});
 	}
 
 	/**
@@ -284,7 +398,7 @@ export default class preference {
 	 * @returns {void}
 	 */
 	syncUI(): void {
-		this.#listener();
+		this.#onChangeListener();
 	}
 
 	/**
@@ -316,7 +430,7 @@ export default class preference {
 	 * @returns {Promise<void>} Resolves when the rule is saved.
 	 */
 	async setRule(id: number, rule: Rule): Promise<void> {
-		if (!this.#validateRule(rule)) return;
+		if (!this.#isRule(rule)) return;
 		this.#content.ruleList[id] = rule;
 		await this.#save();
 	}
@@ -444,116 +558,78 @@ export default class preference {
 	}
 
 	/**
-	 * Gets whether dark/light scheme switching is allowed.
-	 *
-	 * @returns {boolean} `true` if scheme switching is allowed.
-	 */
-	get allowDarkLight(): boolean {
-		return this.#content.allowDarkLight;
-	}
-
-	/**
-	 * Sets whether dark/light scheme switching is allowed.
-	 *
-	 * @param {boolean} value - Whether to allow scheme switching.
-	 */
-	set allowDarkLight(value: boolean) {
-		this.#set("allowDarkLight", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets whether dynamic colour extraction is enabled.
-	 *
-	 * @returns {boolean} `true` if dynamic colour extraction is enabled.
-	 */
-	get dynamic(): boolean {
-		return this.#content.dynamic;
-	}
-
-	/**
-	 * Sets whether dynamic colour extraction is enabled.
-	 *
-	 * @param {boolean} value - Whether to enable dynamic colour extraction.
-	 */
-	set dynamic(value: boolean) {
-		this.#set("dynamic", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets whether theme colour should be ignored by default.
-	 *
-	 * @returns {boolean} `true` if theme colours are ignored by default.
-	 */
-	get noThemeColour(): boolean {
-		return this.#content.noThemeColour;
-	}
-
-	/**
-	 * Sets whether theme colour should be ignored by default.
-	 *
-	 * @param {boolean} value - Whether to ignore theme colours by default.
-	 */
-	set noThemeColour(value: boolean) {
-		this.#set("noThemeColour", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets whether compatibility mode is enabled.
-	 *
-	 * @returns {boolean} `true` if compatibility mode is enabled.
-	 */
-	get compatibilityMode(): boolean {
-		return this.#content.compatibilityMode;
-	}
-
-	/**
-	 * Sets whether compatibility mode is enabled.
-	 *
-	 * @param {boolean} value - Whether to enable compatibility mode.
-	 */
-	set compatibilityMode(value: boolean) {
-		this.#set("compatibilityMode", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets the tab bar brightness adjustment value.
+	 * Gets the popup brightness adjustment value.
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get tabbar(): number {
-		return this.#content.tabbar;
+	get popup(): number {
+		return this.#content.popup;
 	}
 
 	/**
-	 * Sets the tab bar brightness adjustment value.
+	 * Sets the popup brightness adjustment value.
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set tabbar(value: number) {
-		this.#set("tabbar", value);
+	set popup(value: number) {
+		this.#set("popup", value);
 		this.#save();
 	}
 
 	/**
-	 * Gets the tab bar border brightness adjustment value.
+	 * Gets the popup border brightness adjustment value.
 	 *
 	 * @returns {number} The brightness adjustment.
 	 */
-	get tabbarBorder(): number {
-		return this.#content.tabbarBorder;
+	get popupBorder(): number {
+		return this.#content.popupBorder;
 	}
 
 	/**
-	 * Sets the tab bar border brightness adjustment value.
+	 * Sets the popup border brightness adjustment value.
 	 *
 	 * @param {number} value - The brightness adjustment.
 	 */
-	set tabbarBorder(value: number) {
-		this.#set("tabbarBorder", value);
+	set popupBorder(value: number) {
+		this.#set("popupBorder", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the sidebar brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
+	get sidebar(): number {
+		return this.#content.sidebar;
+	}
+
+	/**
+	 * Sets the sidebar brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
+	set sidebar(value: number) {
+		this.#set("sidebar", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the sidebar border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
+	get sidebarBorder(): number {
+		return this.#content.sidebarBorder;
+	}
+
+	/**
+	 * Sets the sidebar border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
+	set sidebarBorder(value: number) {
+		this.#set("sidebarBorder", value);
 		this.#save();
 	}
 
@@ -592,6 +668,44 @@ export default class preference {
 	 */
 	set tabSelectedBorder(value: number) {
 		this.#set("tabSelectedBorder", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the tab bar brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
+	get tabbar(): number {
+		return this.#content.tabbar;
+	}
+
+	/**
+	 * Sets the tab bar brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
+	set tabbar(value: number) {
+		this.#set("tabbar", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the tab bar border brightness adjustment value.
+	 *
+	 * @returns {number} The brightness adjustment.
+	 */
+	get tabbarBorder(): number {
+		return this.#content.tabbarBorder;
+	}
+
+	/**
+	 * Sets the tab bar border brightness adjustment value.
+	 *
+	 * @param {number} value - The brightness adjustment.
+	 */
+	set tabbarBorder(value: number) {
+		this.#set("tabbarBorder", value);
 		this.#save();
 	}
 
@@ -691,173 +805,78 @@ export default class preference {
 	}
 
 	/**
-	 * Gets the sidebar brightness adjustment value.
+	 * Gets the site-specific policies list.
 	 *
-	 * @returns {number} The brightness adjustment.
+	 * @returns {RuleList} The rule list containing ID-keyed rule objects.
 	 */
-	get sidebar(): number {
-		return this.#content.sidebar;
+	get ruleList(): RuleList {
+		return this.#content.ruleList;
 	}
 
 	/**
-	 * Sets the sidebar brightness adjustment value.
+	 * Sets the site-specific policies list.
 	 *
-	 * @param {number} value - The brightness adjustment.
+	 * @param {RuleList} value - The rule list containing ID-keyed rule objects.
 	 */
-	set sidebar(value: number) {
-		this.#set("sidebar", value);
+	set ruleList(value: RuleList) {
+		this.#set("ruleList", value);
 		this.#save();
 	}
 
 	/**
-	 * Gets the sidebar border brightness adjustment value.
+	 * Gets whether dark/light scheme switching is allowed.
 	 *
-	 * @returns {number} The brightness adjustment.
+	 * @returns {boolean} `true` if scheme switching is allowed.
 	 */
-	get sidebarBorder(): number {
-		return this.#content.sidebarBorder;
+	get allowDarkLight(): boolean {
+		return this.#content.allowDarkLight;
 	}
 
 	/**
-	 * Sets the sidebar border brightness adjustment value.
+	 * Sets whether dark/light scheme switching is allowed.
 	 *
-	 * @param {number} value - The brightness adjustment.
+	 * @param {boolean} value - Whether to allow scheme switching.
 	 */
-	set sidebarBorder(value: number) {
-		this.#set("sidebarBorder", value);
+	set allowDarkLight(value: boolean) {
+		this.#set("allowDarkLight", value);
 		this.#save();
 	}
 
 	/**
-	 * Gets the popup brightness adjustment value.
+	 * Gets whether compatibility mode is enabled.
 	 *
-	 * @returns {number} The brightness adjustment.
+	 * @returns {boolean} `true` if compatibility mode is enabled.
 	 */
-	get popup(): number {
-		return this.#content.popup;
+	get compatibilityMode(): boolean {
+		return this.#content.compatibilityMode;
 	}
 
 	/**
-	 * Sets the popup brightness adjustment value.
+	 * Sets whether compatibility mode is enabled.
 	 *
-	 * @param {number} value - The brightness adjustment.
+	 * @param {boolean} value - Whether to enable compatibility mode.
 	 */
-	set popup(value: number) {
-		this.#set("popup", value);
+	set compatibilityMode(value: boolean) {
+		this.#set("compatibilityMode", value);
 		this.#save();
 	}
 
 	/**
-	 * Gets the popup border brightness adjustment value.
+	 * Gets whether dynamic colour extraction is enabled.
 	 *
-	 * @returns {number} The brightness adjustment.
+	 * @returns {boolean} `true` if dynamic colour extraction is enabled.
 	 */
-	get popupBorder(): number {
-		return this.#content.popupBorder;
+	get dynamic(): boolean {
+		return this.#content.dynamic;
 	}
 
 	/**
-	 * Sets the popup border brightness adjustment value.
+	 * Sets whether dynamic colour extraction is enabled.
 	 *
-	 * @param {number} value - The brightness adjustment.
+	 * @param {boolean} value - Whether to enable dynamic colour extraction.
 	 */
-	set popupBorder(value: number) {
-		this.#set("popupBorder", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets the minimum contrast ratio for light theme (times 10).
-	 *
-	 * @returns {number} The minimum contrast ratio (0-210).
-	 */
-	get minContrast_light(): number {
-		return this.#content.minContrast_light;
-	}
-
-	/**
-	 * Sets the minimum contrast ratio for light theme (times 10).
-	 *
-	 * @param {number} value - The minimum contrast ratio (0-210).
-	 */
-	set minContrast_light(value: number) {
-		this.#set("minContrast_light", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets the minimum contrast ratio for dark theme (times 10).
-	 *
-	 * @returns {number} The minimum contrast ratio (0-210).
-	 */
-	get minContrast_dark(): number {
-		return this.#content.minContrast_dark;
-	}
-
-	/**
-	 * Sets the minimum contrast ratio for dark theme (times 10).
-	 *
-	 * @param {number} value - The minimum contrast ratio (0-210).
-	 */
-	set minContrast_dark(value: number) {
-		this.#set("minContrast_dark", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets the home background colour for light theme.
-	 *
-	 * @returns {string} The background colour as a hex string.
-	 */
-	get homeBackground_light(): string {
-		return this.#content.homeBackground_light;
-	}
-
-	/**
-	 * Sets the home background colour for light theme.
-	 *
-	 * @param {string} value - The background colour as a hex string.
-	 */
-	set homeBackground_light(value: string) {
-		this.#set("homeBackground_light", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets the home background colour for dark theme.
-	 *
-	 * @returns {string} The background colour as a hex string.
-	 */
-	get homeBackground_dark(): string {
-		return this.#content.homeBackground_dark;
-	}
-
-	/**
-	 * Sets the home background colour for dark theme.
-	 *
-	 * @param {string} value - The background colour as a hex string.
-	 */
-	set homeBackground_dark(value: string) {
-		this.#set("homeBackground_dark", value);
-		this.#save();
-	}
-
-	/**
-	 * Gets the fallback colour for light theme.
-	 *
-	 * @returns {string} The fallback colour as a hex string.
-	 */
-	get fallbackColour_light(): string {
-		return this.#content.fallbackColour_light;
-	}
-
-	/**
-	 * Sets the fallback colour for light theme.
-	 *
-	 * @param {string} value - The fallback colour as a hex string.
-	 */
-	set fallbackColour_light(value: string) {
-		this.#set("fallbackColour_light", value);
+	set dynamic(value: boolean) {
+		this.#set("dynamic", value);
 		this.#save();
 	}
 
@@ -881,21 +900,116 @@ export default class preference {
 	}
 
 	/**
-	 * Gets the site-specific policies list.
+	 * Gets the fallback colour for light theme.
 	 *
-	 * @returns {RuleList} The rule list containing ID-keyed rule objects.
+	 * @returns {string} The fallback colour as a hex string.
 	 */
-	get ruleList(): RuleList {
-		return this.#content.ruleList;
+	get fallbackColour_light(): string {
+		return this.#content.fallbackColour_light;
 	}
 
 	/**
-	 * Sets the site-specific policies list.
+	 * Sets the fallback colour for light theme.
 	 *
-	 * @param {RuleList} value - The rule list containing ID-keyed rule objects.
+	 * @param {string} value - The fallback colour as a hex string.
 	 */
-	set ruleList(value: RuleList) {
-		this.#set("ruleList", value);
+	set fallbackColour_light(value: string) {
+		this.#set("fallbackColour_light", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the home background colour for dark theme.
+	 *
+	 * @returns {string} The background colour as a hex string.
+	 */
+	get homeBackground_dark(): string {
+		return this.#content.homeBackground_dark;
+	}
+
+	/**
+	 * Sets the home background colour for dark theme.
+	 *
+	 * @param {string} value - The background colour as a hex string.
+	 */
+	set homeBackground_dark(value: string) {
+		this.#set("homeBackground_dark", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the home background colour for light theme.
+	 *
+	 * @returns {string} The background colour as a hex string.
+	 */
+	get homeBackground_light(): string {
+		return this.#content.homeBackground_light;
+	}
+
+	/**
+	 * Sets the home background colour for light theme.
+	 *
+	 * @param {string} value - The background colour as a hex string.
+	 */
+	set homeBackground_light(value: string) {
+		this.#set("homeBackground_light", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the minimum contrast ratio for dark theme (times 10).
+	 *
+	 * @returns {number} The minimum contrast ratio (0-210).
+	 */
+	get minContrast_dark(): number {
+		return this.#content.minContrast_dark;
+	}
+
+	/**
+	 * Sets the minimum contrast ratio for dark theme (times 10).
+	 *
+	 * @param {number} value - The minimum contrast ratio (0-210).
+	 */
+	set minContrast_dark(value: number) {
+		this.#set("minContrast_dark", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the minimum contrast ratio for light theme (times 10).
+	 *
+	 * @returns {number} The minimum contrast ratio (0-210).
+	 */
+	get minContrast_light(): number {
+		return this.#content.minContrast_light;
+	}
+
+	/**
+	 * Sets the minimum contrast ratio for light theme (times 10).
+	 *
+	 * @param {number} value - The minimum contrast ratio (0-210).
+	 */
+	set minContrast_light(value: number) {
+		this.#set("minContrast_light", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets whether theme colour should be ignored by default.
+	 *
+	 * @returns {boolean} `true` if theme colours are ignored by default.
+	 */
+	get noThemeColour(): boolean {
+		return this.#content.noThemeColour;
+	}
+
+	/**
+	 * Sets whether theme colour should be ignored by default.
+	 *
+	 * @param {boolean} value - Whether to ignore theme colours by default.
+	 */
+	set noThemeColour(value: boolean) {
+		this.#set("noThemeColour", value);
 		this.#save();
 	}
 
@@ -909,12 +1023,16 @@ export default class preference {
 	}
 
 	/**
-	 * Sets the preferences version number.
+	 * Disposes storage listeners and pending writes.
 	 *
-	 * @param {number[]} value - The version as an array of numbers.
+	 * @returns {void}
 	 */
-	set version(value: number[]) {
-		this.#set("version", value);
-		this.#save();
+	dispose(): void {
+		this.#state.isDisposed = true;
+		if (this.#state.writeTimeout !== undefined)
+			clearTimeout(this.#state.writeTimeout);
+		if (this.#storageListener)
+			removeStorageChangeListener(this.#storageListener);
+		this.#storageListener = undefined;
 	}
 }
