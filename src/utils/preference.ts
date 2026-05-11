@@ -1,22 +1,4 @@
-import {
-	defaultPreferenceContent as defaultContent,
-	version,
-} from "./constants";
-import type {
-	PreferenceContent,
-	Rule,
-	RuleList,
-	RuleQueryResult,
-} from "./types";
-import {
-	addStorageChangeListener,
-	getStorageContent,
-	getWebExtId,
-	removeStorageChangeListener,
-	removeStorageKeys,
-	setStorageContent,
-	supportsThemeAPI,
-} from "./utility";
+import { defaultPreferenceContent as defaultContent } from "./constants";
 
 export default class preference {
 	/** The content of the preference. */

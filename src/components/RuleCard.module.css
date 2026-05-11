@@ -1,4 +1,4 @@
-.rule-section {
+.rule-card {
 	display: grid;
 	grid-template-columns:
 		minmax(0, 1fr) max-content calc(120 * var(--unit))

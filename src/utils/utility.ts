@@ -1,14 +1,3 @@
-import type {
-	BackgroundMessageListener,
-	MessageForBackground,
-	MessageForPopup,
-	MessageForTab,
-	PopupMessageListener,
-	Scheme,
-	TabMessageListener,
-	Theme,
-} from "./types";
-
 /** Match media for dark mode detection. */
 const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
 

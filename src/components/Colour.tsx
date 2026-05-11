@@ -1,6 +1,4 @@
-import { useState } from "react";
-import colour from "@/utils/colour";
-import styles from "./colour.module.css";
+import styles from "./Colour.module.css";
 
 interface ColourProps {
 	value?: string;

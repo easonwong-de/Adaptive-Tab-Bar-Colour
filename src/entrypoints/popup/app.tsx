@@ -1,13 +1,5 @@
-import { useEffect, useState } from "react";
-import preference from "@/utils/preference";
-import type { Cache, MessageForPopup } from "@/utils/types";
-import {
-	addMessageListener,
-	removeMessageListener,
-	sendMessageToBackground,
-} from "@/utils/utility";
-import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
-import RuleWidget from "./RuleWidget/RuleWidget";
+import CorrectionWidget from "./widgets/CorrectionWidget";
+import RuleWidget from "./widgets/RuleWidget";
 
 const pref = new preference();
 

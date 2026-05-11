@@ -1,9 +1,6 @@
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
-import type preference from "@/utils/preference";
-import Glyph from "@/components/Glyph/Glyph";
-import Slider from "@/components/Slider/Slider";
-import styles from "./theme.builder.module.css";
+import styles from "./ThemeBuilderTab.module.css";
 
 interface ThemeBuilderTabProps {
 	pref: preference;

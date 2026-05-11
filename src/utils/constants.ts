@@ -1,7 +1,3 @@
-import colour from "./colour";
-import type { BrowserColour, PreferenceContent, Scheme } from "./types";
-import { supportsThemeAPI } from "./utility";
-
 /** The version of ATBC. */
 export const version = [4, 0];
 

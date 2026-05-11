@@ -1,5 +1,3 @@
-import colour from "./colour";
-
 export type Scheme = "light" | "dark";
 
 export type BrowserColour =
