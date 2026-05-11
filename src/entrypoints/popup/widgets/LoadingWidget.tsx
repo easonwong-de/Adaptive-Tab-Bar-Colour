@@ -1,5 +1,4 @@
-import Icon from "@/components/Icon/Icon";
-import styles from "./loading.widget.module.css";
+import styles from "./LoadingWidget.module.css";
 
 export default function LoadingWidget() {
 	return (

@@ -1,5 +1,3 @@
-import { ColourCorrectionResult } from "./types";
-
 /**
  * Represents a colour with RGBA channels.
  *

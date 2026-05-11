@@ -1,5 +1,4 @@
-import Icon from "@/components/Icon/Icon";
-import styles from "./correction.widget.module.css";
+import styles from "./CorrectionWidget.module.css";
 
 export default function CorrectionWidget() {
 	return (

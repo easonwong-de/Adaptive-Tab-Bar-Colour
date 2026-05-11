@@ -1,20 +1,19 @@
 import clsx from "clsx";
-import Icon from "@/components/Icon/Icon";
-import styles from "./text.module.css";
+import styles from "./input.module.css";
 
-interface TextProps {
+interface InputProps {
 	value?: string;
 	placeholder?: string;
 	warning?: string;
 	onChange: (newValue: string) => void;
 }
 
-export default function Text({
+export default function Input({
 	value = "",
 	placeholder = "",
 	warning = "",
 	onChange,
-}: TextProps) {
+}: InputProps) {
 	return (
 		<div
 			className={clsx(

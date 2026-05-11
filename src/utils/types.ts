@@ -1,5 +1,3 @@
-import colour from "./colour";
-
 export type Scheme = "light" | "dark";
 
 export type BrowserColour =
@@ -51,10 +49,10 @@ export interface ThemeBuilderPreferenceContent {
 	popupBorder: number;
 	sidebar: number;
 	sidebarBorder: number;
-	tabbar: number;
-	tabbarBorder: number;
 	tabSelected: number;
 	tabSelectedBorder: number;
+	tabbar: number;
+	tabbarBorder: number;
 	toolbar: number;
 	toolbarBorder: number;
 	toolbarField: number;
@@ -110,26 +108,26 @@ export interface RuleQueryResult {
 }
 
 export type TabMetaReason =
+	| "ADDON_DEFAULT"
+	| "ADDON_PRESET"
+	| "ADDON_SPECIFIED"
 	| "COLOUR_PICKED"
 	| "COLOUR_SPECIFIED"
-	| "THEME_USED"
-	| "THEME_MISSING"
-	| "THEME_IGNORED"
-	| "THEME_UNIGNORED"
-	| "QS_USED"
-	| "QS_FAILED"
-	| "QS_ERROR"
-	| "ADDON_SPECIFIED"
-	| "ADDON_PRESET"
-	| "ADDON_DEFAULT"
-	| "HOME_PAGE"
-	| "PROTECTED_PAGE"
-	| "IMAGE_VIEWER"
-	| "PDF_VIEWER"
-	| "JSON_VIEWER"
-	| "TEXT_VIEWER"
+	| "ERROR_OCCURRED"
 	| "FALLBACK_COLOUR"
-	| "ERROR_OCCURRED";
+	| "HOME_PAGE"
+	| "IMAGE_VIEWER"
+	| "JSON_VIEWER"
+	| "PDF_VIEWER"
+	| "PROTECTED_PAGE"
+	| "QS_ERROR"
+	| "QS_FAILED"
+	| "QS_USED"
+	| "TEXT_VIEWER"
+	| "THEME_IGNORED"
+	| "THEME_MISSING"
+	| "THEME_UNIGNORED"
+	| "THEME_USED";
 
 export interface MetaQueryResult {
 	colour: colour;
@@ -143,7 +141,7 @@ export interface ApplyThemeResult {
 	corrected: boolean;
 }
 
-export interface Cache {
+export interface CacheData {
 	ruleData: RuleQueryResult;
 	metaData: MetaQueryResult;
 	themeData: ApplyThemeResult;
@@ -164,7 +162,7 @@ export type MessageForBackground =
 	| { header: "UPDATE_COLOUR"; colour: TabColourData }
 	| { header: "SCRIPT_READY" | "SCHEME_REQUEST" | "CACHE_REQUEST" };
 
-export type MessageForPopup = { header: "CACHE_UPDATE"; cache: Cache };
+export type MessageForPopup = { header: "CACHE_UPDATE"; cache: CacheData };
 
 export type MessageForTab =
 	| {

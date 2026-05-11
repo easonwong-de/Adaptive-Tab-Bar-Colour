@@ -1,14 +1,7 @@
-import clsx from "clsx";
-import {
-	CSSProperties,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
 import colour from "@/utils/colour";
-import styles from "./colour.module.css";
+import clsx from "clsx";
+import { type CSSProperties } from "react";
+import styles from "./Colour.module.css";
 
 interface ColourProps {
 	value?: string;
@@ -136,14 +129,14 @@ function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
 	const [format, setFormat] = useState<ColourFormat>("HEX");
 
 	useEffect(() => {
-		setHwb((previousHwb) => {
+		setHwb((lastHwb) => {
 			const previousHex = new colour()
-				.hwb(previousHwb.h, previousHwb.w, previousHwb.b)
+				.hwb(lastHwb.h, lastHwb.w, lastHwb.b)
 				.toHex();
-			if (value.toHex() === previousHex) return previousHwb;
+			if (value.toHex() === previousHex) return lastHwb;
 			const nextHwb = value.toHWB();
 			if (nextHwb.w + nextHwb.b >= 100) {
-				return { h: previousHwb.h, w: nextHwb.w, b: nextHwb.b };
+				return { h: lastHwb.h, w: nextHwb.w, b: nextHwb.b };
 			}
 			return nextHwb;
 		});

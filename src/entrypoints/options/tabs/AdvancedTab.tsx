@@ -1,13 +1,7 @@
+import preference from "@/utils/preference";
 import clsx from "clsx";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import type preference from "@/utils/preference";
-import { addSchemeChangeListener, getSystemScheme } from "@/utils/utility";
-import Colour from "@/components/Colour/Colour";
-import Confirm from "@/components/Confirm/Confirm";
-import Icon from "@/components/Icon/Icon";
-import Slider from "@/components/Slider/Slider";
-import Switch from "@/components/Switch/Switch";
-import styles from "./advanced.tab.module.css";
+import { useSyncExternalStore } from "react";
+import styles from "./AdvancedSettingsTab.module.css";
 
 interface AdvancedTabProps {
 	pref: preference;

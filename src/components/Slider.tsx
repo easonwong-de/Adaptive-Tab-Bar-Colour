@@ -1,14 +1,6 @@
 import clsx from "clsx";
-import {
-	type CSSProperties,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import { clamp } from "@/utils/utility";
-import Icon from "@/components/Icon/Icon";
-import styles from "./slider.module.css";
+import { type CSSProperties } from "react";
+import styles from "./Slider.module.css";
 
 interface SliderProps {
 	disabled?: boolean;

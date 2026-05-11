@@ -1,12 +1,3 @@
-import type {
-	MessageForTab,
-	TabColourData,
-	TabElementColourData,
-	TabSpecialColourData,
-	TabThemeColourData,
-} from "@/utils/types";
-import { sendMessageToBackground } from "@/utils/utility";
-
 let query: string | undefined;
 let colourDataCache: TabColourData | undefined;
 

@@ -1,9 +1,7 @@
+import preference from "@/utils/preference";
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
-import Glyph from "@/components/Glyph/Glyph";
-import Icon from "@/components/Icon/Icon";
-import Slider from "@/components/Slider/Slider";
-import styles from "./theme.widget.module.css";
+import styles from "./ThemeWidget.module.css";
 
 interface ThemeWidgetProps {
 	ready: boolean;

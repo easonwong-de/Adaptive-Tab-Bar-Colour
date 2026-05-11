@@ -1,12 +1,7 @@
+import preference from "@/utils/preference";
 import clsx from "clsx";
-import { useRef, useSyncExternalStore } from "react";
-import type preference from "@/utils/preference";
-import { ThemeBuilderPreferenceContent } from "@/utils/types";
-import Confirm from "@/components/Confirm/Confirm";
-import Glyph from "@/components/Glyph/Glyph";
-import Icon from "@/components/Icon/Icon";
-import Slider from "@/components/Slider/Slider";
-import styles from "./theme.tab.module.css";
+import { useSyncExternalStore } from "react";
+import styles from "./ThemeTab.module.css";
 
 interface ThemeTabProps {
 	pref: preference;

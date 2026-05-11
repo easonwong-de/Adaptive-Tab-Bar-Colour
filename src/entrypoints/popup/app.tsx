@@ -1,27 +1,20 @@
-import { CSSProperties, useEffect, useState } from "react";
 import preference from "@/utils/preference";
-import type { Cache, MessageForPopup } from "@/utils/types";
-import {
-	addMessageListener,
-	removeMessageListener,
-	sendMessageToBackground,
-} from "@/utils/utility";
-import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
-import LoadingWidget from "./LoadingWidget/LoadingWidget";
-import RuleWidget from "./RuleWidget/RuleWidget";
-import ThemeWidget from "./ThemeWidget/ThemeWidget";
+import CorrectionWidget from "./widgets/CorrectionWidget";
+import LoadingWidget from "./widgets/LoadingWidget";
+import RuleWidget from "./widgets/RuleWidget";
+import ThemeWidget from "./widgets/ThemeWidget";
 
 const pref = new preference();
 
-async function getCache(): Promise<Cache | undefined> {
-	return await sendMessageToBackground<Cache | undefined>({
+async function getCache(): Promise<CacheData | undefined> {
+	return await sendMessageToBackground<CacheData | undefined>({
 		header: "CACHE_REQUEST",
 	});
 }
 
 export default function App() {
 	const [ready, setReady] = useState(false);
-	const [cache, setCache] = useState<Cache | undefined>();
+	const [cache, setCache] = useState<CacheData | undefined>();
 
 	function handleMessage(message: MessageForPopup): void {
 		if (message.header === "CACHE_UPDATE") setCache(message.cache);

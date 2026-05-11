@@ -1,4 +1,4 @@
-import styles from "./glyph.module.css";
+import styles from "./Glyph.module.css";
 
 export default function Glyph({
 	highlight,

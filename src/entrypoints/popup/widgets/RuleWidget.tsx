@@ -1,13 +1,6 @@
+import preference from "@/utils/preference";
 import { useSyncExternalStore } from "react";
-import type preference from "@/utils/preference";
-import type {
-	MetaQueryResult,
-	RuleQueryResult,
-	TabMetaReason,
-} from "@/utils/types";
-import Icon from "@/components/Icon/Icon";
-import Rule from "@/components/Rule/Rule";
-import styles from "./rule.widget.module.css";
+import styles from "./RuleWidget.module.css";
 
 interface RuleWidgetProps {
 	pref: preference;
@@ -141,7 +134,7 @@ function RuleControls({
 	if (ruleData.id !== 0) {
 		return (
 			<>
-				<Rule
+				<RuleCard
 					inPopup
 					rule={ruleData.rule}
 					onChange={(newRule) => pref.setRule(ruleData.id, newRule)}

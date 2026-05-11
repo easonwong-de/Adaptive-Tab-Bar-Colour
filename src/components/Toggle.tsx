@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import styles from "./toggle.module.css";
+import styles from "./Toggle.module.css";
 
 interface ToggleProps {
 	isTabToggle?: boolean;

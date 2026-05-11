@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import preference from "@/utils/preference";
-import Toggle from "@/components/Toggle/Toggle";
-import AdvancedTab from "./AdvancedTab/AdvancedTab";
-import RuleTab from "./RuleTab/RuleTab";
-import ThemeTab from "./ThemeTab/ThemeTab";
+import AdvancedTab from "./tabs/AdvancedTab";
+import RuleTab from "./tabs/RuleTab";
+import ThemeTab from "./tabs/ThemeTab";
 
 const pref = new preference();
 

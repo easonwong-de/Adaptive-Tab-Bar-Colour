@@ -1,5 +1,4 @@
 import "@wxt-dev/browser";
-import type { Theme } from "./utils/types";
 
 declare module "@wxt-dev/browser" {
 	namespace Browser {

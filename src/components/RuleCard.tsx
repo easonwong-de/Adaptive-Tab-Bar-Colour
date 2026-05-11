@@ -1,12 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
-import type { Rule as RuleData } from "@/utils/types";
-import { getWebExtName } from "@/utils/utility";
-import Colour from "@/components/Colour/Colour";
-import Icon from "@/components/Icon/Icon";
-import Text from "@/components/Text/Text";
-import Toggle from "@/components/Toggle/Toggle";
-import styles from "./rule.module.css";
+import styles from "./RuleCard.module.css";
 
 const defaultValue = {
 	COLOUR: "#000000",
@@ -14,13 +7,17 @@ const defaultValue = {
 	QUERY_SELECTOR: "",
 };
 
-interface RuleProps {
-	rule: RuleData;
+interface RuleCardProps {
+	rule: Rule;
 	inPopup?: boolean;
-	onChange: (newRule: RuleData) => void;
+	onChange: (newRule: Rule) => void;
 }
 
-export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
+export default function RuleCard({
+	rule,
+	inPopup = false,
+	onChange,
+}: RuleCardProps) {
 	if (!rule) return null;
 
 	const [webExtName, setWebExtName] = useState(rule?.header);
@@ -46,14 +43,12 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 	})();
 
 	return (
-		<section
-			className={clsx(styles.ruleSection, inPopup && styles.inPopup)}
-		>
+		<section className={clsx(styles.ruleCard, inPopup && styles.inPopup)}>
 			{!inPopup &&
 				(rule.headerType === "ADDON_ID" ? (
 					<div className={styles.webExtHeader}>{webExtName}</div>
 				) : (
-					<Text
+					<Input
 						value={rule.header}
 						placeholder={i18n.t("urlDomainOrRegex")}
 						warning={i18n.t("thisPolicyWillBeIgnored")}
@@ -138,7 +133,7 @@ export default function Rule({ rule, inPopup = false, onChange }: RuleProps) {
 						);
 					case "QUERY_SELECTOR":
 						return (
-							<Text
+							<Input
 								value={rule.value}
 								placeholder={i18n.t("querySelector")}
 								onChange={(newValue) =>

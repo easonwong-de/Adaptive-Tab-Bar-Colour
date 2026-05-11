@@ -13,10 +13,7 @@ export default defineConfig({
 		},
 		default_locale: "en",
 		description: "__MSG_extensionDescription__",
-		developer: {
-			name: "Eason & Yue",
-			url: "https://easonwong.de/",
-		},
+		developer: { name: "Eason & Yue", url: "https://easonwong.de/" },
 		homepage_url:
 			"https://github.com/easonwong-de/adaptive-tab-bar-colour/",
 		icons: {

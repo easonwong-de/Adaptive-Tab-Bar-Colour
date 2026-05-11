@@ -7,7 +7,8 @@
 		"start": "wxt",
 		"build": "npm run format && wxt build",
 		"zip": "npm run format && wxt zip",
-		"format": "prettier --write --list-different src"
+		"format": "prettier --write --list-different src",
+		"postinstall": "wxt prepare"
 	},
 	"repository": {
 		"type": "git",
@@ -34,7 +35,7 @@
 	"dependencies": {
 		"@wxt-dev/i18n": "^0.2.5",
 		"clsx": "^2.1.1",
-		"react": "^19.2.5",
-		"react-dom": "^19.2.5"
+		"react": "^19.2.6",
+		"react-dom": "^19.2.6"
 	}
 }
