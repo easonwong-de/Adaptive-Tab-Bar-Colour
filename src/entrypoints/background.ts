@@ -18,40 +18,6 @@
  * Theme:
  * An object that defines the colour of the Firefox UI.
  */
-import colour from "@/utils/colour";
-import {
-	aboutPageColour,
-	mozillaPageColour,
-	plainTextExtension,
-	presetAddonPageColour,
-	sourcePageProtocol,
-} from "@/utils/constants";
-import preference from "@/utils/preference";
-import type {
-	ApplyThemeResult,
-	BrowserColour,
-	MessageForBackground,
-	MetaQueryResult,
-	Rule,
-	RuleQueryResult,
-	Scheme,
-	TabColourData,
-	Theme,
-} from "@/utils/types";
-import {
-	addMessageListener,
-	addSchemeChangeListener,
-	addTabChangeListener,
-	getActiveTabList,
-	getCurrentScheme,
-	getSystemScheme,
-	getWebExtName,
-	getWindowId,
-	isWindowIncognito,
-	sendMessageToPopup,
-	sendMessageToTab,
-	updateBrowserTheme,
-} from "@/utils/utility";
 
 /** Preference instance. */
 const pref = new preference();

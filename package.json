@@ -7,7 +7,8 @@
 		"start": "wxt",
 		"build": "npm run format && wxt build",
 		"zip": "npm run format && wxt zip",
-		"format": "prettier --write --list-different src"
+		"format": "prettier --write --list-different src",
+		"postinstall": "wxt prepare"
 	},
 	"repository": {
 		"type": "git",

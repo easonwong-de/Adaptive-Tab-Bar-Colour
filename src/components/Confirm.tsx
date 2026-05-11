@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import styles from "./confirm.module.css";
+import { type ReactNode } from "react";
+import styles from "./Confirm.module.css";
 
 interface ConfirmProps {
 	children: (args: {

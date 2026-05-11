@@ -1,8 +1,6 @@
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
-import type preference from "@/utils/preference";
-import Rule from "@/components/Rule/Rule";
-import styles from "./rule.list.module.css";
+import styles from "./RuleListTab.module.css";
 
 interface RuleListTabProps {
 	pref: preference;
@@ -21,7 +19,7 @@ export default function RuleListTab({ pref, ready }: RuleListTabProps) {
 				if (!rule) return null;
 				const id = Number(rawId);
 				return (
-					<Rule
+					<RuleCard
 						key={`rule${id}`}
 						rule={rule}
 						onChange={(newRule) => pref.setRule(id, newRule)}

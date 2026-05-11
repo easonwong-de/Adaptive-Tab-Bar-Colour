@@ -5,8 +5,6 @@ const config: Config = {
 	importOrder: [
 		"<BUILTIN_MODULES>",
 		"<THIRD_PARTY_MODULES>",
-		"^@/utils/(.*)$",
-		"^@/(.*)$",
 		"^[./](?!.*\\.css$)",
 		"^[./]",
 	],

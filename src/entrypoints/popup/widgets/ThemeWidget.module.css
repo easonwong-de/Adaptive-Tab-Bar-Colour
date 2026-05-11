@@ -1,0 +1,55 @@
+.theme-widget {
+	display: flex;
+	flex-direction: column;
+	gap: calc(8 * var(--unit));
+	border: 1px solid var(--transparent-0);
+	border-radius: calc(4 * var(--unit));
+	padding: calc(8 * var(--unit));
+
+	.glyph-wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		gap: calc(16 * var(--unit));
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+	}
+
+	.panel-wrapper {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: calc(8 * var(--unit));
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			gap: calc(8 * var(--unit));
+
+			& > div {
+				display: flex;
+				flex-direction: column;
+				gap: calc(8 * var(--unit));
+				border-radius: calc(4 * var(--unit));
+				background-color: var(--transparent-0);
+				padding: calc(8 * var(--unit));
+			}
+		}
+	}
+
+	button {
+		justify-content: center;
+		background-color: var(--transparent-0);
+
+		&:hover {
+			background-color: var(--transparent-1);
+		}
+
+		&:active {
+			background-color: var(--transparent-2);
+		}
+	}
+}
