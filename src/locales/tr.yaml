@@ -36,7 +36,7 @@ errorOccuredLocatingElement: "Şununla eşleşen HTML ögesi aranırken bir hata
 errorOccuredLocatingElementEnd: ", onun yerine renk web sayfasından seçildi"
 exportSettings: "Ayarları dışarı aktar"
 extensionDescription: "Firefox tema rengini web sitesinin görünümüyle eşlemek için değiştirir."
-extensionName: "Adaptive Tab Bar Color"
+extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Yedek renk: koyu"
 fallbackColourLight: "Yedek renk: açık"
 homepageColourDark: "Giriş sayfası rengi: koyu"
