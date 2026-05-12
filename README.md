@@ -1,8 +1,9 @@
 ![Icon](public/icon/icon-128.png)  
-![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)
-![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)
-![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-colour?color=blue&label=version)
-![Sponsors](https://img.shields.io/badge/sponsors-27-green)
+[![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
+[![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
+[![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-colour?color=violet&label=version)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
+[![Sponsors](https://img.shields.io/badge/sponsors-28-gold)](https://www.buymeacoffee.com/easonwong/)
+[![WXT](https://img.shields.io/badge/WXT-67D55E?logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTM1NC40MzUgNDE4LjE0MUMzODMuMjE3IDQxOC4xNDEgNDA2LjU1IDM5NC44MDggNDA2LjU1IDM2Ni4wMjZWMzEzLjkxSDQxNi4wMjZDNDQ0LjgwOCAzMTMuOTEgNDY4LjE0MSAyOTAuNTc4IDQ2OC4xNDEgMjYxLjc5NUM0NjguMTQxIDIzMy4wMTMgNDQ0LjgwOCAyMDkuNjggNDE2LjAyNiAyMDkuNjhINDA2LjU1VjE1Ny41NjVDNDA2LjU1IDEyOC43ODMgMzgzLjIxNyAxMDUuNDUgMzU0LjQzNSAxMDUuNDVIMzAyLjMyVjk1Ljk3NDVDMzAyLjMyIDY3LjE5MjEgMjc4Ljk4NyA0My44NTk0IDI1MC4yMDUgNDMuODU5NEMyMjEuNDIyIDQzLjg1OTQgMTk4LjA5IDY3LjE5MjEgMTk4LjA5IDk1Ljk3NDVWMTA1LjQ1SDE0NS45NzRDMTE3LjE5MiAxMDUuNDUgOTMuODU5NCAxMjguNzgzIDkzLjg1OTQgMTU3LjU2NVYyMDkuNjhIMTAzLjMzNUMxMzIuMTE3IDIwOS42OCAxNTUuNDUgMjMzLjAxMyAxNTUuNDUgMjYxLjc5NUMxNTUuNDUgMjkwLjU3OCAxMzIuMTE3IDMxMy45MSAxMDMuMzM1IDMxMy45MUg5My44NTk0VjQxOC4xNDFIMTk4LjA5VjQwOC42NjVDMTk4LjA5IDM3OS44ODMgMjIxLjQyMiAzNTYuNTUgMjUwLjIwNSAzNTYuNTVDMjc4Ljk4NyAzNTYuNTUgMzAyLjMyIDM3OS44ODMgMzAyLjMyIDQwOC42NjVWNDE4LjE0MUgzNTQuNDM1WiIgc3Ryb2tlPSIjNjdENTVFIiBzdHJva2Utd2lkdGg9IjQwIi8+PC9zdmc+&labelColor=grey&color=%2367D55E)](https://wxt.dev/)
 
 # Adaptive Tab Bar Colour
 
