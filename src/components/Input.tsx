@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import styles from "./input.module.css";
+import styles from "./Input.module.css";
 
 interface InputProps {
 	value?: string;
@@ -17,7 +17,7 @@ export default function Input({
 	return (
 		<div
 			className={clsx(
-				styles.text,
+				styles.input,
 				value === "" && warning !== "" && styles.warning,
 			)}
 		>

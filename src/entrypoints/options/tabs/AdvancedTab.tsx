@@ -1,7 +1,7 @@
 import preference from "@/utils/preference";
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
-import styles from "./AdvancedSettingsTab.module.css";
+import styles from "./AdvancedTab.module.css";
 
 interface AdvancedTabProps {
 	pref: preference;

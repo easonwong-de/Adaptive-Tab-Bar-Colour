@@ -96,7 +96,6 @@ body {
 	align-items: stretch;
 	gap: var(--unit-16);
 	padding: var(--unit-16) 0;
-	padding-block-end: calc(96 * var(--unit));
 	width: 100%;
 	max-width: calc(960 * var(--unit));
 	height: 100%;

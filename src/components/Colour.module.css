@@ -119,7 +119,7 @@
 			background-image:
 				linear-gradient(transparent 0%, #000 100%),
 				linear-gradient(to left, transparent 0%, #fff 100%);
-			aspect-ratio: 4/3;
+			aspect-ratio: 1/1;
 
 			.wb-iris {
 				position: absolute;
