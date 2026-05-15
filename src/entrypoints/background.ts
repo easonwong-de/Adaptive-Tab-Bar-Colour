@@ -563,10 +563,17 @@ async function setTabThemeColour(
 function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 	if (scheme !== "light" && scheme !== "dark") return;
 	const factor = scheme === "light" ? -1.5 : 1;
-	const textColour = scheme === "light" ? "#000000" : "#ffffff";
+	const primaryColour = scheme === "light" ? "#000000" : "#ffffff";
 	const secondaryColour = scheme === "light" ? "#0000001c" : "#ffffff1c";
+	const accentColour = pref.overwriteAccentColour
+		? scheme === "light"
+			? pref.accentColour_light
+			: pref.accentColour_dark
+		: "AccentColor";
+
 	const css = (value: number): string =>
 		colour.brightness(factor * value).toRGBA();
+
 	const theme: Theme = {
 		colors: {
 			// adaptive
@@ -592,20 +599,20 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 					? "transparent"
 					: css(pref.tabbarBorder + pref.tabbar),
 			// static
-			icons: textColour,
-			ntp_text: textColour,
-			popup_text: textColour,
-			sidebar_text: textColour,
-			tab_background_text: textColour,
-			tab_text: textColour,
-			toolbar_field_text: textColour,
-			toolbar_text: textColour,
+			icons: primaryColour,
+			ntp_text: primaryColour,
+			popup_text: primaryColour,
+			sidebar_text: primaryColour,
+			tab_background_text: primaryColour,
+			tab_text: primaryColour,
+			toolbar_field_text: primaryColour,
+			toolbar_text: primaryColour,
 			button_background_hover: secondaryColour,
 			toolbar_vertical_separator: secondaryColour,
-			toolbar_field_border_focus: "AccentColor",
-			popup_highlight: "AccentColor",
-			sidebar_highlight: "AccentColor",
-			icons_attention: "AccentColor",
+			toolbar_field_border_focus: accentColour,
+			popup_highlight: accentColour,
+			sidebar_highlight: accentColour,
+			icons_attention: accentColour,
 		},
 		properties: { color_scheme: "system", content_color_scheme: "system" },
 	};

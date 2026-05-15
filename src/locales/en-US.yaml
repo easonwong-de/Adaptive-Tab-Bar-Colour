@@ -57,6 +57,9 @@ minimumContrastTooltip: >-
 moreSettings: "More settings…"
 moreSettingsTooltip: "Open option page"
 no: "No"
+overwriteAccentColour: "Overwrite accent color"
+overwriteAccentColourTooltip: >-
+    Use a custom accent color instead of your system’s color for the URL bar and toolbar buttons.
 pageIsProtected: "This page is protected by browser"
 pickColourFromElement: "pick color from element"
 popUp: "Pop-up"

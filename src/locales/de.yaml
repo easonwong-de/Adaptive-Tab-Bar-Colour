@@ -63,6 +63,9 @@ minimumContrastTooltip: >-
 moreSettings: "Weitere Einstellungen…"
 moreSettingsTooltip: "Optionenseite öffnen"
 no: "Nein"
+overwriteAccentColour: "Akzentfarbe überschreiben"
+overwriteAccentColourTooltip: >-
+    Für die URL-Leiste und die Werkzeugleisten-Buttons eine benutzerdefinierte Akzentfarbe anstelle Ihrer Systemfarbe verwenden.
 pageIsProtected: "Diese Seite wird vom Browser geschützt"
 pickColourFromElement: "Farbe aus Element"
 popUp: "Pop-up"

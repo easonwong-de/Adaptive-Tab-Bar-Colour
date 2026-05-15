@@ -62,6 +62,9 @@ minimumContrastTooltip: >-
 moreSettings: "Plus de paramètres…"
 moreSettingsTooltip: "Ouvrir la page d'options"
 no: "Non"
+overwriteAccentColour: "Remplacer la couleur d'accentuation"
+overwriteAccentColourTooltip: >-
+    Utiliser une couleur d’accentuation personnalisée au lieu de la couleur de votre système pour la barre d’URL et les boutons de la barre d’outils.
 pageIsProtected: "Cette page est protégée par le navigateur"
 pickColourFromElement: "sélectionner la couleur de l'élément"
 popUp: "Pop-up"

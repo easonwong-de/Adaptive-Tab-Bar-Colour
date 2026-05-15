@@ -56,6 +56,9 @@ minimumContrastTooltip: >-
 moreSettings: "Mais opções…"
 moreSettingsTooltip: "Abre a página de opções"
 no: "Não"
+overwriteAccentColour: "Substituir cor de destaque"
+overwriteAccentColourTooltip: >-
+    Usar uma cor de destaque personalizada em vez da cor do seu sistema para a barra de URL e os botões da barra de ferramentas.
 pageIsProtected: "Essa página é protegida pelo navegador"
 pickColourFromElement: "Selecionar a cor a partir de um elemento"
 popUp: "Pop-up"

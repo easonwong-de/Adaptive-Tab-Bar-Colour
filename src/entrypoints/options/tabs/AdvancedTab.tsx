@@ -80,6 +80,93 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 				</section>
 				<section
 					className={clsx(
+						styles.cardSection,
+						pref.compatibilityMode && "disabled",
+					)}
+				>
+					<h3>{i18n.t("overwriteAccentColour")}</h3>
+					<Switch
+						label={i18n.t("overwriteAccentColourTooltip")}
+						active={pref.overwriteAccentColour}
+						onChange={(value) =>
+							(pref.overwriteAccentColour = value)
+						}
+					/>
+					{pref.overwriteAccentColour && (
+						<div className={styles.colourBox}>
+							<div>
+								<Colour
+									value={pref.accentColour_light}
+									onChange={(value) =>
+										(pref.accentColour_light = value)
+									}
+								/>
+								<h4>
+									{i18n.t("inLightMode")}
+									<button
+										className={styles.resetButton}
+										onClick={() =>
+											pref.reset(["accentColour_light"])
+										}
+									>
+										<Icon type="reset" size="text" />
+									</button>
+								</h4>
+							</div>
+							<div>
+								<Colour
+									value={pref.accentColour_dark}
+									onChange={(value) =>
+										(pref.accentColour_dark = value)
+									}
+								/>
+								<h4>
+									{i18n.t("inDarkMode")}
+									<button
+										className={styles.resetButton}
+										onClick={() =>
+											pref.reset(["accentColour_dark"])
+										}
+									>
+										<Icon type="reset" size="text" />
+									</button>
+								</h4>
+							</div>
+						</div>
+					)}
+				</section>
+			</div>
+			<div className={styles.column}>
+				<section className={styles.cardSection}>
+					<h3>{i18n.t("minimumContrast")}</h3>
+					<p>{i18n.t("minimumContrastTooltip")}</p>
+					<Slider
+						title={i18n.t("inLightMode")}
+						minValue={0}
+						maxValue={210}
+						minorStep={5}
+						majorStep={15}
+						value={pref.minContrast_light}
+						leftIconType="circle"
+						rightIconType="contrast"
+						onDisplay={(value) => (value / 10).toFixed(1)}
+						onChange={(value) => (pref.minContrast_light = value)}
+					/>
+					<Slider
+						title={i18n.t("inDarkMode")}
+						minValue={0}
+						maxValue={210}
+						minorStep={5}
+						majorStep={15}
+						value={pref.minContrast_dark}
+						leftIconType="circle"
+						rightIconType="contrast"
+						onDisplay={(value) => (value / 10).toFixed(1)}
+						onChange={(value) => (pref.minContrast_dark = value)}
+					/>
+				</section>
+				<section
+					className={clsx(
 						styles.listSection,
 						pref.compatibilityMode && "disabled",
 					)}
@@ -120,36 +207,6 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 							}
 						/>
 					</div>
-				</section>
-			</div>
-			<div className={styles.column}>
-				<section className={styles.cardSection}>
-					<h3>{i18n.t("minimumContrast")}</h3>
-					<p>{i18n.t("minimumContrastTooltip")}</p>
-					<Slider
-						title={i18n.t("inLightMode")}
-						minValue={0}
-						maxValue={210}
-						minorStep={5}
-						majorStep={15}
-						value={pref.minContrast_light}
-						leftIconType="circle"
-						rightIconType="contrast"
-						onDisplay={(value) => (value / 10).toFixed(1)}
-						onChange={(value) => (pref.minContrast_light = value)}
-					/>
-					<Slider
-						title={i18n.t("inDarkMode")}
-						minValue={0}
-						maxValue={210}
-						minorStep={5}
-						majorStep={15}
-						value={pref.minContrast_dark}
-						leftIconType="circle"
-						rightIconType="contrast"
-						onDisplay={(value) => (value / 10).toFixed(1)}
-						onChange={(value) => (pref.minContrast_dark = value)}
-					/>
 				</section>
 				<section className={styles.cardSection}>
 					<h3>{i18n.t("backupAndReset")}</h3>

@@ -9,6 +9,10 @@ export const default_homeBackground_dark = "#2b2a33";
 export const default_fallbackColour_light = "#ffffff";
 /** Default dark fallback colour. */
 export const default_fallbackColour_dark = "#2b2a33";
+/** Default light accent colour. */
+export const default_accentColour_light = "#0062fa";
+/** Default dark accent colour. */
+export const default_accentColour_dark = "#00cadb";
 
 /** Default compatibility mode setting. */
 export const default_compatibilityMode = !supportsThemeAPI();
@@ -105,6 +109,8 @@ export const defaultPreferenceContent = Object.freeze({
 	// rule list
 	ruleList: {},
 	// advanced
+	accentColour_dark: default_accentColour_dark,
+	accentColour_light: default_accentColour_light,
 	allowDarkLight: true,
 	compatibilityMode: default_compatibilityMode,
 	dynamic: true,
@@ -115,6 +121,7 @@ export const defaultPreferenceContent = Object.freeze({
 	minContrast_dark: 45,
 	minContrast_light: 90,
 	noThemeColour: true,
+	overwriteAccentColour: false,
 	// state
 	lastSave: 0,
 	version,

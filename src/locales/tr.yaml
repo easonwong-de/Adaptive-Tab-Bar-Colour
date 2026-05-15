@@ -57,6 +57,9 @@ minimumContrastTooltip: >-
 moreSettings: "Daha fazla ayar…"
 moreSettingsTooltip: "Seçenek sayfasını aç"
 no: "Hayır"
+overwriteAccentColour: "Vurgu renginin üzerine yaz"
+overwriteAccentColourTooltip: >-
+    URL çubuğu ve araç çubuğu düğmeleri için sistem renginiz yerine özel bir vurgu rengi kullanmak.
 pageIsProtected: "Bu sayfa tarayıcı tarafından korunuyor"
 pickColourFromElement: "ögeden renk seç"
 popUp: "Açılır pencere"

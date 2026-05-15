@@ -91,7 +91,7 @@ export default function Slider({
 					{title}
 					{warning && (
 						<span className={styles.warning} title={warning}>
-							<Icon type="warning" />
+							<Icon type="warning" size="text" />
 						</span>
 					)}
 				</h4>

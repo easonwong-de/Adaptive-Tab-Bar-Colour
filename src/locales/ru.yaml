@@ -59,6 +59,9 @@ minimumContrastTooltip: >-
 moreSettings: "Больше настроек…"
 moreSettingsTooltip: "Открыть страницу настроек"
 no: "Нет"
+overwriteAccentColour: "Перезаписать акцентный цвет"
+overwriteAccentColourTooltip: >-
+    Использовать собственный цвет акцента вместо цвета системы для адресной строки и кнопок панели инструментов.
 pageIsProtected: "Эта страница защищена браузером"
 pickColourFromElement: "выбрать цвет из элемента"
 popUp: "Всплывающее окно"

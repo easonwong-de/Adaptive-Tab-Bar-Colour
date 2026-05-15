@@ -134,9 +134,12 @@ export default class preference {
 			case "compatibilityMode":
 			case "dynamic":
 			case "noThemeColour":
+			case "overwriteAccentColour":
 				this.#content[key] =
 					typeof value === "boolean" ? value : defaultContent[key];
 				break;
+			case "accentColour_dark":
+			case "accentColour_light":
 			case "fallbackColour_dark":
 			case "fallbackColour_light":
 			case "homeBackground_dark":
@@ -806,6 +809,44 @@ export default class preference {
 	}
 
 	/**
+	 * Gets the accent colour for dark theme.
+	 *
+	 * @returns {string} The accent colour as a hex string.
+	 */
+	get accentColour_dark(): string {
+		return this.#content.accentColour_dark;
+	}
+
+	/**
+	 * Sets the accent colour for dark theme.
+	 *
+	 * @param {string} value - The accent colour as a hex string.
+	 */
+	set accentColour_dark(value: string) {
+		this.#set("accentColour_dark", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets the accent colour for light theme.
+	 *
+	 * @returns {string} The accent colour as a hex string.
+	 */
+	get accentColour_light(): string {
+		return this.#content.accentColour_light;
+	}
+
+	/**
+	 * Sets the accent colour for light theme.
+	 *
+	 * @param {string} value - The accent colour as a hex string.
+	 */
+	set accentColour_light(value: string) {
+		this.#set("accentColour_light", value);
+		this.#save();
+	}
+
+	/**
 	 * Gets whether dark/light scheme switching is allowed.
 	 *
 	 * @returns {boolean} `true` if scheme switching is allowed.
@@ -992,6 +1033,25 @@ export default class preference {
 	 */
 	set noThemeColour(value: boolean) {
 		this.#set("noThemeColour", value);
+		this.#save();
+	}
+
+	/**
+	 * Gets whether accent colour should be overwritten.
+	 *
+	 * @returns {boolean} `true` if the accent colour is overwritten.
+	 */
+	get overwriteAccentColour(): boolean {
+		return this.#content.overwriteAccentColour;
+	}
+
+	/**
+	 * Sets whether accent colour should be overwritten.
+	 *
+	 * @param {boolean} value - Whether to overwrite accent colour.
+	 */
+	set overwriteAccentColour(value: boolean) {
+		this.#set("overwriteAccentColour", value);
 		this.#save();
 	}
 

@@ -64,6 +64,8 @@ export interface PreferenceContent extends ThemeBuilderPreferenceContent {
 	// rule list
 	ruleList: RuleList;
 	// advanced
+	accentColour_dark: string;
+	accentColour_light: string;
 	allowDarkLight: boolean;
 	compatibilityMode: boolean;
 	dynamic: boolean;
@@ -74,6 +76,7 @@ export interface PreferenceContent extends ThemeBuilderPreferenceContent {
 	minContrast_dark: number;
 	minContrast_light: number;
 	noThemeColour: boolean;
+	overwriteAccentColour: boolean;
 	// state
 	lastSave: number;
 	version: number[];

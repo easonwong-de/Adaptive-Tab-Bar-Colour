@@ -67,6 +67,37 @@ main.advanced-tab {
 		}
 	}
 
+	.colour-box {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--unit-8);
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			gap: var(--unit-8);
+		}
+
+		.reset-button {
+			transform: scale(1);
+			transition-duration: 160ms;
+			transition-property: color, transform;
+			transition-timing-function: ease;
+			background-color: transparent;
+			padding: 0;
+			color: inherit;
+
+			&:hover {
+				transform: scale(1.04);
+				color: var(--text-primary);
+			}
+
+			&:active {
+				transform: scale(0.98);
+			}
+		}
+	}
+
 	.text-button {
 		justify-content: start;
 		vertical-align: text-bottom;

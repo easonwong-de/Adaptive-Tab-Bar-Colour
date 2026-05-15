@@ -132,10 +132,5 @@
 		align-items: center;
 		vertical-align: text-bottom;
 		cursor: help;
-
-		svg {
-			width: 1em;
-			height: 1em;
-		}
 	}
 }

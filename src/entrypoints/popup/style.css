@@ -178,17 +178,6 @@ hr {
 	height: var(--unit);
 }
 
-svg {
-	flex-shrink: 0;
-	align-self: center;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-	stroke-width: calc(1.5 * var(--unit));
-	margin: 0;
-	width: var(--unit-16);
-	height: var(--unit-16);
-}
-
 select {
 	display: flex;
 	vertical-align: middle;
