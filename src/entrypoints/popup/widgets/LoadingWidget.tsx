@@ -4,8 +4,8 @@ export default function LoadingWidget() {
 	return (
 		<section className={styles.loadingWidget}>
 			<div className={styles.loadingMessage}>
-				<Icon type="info" />
-				{i18n.t("loading")}
+				<Icon type="info" inline />
+				<span>{i18n.t("loading")}</span>
 			</div>
 		</section>
 	);

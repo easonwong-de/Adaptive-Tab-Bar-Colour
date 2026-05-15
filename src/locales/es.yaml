@@ -59,7 +59,7 @@ loading: "Cargando…"
 minimumContrast: "Contraste mínimo"
 minimumContrastTooltip: >-
     Establece la relación de contraste mínima entre la barra de pestañas y el texto. El color de la barra de pestañas se ajusta automáticamente si no se cumple la relación.
-moreSettings: "Más opciones…"
+moreSettings: "Más opciones"
 moreSettingsTooltip: "Abrir página de opciones"
 no: "No"
 overwriteAccentColour: "Sobrescribir color de acento"

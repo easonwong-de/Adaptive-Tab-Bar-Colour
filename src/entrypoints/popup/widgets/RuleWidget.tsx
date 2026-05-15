@@ -21,21 +21,22 @@ export default function RuleWidget({
 	return (
 		<section className={styles.ruleWidget}>
 			<div className={styles.infoMessage}>
-				<Icon type="info" />
-				<ReasonText reason={metaData.reason} info={metaData.info} />
+				<Icon type="info" inline />
+				<span>
+					<ReasonText reason={metaData.reason} info={metaData.info} />
+				</span>
 			</div>
 			<RuleControls pref={pref} ruleData={ruleData} metaData={metaData} />
 		</section>
 	);
 }
 
-function ReasonText({
-	reason,
-	info,
-}: {
+interface ReasonTextProps {
 	reason: TabMetaReason;
 	info?: string;
-}) {
+}
+
+function ReasonText({ reason, info }: ReasonTextProps) {
 	switch (reason) {
 		case "COLOUR_PICKED":
 			return i18n.t("colourPickedFromWebpage");
@@ -122,15 +123,13 @@ function ReasonText({
 	}
 }
 
-function RuleControls({
-	pref,
-	ruleData,
-	metaData,
-}: {
+interface RuleControlsProps {
 	pref: preference;
 	ruleData: RuleQueryResult;
 	metaData: MetaQueryResult;
-}) {
+}
+
+function RuleControls({ pref, ruleData, metaData }: RuleControlsProps) {
 	if (ruleData.id !== 0) {
 		return (
 			<>

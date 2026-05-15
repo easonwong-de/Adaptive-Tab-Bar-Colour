@@ -3,13 +3,23 @@ import styles from "./Icon.module.css";
 
 interface InputProps {
 	type: IconType;
-	size?: "text" | "default";
+	inline?: boolean;
+	size?: "default" | "small" | "text";
 }
 
-export default function Icon({ type, size = "default" }: InputProps) {
+export default function Icon({
+	type,
+	inline = false,
+	size = "default",
+}: InputProps) {
 	return (
 		<svg
-			className={clsx(styles.svg, size == "text" && styles.textSize)}
+			className={clsx(
+				styles.icon,
+				inline && styles.inline,
+				size === "small" && styles.smallSize,
+				size === "text" && styles.textSize,
+			)}
 			viewBox="0 0 24 24"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
@@ -113,6 +123,15 @@ export default function Icon({ type, size = "default" }: InputProps) {
 								stroke="currentColor"
 								d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
 							/>
+						);
+					case "redirect":
+						return (
+							<g transform="translate(6 6) scale(0.5)">
+								<path
+									fill="currentColor"
+									d="M24 21.3458L24 2.6542C23.9924 2.30627 23.9162 1.96326 23.7757 1.64486C23.5076 1.00284 22.9971 0.492414 22.3551 0.224296C22.0367 0.0838162 21.6937 0.00759496 21.3458 4.08822e-07L2.6542 0C2.30565 1.04504e-08 1.96051 0.0686522 1.63848 0.202038C1.31646 0.335425 1.02386 0.530932 0.777398 0.777397C0.279638 1.27516 5.15199e-08 1.95026 0 2.6542C-5.15207e-08 3.35814 0.279639 4.03325 0.777399 4.53101C1.27516 5.02877 1.95026 5.30841 2.6542 5.30841L14.972 5.28972L0.785046 19.4766C0.289315 19.9724 0.0108134 20.6447 0.0108133 21.3458C0.0108133 22.0468 0.289314 22.7192 0.785045 23.2149C1.28078 23.7107 1.95313 23.9892 2.6542 23.9892C3.35527 23.9892 4.02763 23.7107 4.52336 23.2149L18.7103 9.02803L18.6916 21.3458C18.6901 21.6947 18.7578 22.0405 18.8907 22.3632C19.0236 22.6859 19.219 22.979 19.4658 23.2258C19.7125 23.4725 20.0057 23.668 20.3284 23.8009C20.651 23.9337 20.9968 24.0014 21.3458 24C21.6947 24.0014 22.0405 23.9337 22.3632 23.8009C22.6859 23.668 22.979 23.4725 23.2258 23.2258C23.4725 22.979 23.668 22.6859 23.8009 22.3632C23.9337 22.0405 24.0014 21.6947 24 21.3458Z"
+								/>
+							</g>
 						);
 					case "border":
 						return (

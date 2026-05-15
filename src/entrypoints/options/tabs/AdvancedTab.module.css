@@ -3,7 +3,7 @@ main.advanced-tab {
 	grid-template-columns: 1fr 1fr;
 	gap: var(--unit-16);
 
-	@media screen and (max-width: 600px) {
+	@media screen and (max-width: 550px) {
 		grid-template-columns: 1fr;
 	}
 
@@ -67,10 +67,19 @@ main.advanced-tab {
 		}
 	}
 
-	.colour-box {
+	.slider-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: var(--unit-8);
+		margin-block-start: var(--unit-8);
+		width: 100%;
+	}
+
+	.colour-wrapper {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: var(--unit-8);
+		margin-block-start: var(--unit-8);
 
 		& > div {
 			display: flex;
@@ -100,8 +109,6 @@ main.advanced-tab {
 
 	.text-button {
 		justify-content: start;
-		vertical-align: text-bottom;
-		gap: var(--unit-8);
 		box-sizing: border-box;
 		padding-inline: var(--unit-8);
 		width: 100%;

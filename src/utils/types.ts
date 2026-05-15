@@ -215,6 +215,7 @@ export type IconType =
 	| "upload"
 	| "download"
 	| "info"
+	| "redirect"
 	| "border"
 	| "background"
 	| "backgroundOnFocus";

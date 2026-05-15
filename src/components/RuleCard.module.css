@@ -20,6 +20,14 @@
 		background-color: var(--panel);
 		padding: var(--unit-8);
 
+		&:nth-of-type(even) {
+			background-color: var(--panel-alt);
+		}
+
+		select {
+			width: max-content;
+		}
+
 		@media screen and (max-width: 550px) {
 			grid-template-columns:
 				minmax(max-content, 1fr) minmax(0, 1fr)
@@ -32,14 +40,6 @@
 			select {
 				width: 100%;
 			}
-		}
-
-		&:nth-of-type(even) {
-			background-color: var(--panel-alt);
-		}
-
-		select {
-			width: max-content;
 		}
 	}
 

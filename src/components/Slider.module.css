@@ -1,23 +1,9 @@
 .slider {
 	display: flex;
-	flex-direction: column;
-	gap: var(--unit-8);
+	flex-direction: row;
+	justify-content: center;
+	gap: var(--unit-4);
 	width: 100%;
-
-	.body {
-		display: flex;
-		flex-direction: row;
-		justify-content: center;
-		gap: var(--unit-4);
-	}
-
-	.popup-display {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: var(--unit-32);
-		font-variant-numeric: tabular-nums;
-	}
 
 	.track {
 		display: flex;
@@ -32,13 +18,6 @@
 		overflow: hidden;
 		line-height: 100%;
 		text-align: center;
-
-		.display {
-			position: relative;
-			z-index: 1;
-			pointer-events: none;
-			font-variant-numeric: tabular-nums;
-		}
 
 		.fill {
 			position: absolute;
@@ -113,6 +92,21 @@
 		}
 	}
 
+	.display {
+		position: relative;
+		z-index: 1;
+		pointer-events: none;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.popup-display {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: calc(28 * var(--unit));
+		font-variant-numeric: tabular-nums;
+	}
+
 	button {
 		flex-shrink: 0;
 		border-radius: var(--unit-12);
@@ -121,16 +115,9 @@
 		color: var(--text-primary);
 
 		&.popup-button {
-			border-radius: calc(14 * var(--unit));
-			width: calc(28 * var(--unit));
-			height: calc(28 * var(--unit));
+			border-radius: var(--unit-12);
+			width: calc(2 * var(--unit-12));
+			height: calc(2 * var(--unit-12));
 		}
-	}
-
-	.warning {
-		display: inline-flex;
-		align-items: center;
-		vertical-align: text-bottom;
-		cursor: help;
 	}
 }

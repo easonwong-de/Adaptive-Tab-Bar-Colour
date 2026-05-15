@@ -93,7 +93,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 						}
 					/>
 					{pref.overwriteAccentColour && (
-						<div className={styles.colourBox}>
+						<div className={styles.colourWrapper}>
 							<div>
 								<Colour
 									value={pref.accentColour_light}
@@ -140,30 +140,38 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 				<section className={styles.cardSection}>
 					<h3>{i18n.t("minimumContrast")}</h3>
 					<p>{i18n.t("minimumContrastTooltip")}</p>
-					<Slider
-						title={i18n.t("inLightMode")}
-						minValue={0}
-						maxValue={210}
-						minorStep={5}
-						majorStep={15}
-						value={pref.minContrast_light}
-						leftIconType="circle"
-						rightIconType="contrast"
-						onDisplay={(value) => (value / 10).toFixed(1)}
-						onChange={(value) => (pref.minContrast_light = value)}
-					/>
-					<Slider
-						title={i18n.t("inDarkMode")}
-						minValue={0}
-						maxValue={210}
-						minorStep={5}
-						majorStep={15}
-						value={pref.minContrast_dark}
-						leftIconType="circle"
-						rightIconType="contrast"
-						onDisplay={(value) => (value / 10).toFixed(1)}
-						onChange={(value) => (pref.minContrast_dark = value)}
-					/>
+					<div className={styles.sliderWrapper}>
+						<Slider
+							minValue={0}
+							maxValue={210}
+							minorStep={5}
+							majorStep={15}
+							value={pref.minContrast_light}
+							leftIconType="circle"
+							rightIconType="contrast"
+							onDisplay={(value) => (value / 10).toFixed(1)}
+							onChange={(value) =>
+								(pref.minContrast_light = value)
+							}
+						/>
+						<h4>{i18n.t("inLightMode")}</h4>
+					</div>
+					<div className={styles.sliderWrapper}>
+						<Slider
+							minValue={0}
+							maxValue={210}
+							minorStep={5}
+							majorStep={15}
+							value={pref.minContrast_dark}
+							leftIconType="circle"
+							rightIconType="contrast"
+							onDisplay={(value) => (value / 10).toFixed(1)}
+							onChange={(value) =>
+								(pref.minContrast_dark = value)
+							}
+						/>
+						<h4>{i18n.t("inDarkMode")}</h4>
+					</div>
 				</section>
 				<section
 					className={clsx(
@@ -226,14 +234,14 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 						}}
 					>
 						<Icon type="download" />
-						{i18n.t("exportSettings")}
+						<span>{i18n.t("exportSettings")}</span>
 					</button>
 					<button
 						className={styles.textButton}
 						onClick={() => fileInputRef.current?.click()}
 					>
 						<Icon type="upload" />
-						{i18n.t("importSettings")}
+						<span>{i18n.t("importSettings")}</span>
 					</button>
 					<input
 						type="file"
@@ -263,7 +271,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 								onClick={open}
 							>
 								<Icon type="reset" />
-								{i18n.t("resetAllSettings")}
+								<span>{i18n.t("resetAllSettings")}</span>
 							</button>
 						)}
 					</Confirm>

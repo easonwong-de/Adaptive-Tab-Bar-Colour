@@ -3,10 +3,7 @@ import { type CSSProperties } from "react";
 import styles from "./Slider.module.css";
 
 interface SliderProps {
-	disabled?: boolean;
 	inPopup?: boolean;
-	title?: string;
-	warning?: string;
 	minValue?: number;
 	maxValue?: number;
 	minorStep?: number;
@@ -14,16 +11,13 @@ interface SliderProps {
 	value?: number;
 	leftIconType?: IconType;
 	rightIconType?: IconType;
-	onChange?: (newValue: number) => void;
+	onChange: (newValue: number) => void;
 	onCommit?: (oldValue: number, newValue: number) => void;
 	onDisplay?: (value: number) => string;
 }
 
 export default function Slider({
-	disabled = false,
 	inPopup = false,
-	title = "",
-	warning = "",
 	minValue = -50,
 	maxValue = 50,
 	minorStep = 1,
@@ -31,71 +25,63 @@ export default function Slider({
 	value = minValue,
 	leftIconType = "moon",
 	rightIconType = "sun",
-	onChange = () => {},
+	onChange,
 	onCommit = () => {},
 	onDisplay = (value) => `${value}%`,
 }: SliderProps) {
 	return (
-		<div className={clsx(styles.slider, disabled && "disabled")}>
-			<div className={styles.body}>
-				<button
-					className={clsx(inPopup && styles.popupButton)}
-					onPointerDown={() => {
-						const newValue = clamp(
-							minValue,
-							(Math.ceil(value / majorStep) - 1) * majorStep,
-							maxValue,
-						);
-						if (value !== newValue) {
-							onChange(newValue);
-							onCommit(value, newValue);
-						}
-					}}
-				>
-					<Icon type={leftIconType} />
-				</button>
-				{inPopup ? (
-					<div className={styles.popupDisplay}>
-						{onDisplay(value)}
-					</div>
-				) : (
-					<SliderTrack
-						minValue={minValue}
-						maxValue={maxValue}
-						minorStep={minorStep}
-						value={value}
-						onChange={onChange}
-						onCommit={onCommit}
-						onDisplay={onDisplay}
-					/>
-				)}
-				<button
-					className={clsx(inPopup && styles.popupButton)}
-					onPointerDown={() => {
-						const newValue = clamp(
-							minValue,
-							(Math.floor(value / majorStep) + 1) * majorStep,
-							maxValue,
-						);
-						if (value !== newValue) {
-							onChange(newValue);
-							onCommit(value, newValue);
-						}
-					}}
-				>
-					<Icon type={rightIconType} />
-				</button>
-			</div>
-			{!inPopup && (
-				<h4>
-					{title}
-					{warning && (
-						<span className={styles.warning} title={warning}>
-							<Icon type="warning" size="text" />
-						</span>
-					)}
-				</h4>
+		<div className={styles.slider}>
+			<button
+				className={clsx(inPopup && styles.popupButton)}
+				onPointerDown={() => {
+					const newValue = clamp(
+						minValue,
+						(Math.ceil(value / majorStep) - 1) * majorStep,
+						maxValue,
+					);
+					if (value !== newValue) {
+						onChange(newValue);
+						onCommit(value, newValue);
+					}
+				}}
+			>
+				<Icon
+					type={leftIconType}
+					size={inPopup ? "small" : "default"}
+				/>
+			</button>
+			{inPopup ? (
+				<div className={styles.popupDisplay}>{onDisplay(value)}</div>
+			) : (
+				<SliderTrack
+					minValue={minValue}
+					maxValue={maxValue}
+					minorStep={minorStep}
+					value={value}
+					onChange={onChange}
+					onCommit={onCommit}
+					onDisplay={onDisplay}
+				/>
 			)}
+			<button
+				className={clsx(inPopup && styles.popupButton)}
+				onPointerDown={() => {
+					const newValue = clamp(
+						minValue,
+						(Math.floor(value / majorStep) + 1) * majorStep,
+						maxValue,
+					);
+					if (value !== newValue) {
+						onChange(newValue);
+						onCommit(value, newValue);
+					}
+				}}
+			>
+				<Icon
+					type={rightIconType}
+					size={inPopup ? "small" : "default"}
+				/>
+			</button>
 		</div>
 	);
 }

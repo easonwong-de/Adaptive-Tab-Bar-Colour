@@ -54,7 +54,7 @@ loading: "Loading…"
 minimumContrast: "Minimum contrast"
 minimumContrastTooltip: >-
     Set the minimum contrast ratio between the tab bar and text. The tab bar color adjusts automatically if the ratio is not met.
-moreSettings: "More settings…"
+moreSettings: "More settings"
 moreSettingsTooltip: "Open option page"
 no: "No"
 overwriteAccentColour: "Overwrite accent color"

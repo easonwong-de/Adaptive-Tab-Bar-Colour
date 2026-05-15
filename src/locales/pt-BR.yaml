@@ -53,7 +53,7 @@ loading: "Carregando…"
 minimumContrast: "Contraste mínimo"
 minimumContrastTooltip: >-
     Ajuste o contraste mínimo entre a aba e o texto. A cor da aba é ajustada automaticamente se o contraste mínimo não for alcançado.
-moreSettings: "Mais opções…"
+moreSettings: "Mais opções"
 moreSettingsTooltip: "Abre a página de opções"
 no: "Não"
 overwriteAccentColour: "Substituir cor de destaque"

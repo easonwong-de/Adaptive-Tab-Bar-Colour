@@ -1,12 +1,11 @@
 import styles from "./Glyph.module.css";
 
-export default function Glyph({
-	highlight,
-	scale = 1,
-}: {
+interface GlyphProps {
 	highlight: GlyphHighlight;
 	scale?: number;
-}) {
+}
+
+export default function Glyph({ highlight, scale = 1 }: GlyphProps) {
 	return (
 		<svg
 			width={scale * 84}
@@ -41,7 +40,6 @@ export default function Glyph({
 				}
 				d="M79.0506 8.00012C79.0506 8.55241 78.6029 9.00012 78.0506 9.00012L26.4143 9.00011C26.1827 9.00011 26.0492 8.46177 26.2229 8.3086C26.6673 7.91675 27.0625 7.33389 27.0625 6.50011C27.0625 5.66634 26.6673 5.08348 26.2229 4.69163C26.0492 4.53845 26.1827 4.00011 26.4143 4.00011L76.0506 4.00012C77.7075 4.00012 79.0506 5.34327 79.0506 7.00012L79.0506 8.00012Z"
 			/>
-
 			<path
 				className={
 					highlight === "sidebar"
@@ -50,7 +48,6 @@ export default function Glyph({
 				}
 				d="M5 19C5 18.4477 5.44772 18 6 18H28C28.5523 18 29 18.4477 29 19V50C29 50.5523 28.5523 51 28 51H8C6.34315 51 5 49.6569 5 48V19Z"
 			/>
-
 			{highlight === "popup" ? (
 				<>
 					<path

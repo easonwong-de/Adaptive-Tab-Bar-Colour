@@ -20,20 +20,20 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 		<section className={clsx(styles.themeWidget, !ready && "disabled")}>
 			<h2>{i18n.t("themeBuilder")}</h2>
 			<div className={styles.glyphWrapper}>
-				<Glyph highlight={hover} scale={1.5} />
+				<Glyph highlight={hover} scale={1.25} />
 				<div>
 					<p>
-						<Icon type="background" />
-						{i18n.t("background")}
+						<Icon type="background" inline size="small" />
+						<span>{i18n.t("background")}</span>
 					</p>
 					<p>
-						<Icon type="backgroundOnFocus" />
-						{i18n.t("backgroundOnFocus")}
+						<Icon type="backgroundOnFocus" inline size="small" />
+						<span>{i18n.t("backgroundOnFocus")}</span>
 					</p>
 
 					<p>
-						<Icon type="border" />
-						{i18n.t("border")}
+						<Icon type="border" inline size="small" />
+						<span>{i18n.t("border")}</span>
 					</p>
 				</div>
 			</div>
@@ -126,7 +126,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 						onMouseEnter={() => setHover("none")}
 						onClick={() => browser.runtime.openOptionsPage()}
 					>
-						{i18n.t("moreSettings")}
+						<span>{i18n.t("moreSettings")}</span>
+						<Icon type="redirect" inline size="text" />
 					</button>
 				</div>
 				<div>

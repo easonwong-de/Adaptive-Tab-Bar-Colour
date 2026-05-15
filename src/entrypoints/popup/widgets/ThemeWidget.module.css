@@ -14,14 +14,8 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			gap: var(--unit-8);
-
-			& > p {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				gap: var(--unit-8);
-			}
+			gap: var(--unit-4);
+			font-size: var(--unit-12);
 		}
 	}
 
@@ -31,12 +25,12 @@
 		--control-active: var(--app-3);
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: var(--unit-16);
+		gap: var(--unit-12);
 
 		& > div {
 			display: flex;
 			flex-direction: column;
-			gap: var(--unit-16);
+			gap: var(--unit-12);
 		}
 
 		.panel {
@@ -47,19 +41,22 @@
 			box-shadow: var(--shadow-small), var(--shadow-large);
 			border-radius: var(--unit-16);
 			background-color: var(--app-0);
-			padding: var(--unit-8);
+			padding: var(--unit-12);
 
 			& > div {
 				display: flex;
 				flex-direction: row;
-				gap: var(--unit-16);
+				gap: var(--unit-12);
 			}
 		}
 	}
 
 	.more-settings-button {
 		flex: 1;
+		align-self: start;
 		box-shadow: var(--shadow-small), var(--shadow-large);
+		padding-inline: var(--unit-8);
+		width: auto;
 		color: var(--text-secondary);
 		font-size: 80%;
 	}

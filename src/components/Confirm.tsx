@@ -27,6 +27,12 @@ export default function Confirm({
 		}
 	}, [isOpen]);
 
+	useEffect(() => {
+		const onBlur = () => setIsOpen(false);
+		document.addEventListener("blur", onBlur);
+		return () => document.removeEventListener("blur", onBlur);
+	}, []);
+
 	return (
 		<div className={styles.confirm} ref={containerRef}>
 			{children(() => setIsOpen(!isOpen))}

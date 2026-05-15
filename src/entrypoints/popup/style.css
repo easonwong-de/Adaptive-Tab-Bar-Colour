@@ -69,17 +69,15 @@ html {
 	user-select: none;
 	-webkit-font-smoothing: antialiased;
 	background-color: var(--app);
-	width: calc(368 * var(--unit));
-	min-width: calc(368 * var(--unit));
-	max-width: calc(368 * var(--unit));
+	width: auto;
 	font-weight: 450;
 }
 
 body {
 	margin: 0;
 	padding: 0;
-	width: 100%;
-	height: 100%;
+	width: auto;
+	height: auto;
 }
 
 #root {
@@ -89,9 +87,9 @@ body {
 	gap: var(--unit-8);
 	transition: background-color 0.1s;
 	background-color: var(--app);
-	padding: var(--unit-16);
-	width: 100%;
-	height: 100%;
+	padding: var(--unit-12);
+	width: min-content;
+	height: min-content;
 }
 
 *,
@@ -173,7 +171,7 @@ hr {
 	align-self: center;
 	margin: 0;
 	border-width: 0;
-	background-color: var(--app-0);
+	background-color: var(--app-1);
 	width: 25%;
 	height: var(--unit);
 }

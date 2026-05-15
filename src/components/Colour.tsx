@@ -9,6 +9,11 @@ interface ColourProps {
 	onChange: (newValue: string) => void;
 }
 
+interface Location {
+	orientation: "north" | "south";
+	deviation: "none" | "left" | "right";
+}
+
 export default function Colour({
 	value = "#000000",
 	inPopup = false,
@@ -16,10 +21,16 @@ export default function Colour({
 }: ColourProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const inputRef = useRef<HTMLInputElement | null>(null);
+	const previewRef = useRef<HTMLInputElement | null>(null);
+
 	const [isEditing, setIsEditing] = useState(false);
 	const [text, setText] = useState(value);
 	const [isPopupOpen, setIsPopupOpen] = useState(false);
 	const [popupValue, setPopupValue] = useState(value);
+	const [popupLocation, setPopupLocation] = useState<Location>({
+		orientation: "south",
+		deviation: "none",
+	});
 
 	const displayValue = isPopupOpen ? popupValue : value;
 	const displayColour = useMemo(
@@ -81,9 +92,38 @@ export default function Colour({
 				}}
 			/>
 			<div
+				ref={previewRef}
 				className={styles.preview}
 				style={{ backgroundColor: displayValue }}
-				onClick={() => setIsPopupOpen(!isPopupOpen)}
+				onClick={() => {
+					if (!isPopupOpen) {
+						const preview = previewRef.current;
+						if (!preview)
+							return setPopupLocation({
+								orientation: "south",
+								deviation: "none",
+							});
+						const rect = preview.getBoundingClientRect();
+						const width = 96;
+						const height = 256;
+						const top = rect.top;
+						const bottom = window.innerHeight - rect.bottom;
+						const left = rect.left;
+						const right = window.innerWidth - rect.right;
+						const orientation =
+							bottom >= height || top < height
+								? "south"
+								: "north";
+						const deviation =
+							left >= width && right >= width
+								? "none"
+								: left < width
+									? "right"
+									: "left";
+						setPopupLocation({ orientation, deviation });
+					}
+					setIsPopupOpen(!isPopupOpen);
+				}}
 			/>
 			{!inPopup && (
 				<input
@@ -102,6 +142,7 @@ export default function Colour({
 				<ColourPopup
 					value={displayColour}
 					inPopup={inPopup}
+					location={popupLocation}
 					onChange={(hex) => {
 						setText(hex);
 						setPopupValue(hex);
@@ -116,12 +157,13 @@ export default function Colour({
 interface ColourPopupProps {
 	value: colour;
 	inPopup: boolean;
+	location: Location;
 	onChange: (hex: string) => void;
 }
 
 type ColourFormat = "HEX" | "RGB" | "HWB" | "CSS";
 
-function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
+function ColourPopup({ value, inPopup, location, onChange }: ColourPopupProps) {
 	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
 	const hSliderRef = useRef<HTMLDivElement | null>(null);
 	const lastXRef = useRef(0);
@@ -182,7 +224,16 @@ function ColourPopup({ value, inPopup, onChange }: ColourPopupProps) {
 	);
 
 	return (
-		<div className={clsx(styles.popup, inPopup && styles.inPopup)}>
+		<div
+			className={clsx(
+				styles.popup,
+				inPopup && styles.inPopup,
+				location.orientation === "north" && styles.popupNorth,
+				location.orientation === "south" && styles.popupSouth,
+				location.deviation === "left" && styles.popupLeft,
+				location.deviation === "right" && styles.popupRight,
+			)}
+		>
 			<div
 				className={styles.wbPlane}
 				ref={wbPlaneRef}

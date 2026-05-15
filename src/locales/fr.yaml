@@ -59,7 +59,7 @@ loading: "Chargement…"
 minimumContrast: "Contraste minimum"
 minimumContrastTooltip: >-
     Défini le ratio de contraste minimal entre la barre d'onglets et le texte. La couleur de la barre d'onglets s'ajuste automatiquement si le ratio n'est pas respecté.
-moreSettings: "Plus de paramètres…"
+moreSettings: "Plus de paramètres"
 moreSettingsTooltip: "Ouvrir la page d'options"
 no: "Non"
 overwriteAccentColour: "Remplacer la couleur d'accentuation"

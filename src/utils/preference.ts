@@ -158,7 +158,11 @@ export default class preference {
 							})
 						: defaultContent[key];
 				break;
+			case "lastSave":
+			case "version":
+				break;
 			default:
+				console.warn("Unknown preference key:", key);
 				break;
 		}
 	}
@@ -1053,15 +1057,6 @@ export default class preference {
 	set overwriteAccentColour(value: boolean) {
 		this.#set("overwriteAccentColour", value);
 		this.#save();
-	}
-
-	/**
-	 * Gets the preferences version number.
-	 *
-	 * @returns {number[]} The version as an array of numbers.
-	 */
-	get version(): number[] {
-		return this.#content.version;
 	}
 
 	/**

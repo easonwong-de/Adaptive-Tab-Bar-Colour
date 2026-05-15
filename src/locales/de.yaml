@@ -60,7 +60,7 @@ loading: "Laden…"
 minimumContrast: "Minimaler Kontrast"
 minimumContrastTooltip: >-
     Stellt den minimalen Kontrast zwischen Tableiste und ihrem Text ein. Die Farbe der Tableiste wird automatisch angepasst, wenn der Kontrast nicht erreicht wird.
-moreSettings: "Weitere Einstellungen…"
+moreSettings: "Weitere Einstellungen"
 moreSettingsTooltip: "Optionenseite öffnen"
 no: "Nein"
 overwriteAccentColour: "Akzentfarbe überschreiben"

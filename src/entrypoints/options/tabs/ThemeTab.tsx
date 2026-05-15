@@ -50,78 +50,106 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 					<Glyph highlight="selectedTab" />
 					<div>
 						<h3>{i18n.t("selectedTab")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.tabSelected}
-							onChange={(newValue) =>
-								(pref.tabSelected = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("tabSelected", oldValue, newValue)
-							}
-						/>
-						<Slider
-							title={i18n.t("border")}
-							value={pref.tabSelectedBorder}
-							onChange={(newValue) =>
-								(pref.tabSelectedBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory(
-									"tabSelectedBorder",
-									oldValue,
-									newValue,
-								)
-							}
-						/>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.tabSelected}
+								onChange={(newValue) =>
+									(pref.tabSelected = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"tabSelected",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("background")}</h4>
+						</div>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.tabSelectedBorder}
+								onChange={(newValue) =>
+									(pref.tabSelectedBorder = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"tabSelectedBorder",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("border")}</h4>
+						</div>
 					</div>
 				</section>
 				<section className={clsx(pref.compatibilityMode && "disabled")}>
 					<Glyph highlight="toolbar" />
 					<div>
 						<h3>{i18n.t("toolbar")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.toolbar}
-							onChange={(newValue) => (pref.toolbar = newValue)}
-							onCommit={(oldValue, newValue) =>
-								addHistory("toolbar", oldValue, newValue)
-							}
-						/>
-						<Slider
-							title={i18n.t("border")}
-							value={pref.toolbarBorder}
-							onChange={(newValue) =>
-								(pref.toolbarBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("toolbarBorder", oldValue, newValue)
-							}
-						/>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.toolbar}
+								onChange={(newValue) =>
+									(pref.toolbar = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory("toolbar", oldValue, newValue)
+								}
+							/>
+							<h4>{i18n.t("background")}</h4>
+						</div>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.toolbarBorder}
+								onChange={(newValue) =>
+									(pref.toolbarBorder = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"toolbarBorder",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("border")}</h4>
+						</div>
 					</div>
 				</section>
 				<section className={clsx(pref.compatibilityMode && "disabled")}>
 					<Glyph highlight="sidebar" />
 					<div>
 						<h3>{i18n.t("sidebar")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.sidebar}
-							onChange={(newValue) => (pref.sidebar = newValue)}
-							onCommit={(oldValue, newValue) =>
-								addHistory("sidebar", oldValue, newValue)
-							}
-						/>
-						<Slider
-							title={i18n.t("border")}
-							value={pref.sidebarBorder}
-							onChange={(newValue) =>
-								(pref.sidebarBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("sidebarBorder", oldValue, newValue)
-							}
-						/>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.sidebar}
+								onChange={(newValue) =>
+									(pref.sidebar = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory("sidebar", oldValue, newValue)
+								}
+							/>
+							<h4>{i18n.t("background")}</h4>
+						</div>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.sidebarBorder}
+								onChange={(newValue) =>
+									(pref.sidebarBorder = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"sidebarBorder",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("border")}</h4>
+						</div>
 					</div>
 				</section>
 				<section className={styles.toolboxSection}>
@@ -186,95 +214,138 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 					<Glyph highlight="tabBar" />
 					<div>
 						<h3>{i18n.t("tabBar")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.tabbar}
-							onChange={(newValue) => (pref.tabbar = newValue)}
-							onCommit={(oldValue, newValue) =>
-								addHistory("tabbar", oldValue, newValue)
-							}
-						/>
-						<Slider
-							disabled={pref.compatibilityMode}
-							title={i18n.t("border")}
-							warning={i18n.t("ifVerticalTabsAreEnabled")}
-							value={pref.tabbarBorder}
-							onChange={(newValue) =>
-								(pref.tabbarBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("tabbarBorder", oldValue, newValue)
-							}
-						/>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.tabbar}
+								onChange={(newValue) =>
+									(pref.tabbar = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory("tabbar", oldValue, newValue)
+								}
+							/>
+							<h4>{i18n.t("background")}</h4>
+						</div>
+						<div
+							className={clsx(
+								styles.sliderWrapper,
+								pref.compatibilityMode && "disabled",
+							)}
+						>
+							<Slider
+								value={pref.tabbarBorder}
+								onChange={(newValue) =>
+									(pref.tabbarBorder = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"tabbarBorder",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>
+								{i18n.t("border")}
+								<span
+									className={styles.warning}
+									title={i18n.t("ifVerticalTabsAreEnabled")}
+								>
+									<Icon type="warning" inline size="text" />
+								</span>
+							</h4>
+						</div>
 					</div>
 				</section>
 				<section className={clsx(pref.compatibilityMode && "disabled")}>
 					<Glyph highlight="urlBar" />
 					<div>
 						<h3>{i18n.t("urlBar")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.toolbarField}
-							onChange={(newValue) =>
-								(pref.toolbarField = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("toolbarField", oldValue, newValue)
-							}
-						/>
-						<Slider
-							title={i18n.t("backgroundOnFocus")}
-							value={pref.toolbarFieldOnFocus}
-							onChange={(newValue) =>
-								(pref.toolbarFieldOnFocus = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory(
-									"toolbarFieldOnFocus",
-									oldValue,
-									newValue,
-								)
-							}
-						/>
-						<Slider
-							title={i18n.t("border")}
-							value={pref.toolbarFieldBorder}
-							onChange={(newValue) =>
-								(pref.toolbarFieldBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory(
-									"toolbarFieldBorder",
-									oldValue,
-									newValue,
-								)
-							}
-						/>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.toolbarField}
+								onChange={(newValue) =>
+									(pref.toolbarField = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"toolbarField",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("background")}</h4>
+						</div>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.toolbarFieldOnFocus}
+								onChange={(newValue) =>
+									(pref.toolbarFieldOnFocus = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"toolbarFieldOnFocus",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("backgroundOnFocus")}</h4>
+						</div>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.toolbarFieldBorder}
+								onChange={(newValue) =>
+									(pref.toolbarFieldBorder = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"toolbarFieldBorder",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("border")}</h4>
+						</div>
 					</div>
 				</section>
 				<section>
 					<Glyph highlight="popup" />
 					<div>
 						<h3>{i18n.t("popUp")}</h3>
-						<Slider
-							title={i18n.t("background")}
-							value={pref.popup}
-							onChange={(newValue) => (pref.popup = newValue)}
-							onCommit={(oldValue, newValue) =>
-								addHistory("popup", oldValue, newValue)
-							}
-						/>
-						<Slider
-							disabled={pref.compatibilityMode}
-							title={i18n.t("border")}
-							value={pref.popupBorder}
-							onChange={(newValue) =>
-								(pref.popupBorder = newValue)
-							}
-							onCommit={(oldValue, newValue) =>
-								addHistory("popupBorder", oldValue, newValue)
-							}
-						/>
+						<div className={styles.sliderWrapper}>
+							<Slider
+								value={pref.popup}
+								onChange={(newValue) => (pref.popup = newValue)}
+								onCommit={(oldValue, newValue) =>
+									addHistory("popup", oldValue, newValue)
+								}
+							/>
+							<h4>{i18n.t("background")}</h4>
+						</div>
+						<div
+							className={clsx(
+								styles.sliderWrapper,
+								pref.compatibilityMode && "disabled",
+							)}
+						>
+							<Slider
+								value={pref.popupBorder}
+								onChange={(newValue) =>
+									(pref.popupBorder = newValue)
+								}
+								onCommit={(oldValue, newValue) =>
+									addHistory(
+										"popupBorder",
+										oldValue,
+										newValue,
+									)
+								}
+							/>
+							<h4>{i18n.t("border")}</h4>
+						</div>
 					</div>
 				</section>
 			</div>
