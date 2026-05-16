@@ -20,8 +20,9 @@ export default function Colour({
 	onChange,
 }: ColourProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const inputRef = useRef<HTMLInputElement | null>(null);
-	const previewRef = useRef<HTMLInputElement | null>(null);
+	const previewRef = useRef<HTMLDivElement | null>(null);
+	const textInputRef = useRef<HTMLInputElement | null>(null);
+	const colourInputRef = useRef<HTMLInputElement | null>(null);
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [text, setText] = useState(value);
@@ -34,7 +35,7 @@ export default function Colour({
 
 	const displayValue = isPopupOpen ? popupValue : value;
 	const displayColour = useMemo(
-		() => new colour().parse(displayValue),
+		() => new colour(displayValue),
 		[displayValue],
 	);
 
@@ -46,7 +47,7 @@ export default function Colour({
 		const onPointerDown = (event: PointerEvent) => {
 			if (
 				!containerRef.current?.contains(event.target as Node) ||
-				inputRef.current?.contains(event.target as Node)
+				textInputRef.current?.contains(event.target as Node)
 			)
 				setIsPopupOpen(false);
 		};
@@ -67,7 +68,7 @@ export default function Colour({
 		<div className={styles.colour} ref={containerRef}>
 			<input
 				type="text"
-				ref={inputRef}
+				ref={textInputRef}
 				placeholder={i18n.t("anyCSSColour")}
 				title={i18n.t("anyCSSColour")}
 				value={isEditing ? text : displayValue}
@@ -82,7 +83,7 @@ export default function Colour({
 				}}
 				onChange={(e) => {
 					const value = e.target.value;
-					const hex = new colour().parse(value).toHex();
+					const hex = new colour(value).toHex();
 					setText(value);
 					setPopupValue(hex);
 					onChange(hex);
@@ -127,11 +128,12 @@ export default function Colour({
 			/>
 			{!inPopup && (
 				<input
+					ref={colourInputRef}
 					type="color"
 					value={displayValue}
 					onChange={(e) => {
 						const value = e.target.value;
-						const hex = new colour().parse(value).toHex();
+						const hex = new colour(value).toHex();
 						setText(value);
 						setPopupValue(hex);
 						onChange(hex);
@@ -143,6 +145,10 @@ export default function Colour({
 					value={displayColour}
 					inPopup={inPopup}
 					location={popupLocation}
+					openColourInput={() => {
+						setIsPopupOpen(false);
+						colourInputRef.current?.click();
+					}}
 					onChange={(hex) => {
 						setText(hex);
 						setPopupValue(hex);
@@ -158,12 +164,19 @@ interface ColourPopupProps {
 	value: colour;
 	inPopup: boolean;
 	location: Location;
+	openColourInput: () => void;
 	onChange: (hex: string) => void;
 }
 
 type ColourFormat = "HEX" | "RGB" | "HWB" | "CSS";
 
-function ColourPopup({ value, inPopup, location, onChange }: ColourPopupProps) {
+function ColourPopup({
+	value,
+	inPopup,
+	location,
+	openColourInput,
+	onChange,
+}: ColourPopupProps) {
 	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
 	const hSliderRef = useRef<HTMLDivElement | null>(null);
 	const lastXRef = useRef(0);
@@ -281,12 +294,19 @@ function ColourPopup({ value, inPopup, location, onChange }: ColourPopupProps) {
 			<div className={styles.toolbox}>
 				<select
 					value={format}
-					onChange={(e) => setFormat(e.target.value as ColourFormat)}
+					onChange={(e) => {
+						const value = e.target.value;
+						if (value === "SYS") openColourInput();
+						else setFormat(value as ColourFormat);
+					}}
 				>
 					<option value="HEX">HEX</option>
 					<option value="RGB">RGB</option>
 					<option value="HWB">HWB</option>
 					<option value="CSS">CSS</option>
+					{!inPopup && (
+						<option value="SYS">{i18n.t("system")}</option>
+					)}
 				</select>
 				{(() => {
 					switch (format) {
@@ -294,7 +314,9 @@ function ColourPopup({ value, inPopup, location, onChange }: ColourPopupProps) {
 							return (
 								<HEXInput
 									hex={value.toHex().slice(1)}
-									onChange={onChange}
+									onChange={(css) =>
+										onChange(new colour(css).toHex())
+									}
 								/>
 							);
 						case "RGB":
@@ -328,7 +350,9 @@ function ColourPopup({ value, inPopup, location, onChange }: ColourPopupProps) {
 							return (
 								<CSSInput
 									css={value.toHex()}
-									onChange={onChange}
+									onChange={(css) =>
+										onChange(new colour(css).toHex())
+									}
 								/>
 							);
 					}
@@ -362,7 +386,7 @@ function HEXInput({
 				onChange={(e) => {
 					const value = e.target.value;
 					if (value !== "" && !/^[0-9A-Fa-f]*$/.test(value)) return;
-					setText(value);
+					setText(value.toLowerCase());
 					if (value.length === 3 || value.length === 6)
 						onChange(`#${value}`);
 				}}
@@ -579,7 +603,7 @@ function CSSInput({
 	onChange,
 }: {
 	css: string;
-	onChange: (hex: string) => void;
+	onChange: (css: string) => void;
 }) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [text, setText] = useState(css);
@@ -601,7 +625,7 @@ function CSSInput({
 				onChange={(e) => {
 					const value = e.target.value;
 					setText(value);
-					onChange(new colour().parse(value).toHex());
+					onChange(value);
 				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") e.currentTarget.blur();

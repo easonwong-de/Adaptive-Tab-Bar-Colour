@@ -236,6 +236,7 @@
 			select {
 				margin-inline-end: var(--unit-2);
 				border-radius: var(--unit-8);
+				width: 5em;
 				height: var(--unit-20);
 			}
 

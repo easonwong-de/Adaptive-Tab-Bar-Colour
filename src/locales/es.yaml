@@ -101,3 +101,4 @@ usingSpecifiedColourForAddon: "Se está usando color especificado para páginas 
 usingSpecifiedColourForAddonEnd: "\0"
 usingThemeColour: "Se está usando el color del tema definido por el sitio web"
 yes: "Sí"
+system: "Sistema"
