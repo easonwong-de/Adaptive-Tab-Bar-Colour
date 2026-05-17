@@ -239,9 +239,7 @@ export default class preference {
 			value !== undefined &&
 			value !== null &&
 			Array.isArray(value) &&
-			value.every((item) => {
-				typeof item === "number" && !isNaN(item);
-			})
+			value.every((item) => typeof item === "number" && !isNaN(item))
 		);
 	}
 
