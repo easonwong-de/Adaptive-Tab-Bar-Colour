@@ -625,7 +625,7 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 export default defineBackground(() => {
 	(async () => {
 		await pref.initialise();
-		pref.setOnChangeListener(run);
+		pref.addOnChangeListener(run);
 		addSchemeChangeListener(run);
 		addTabChangeListener(run);
 		addMessageListener(handleMessage);

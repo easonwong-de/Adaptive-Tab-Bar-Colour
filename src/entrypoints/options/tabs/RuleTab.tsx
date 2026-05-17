@@ -10,7 +10,7 @@ interface RuleTabProps {
 
 export default function RuleTab({ pref, ready }: RuleTabProps) {
 	useSyncExternalStore(
-		(listener) => pref.setOnChangeListener(listener),
+		(listener) => pref.addOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
 

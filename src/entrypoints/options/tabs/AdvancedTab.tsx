@@ -10,7 +10,7 @@ interface AdvancedTabProps {
 
 export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 	useSyncExternalStore(
-		(listener) => pref.setOnChangeListener(listener),
+		(listener) => pref.addOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
 

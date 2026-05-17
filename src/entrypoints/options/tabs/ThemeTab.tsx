@@ -16,7 +16,7 @@ interface History {
 
 export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 	useSyncExternalStore(
-		(listener) => pref.setOnChangeListener(listener),
+		(listener) => pref.addOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
 
