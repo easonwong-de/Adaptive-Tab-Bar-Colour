@@ -61,11 +61,11 @@ export async function getStorageContent(): Promise<Record<string, unknown>> {
  * Saves content to local storage.
  *
  * @async
- * @param {Record<string, unknown>} content - The content to save.
+ * @param {Partial<PreferenceContent>} content - The content to save.
  * @returns {Promise<boolean>} `true` if saved successfully.
  */
 export async function setStorageContent(
-	content: Record<string, unknown>,
+	content: Partial<PreferenceContent>,
 ): Promise<boolean> {
 	try {
 		await browser.storage.local.set(content);

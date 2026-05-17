@@ -10,7 +10,7 @@ interface ThemeWidgetProps {
 
 export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 	useSyncExternalStore(
-		(listener) => pref.setOnChangeListener(listener),
+		(listener) => pref.addOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
 

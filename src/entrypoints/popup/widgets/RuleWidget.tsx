@@ -14,7 +14,7 @@ export default function RuleWidget({
 	metaData,
 }: RuleWidgetProps) {
 	useSyncExternalStore(
-		(listener) => pref.setOnChangeListener(listener),
+		(listener) => pref.addOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
 

@@ -9,10 +9,11 @@ export default class preference {
 		lastWrite: number;
 		isDisposed: boolean;
 		writeTimeout?: ReturnType<typeof setTimeout>;
-	} = { lastWrite: 0, isDisposed: false };
+		pendingUpdates: Partial<PreferenceContent>;
+	} = { lastWrite: 0, isDisposed: false, pendingUpdates: {} };
 
-	/** The listener for preference changes. */
-	#onChangeListener: () => void = () => {};
+	/** The listeners for preference changes. */
+	#onChangeListeners = new Set<() => void>();
 
 	/** Listener for storage changes. */
 	#storageListener?: (
@@ -36,13 +37,14 @@ export default class preference {
 		for (const key in result)
 			this.#set(key as keyof PreferenceContent, result[key]);
 		if (!supportsThemeAPI()) this.#set("compatibilityMode", true);
-		await this.#save();
+		await this.#save({ ...this.#content });
 
 		this.#storageListener = (changes, areaName) => {
 			if (areaName !== "local" || this.#state.isDisposed) return;
 			const nextLastSave = changes.lastSave?.newValue;
 			if (
 				typeof nextLastSave !== "number" ||
+				isNaN(nextLastSave) ||
 				nextLastSave <= this.#content.lastSave
 			)
 				return;
@@ -68,17 +70,22 @@ export default class preference {
 			for (const key of keys)
 				if (key in defaultContent) this.#set(key, defaultContent[key]);
 		} else this.#content = { ...defaultContent };
-		await this.#save();
+		await this.#save({ ...this.#content });
 	}
 
 	/**
 	 * Saves preferences to storage with a debounce.
 	 *
 	 * @private
+	 * @param {Partial<PreferenceContent>} updates - The content to save.
 	 */
-	async #save(): Promise<void> {
+	async #save(updates: Partial<PreferenceContent> = {}): Promise<void> {
 		if (this.#state.isDisposed) return;
 		this.syncUI();
+		this.#state.pendingUpdates = {
+			...this.#state.pendingUpdates,
+			...updates,
+		};
 		if (this.#state.writeTimeout !== undefined)
 			clearTimeout(this.#state.writeTimeout);
 		this.#state.writeTimeout = setTimeout(
@@ -86,10 +93,14 @@ export default class preference {
 				if (this.#state.isDisposed) return;
 				this.#state.lastWrite = Date.now();
 				const lastSave = Date.now();
-				const contentToSave = { ...this.#content, lastSave };
+				const contentToSave = {
+					...this.#state.pendingUpdates,
+					lastSave,
+				};
 				const didSave = await setStorageContent(contentToSave);
 				if (!didSave) return;
 				this.#content.lastSave = lastSave;
+				this.#state.pendingUpdates = {};
 				this.syncUI();
 			},
 			Math.max(0, 50 + this.#state.lastWrite - Date.now()),
@@ -119,7 +130,7 @@ export default class preference {
 			case "toolbarFieldBorder":
 			case "toolbarFieldOnFocus":
 				this.#content[key] =
-					typeof value === "number"
+					typeof value === "number" && !isNaN(value)
 						? this.#normaliseNumber(value, {
 								min: -50,
 								max: 50,
@@ -150,7 +161,7 @@ export default class preference {
 			case "minContrast_light":
 			case "minContrast_dark":
 				this.#content[key] =
-					typeof value === "number"
+					typeof value === "number" && !isNaN(value)
 						? this.#normaliseNumber(value, {
 								min: 0,
 								max: 210,
@@ -159,6 +170,8 @@ export default class preference {
 						: defaultContent[key];
 				break;
 			case "lastSave":
+				this.#content.lastSave = value as number;
+				break;
 			case "version":
 				break;
 			default:
@@ -175,23 +188,25 @@ export default class preference {
 	 * @returns {boolean} `true` if the value is a valid rule.
 	 */
 	#isRule(value: unknown): value is Rule {
-		return (
-			value === null ||
-			(this.#isRecord(value) &&
-				typeof value.header === "string" &&
-				(value.scheme === "both" ||
-					value.scheme === "dark" ||
-					value.scheme === "light") &&
-				(((value.headerType === "URL" ||
-					value.headerType === "ADDON_ID") &&
-					value.type === "COLOUR" &&
-					typeof value.value === "string") ||
-					(value.headerType === "URL" &&
-						((value.type === "THEME_COLOUR" &&
-							typeof value.value === "boolean") ||
-							(value.type === "QUERY_SELECTOR" &&
-								typeof value.value === "string")))))
-		);
+		if (value === null) {
+			return true;
+		} else if (
+			!this.#isRecord(value) ||
+			typeof value.header !== "string" ||
+			!["both", "dark", "light"].includes(value.scheme as string)
+		) {
+			return false;
+		} else if (value.headerType === "ADDON_ID") {
+			return value.type === "COLOUR" && typeof value.value === "string";
+		} else if (value.headerType === "URL") {
+			return (
+				(value.type === "COLOUR" && typeof value.value === "string") ||
+				(value.type === "THEME_COLOUR" &&
+					typeof value.value === "boolean") ||
+				(value.type === "QUERY_SELECTOR" &&
+					typeof value.value === "string")
+			);
+		} else return false;
 	}
 
 	/**
@@ -224,7 +239,9 @@ export default class preference {
 			value !== undefined &&
 			value !== null &&
 			Array.isArray(value) &&
-			value.every((item) => typeof item === "number")
+			value.every((item) => {
+				typeof item === "number" && !isNaN(item);
+			})
 		);
 	}
 
@@ -243,13 +260,10 @@ export default class preference {
 	): void {
 		if (this.#isNumberArray(content.version)) {
 			for (let i = 0; i < 3; i++) {
-				const contentPart = content.version[i] ?? 0;
-				const targetPart = version[i] ?? 0;
-				if (contentPart > targetPart) return;
-				if (contentPart < targetPart) {
-					callback();
-					return;
-				}
+				const current = content.version[i] ?? 0;
+				const target = version[i] ?? 0;
+				if (current > target) return;
+				if (current < target) return callback();
 			}
 			return;
 		}
@@ -318,16 +332,9 @@ export default class preference {
 		num: number,
 		{ min, max, step }: { min: number; max: number; step: number },
 	): number {
-		if (-1 < num && num < 1) num = Math.round(num * 100);
-		let clamped = clamp(min, num, max);
-		const remainder = (clamped - min) % step;
-		if (remainder !== 0) {
-			clamped =
-				remainder >= step / 2
-					? clamped + (step - remainder)
-					: clamped - remainder;
-		}
-		return Math.round(clamped);
+		if (num > -1 && num < 1) num = Math.round(num * 100);
+		const clamped = clamp(min, num, max);
+		return Math.round(Math.round((clamped - min) / step) * step + min);
 	}
 
 	/**
@@ -339,20 +346,17 @@ export default class preference {
 	 */
 	#normaliseRuleList(value: unknown): RuleList {
 		if (!this.#isRecord(value)) return {};
-		const entries = Object.entries(value)
+		return Object.entries(value)
 			.map(([id, rule]) => ({ id: Number(id), rule }))
 			.filter(
 				({ id, rule }) =>
 					Number.isInteger(id) && id > 0 && this.#isRule(rule),
 			)
-			.sort((first, second) => first.id - second.id);
-		const ruleList: RuleList = {};
-		let id = 1;
-		for (const entry of entries) {
-			ruleList[id] = entry.rule as Rule;
-			id++;
-		}
-		return ruleList;
+			.sort((first, second) => first.id - second.id)
+			.reduce(
+				(list, { rule }, i) => ({ ...list, [i + 1]: rule as Rule }),
+				{} as RuleList,
+			);
 	}
 
 	/**
@@ -374,7 +378,7 @@ export default class preference {
 		try {
 			const parsedPref = this.#normalise(JSON.parse(jsonString)).result;
 			for (const key in parsedPref) this.#set(key, parsedPref[key]);
-			await this.#save();
+			await this.#save({ ...this.#content });
 			return true;
 		} catch {
 			return false;
@@ -382,14 +386,14 @@ export default class preference {
 	}
 
 	/**
-	 * Registers the listener for preference changes.
+	 * Registers a listener for preference changes.
 	 *
 	 * @param {() => void} listener - The callback function.
 	 * @returns {() => void} A function to remove the listener.
 	 */
-	setOnChangeListener(listener: () => void): () => void {
-		this.#onChangeListener = listener;
-		return () => (this.#onChangeListener = () => {});
+	addOnChangeListener(listener: () => void): () => void {
+		this.#onChangeListeners.add(listener);
+		return () => this.#onChangeListeners.delete(listener);
 	}
 
 	/**
@@ -398,7 +402,7 @@ export default class preference {
 	 * @returns {void}
 	 */
 	syncUI(): void {
-		this.#onChangeListener();
+		for (const listener of this.#onChangeListeners) listener();
 	}
 
 	/**
@@ -432,7 +436,7 @@ export default class preference {
 	async setRule(id: number, rule: Rule): Promise<void> {
 		if (!this.#isRule(rule)) return;
 		this.#content.ruleList[id] = rule;
-		await this.#save();
+		await this.#save({ ruleList: this.#content.ruleList });
 	}
 
 	/**
@@ -455,42 +459,40 @@ export default class preference {
 	 * @returns {Promise<RuleQueryResult>} Result.
 	 */
 	async getRule(url: string = "", scheme: Scheme): Promise<RuleQueryResult> {
-		let id = 0;
-		let rule: Rule = null;
-		if (url === "") return { id, url, rule };
+		if (!url) return { id: 0, url, rule: null };
+
 		const webExtId = await getWebExtId(url);
-		for (const forId in this.#content.ruleList) {
-			const forRule = this.#content.ruleList[forId];
+		const cleanUrl = url.replace(/\/$/, "");
+		let match: RuleQueryResult = { id: 0, url, webExtId, rule: null };
+
+		for (const [forId, rule] of Object.entries(this.#content.ruleList)) {
 			if (
-				!this.#isRule(forRule) ||
-				forRule === null ||
-				forRule.header === "" ||
-				(forRule.scheme !== "both" && forRule.scheme !== scheme)
+				!this.#isRule(rule) ||
+				rule === null ||
+				!rule.header ||
+				(rule.scheme !== "both" && rule.scheme !== scheme)
 			) {
 				continue;
 			} else if (
 				webExtId !== undefined &&
-				forRule.headerType === "ADDON_ID" &&
-				forRule.header === webExtId
+				rule.headerType === "ADDON_ID" &&
+				rule.header === webExtId
 			) {
-				id = +forId;
-				rule = forRule;
-			} else {
-				const cleanUrl = url.replace(/\/$/, "");
-				const cleanHeader = forRule.header.replace(/\/$/, "");
+				match = { id: Number(forId), url, webExtId, rule };
+			} else if (rule.headerType === "URL") {
+				const cleanHeader = rule.header.replace(/\/$/, "");
 				if (
-					forRule.headerType === "URL" &&
-					(cleanUrl === cleanHeader ||
-						this.#testRegex(cleanUrl, cleanHeader) ||
-						this.#testWildcard(cleanUrl, cleanHeader) ||
-						this.#testHostname(cleanUrl, cleanHeader))
+					cleanUrl === cleanHeader ||
+					this.#testRegex(cleanUrl, cleanHeader) ||
+					this.#testWildcard(cleanUrl, cleanHeader) ||
+					this.#testHostname(cleanUrl, cleanHeader)
 				) {
-					id = +forId;
-					rule = forRule;
+					match = { id: Number(forId), url, webExtId, rule };
 				}
 			}
 		}
-		return { id, url, webExtId, rule };
+
+		return match;
 	}
 
 	/**
@@ -516,21 +518,18 @@ export default class preference {
 	 * @returns {boolean} Whether it matches.
 	 */
 	#testWildcard(url: string, test: string): boolean {
-		if (test.includes("*") || test.includes("?")) {
-			try {
-				const wildcardPattern = test
-					.replace(/[.+^${}()|[\]\\]/g, "\\$&")
-					.replace(/\*\*/g, "::WILDCARD_MATCH_ALL::")
-					.replace(/\*/g, "[^/.:]*")
-					.replace(/\?/g, ".")
-					.replace(/::WILDCARD_MATCH_ALL::/g, ".*")
-					.replace(/^([a-z]+:\/\/)/i, "$1")
-					.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
-				return new RegExp(`^${wildcardPattern}/?$`, "i").test(url);
-			} catch {
-				return false;
-			}
-		} else {
+		if (!test.includes("*") && !test.includes("?")) return false;
+		try {
+			const wildcardPattern = test
+				.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+				.replace(/\*\*/g, "\0")
+				.replace(/\*/g, "[^/.:]*")
+				.replace(/\?/g, ".")
+				.replace(/\0/g, ".*")
+				.replace(/^([a-z]+:\/\/)/i, "$1")
+				.replace(/^((?![a-z]+:\/\/).)/i, "(?:[a-z]+:\\/\\/)?$1");
+			return new RegExp(`^${wildcardPattern}/?$`, "i").test(url);
+		} catch {
 			return false;
 		}
 	}
@@ -574,7 +573,7 @@ export default class preference {
 	 */
 	set popup(value: number) {
 		this.#set("popup", value);
-		this.#save();
+		this.#save({ popup: this.#content.popup });
 	}
 
 	/**
@@ -593,7 +592,7 @@ export default class preference {
 	 */
 	set popupBorder(value: number) {
 		this.#set("popupBorder", value);
-		this.#save();
+		this.#save({ popupBorder: this.#content.popupBorder });
 	}
 
 	/**
@@ -612,7 +611,7 @@ export default class preference {
 	 */
 	set sidebar(value: number) {
 		this.#set("sidebar", value);
-		this.#save();
+		this.#save({ sidebar: this.#content.sidebar });
 	}
 
 	/**
@@ -631,7 +630,7 @@ export default class preference {
 	 */
 	set sidebarBorder(value: number) {
 		this.#set("sidebarBorder", value);
-		this.#save();
+		this.#save({ sidebarBorder: this.#content.sidebarBorder });
 	}
 
 	/**
@@ -650,7 +649,7 @@ export default class preference {
 	 */
 	set tabSelected(value: number) {
 		this.#set("tabSelected", value);
-		this.#save();
+		this.#save({ tabSelected: this.#content.tabSelected });
 	}
 
 	/**
@@ -669,7 +668,7 @@ export default class preference {
 	 */
 	set tabSelectedBorder(value: number) {
 		this.#set("tabSelectedBorder", value);
-		this.#save();
+		this.#save({ tabSelectedBorder: this.#content.tabSelectedBorder });
 	}
 
 	/**
@@ -688,7 +687,7 @@ export default class preference {
 	 */
 	set tabbar(value: number) {
 		this.#set("tabbar", value);
-		this.#save();
+		this.#save({ tabbar: this.#content.tabbar });
 	}
 
 	/**
@@ -707,7 +706,7 @@ export default class preference {
 	 */
 	set tabbarBorder(value: number) {
 		this.#set("tabbarBorder", value);
-		this.#save();
+		this.#save({ tabbarBorder: this.#content.tabbarBorder });
 	}
 
 	/**
@@ -726,7 +725,7 @@ export default class preference {
 	 */
 	set toolbar(value: number) {
 		this.#set("toolbar", value);
-		this.#save();
+		this.#save({ toolbar: this.#content.toolbar });
 	}
 
 	/**
@@ -745,7 +744,7 @@ export default class preference {
 	 */
 	set toolbarBorder(value: number) {
 		this.#set("toolbarBorder", value);
-		this.#save();
+		this.#save({ toolbarBorder: this.#content.toolbarBorder });
 	}
 
 	/**
@@ -764,7 +763,7 @@ export default class preference {
 	 */
 	set toolbarField(value: number) {
 		this.#set("toolbarField", value);
-		this.#save();
+		this.#save({ toolbarField: this.#content.toolbarField });
 	}
 
 	/**
@@ -783,7 +782,7 @@ export default class preference {
 	 */
 	set toolbarFieldBorder(value: number) {
 		this.#set("toolbarFieldBorder", value);
-		this.#save();
+		this.#save({ toolbarFieldBorder: this.#content.toolbarFieldBorder });
 	}
 
 	/**
@@ -802,7 +801,7 @@ export default class preference {
 	 */
 	set toolbarFieldOnFocus(value: number) {
 		this.#set("toolbarFieldOnFocus", value);
-		this.#save();
+		this.#save({ toolbarFieldOnFocus: this.#content.toolbarFieldOnFocus });
 	}
 
 	/**
@@ -821,7 +820,7 @@ export default class preference {
 	 */
 	set ruleList(value: RuleList) {
 		this.#set("ruleList", value);
-		this.#save();
+		this.#save({ ruleList: this.#content.ruleList });
 	}
 
 	/**
@@ -840,7 +839,7 @@ export default class preference {
 	 */
 	set accentColour_dark(value: string) {
 		this.#set("accentColour_dark", value);
-		this.#save();
+		this.#save({ accentColour_dark: this.#content.accentColour_dark });
 	}
 
 	/**
@@ -859,7 +858,7 @@ export default class preference {
 	 */
 	set accentColour_light(value: string) {
 		this.#set("accentColour_light", value);
-		this.#save();
+		this.#save({ accentColour_light: this.#content.accentColour_light });
 	}
 
 	/**
@@ -878,7 +877,7 @@ export default class preference {
 	 */
 	set allowDarkLight(value: boolean) {
 		this.#set("allowDarkLight", value);
-		this.#save();
+		this.#save({ allowDarkLight: this.#content.allowDarkLight });
 	}
 
 	/**
@@ -897,7 +896,7 @@ export default class preference {
 	 */
 	set compatibilityMode(value: boolean) {
 		this.#set("compatibilityMode", value);
-		this.#save();
+		this.#save({ compatibilityMode: this.#content.compatibilityMode });
 	}
 
 	/**
@@ -916,7 +915,7 @@ export default class preference {
 	 */
 	set dynamic(value: boolean) {
 		this.#set("dynamic", value);
-		this.#save();
+		this.#save({ dynamic: this.#content.dynamic });
 	}
 
 	/**
@@ -935,7 +934,7 @@ export default class preference {
 	 */
 	set fallbackColour_dark(value: string) {
 		this.#set("fallbackColour_dark", value);
-		this.#save();
+		this.#save({ fallbackColour_dark: this.#content.fallbackColour_dark });
 	}
 
 	/**
@@ -954,7 +953,9 @@ export default class preference {
 	 */
 	set fallbackColour_light(value: string) {
 		this.#set("fallbackColour_light", value);
-		this.#save();
+		this.#save({
+			fallbackColour_light: this.#content.fallbackColour_light,
+		});
 	}
 
 	/**
@@ -973,7 +974,7 @@ export default class preference {
 	 */
 	set homeBackground_dark(value: string) {
 		this.#set("homeBackground_dark", value);
-		this.#save();
+		this.#save({ homeBackground_dark: this.#content.homeBackground_dark });
 	}
 
 	/**
@@ -992,7 +993,9 @@ export default class preference {
 	 */
 	set homeBackground_light(value: string) {
 		this.#set("homeBackground_light", value);
-		this.#save();
+		this.#save({
+			homeBackground_light: this.#content.homeBackground_light,
+		});
 	}
 
 	/**
@@ -1011,7 +1014,7 @@ export default class preference {
 	 */
 	set minContrast_dark(value: number) {
 		this.#set("minContrast_dark", value);
-		this.#save();
+		this.#save({ minContrast_dark: this.#content.minContrast_dark });
 	}
 
 	/**
@@ -1030,7 +1033,7 @@ export default class preference {
 	 */
 	set minContrast_light(value: number) {
 		this.#set("minContrast_light", value);
-		this.#save();
+		this.#save({ minContrast_light: this.#content.minContrast_light });
 	}
 
 	/**
@@ -1049,7 +1052,7 @@ export default class preference {
 	 */
 	set noThemeColour(value: boolean) {
 		this.#set("noThemeColour", value);
-		this.#save();
+		this.#save({ noThemeColour: this.#content.noThemeColour });
 	}
 
 	/**
@@ -1068,7 +1071,9 @@ export default class preference {
 	 */
 	set overwriteAccentColour(value: boolean) {
 		this.#set("overwriteAccentColour", value);
-		this.#save();
+		this.#save({
+			overwriteAccentColour: this.#content.overwriteAccentColour,
+		});
 	}
 
 	/**
