@@ -171,14 +171,18 @@ function RuleControls({ pref, ruleData, metaData }: RuleControlsProps) {
 				{i18n.t("addANewRule")}
 			</button>
 		);
-	} else if (["ADDON_DEFAULT", "ADDON_PRESET"].includes(metaData.reason)) {
+	} else if (
+		["ADDON_DEFAULT", "ADDON_PRESET"].includes(metaData.reason) &&
+		ruleData.webExtId !== undefined
+	) {
+		const webExtId = ruleData.webExtId;
 		return (
 			<button
 				className={styles.controlButton}
 				onClick={() => {
 					pref.addRule({
 						headerType: "ADDON_ID",
-						header: ruleData.url,
+						header: webExtId,
 						type: "COLOUR",
 						value: new colour().random().toHex(),
 						scheme: "both",
