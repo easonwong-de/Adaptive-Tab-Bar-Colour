@@ -1,31 +1,39 @@
 :root {
 	--unit: 0.0769rem;
+	--unit-2: 0.1538rem;
+	--unit-4: 0.3076rem;
+	--unit-6: 0.4614rem;
+	--unit-8: 0.6152rem;
+	--unit-12: 0.9228rem;
+	--unit-16: 1.2304rem;
+	--unit-20: 1.5385rem;
+	--unit-32: 2.4608rem;
 
-	--app: hsl(247, 12%, 100%);
-	--panel: hsl(247, 12%, 78%);
-	--panel-alt: hsl(247, 12%, 76%);
-	--panel-hover: hsl(247, 12%, 73%);
-	--panel-active: hsl(247, 12%, 75%);
-	--panel-selected: hsl(247, 12%, 65%);
-	--panel-selected-hover: hsl(247, 12%, 50%);
-	--panel-selected-active: hsl(247, 12%, 62%);
+	--app: hsl(0, 0%, 100%);
+	--panel: hsl(0, 0%, 97%);
+	--panel-alt: hsl(0, 0%, 95%);
+	--panel-hover: hsl(0, 0%, 90%);
+	--panel-active: hsl(0, 0%, 93%);
+	--panel-selected: hsl(0, 0%, 88%);
+	--panel-selected-hover: hsl(0, 0%, 85%);
+	--panel-selected-active: hsl(0, 0%, 87%);
 
-	--control: hsl(247, 12%, 49%);
-	--control-hover: hsl(247, 12%, 47%);
-	--control-active: hsl(247, 12%, 52%);
-	--control-selected: hsl(247, 12%, 64%);
-	--control-selected-hover: hsl(247, 12%, 60%);
-	--control-selected-active: hsl(247, 12%, 62%);
-
-	--glyph-foreground: hsl(247, 12%, 49%);
-	--glyph-background: hsl(247, 12%, 66%);
+	--control: hsl(0, 0%, 87%);
+	--control-hover: hsl(0, 0%, 83%);
+	--control-active: hsl(0, 0%, 85%);
+	--control-selected: hsl(0, 0%, 80%);
+	--control-selected-hover: hsl(0, 0%, 77%);
+	--control-selected-active: hsl(0, 0%, 79%);
 
 	--text-primary: hsl(0 0% 0%);
 	--text-secondary: hsl(0 0% 20%);
 
-	--accent: hsl(216, 100%, 49%);
-	--accent-hover: hsl(215, 100%, 40%);
-	--accent-active: hsl(216, 100%, 69%);
+	--accent: oklch(55% 0.24 260);
+	--accent-hover: oklch(50% 0.24 260);
+	--accent-active: oklch(70% 0.24 260);
+
+	--shadow-small: 0 0 var(--unit-2) rgba(0, 0, 0, 0.15);
+	--shadow-large: 0 var(--unit-2) var(--unit-4) rgba(0, 0, 0, 0.1);
 
 	@media (prefers-color-scheme: dark) {
 		--app: hsl(247, 12%, 15%);
@@ -44,15 +52,12 @@
 		--control-selected-hover: hsl(247, 12%, 53%);
 		--control-selected-active: hsl(247, 12%, 48%);
 
-		--glyph-foreground: hsl(247, 12%, 51%);
-		--glyph-background: hsl(247, 12%, 34%);
-
 		--text-primary: hsl(0, 0%, 100%);
 		--text-secondary: hsl(0, 0%, 80%);
 
-		--accent: hsl(185, 100%, 43%);
-		--accent-hover: hsl(186, 100%, 65%);
-		--accent-active: hsl(186, 100%, 80%);
+		--accent: oklch(76% 0.14 205);
+		--accent-hover: oklch(86% 0.14 205);
+		--accent-active: oklch(90% 0.14 205);
 	}
 }
 
@@ -61,6 +66,7 @@ html {
 	margin: 0;
 	padding: 0;
 	color: var(--text-primary);
+	color-scheme: light dark;
 	font: caption;
 	line-height: 1.5;
 	font-family:
@@ -79,18 +85,17 @@ html {
 
 body {
 	margin: 0;
-	padding: 0;
+	padding: 0 var(--unit-4);
 	width: 100%;
 	height: 100%;
-	min-height: calc(250 * var(--unit));
 }
 
 #root {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: calc(16 * var(--unit));
-	padding: calc(16 * var(--unit)) 0;
+	gap: var(--unit-16);
+	padding: var(--unit-16) 0;
 	width: 100%;
 	max-width: calc(960 * var(--unit));
 	height: 100%;
@@ -118,7 +123,9 @@ button {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border-radius: calc(12 * var(--unit));
+	transition-duration: 0.1s;
+	transition-property: background-color, border-color, color;
+	border-radius: var(--unit-12);
 	background-color: var(--control);
 	color: var(--text-primary);
 	text-align: center;
@@ -141,7 +148,7 @@ h6 {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
-	gap: calc(4 * var(--unit));
+	gap: var(--unit-4);
 	font: inherit;
 	font-size: inherit;
 	text-wrap: balance;
@@ -191,17 +198,26 @@ hr {
 	border-width: 0;
 	background-color: var(--panel-active);
 	width: 100%;
-	height: calc(1 * var(--unit));
+	height: var(--unit);
 }
 
-svg {
-	align-self: center;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-	stroke-width: calc(1.5 * var(--unit));
-	margin: 0;
-	width: calc(16 * var(--unit));
-	height: calc(16 * var(--unit));
+select {
+	display: flex;
+	vertical-align: middle;
+	outline: solid var(--unit) var(--control);
+	outline-offset: calc(-1 * var(--unit));
+	border: none;
+	background-color: transparent;
+	padding-inline: var(--unit-8) 0;
+	color: var(--text-primary);
+
+	&:hover {
+		outline-color: var(--control-hover);
+	}
+
+	&:active {
+		outline-color: var(--control-active);
+	}
 }
 
 .hidden {

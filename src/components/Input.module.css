@@ -1,0 +1,46 @@
+.input {
+	position: relative;
+
+	input[type="text"] {
+		display: inline-block;
+		vertical-align: middle;
+		box-sizing: border-box;
+		outline: none;
+		outline-offset: calc(-1 * var(--unit));
+		border: none;
+		border-radius: var(--radius, var(--unit-12));
+		background-color: var(--app);
+		padding-inline: var(--unit-8);
+		width: 100%;
+		height: var(--unit-32);
+		color: var(--text-primary);
+		line-height: 100%;
+		font-family: monospace;
+
+		&:hover,
+		&:focus-visible {
+			outline: solid var(--unit) var(--control);
+		}
+	}
+
+	& > div {
+		display: none;
+		position: absolute;
+		top: 50%;
+		right: var(--unit-8);
+		transform: translateY(-50%);
+		cursor: help;
+		width: var(--unit-16);
+		height: var(--unit-16);
+	}
+
+	&.warning {
+		input[type="text"] {
+			padding-inline-end: var(--unit-32);
+		}
+
+		& > div {
+			display: block;
+		}
+	}
+}

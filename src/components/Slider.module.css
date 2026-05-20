@@ -1,0 +1,123 @@
+.slider {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: var(--unit-4);
+	width: 100%;
+
+	.track {
+		display: flex;
+		position: relative;
+		flex: 1;
+		justify-content: center;
+		align-items: center;
+		border-radius: var(--unit-12);
+		background-color: var(--control);
+		max-width: calc(120 * var(--unit));
+		height: var(--unit-32);
+		overflow: hidden;
+		line-height: 100%;
+		text-align: center;
+
+		.fill {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 0;
+			transition: width 0.1s ease-in;
+			background-color: var(--control-selected);
+			width: calc(var(--percent, 0) * (100% - var(--unit-12)));
+		}
+
+		.thumb {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: calc(var(--percent, 0) * (100% - var(--unit-12)));
+			z-index: 0;
+			transition: left 0.1s ease-in;
+			cursor: grab;
+			border-radius: 0 var(--unit-12) var(--unit-12) 0;
+			background-color: var(--control-selected);
+			width: var(--unit-12);
+
+			&::after {
+				position: absolute;
+				opacity: 0;
+				transition:
+					opacity 0.1s,
+					background-color 0.1s;
+				inset: 30% 35%;
+				border-radius: calc(infinity * var(--unit));
+				background-color: rgba(0, 0, 0, 0.25);
+				content: "";
+			}
+
+			&:hover::after {
+				opacity: 1;
+			}
+		}
+
+		&:hover {
+			.fill {
+				background-color: var(--control-selected-hover);
+			}
+
+			.thumb {
+				background-color: var(--control-selected-hover);
+
+				&:not(:hover)::after {
+					opacity: 0.5;
+				}
+			}
+		}
+
+		&.dragging {
+			.fill {
+				transition: none;
+				background-color: var(--control-selected-active);
+			}
+
+			.thumb {
+				transition: none;
+				cursor: grabbing;
+				background-color: var(--control-selected-active);
+
+				&::after {
+					opacity: 1;
+					background-color: var(--accent);
+				}
+			}
+		}
+	}
+
+	.display {
+		position: relative;
+		z-index: 1;
+		pointer-events: none;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.popup-display {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: calc(28 * var(--unit));
+		font-variant-numeric: tabular-nums;
+	}
+
+	button {
+		flex-shrink: 0;
+		border-radius: var(--unit-12);
+		width: var(--unit-32);
+		height: var(--unit-32);
+		color: var(--text-primary);
+
+		&.popup-button {
+			border-radius: var(--unit-12);
+			width: calc(2 * var(--unit-12));
+			height: calc(2 * var(--unit-12));
+		}
+	}
+}

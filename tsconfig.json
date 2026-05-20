@@ -2,8 +2,13 @@
 	"compilerOptions": {
 		"allowJs": false,
 		"jsx": "react-jsx",
-		"noImplicitAny": true
+		"noImplicitAny": true,
 	},
 	"extends": "./.wxt/tsconfig.json",
-	"include": ["src/**/*.ts", "src/**/*.tsx", "wxt.config.ts", ".wxt/wxt.d.ts"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"wxt.config.ts",
+		".wxt/wxt.d.ts",
+	],
 }

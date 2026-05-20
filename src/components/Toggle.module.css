@@ -1,0 +1,52 @@
+.toggle {
+	display: grid;
+	grid-auto-columns: minmax(0, 1fr);
+	grid-auto-flow: column;
+	border-radius: var(--radius, var(--unit-12));
+	width: 100%;
+	height: auto;
+	overflow: hidden;
+
+	button {
+		box-shadow: none;
+		border-radius: 0;
+		background-color: var(--control);
+
+		&:hover {
+			background-color: var(--control-hover);
+		}
+
+		&.selected {
+			background-color: var(--control-selected);
+			color: var(--accent);
+
+			&:hover {
+				background-color: var(--control-selected-hover);
+			}
+		}
+	}
+
+	&.tab-toggle {
+		box-shadow: var(--shadow-small), var(--shadow-large);
+		border-radius: var(--unit-16);
+		font-weight: 800;
+
+		button {
+			background-color: var(--panel);
+			padding: var(--unit-8) var(--unit-32);
+
+			&:hover {
+				background-color: var(--panel-hover);
+			}
+
+			&.selected {
+				background-color: var(--panel-selected);
+				color: var(--accent);
+
+				&:hover {
+					background-color: var(--panel-selected-hover);
+				}
+			}
+		}
+	}
+}

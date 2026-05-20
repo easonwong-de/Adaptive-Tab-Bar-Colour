@@ -1,58 +1,63 @@
 import preference from "@/utils/preference";
-import { useState, useEffect } from "react";
-import RuleWidget from "./RuleWidget/RuleWidget";
-import type { MessageForPopup, Cache } from "@/utils/types.js";
-import CorrectionWidget from "./CorrectionWidget/CorrectionWidget";
-import {
-	addMessageListener,
-	removeMessageListener,
-	sendMessageToBackground,
-} from "@/utils/utility";
+import CorrectionWidget from "./widgets/CorrectionWidget";
+import LoadingWidget from "./widgets/LoadingWidget";
+import RuleWidget from "./widgets/RuleWidget";
+import ThemeWidget from "./widgets/ThemeWidget";
 
 const pref = new preference();
 
-async function getCache(): Promise<Cache | undefined> {
-	return await sendMessageToBackground<Cache | undefined>({
+async function getCache(): Promise<CacheData | undefined> {
+	return await sendMessageToBackground<CacheData | undefined>({
 		header: "CACHE_REQUEST",
 	});
 }
 
 export default function App() {
 	const [ready, setReady] = useState(false);
-	const [cache, setCache] = useState<Cache | undefined>(undefined);
+	const [cache, setCache] = useState<CacheData | undefined>();
+	const windowIdRef = useRef<number | undefined>(0);
 
 	function handleMessage(message: MessageForPopup): void {
-		if (message.header === "CACHE_UPDATE") getCache().then(setCache);
+		if (
+			message.header === "CACHE_UPDATE" &&
+			message.windowId === windowIdRef.current
+		)
+			setCache(message.cache);
 	}
 
 	useEffect(() => {
 		pref.initialise().then(() => setReady(true));
-		getCache().then(setCache);
+		getCache().then(async (newCache) => {
+			const windowId = await getActiveWindowId();
+			windowIdRef.current = windowId;
+			if (windowId !== undefined) setCache(newCache);
+		});
 		addMessageListener(handleMessage);
 		return () => removeMessageListener(handleMessage);
 	}, []);
 
+	useEffect(() => {
+		document.documentElement.style.setProperty(
+			"--app",
+			cache?.themeData?.popupColour ?? "inherit",
+		);
+	}, [cache?.themeData?.popupColour]);
+
 	return (
 		<>
-			{cache ? (
+			{ready && cache ? (
 				<>
-					<div
-						className="background"
-						style={{ backgroundColor: cache.theme.popupColour }}
+					<RuleWidget
+						pref={pref}
+						ruleData={cache.ruleData}
+						metaData={cache.metaData}
 					/>
-					{ready && (
-						<RuleWidget
-							pref={pref}
-							rule={cache.rule}
-							meta={cache.meta}
-						/>
-					)}
-					{cache.theme.corrected && <CorrectionWidget />}
+					{cache.themeData.corrected && <CorrectionWidget />}
 				</>
-			) : null}
-			<button onClick={() => browser.runtime.openOptionsPage()}>
-				{i18n.t("moreSettings")}
-			</button>
+			) : (
+				<LoadingWidget />
+			)}
+			<ThemeWidget ready={ready} pref={pref} />
 		</>
 	);
 }

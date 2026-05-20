@@ -1,0 +1,37 @@
+.icon {
+	display: inline-block;
+	flex-shrink: 0;
+	align-self: center;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: calc(1.5 * var(--unit));
+	margin: auto var(--unit-4);
+	width: var(--unit-16);
+	height: var(--unit-16);
+	color: inherit;
+	font-size: inherit;
+
+	&.inline {
+		vertical-align: center;
+	}
+
+	&.small-size {
+		margin-inline: var(--unit-8);
+		width: var(--unit-12);
+		height: var(--unit-12);
+	}
+
+	&.text-size {
+		margin-inline: 0.5ch;
+		width: 1em;
+		height: 1em;
+	}
+
+	&:first-child {
+		margin-inline-start: 0;
+	}
+
+	&:last-child {
+		margin-inline-end: 0;
+	}
+}

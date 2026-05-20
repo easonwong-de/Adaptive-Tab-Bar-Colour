@@ -1,0 +1,63 @@
+.theme-widget {
+	display: flex;
+	flex-direction: column;
+	gap: var(--unit-16);
+
+	.glyph-wrapper {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: var(--unit-16);
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			gap: var(--unit-4);
+			font-size: var(--unit-12);
+		}
+	}
+
+	.panel-wrapper {
+		--control: var(--app-1);
+		--control-hover: var(--app-2);
+		--control-active: var(--app-3);
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--unit-12);
+
+		& > div {
+			display: flex;
+			flex-direction: column;
+			gap: var(--unit-12);
+		}
+
+		.panel {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: var(--unit-8);
+			box-shadow: var(--shadow-small), var(--shadow-large);
+			border-radius: var(--unit-16);
+			background-color: var(--app-0);
+			padding: var(--unit-12);
+
+			& > div {
+				display: flex;
+				flex-direction: row;
+				gap: var(--unit-12);
+			}
+		}
+	}
+
+	.more-settings-button {
+		flex: 1;
+		align-self: start;
+		box-shadow: var(--shadow-small), var(--shadow-large);
+		padding-inline: var(--unit-8);
+		width: auto;
+		color: var(--text-secondary);
+		font-size: 80%;
+	}
+}

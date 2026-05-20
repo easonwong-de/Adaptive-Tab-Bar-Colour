@@ -1,12 +1,5 @@
-import { sendMessageToBackground } from "@/utils/utility";
-import type {
-	MessageForTab,
-	TabColourData,
-	TabElementColourData,
-	TabThemeColourData,
-} from "@/utils/types.js";
-
 let query: string | undefined;
+let colourDataCache: TabColourData | undefined;
 
 /**
  * Handles incoming runtime messages from the background script.
@@ -21,17 +14,24 @@ function handleMessage(
 	_: Browser.runtime.MessageSender,
 	sendResponse: (response?: unknown) => void,
 ): void {
-	switch (message.header) {
-		case "GET_COLOUR":
-			query = message.query;
-			message.dynamic ? enableDynamic() : disableDynamic();
-			sendResponse(getColour());
-			break;
-		case "SET_THEME_COLOUR":
-			setThemeColour(message.colour);
-			break;
-		default:
-			break;
+	if (message.header === "SETUP_SCRIPT") {
+		query = message.query;
+		switch (message.mode) {
+			case "suspend":
+				disableDynamic();
+				sendResponse();
+				break;
+			case "static":
+				disableDynamic();
+				sendResponse(colourDataCache ?? getColourData());
+				break;
+			case "dynamic":
+				enableDynamic();
+				sendResponse(getColourData());
+				break;
+		}
+	} else if (message.header === "SET_THEME_COLOUR") {
+		setThemeColour(message.colour);
 	}
 }
 
@@ -40,13 +40,16 @@ function handleMessage(
  *
  * @returns {TabColourData} The colour data object.
  */
-function getColour(): TabColourData {
-	return {
-		theme: getThemeColour(),
-		page: getPageColour(),
-		query: getQueryColour(),
-		image: isImageViewer(),
+function getColourData(): TabColourData {
+	const page = getPageColourData();
+	const tabColourData: TabColourData = {
+		page,
+		theme: getThemeColourData(),
+		query: getQueryColourData(),
+		special: page.length > 0 ? "none" : getSpecialColourData(),
 	};
+	colourDataCache = tabColourData;
+	return tabColourData;
 }
 
 /**
@@ -54,7 +57,7 @@ function getColour(): TabColourData {
  *
  * @returns {TabThemeColourData} The extracted theme colours.
  */
-function getThemeColour(): TabThemeColourData {
+function getThemeColourData(): TabThemeColourData {
 	const metaThemeColour = document.querySelector<HTMLMetaElement>(
 		`meta[name="theme-color"]:not([media])`,
 	);
@@ -77,7 +80,7 @@ function getThemeColour(): TabThemeColourData {
  *
  * @returns {TabElementColourData[]} List of element colour objects.
  */
-function getPageColour(): TabElementColourData[] {
+function getPageColourData(): TabElementColourData[] {
 	return document
 		.elementsFromPoint(window.innerWidth / 2, 3)
 		.filter(
@@ -91,7 +94,7 @@ function getPageColour(): TabElementColourData[] {
 			getElementColour(document.body),
 			getElementColour(document.documentElement),
 		)
-		.filter((colour) => colour !== undefined);
+		.filter((colourData) => colourData !== undefined);
 }
 
 /**
@@ -99,21 +102,39 @@ function getPageColour(): TabElementColourData[] {
  *
  * @returns {TabElementColourData | undefined} Element colour object.
  */
-function getQueryColour(): TabElementColourData | undefined {
+function getQueryColourData(): TabElementColourData | undefined {
 	try {
 		return query
 			? getElementColour(document.querySelector(query))
 			: undefined;
-	} catch (error) {
+	} catch {
 		return undefined;
 	}
 }
 
-function isImageViewer(): boolean {
-	return (
+/**
+ * Determines the special page type when no page colour candidates are found.
+ *
+ * @returns {TabSpecialColourData} The detected special page type.
+ */
+function getSpecialColourData(): TabSpecialColourData {
+	if (
 		getComputedStyle(document.documentElement).backgroundImage ===
 		'url("chrome://global/skin/media/imagedoc-darknoise.png")'
-	);
+	)
+		return "image";
+	if (document.head) {
+		const stylesheetLinks = document.head.querySelectorAll(
+			'link[rel="stylesheet"][href]',
+		);
+		if (
+			stylesheetLinks.length === 1 &&
+			stylesheetLinks[0]?.getAttribute("href") ===
+				"resource://content-accessible/plaintext.css"
+		)
+			return "plaintext";
+	}
+	return document.documentElement instanceof SVGSVGElement ? "svg" : "none";
 }
 
 /**
@@ -148,9 +169,7 @@ const metaTagObserver = new MutationObserver((mutationList) =>
 				node.name === "theme-color"
 			) {
 				sendColour();
-				metaThemeColourObserver.observe(node, {
-					attributes: true,
-				});
+				metaThemeColourObserver.observe(node, { attributes: true });
 			}
 		});
 	}),
@@ -218,15 +237,15 @@ function disableDynamic(): void {
 /**
  * Sets the theme colour by adding a meta tag.
  *
- * @param {string} colour - The colour string.
+ * @param {string} themeColour - The colour string.
  */
-function setThemeColour(colour: string): void {
+function setThemeColour(themeColour: string): void {
 	const metaThemeColourList = document.querySelectorAll(
 		`meta[name="theme-color"]`,
 	);
 	const newMetaThemeColour = document.createElement("meta");
 	newMetaThemeColour.name = "theme-color";
-	newMetaThemeColour.content = colour;
+	newMetaThemeColour.content = themeColour;
 	(document.head ?? document.documentElement).appendChild(newMetaThemeColour);
 	metaThemeColourList.forEach((metaThemeColour) => metaThemeColour.remove());
 }
@@ -249,9 +268,9 @@ async function sendColour() {
 		try {
 			await browser.runtime.sendMessage({
 				header: "UPDATE_COLOUR",
-				colour: getColour(),
+				colour: getColourData(),
 			});
-		} catch (error) {
+		} catch {
 			console.warn("Failed to send colour to ATBC background.");
 		}
 	};

@@ -1,0 +1,15 @@
+.glyph {
+	all: unset;
+
+	.background {
+		fill: var(--control);
+	}
+
+	.foreground {
+		fill: var(--control-selected);
+	}
+
+	.highlight {
+		fill: var(--accent);
+	}
+}

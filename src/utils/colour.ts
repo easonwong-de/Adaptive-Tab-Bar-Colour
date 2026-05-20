@@ -19,17 +19,27 @@ export default class colour {
 	 *   instance.
 	 */
 	constructor(initialiser: string | colour | undefined = undefined) {
-		if (typeof initialiser === "string") {
+		this.parse(initialiser);
+	}
+
+	/**
+	 * Parses the value to set the colour.
+	 *
+	 * @param {string | colour} [value] - A CSS string, or `colour` instance.
+	 * @returns {this} This instance.
+	 */
+	parse(value: string | colour | undefined = undefined): this {
+		if (typeof value === "string") {
 			const canvas = document.createElement("canvas");
 			canvas.width = 1;
 			canvas.height = 1;
 			const canvasContext = canvas.getContext("2d");
-			if (!canvasContext) return;
-			canvasContext.fillStyle = initialiser;
+			if (!canvasContext) return this;
+			canvasContext.fillStyle = value;
 			const parsedColour = canvasContext.fillStyle;
 			canvas.remove();
 			if (parsedColour.startsWith("#")) {
-				this.rgba(
+				return this.rgba(
 					parseInt(parsedColour.slice(1, 3), 16),
 					parseInt(parsedColour.slice(3, 5), 16),
 					parseInt(parsedColour.slice(5, 7), 16),
@@ -38,20 +48,17 @@ export default class colour {
 			} else {
 				const rgbaValues =
 					parsedColour.match(/[.?\d]+/g)?.map(Number) ?? [];
-				this.rgba(
+				return this.rgba(
 					rgbaValues[0] ?? 0,
 					rgbaValues[1] ?? 0,
 					rgbaValues[2] ?? 0,
 					rgbaValues[3] ?? 1,
 				);
 			}
-		} else if (initialiser instanceof colour) {
-			this.rgba(
-				initialiser.r,
-				initialiser.g,
-				initialiser.b,
-				initialiser.a,
-			);
+		} else if (value instanceof colour) {
+			return this.rgba(value.r, value.g, value.b, value.a);
+		} else {
+			return this;
 		}
 	}
 
@@ -62,7 +69,7 @@ export default class colour {
 	 * @param {number} g - Green (0-255).
 	 * @param {number} b - Blue (0-255).
 	 * @param {number} a - Alpha (0-1).
-	 * @returns {colour} This instance.
+	 * @returns {this} This instance.
 	 */
 	rgba(r: number, g: number, b: number, a: number): this {
 		this.r = r;
@@ -73,13 +80,100 @@ export default class colour {
 	}
 
 	/**
+	 * Assigns RGB values.
+	 *
+	 * @param {number} r - Red (0-255).
+	 * @param {number} g - Green (0-255).
+	 * @param {number} b - Blue (0-255).
+	 * @returns {this} This instance.
+	 */
+	rgb(r: number, g: number, b: number): this {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		return this;
+	}
+
+	/**
+	 * Assigns HWB values.
+	 *
+	 * @param {number} h - Hue in degrees (0-360).
+	 * @param {number} w - Whiteness percentage (0-100).
+	 * @param {number} b - Blackness percentage (0-100).
+	 * @returns {this} This instance.
+	 */
+	hwb(h: number, w: number, b: number): this {
+		const hw = w / 100;
+		const hb = b / 100;
+		if (hw + hb >= 1) {
+			const gray = Math.round((hw / (hw + hb)) * 255);
+			this.r = gray;
+			this.g = gray;
+			this.b = gray;
+			return this;
+		}
+		const v = 1 - hb;
+		const s = 1 - hw / v;
+		let c = v * s,
+			x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+			m = v - c,
+			cr = 0,
+			cg = 0,
+			cb = 0;
+		if (0 <= h && h < 60) {
+			cr = c;
+			cg = x;
+			cb = 0;
+		} else if (60 <= h && h < 120) {
+			cr = x;
+			cg = c;
+			cb = 0;
+		} else if (120 <= h && h < 180) {
+			cr = 0;
+			cg = c;
+			cb = x;
+		} else if (180 <= h && h < 240) {
+			cr = 0;
+			cg = x;
+			cb = c;
+		} else if (240 <= h && h < 300) {
+			cr = x;
+			cg = 0;
+			cb = c;
+		} else if (300 <= h && h < 360) {
+			cr = c;
+			cg = 0;
+			cb = x;
+		} else {
+			return this.hwb(h % 360, w, b);
+		}
+		this.r = Math.round((cr + m) * 255);
+		this.g = Math.round((cg + m) * 255);
+		this.b = Math.round((cb + m) * 255);
+		return this;
+	}
+
+	/**
 	 * Applies an opacity factor to the current colour.
 	 *
 	 * @param {number} opacity - The opacity factor to apply (0-1).
-	 * @returns {colour} This colour instance for method chaining.
+	 * @returns {this} This instance.
 	 */
 	opacity(opacity: number): this {
 		this.#a *= Math.max(0, Math.min(1, opacity));
+		return this;
+	}
+
+	/**
+	 * Randomises the colour.
+	 *
+	 * @returns {this} This instance.
+	 */
+	random(): this {
+		this.r = Math.floor(Math.random() * 256);
+		this.g = Math.floor(Math.random() * 256);
+		this.b = Math.floor(Math.random() * 256);
+		this.a = 1;
 		return this;
 	}
 
@@ -126,7 +220,7 @@ export default class colour {
 	/**
 	 * Mixes this colour with another underneath.
 	 *
-	 * @param {colour} colour - The colour underneath.
+	 * @param {colour} colourValue - The colour underneath.
 	 * @returns {colour} The result of the mix.
 	 */
 	mix(colourValue: colour): colour {
@@ -150,28 +244,23 @@ export default class colour {
 	/**
 	 * Adjusts colour to meet minimum contrast.
 	 *
-	 * @param {"light" | "dark"} preferredScheme - Preferred scheme.
+	 * @param {Scheme} preferredScheme - Preferred scheme.
 	 * @param {boolean} allowDarkLight - Allow opposite scheme.
 	 * @param {number} minContrastLightX10 - Min contrast for light (x10).
 	 * @param {number} minContrastDarkX10 - Min contrast for dark (x10).
 	 * @param {colour} [contrastColourLight] - Light mode contrast target.
 	 * @param {colour} [contrastColourDark] - Dark mode contrast target.
-	 * @returns {{
-	 * 	colour: colour;
-	 * 	scheme: "light" | "dark";
-	 * 	corrected: boolean;
-	 * }}
-	 *   Correction result.
+	 * @returns {ColourCorrectionResult} Correction result.
 	 * @throws {Error} If correction fails.
 	 */
 	contrastCorrection(
-		preferredScheme: "light" | "dark",
+		preferredScheme: Scheme,
 		allowDarkLight: boolean,
 		minContrastLightX10: number,
 		minContrastDarkX10: number,
-		contrastColourLight = new colour().rgba(0, 0, 0, 1),
-		contrastColourDark = new colour().rgba(255, 255, 255, 1),
-	) {
+		contrastColourLight: colour = new colour().rgba(0, 0, 0, 1),
+		contrastColourDark: colour = new colour().rgba(255, 255, 255, 1),
+	): ColourCorrectionResult {
 		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
 		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
 		const eligibilityLight = contrastRatioLight > minContrastLightX10 / 10;
@@ -218,7 +307,7 @@ export default class colour {
 	 * Contrast ratio over 4.5 is considered adequate for accessibility.
 	 *
 	 * @private
-	 * @param {colour} colour - The colour to compare against.
+	 * @param {colour} colourValue - The colour to compare against.
 	 * @returns {number} The contrast ratio between the two colours (1.05 to
 	 *   21).
 	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
@@ -324,6 +413,31 @@ export default class colour {
 	}
 
 	/**
+	 * Returns the colour as HWB channel values.
+	 *
+	 * @returns {{ h: number; w: number; b: number }} HWB values where `h` is in
+	 *   degrees (0-360), and `w`/`b` are percentage values (0-100).
+	 */
+	toHWB(): { h: number; w: number; b: number } {
+		const cr = this.#r / 255;
+		const cg = this.#g / 255;
+		const cb = this.#b / 255;
+		const cmin = Math.min(cr, cg, cb),
+			cmax = Math.max(cr, cg, cb),
+			delta = cmax - cmin;
+		let h = 0;
+		if (delta === 0) h = 0;
+		else if (cmax === cr) h = ((cg - cb) / delta) % 6;
+		else if (cmax === cg) h = (cb - cr) / delta + 2;
+		else h = (cr - cg) / delta + 4;
+		h = Math.round(h * 60);
+		if (h < 0) h += 360;
+		const w = cmin * 100;
+		const b = (1 - cmax) * 100;
+		return { h, w, b };
+	}
+
+	/**
 	 * Checks if the colour is fully opaque.
 	 *
 	 * @returns {boolean} `true` if the colour is opaque (alpha = 1), `false`
@@ -338,7 +452,7 @@ export default class colour {
 	 *
 	 * @returns {number} The red channel value (0-255).
 	 */
-	get r() {
+	get r(): number {
 		return this.#r;
 	}
 
@@ -359,7 +473,7 @@ export default class colour {
 	 *
 	 * @returns {number} The green channel value (0-255).
 	 */
-	get g() {
+	get g(): number {
 		return this.#g;
 	}
 
@@ -380,7 +494,7 @@ export default class colour {
 	 *
 	 * @returns {number} The blue channel value (0-255).
 	 */
-	get b() {
+	get b(): number {
 		return this.#b;
 	}
 
@@ -401,7 +515,7 @@ export default class colour {
 	 *
 	 * @returns {number} The alpha channel value (0-1).
 	 */
-	get a() {
+	get a(): number {
 		return this.#a;
 	}
 

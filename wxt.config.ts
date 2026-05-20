@@ -8,16 +8,12 @@ export default defineConfig({
 			gecko: {
 				id: "ATBC@EasonWong",
 				strict_min_version: "57.0",
-				// @ts-ignore
 				data_collection_permissions: { required: ["none"] },
 			},
 		},
 		default_locale: "en",
 		description: "__MSG_extensionDescription__",
-		developer: {
-			name: "Eason & Yue",
-			url: "https://easonwong.de/",
-		},
+		developer: { name: "Eason & Yue", url: "https://easonwong.de/" },
 		homepage_url:
 			"https://github.com/easonwong-de/adaptive-tab-bar-colour/",
 		icons: {
