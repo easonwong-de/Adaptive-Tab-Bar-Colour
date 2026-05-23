@@ -15,7 +15,7 @@ export const testCase: TestCase = {
 			});
 
 			await driver.get(optionsUrl);
-			await sleep(1500);
+			await sleep(1000);
 
 			const stored = await driver.executeScript(async () => {
 				const data = await browser.storage.local.get("tabbar");

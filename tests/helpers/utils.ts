@@ -7,51 +7,45 @@ import { Command } from "selenium-webext-bridge";
 import type { Bridge, TestCase } from "./types.js";
 
 /** Resolves the extension output directory to use for tests. */
-export async function resolveExtensionDir(
-	outputDirectory: string,
-): Promise<string> {
-	const entries = await fs.readdir(outputDirectory, { withFileTypes: true });
-	const options = entries
-		.filter((entry) => entry.isDirectory())
+export async function getWebExtDir(webExtDir: string): Promise<string> {
+	const entries = await fs.readdir(webExtDir, { withFileTypes: true });
+	const files = entries
+		.filter((entry) => {
+			const entryName = entry.name.toLowerCase();
+			return (
+				entry.isDirectory() ||
+				entryName.endsWith(".zip") ||
+				entryName.endsWith(".xpi")
+			);
+		})
 		.map((entry) => entry.name)
 		.sort((a, b) => a.localeCompare(b));
 
-	if (options.length === 0) {
-		throw new Error(`No extension builds found in ${outputDirectory}`);
+	if (files.length === 0) {
+		throw new Error(`No extension builds found in ${webExtDir}`);
 	}
 
-	const requested = process.env.EXT_OUTPUT_NAME;
-	if (requested) {
-		if (!options.includes(requested)) {
-			throw new Error(
-				`EXT_OUTPUT_NAME not found in ${outputDirectory}: ${requested}`,
-			);
-		}
-		return path.join(outputDirectory, requested);
-	}
-
-	const selected = process.stdin.isTTY
-		? await promptForSelection(options)
-		: options[0];
-	return path.join(outputDirectory, selected);
+	const webExtFile = process.stdin.isTTY
+		? await getSelection(files)
+		: files[0];
+	return path.join(webExtDir, webExtFile);
 }
 
 /** Prompts the user to select an option from a list. */
-export function promptForSelection(options: string[]): Promise<string> {
+export function getSelection(options: string[]): Promise<string> {
 	return new Promise<string>((resolve, reject) => {
 		let index = 0;
 		const input = process.stdin;
 		const output = process.stdout;
-		const colour = { blue: "\u001b[34m", reset: "\u001b[0m" };
 
 		const render = () => {
 			readline.cursorTo(output, 0, 0);
 			readline.clearScreenDown(output);
-			output.write("Select extension build under .output:\n\n");
+			output.write("Select extension build:\n\n");
 			options.forEach((option, position) => {
 				const prefix =
 					position === index
-						? `${colour.blue}> ${option}${colour.reset}`
+						? `\u001b[34m> ${option}\u001b[0m`
 						: `  ${option}`;
 				output.write(`${prefix}\n`);
 			});
@@ -69,30 +63,25 @@ export function promptForSelection(options: string[]): Promise<string> {
 		const onData = (data: Buffer) => {
 			const key = data.toString();
 			switch (key) {
-				case "\u0003": {
+				case "\u0003":
 					cleanup();
 					reject(new Error("Selection cancelled"));
 					return;
-				}
-				case "\r": {
+				case "\r":
 					const selection = options[index];
 					cleanup();
 					resolve(selection);
 					return;
-				}
-				case "\u001b[A": {
+				case "\u001b[A":
 					index = (index - 1 + options.length) % options.length;
 					render();
 					return;
-				}
-				case "\u001b[B": {
+				case "\u001b[B":
 					index = (index + 1) % options.length;
 					render();
 					return;
-				}
-				default: {
+				default:
 					return;
-				}
 			}
 		};
 
@@ -104,13 +93,9 @@ export function promptForSelection(options: string[]): Promise<string> {
 }
 
 /** Discovers test cases from spec files in a directory. */
-export async function discoverTestCases(
-	specificationsDirectory: string,
-): Promise<TestCase[]> {
-	const entries = await fs.readdir(specificationsDirectory, {
-		withFileTypes: true,
-	});
-	const specificationFiles = entries
+export async function getTestCases(specDir: string): Promise<TestCase[]> {
+	const entries = await fs.readdir(specDir, { withFileTypes: true });
+	const files = entries
 		.filter(
 			(entry) =>
 				entry.isFile() &&
@@ -120,79 +105,93 @@ export async function discoverTestCases(
 		.map((entry) => entry.name)
 		.sort((a, b) => a.localeCompare(b));
 
-	const cases: TestCase[] = [];
-	for (const fileName of specificationFiles) {
-		const specificationPath = path.join(specificationsDirectory, fileName);
-		const module = await import(specificationPath);
-		if (!module.testCase) {
-			throw new Error(`Missing testCase export in ${fileName}`);
-		}
-		cases.push(module.testCase as TestCase);
+	const testCases: TestCase[] = [];
+	for (const specFiles of files) {
+		const specPath = path.join(specDir, specFiles);
+		const module = await import(specPath);
+		if (!module.testCase)
+			throw new Error(`Missing testCase export in ${specFiles}`);
+		testCases.push(module.testCase as TestCase);
 	}
-
-	return cases;
+	return testCases;
 }
 
 /** Gets the extension base URL for a web extension. */
-export async function getExtensionBaseUrl(
+export async function getWebExtBaseUrl(
 	bridge: Bridge,
-	webExtensionId: string,
-): Promise<string | undefined> {
-	try {
-		const extensionBaseUrl = await bridge.getExtensionUrl(webExtensionId);
-		if (
-			extensionBaseUrl &&
-			extensionBaseUrl.startsWith("moz-extension://")
-		) {
-			return extensionBaseUrl;
-		}
-	} catch {}
+	webExtId: string,
+): Promise<string | null> {
+	const webExtBaseUrl = await bridge.getExtensionUrl(webExtId);
+	if (webExtBaseUrl?.startsWith("moz-extension://")) {
+		return webExtBaseUrl;
+	}
+	return null;
 }
 
 /**
- * Serves pages with specific background colours. Example:
- * /test-page?bg=%23ff0000
+ * Creates a local HTTP server that serves test pages.
+ *
+ * @example
+ * 	const server = await createServer();
+ * 	await driver.get("http://127.0.0.1:8080?background=white&theme=white");
  */
-export function createColorServer(port = 8080): Promise<http.Server> {
+export function createServer(port = 8080): Promise<http.Server> {
 	return new Promise<http.Server>((resolve, reject) => {
 		const server = http.createServer((req, res) => {
-			const requestAddress = new URL(
+			const url = new URL(
 				req.url || "/",
-				`http://127.0.0.1:${port}`,
+				`http://127.0.0.1:${port}/test`,
 			);
-			const backgroundColour =
-				requestAddress.searchParams.get("bg") || "#f0f0f0";
-			const pageName = requestAddress.pathname.slice(1) || "test";
+			const backgroundColour = url.searchParams.get("background");
+			const themeColour = url.searchParams.get("theme");
+
+			const bodyStyles = [
+				"margin:0; padding:0; width: 100%; height: 100%;",
+				backgroundColour ? `background:${backgroundColour};` : "",
+			]
+				.filter(Boolean)
+				.join(" ");
+			const themeMetaTag = themeColour
+				? `<meta name=\"theme-color\" content=\"${themeColour}\">`
+				: "";
 
 			res.writeHead(200, { "Content-Type": "text/html" });
-			res.end(`<!DOCTYPE html>
+			res.end(`
+				<!DOCTYPE html>
 				<html>
-				<head><meta charset="UTF-8"><title>${pageName}</title></head>
-				<body style="margin:0; padding:0; background:${backgroundColour}; min-height:100vh;">
-					<div id="keepalive"></div>
-					<script>
-						setInterval(() => {
-							document.getElementById('keepalive').textContent = Date.now();
-						}, 5000);
-					</script>
-				</body>
-				</html>`);
+					<head>
+						<meta charset="UTF-8">
+						<title>test</title>
+						${themeMetaTag}
+					</head>
+					<body style="${bodyStyles}">
+						<div id="keepalive"></div>
+						<script>
+							setInterval(() => {
+								document.getElementById("keepalive").textContent = Date.now();
+								}, 5000);
+						</script>
+					</body>
+				</html>
+			`);
 		});
 
 		server.on("error", reject);
 		server.listen(port, "127.0.0.1", () => {
-			console.log(`Colour test server on http://127.0.0.1:${port}`);
+			console.log(`Serving test pages on http://127.0.0.1:${port}`);
 			resolve(server);
 		});
 	});
 }
 
 /** Reads the browser frame's accent colour from Firefox chrome context. */
-export async function getFrameColor(driver: WebDriver): Promise<string | null> {
-	await driver.execute(
-		new Command("setContext").setParameter("context", "chrome"),
-	);
+export async function getFrameColour(
+	driver: WebDriver,
+): Promise<string | null> {
 	try {
+		await driver.execute(
+			new Command("setContext").setParameter("context", "chrome"),
+		);
 		return await driver.executeScript(() => {
 			const style = getComputedStyle(document.documentElement);
 			return style.getPropertyValue("--lwt-accent-color").trim() || null;
@@ -204,31 +203,75 @@ export async function getFrameColor(driver: WebDriver): Promise<string | null> {
 	}
 }
 
-/** Parses an rgba/rgb colour string. */
-export function parseRGB(
-	colourText: string | null,
-): { r: number; g: number; b: number } | null {
-	if (!colourText) {
-		return null;
-	}
-	const match = colourText.match(/rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)/);
-	return match ? { r: +match[1], g: +match[2], b: +match[3] } : null;
+interface ColourChannel {
+	r: number;
+	g: number;
+	b: number;
+	a: number;
 }
 
-/** Checks if two colour strings are different with tolerance value. */
-export function colorsDiffer(
-	firstColour: string | null,
-	secondColour: string | null,
+/** Parses a colour string into RGBA channel values. */
+function parseColourString(colour: string): ColourChannel {
+	const trimmed = colour.trim();
+	const hexMatch = trimmed.match(/^#([0-9a-f]{3,8})$/i);
+	const channel: ColourChannel = { r: 0, g: 0, b: 0, a: 1 };
+	if (hexMatch) {
+		const hex = hexMatch[1];
+		if (hex.length === 3 || hex.length === 4) {
+			channel.r = parseInt(hex[0] + hex[0], 16);
+			channel.g = parseInt(hex[1] + hex[1], 16);
+			channel.b = parseInt(hex[2] + hex[2], 16);
+			if (hex.length === 4)
+				channel.a = parseInt(hex[3] + hex[3], 16) / 255;
+		} else if (hex.length === 6 || hex.length === 8) {
+			channel.r = parseInt(hex.slice(0, 2), 16);
+			channel.g = parseInt(hex.slice(2, 4), 16);
+			channel.b = parseInt(hex.slice(4, 6), 16);
+			if (hex.length === 8)
+				channel.a = parseInt(hex.slice(6, 8), 16) / 255;
+		}
+	} else {
+		const rgbMatch = trimmed.match(/^rgba?\((.+)\)$/i);
+		if (rgbMatch) {
+			const parts = rgbMatch[1].split(",").map((part) => part.trim());
+			if (parts[0]) {
+				channel.r = parts[0].endsWith("%")
+					? (parseFloat(parts[0]) / 100) * 255
+					: parseFloat(parts[0]);
+			}
+			if (parts[1]) {
+				channel.g = parts[1].endsWith("%")
+					? (parseFloat(parts[1]) / 100) * 255
+					: parseFloat(parts[1]);
+			}
+			if (parts[2]) {
+				channel.b = parts[2].endsWith("%")
+					? (parseFloat(parts[2]) / 100) * 255
+					: parseFloat(parts[2]);
+			}
+			if (parts[3]) {
+				channel.a = parts[3].endsWith("%")
+					? parseFloat(parts[3]) / 100
+					: parseFloat(parts[3]);
+			}
+		}
+	}
+	return channel;
+}
+
+/** Checks if the difference between two colour strings is within tolerence. */
+export function compareColour(
+	colour1: string,
+	colour2: string,
 	tolerance = 5,
 ): boolean {
-	const firstParsed = parseRGB(firstColour);
-	const secondParsed = parseRGB(secondColour);
-	if (!firstParsed || !secondParsed) {
-		return true;
-	}
+	const channel1 = parseColourString(colour1);
+	const channel2 = parseColourString(colour2);
+	const alphaTolerance = tolerance / 255;
 	return (
-		Math.abs(firstParsed.r - secondParsed.r) > tolerance ||
-		Math.abs(firstParsed.g - secondParsed.g) > tolerance ||
-		Math.abs(firstParsed.b - secondParsed.b) > tolerance
+		Math.abs((channel1.r ?? 0) - (channel2.r ?? 0)) <= tolerance &&
+		Math.abs((channel1.g ?? 0) - (channel2.g ?? 0)) <= tolerance &&
+		Math.abs((channel1.b ?? 0) - (channel2.b ?? 0)) <= tolerance &&
+		Math.abs((channel1.a ?? 1) - (channel2.a ?? 1)) <= alphaTolerance
 	);
 }

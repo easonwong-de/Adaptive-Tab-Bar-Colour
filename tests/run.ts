@@ -10,10 +10,10 @@ import {
 import type { LaunchedBrowser } from "selenium-webext-bridge";
 import type { TestContext } from "./helpers/types.js";
 import {
-	createColorServer,
-	discoverTestCases,
-	getExtensionBaseUrl,
-	resolveExtensionDir,
+	createServer,
+	getTestCases,
+	getWebExtBaseUrl,
+	getWebExtDir,
 } from "./helpers/utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,21 +21,21 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = process.env.EXT_OUTPUT_DIR
 	? path.resolve(process.env.EXT_OUTPUT_DIR)
 	: path.join(__dirname, "..", ".output");
-const EXT_ID = process.env.EXT_ID || "ATBC@EasonWong";
+const EXT_ID = "ATBC@EasonWong";
 
 async function main() {
 	const results = new TestResults();
-	const server = await createColorServer();
+	const server = await createServer();
 	let browser: LaunchedBrowser | null = null;
 
 	try {
-		const extDir = await resolveExtensionDir(OUTPUT_DIR);
+		const extDir = await getWebExtDir(OUTPUT_DIR);
 		browser = await launchBrowser({
 			extensions: [extDir],
 			firefoxArgs: ["-remote-allow-system-access"],
 		});
 		const { driver, testBridge: bridge } = browser;
-		const extBaseUrl = await getExtensionBaseUrl(bridge, EXT_ID);
+		const extBaseUrl = await getWebExtBaseUrl(bridge, EXT_ID);
 		if (!extBaseUrl) throw new Error("Could not get extension URL");
 
 		const optionsUrl = `${extBaseUrl}/options/options.html`;
@@ -48,9 +48,7 @@ async function main() {
 			popupUrl,
 			extDir,
 		};
-		const testCases = await discoverTestCases(
-			path.join(__dirname, "specs"),
-		);
+		const testCases = await getTestCases(path.join(__dirname, "specs"));
 		for (const testCase of testCases) {
 			console.log(`\n🔍 \x1b[1;34mTest case: ${testCase.name}\x1b[0m\n`);
 			try {

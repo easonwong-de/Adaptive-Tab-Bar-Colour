@@ -15,7 +15,10 @@ export type TestContext = {
 	extDir: string;
 };
 
-export type TestCase = { name: string; run(ctx: TestContext): Promise<void> };
+export type TestCase = {
+	name: string;
+	run(context: TestContext): Promise<void>;
+};
 
 type StorageGetKeys = string | string[] | Record<string, unknown> | null;
 
@@ -25,5 +28,8 @@ interface BrowserStorageArea {
 }
 
 declare global {
-	const browser: { storage: { local: BrowserStorageArea } };
+	const browser: {
+		storage: { local: BrowserStorageArea };
+		theme?: { update?: (windowId: number, theme: unknown) => void };
+	};
 }
