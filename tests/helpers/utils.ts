@@ -3,12 +3,12 @@ import http from "node:http";
 import path from "node:path";
 import readline from "node:readline";
 import type { WebDriver } from "selenium-webdriver";
-import { Command } from "selenium-webext-bridge";
-import type { Bridge, TestCase } from "./types.js";
+import { Command } from "selenium-webdriver/lib/command.js";
+import type { TestCase } from "./types.js";
 
 /** Resolves the extension output directory to use for tests. */
-export async function getWebExtDir(webExtDir: string): Promise<string> {
-	const entries = await fs.readdir(webExtDir, { withFileTypes: true });
+export async function getWebExtDir(dir: string): Promise<string> {
+	const entries = await fs.readdir(dir, { withFileTypes: true });
 	const files = entries
 		.filter((entry) => {
 			const entryName = entry.name.toLowerCase();
@@ -22,13 +22,13 @@ export async function getWebExtDir(webExtDir: string): Promise<string> {
 		.sort((a, b) => a.localeCompare(b));
 
 	if (files.length === 0) {
-		throw new Error(`No extension builds found in ${webExtDir}`);
+		throw new Error(`No extension builds found in ${dir}`);
 	}
 
 	const webExtFile = process.stdin.isTTY
 		? await getSelection(files)
 		: files[0];
-	return path.join(webExtDir, webExtFile);
+	return path.join(dir, webExtFile);
 }
 
 /** Prompts the user to select an option from a list. */
@@ -93,8 +93,8 @@ export function getSelection(options: string[]): Promise<string> {
 }
 
 /** Discovers test cases from spec files in a directory. */
-export async function getTestCases(specDir: string): Promise<TestCase[]> {
-	const entries = await fs.readdir(specDir, { withFileTypes: true });
+export async function getTestCases(dir: string): Promise<TestCase[]> {
+	const entries = await fs.readdir(dir, { withFileTypes: true });
 	const files = entries
 		.filter(
 			(entry) =>
@@ -107,25 +107,13 @@ export async function getTestCases(specDir: string): Promise<TestCase[]> {
 
 	const testCases: TestCase[] = [];
 	for (const specFiles of files) {
-		const specPath = path.join(specDir, specFiles);
+		const specPath = path.join(dir, specFiles);
 		const module = await import(specPath);
 		if (!module.testCase)
 			throw new Error(`Missing testCase export in ${specFiles}`);
 		testCases.push(module.testCase as TestCase);
 	}
 	return testCases;
-}
-
-/** Gets the extension base URL for a web extension. */
-export async function getWebExtBaseUrl(
-	bridge: Bridge,
-	webExtId: string,
-): Promise<string | null> {
-	const webExtBaseUrl = await bridge.getExtensionUrl(webExtId);
-	if (webExtBaseUrl?.startsWith("moz-extension://")) {
-		return webExtBaseUrl;
-	}
-	return null;
 }
 
 /**
@@ -274,4 +262,26 @@ export function compareColour(
 		Math.abs((channel1.b ?? 0) - (channel2.b ?? 0)) <= tolerance &&
 		Math.abs((channel1.a ?? 1) - (channel2.a ?? 1)) <= alphaTolerance
 	);
+}
+
+/** Compares two records for key and value differences. */
+export function compareRecord(
+	record1: Record<string, unknown>,
+	record2: Record<string, unknown>,
+): { extraKeys1: string[]; extraKeys2: string[]; mismatchedValues: string[] } {
+	const keys1 = Object.keys(record1);
+	const keys2 = Object.keys(record2);
+	const extraKeys1 = keys1.filter((key) => !(key in record2));
+	const extraKeys2 = keys2.filter((key) => !(key in record1));
+	const mismatchedValues: string[] = [];
+	for (const key of keys1.filter((key1) => key1 in keys2)) {
+		const actualValue = JSON.stringify(record2[key]);
+		const expectedValue = JSON.stringify(record1[key]);
+		if (actualValue !== expectedValue) {
+			mismatchedValues.push(
+				`${key} - expected: ${expectedValue}, got: ${actualValue}`,
+			);
+		}
+	}
+	return { extraKeys1, extraKeys2, mismatchedValues };
 }

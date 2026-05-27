@@ -1,36 +1,38 @@
 declare module "selenium-webext-bridge" {
 	import type { WebDriver } from "selenium-webdriver";
-	import { Command } from "selenium-webdriver/lib/command";
-
-	export { Command };
 
 	export class TestResults {
-		pass(name: string, details?: string): void;
-		fail(name: string, details?: string): void;
-		error(name: string, err: unknown): void;
+		pass(testName: string): void;
+		fail(testName: string, reason: string): void;
+		error(testName: string, error: unknown): void;
 		summary(): void;
-		exitCode(): number;
+		exitCode(): 0 | 1;
 	}
 
-	export interface TestBridge {
+	export interface TestWebDriver extends WebDriver {
+		installAddon(path: string, temporary?: boolean): Promise<string>;
+		uninstallAddon(id: string): Promise<void>;
+	}
+
+	export class TestBridge {
+		constructor(driver: WebDriver);
+		init(): Promise<void>;
 		getExtensionUrl(id: string): Promise<string | null>;
 		reset(): Promise<void>;
 	}
 
-	export type LaunchOptions = {
-		extensions: string[];
+	export type TestBrowser = { driver: TestWebDriver; testBridge: TestBridge };
+
+	export function launchBrowser(options: {
+		extensions?: string[];
+		BridgeClass?: typeof TestBridge;
+		headless?: boolean;
+		waitForInit?: number;
+		preferences?: Record<string, string | number | boolean>;
 		firefoxArgs?: string[];
-	};
+	}): Promise<TestBrowser>;
 
-	export type LaunchedBrowser = { driver: WebDriver; testBridge: TestBridge };
-
-	export function cleanupBrowser(
-		browser: LaunchedBrowser | null,
-	): Promise<void>;
-
-	export function launchBrowser(
-		options: LaunchOptions,
-	): Promise<LaunchedBrowser>;
+	export function cleanupBrowser(browser: TestBrowser | null): Promise<void>;
 
 	export function sleep(ms: number): Promise<void>;
 }
