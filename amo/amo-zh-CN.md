@@ -18,7 +18,7 @@
 
 **移除工具栏底部的阴影**
 
-要移除网页内容在浏览器工具栏上投射的细微阴影，请前往设置 (`about:preferences`) 并在“浏览器布局”部分关闭“显示侧栏”。或者，将以下代码添加到您的 CSS 主题：
+要移除网页内容在浏览器工具栏上投射的细微阴影，请前往设置（`about:preferences`）并在「浏览器布局」部分关闭「显示侧栏」。或者，将以下代码添加到您的 CSS 主题：
 
 > `#tabbrowser-tabbox, .browserContainer {`
 
@@ -28,7 +28,7 @@
 
 **自定义颜色过渡**
 
-Firefox 原生会为标签栏的颜色更改应用过渡效果。如果您希望移除这个行为并让变色标签栏 (ATBC) 实时更改颜色，请将以下代码添加到您的 CSS 主题中：
+Firefox 原生会为标签栏的颜色更改应用过渡效果。如果您希望移除这个行为并让变色标签栏（ATBC）实时更改颜色，请将以下代码添加到您的 CSS 主题中：
 
 > `:root {`
 
@@ -58,11 +58,11 @@ Firefox 原生会为标签栏的颜色更改应用过渡效果。如果您希望
 
 **与第三方 CSS 主题的兼容性**
 
-第三方 CSS 主题可与变色标签栏 (ATBC) 兼容，只要它们使用 Firefox 的标准颜色变量（例如，`--lwt-accent-color` 用于标签栏颜色）。比如，[这](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一个与 ATBC 兼容的 CSS 主题。
+第三方 CSS 主题可与变色标签栏（ATBC）兼容，只要它们使用 Firefox 的标准颜色变量（例如，`--lwt-accent-color` 用于标签栏颜色）。比如，[这](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一个与 ATBC 兼容的 CSS 主题。
 
 **Linux 搭配 GTK 主题时的标题栏按钮**
 
-Firefox 的标题栏按钮可能会被重置为 Windows 风格。为了避免这种情况，请打开“高级首选项”（`about:config`），并将 `widget.gtk.non-native-titlebar-buttons.enabled` 设置为 `false`。（感谢 [@anselstetter](https://github.com/anselstetter/)）
+Firefox 的标题栏按钮可能会被重置为 Windows 风格。为了避免这种情况，请打开「高级首选项」（`about:config`），并将 `widget.gtk.non-native-titlebar-buttons.enabled` 设置为 `false`。（感谢 [@anselstetter](https://github.com/anselstetter/)）
 
 **安全提示**
 

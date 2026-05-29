@@ -18,7 +18,7 @@
 
 **移除工具列底部的陰影**
 
-要移除網頁內容在瀏覽器工具列上投射的細微陰影，請前往設定 (`about:preferences`) 並在「瀏覽器版面」部分關閉「顯示側邊欄」。另外，閣下亦可將以下程式碼加入閣下的 CSS 主題：
+要移除網頁內容在瀏覽器工具列上投射的細微陰影，請前往設定（`about:preferences`）並在「瀏覽器版面」部分關閉「顯示側邊欄」。另外，閣下亦可將以下程式碼加入閣下的 CSS 主題：
 
 > `#tabbrowser-tabbox, .browserContainer {`
 
@@ -28,7 +28,7 @@
 
 **自訂色彩轉場**
 
-Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此行為並讓變色標題列 (ATBC) 即時更新色彩，請將以下程式碼加入你的 CSS 主題：
+Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此行為並讓變色標題列（ATBC）即時更新色彩，請將以下程式碼加入你的 CSS 主題：
 
 > `:root {`
 
@@ -58,7 +58,7 @@ Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此
 
 **與第三方 CSS 主題的相容性**
 
-第三方 CSS 主題可與變色標題列 (ATBC) 相容，只要它們使用 Firefox 的標準顏色變數（例如，`--lwt-accent-color` 用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 ATBC 相容的 CSS 主題。
+第三方 CSS 主題可與變色標題列（ATBC）相容，只要它們使用 Firefox 的標準顏色變數（例如，`--lwt-accent-color` 用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 ATBC 相容的 CSS 主題。
 
 **Linux 配搭 GTK 主題時的標題列按鈕**
 
