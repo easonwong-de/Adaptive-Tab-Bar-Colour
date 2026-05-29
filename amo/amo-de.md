@@ -28,7 +28,7 @@ Um den dünnen Schatten zu entfernen, den der Webinhalt auf die Browser-Werkzeug
 
 **Farbübergänge anpassen**
 
-Firefox wendet von Haus aus einen Übergangseffekt auf Farbänderungen der Tableiste an. Um dieses Verhalten zu deaktivieren und Anpassende Tableistenfarbe (ATBC) zu ermöglichen, Farben sofort zu aktualisieren, füge den folgenden Code zu Ihrem CSS-Theme hinzu:
+Firefox wendet von Haus aus einen Übergangseffekt auf Farbänderungen der Tableiste an. Um dieses Verhalten zu deaktivieren und Anpassende Tableistenfarbe (ATBC) zu ermöglichen, Farben sofort zu aktualisieren, füge den folgenden Code zu deinem CSS-Theme hinzu:
 
 > `:root {`
 
@@ -38,7 +38,7 @@ Firefox wendet von Haus aus einen Übergangseffekt auf Farbänderungen der Table
 
 > `}`
 
-Alternativ bevorzugen Sie vielleicht sanfte Farbübergänge für die Tableiste. Da dies aufgrund technischer Einschränkungen nicht nativ unterstützt werden kann, fügen Sie den folgenden Code zu Ihrem CSS-Theme hinzu (Dank an [@Moarram](https://github.com/Moarram/)):
+Alternativ bevorzugst du vielleicht sanfte Farbübergänge für die Tableiste. Da dies aufgrund technischer Einschränkungen nicht nativ unterstützt werden kann, füge den folgenden Code zu deinem CSS-Theme hinzu (Dank an [@Moarram](https://github.com/Moarram/)):
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
