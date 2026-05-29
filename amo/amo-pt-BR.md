@@ -26,9 +26,19 @@ Para remover a fina sombra projetada por conteúdo web na barra de ferramentas, 
 
 > `}`
 
-**Customizando transições de cor**
+**Personalizar transições de cores**
 
-Devido à limitações técnicas, a transição suave de cores para a barra de abas não tem suporte nativo. Entretanto, você pode ativar esse efeito adicionando o seguinte código a seu tema CSS (graças a [@Moarram](https://github.com/Moarram/)):
+O Firefox aplica nativamente um efeito de transição às mudanças de cor da barra de abas. Para desativar esse comportamento e permitir que Adaptive Tab Bar Colour (ATBC) atualize as cores instantaneamente, adicione o seguinte código ao seu tema CSS:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> > `--inactive-window-transition: none !important;`
+
+> `}`
+
+Alternativamente, você pode preferir transições de cores suaves para a barra de abas. Como isso não pode ser suportado nativamente devido a limitações técnicas, adicione o seguinte código ao seu tema CSS (obrigado a [@Moarram](https://github.com/Moarram/)):
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
@@ -43,14 +53,6 @@ Para ativar a transição suave de cores na interface da Sidebery, adicione o se
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
-
-> `}`
-
-Alternativamente, se você deseja remover a transição de cor integrada do Firefox na barra de ferramentas para uma mudança de cores instantânea, adicione o seguinte código a seu tema CSS:
-
-> `:root {`
-
-> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

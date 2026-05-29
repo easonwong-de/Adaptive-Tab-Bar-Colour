@@ -28,7 +28,17 @@ Um den dünnen Schatten zu entfernen, den der Webinhalt auf die Browser-Werkzeug
 
 **Farbübergänge anpassen**
 
-Aufgrund technischer Einschränkungen werden sanfte Farbübergänge der Tableiste nicht nativ unterstützt. Du kannst jedoch diesen Effekt aktivieren, indem du den folgenden Code zu deinem CSS-Theme hinzufügst (dank an [@Moarram](https://github.com/Moarram/)):
+Firefox wendet von Haus aus einen Übergangseffekt auf Farbänderungen der Tableiste an. Um dieses Verhalten zu deaktivieren und Anpassende Tableistenfarbe (ATBC) zu ermöglichen, Farben sofort zu aktualisieren, füge den folgenden Code zu Ihrem CSS-Theme hinzu:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> > `--inactive-window-transition: none !important;`
+
+> `}`
+
+Alternativ bevorzugen Sie vielleicht sanfte Farbübergänge für die Tableiste. Da dies aufgrund technischer Einschränkungen nicht nativ unterstützt werden kann, fügen Sie den folgenden Code zu Ihrem CSS-Theme hinzu (Dank an [@Moarram](https://github.com/Moarram/)):
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
@@ -43,14 +53,6 @@ Um sanfte Farbübergänge in der Sidebery-Benutzeroberfläche zu aktivieren, fü
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
-
-> `}`
-
-Alternativ, wenn Sie den integrierten Farbübergang von Firefox in der Symbolleiste für einen sofortigen Farbwechsel entfernen möchten, fügen Sie den folgenden Code zu Ihrem CSS-Theme hinzu:
-
-> `:root {`
-
-> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

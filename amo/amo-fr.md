@@ -28,7 +28,17 @@ Pour supprimer la fine ombre projetée par le contenu web sur la barre d’outil
 
 **Personnaliser les transitions de couleur**
 
-En raison de limitations techniques, les transitions douces des couleurs pour la barre d’onglets ne sont pas prises en charge nativement. Cependant, vous pouvez activer cet effet en ajoutant le code suivant à votre thème CSS (merci à [@Moarram](https://github.com/Moarram/)) :
+Firefox applique nativement un effet de transition aux changements de couleur de la barre d’onglets. Pour désactiver ce comportement et permettre à Adaptive Tab Bar Colour (ATBC) de mettre à jour les couleurs instantanément, ajoutez le code suivant à votre thème CSS :
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> > `--inactive-window-transition: none !important;`
+
+> `}`
+
+Alternativement, vous préférerez peut-être des transitions de couleur fluides pour la barre d’onglets. Comme cela ne peut pas être pris en charge nativement en raison de limitations techniques, ajoutez le code suivant à votre thème CSS (merci à [@Moarram](https://github.com/Moarram/)) :
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
@@ -43,14 +53,6 @@ Pour activer les transitions douces des couleurs dans l’interface de Sidebery,
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
-
-> `}`
-
-Alternativement, si vous souhaitez supprimer la transition de couleur intégrée de Firefox sur la barre d'outils pour un changement de couleur instantané, ajoutez le code suivant à votre thème CSS :
-
-> `:root {`
-
-> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

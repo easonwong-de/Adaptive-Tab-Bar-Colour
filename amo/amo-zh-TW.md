@@ -26,9 +26,19 @@
 
 > `}`
 
-**自訂顏色過渡**
+**自訂色彩轉場**
 
-由於技術限制，標籤列的平滑顏色過渡無法原生支援。然而，閣下可以透過將以下程式碼加入閣下的 CSS 主題來啟用此效果（感謝 [@Moarram](https://github.com/Moarram/)）：
+Firefox 預設會為分頁列的色彩變更套用轉場效果。若要停用此行為並讓變色標題列 (ATBC) 即時更新色彩，請將以下程式碼加入至你的 CSS 佈景主題：
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> > `--inactive-window-transition: none !important;`
+
+> `}`
+
+或者，你可能偏好分頁列擁有平滑的色彩轉場。由於技術限制，這無法原生支援。不過，閣下可將以下程式碼加入至你的 CSS 佈景主題（感謝 [@Moarram](https://github.com/Moarram/)）：
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
@@ -38,19 +48,11 @@
 
 > `}`
 
-要在 Sidebery 介面中啟用平滑顏色過渡，請將以下程式碼加入 Sidebery 樣式編輯器（感謝 [@MaxHasBeenUsed](https://github.com/MaxHasBeenUsed/)）：
+若要啟用 Sidebery 介面的平滑色彩轉場，請將以下程式碼加入 Sidebery 樣式編輯器（感謝 [@MaxHasBeenUsed](https://github.com/MaxHasBeenUsed/)）：
 
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
-
-> `}`
-
-另外，若閣下希望移除 Firefox 工具列內建的顏色過渡以實現即時顏色更改，請將以下程式碼加入閣下的 CSS 主題中：
-
-> `:root {`
-
-> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 

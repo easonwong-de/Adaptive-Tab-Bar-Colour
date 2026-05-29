@@ -28,7 +28,17 @@ Web içeriği tarafından tarayıcı araç çubuğuna vuran ince gölgeyi kaldı
 
 **Renk Geçişlerini Özelleştirme**
 
-Teknik sınırlamalar sebebiyle sekme çubuğu için yumuşak renk geçişleri yerleşik olarak desteklenmiyor. Ancak aşağıdaki kodu CSS temanıza ekleyerek bu efekti devreye alabilirsiniz ([@Moarram](https://github.com/Moarram/)'a teşekkürler):
+Firefox sekme çubuğu renk değişikliklerine yerel olarak bir geçiş efekti uygular. Bu davranışı devre dışı bırakmak ve Adaptive Tab Bar Colour (ATBC)'nin renkleri anında güncellemesini sağlamak için aşağıdaki kodu CSS temanıza ekleyin:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> > `--inactive-window-transition: none !important;`
+
+> `}`
+
+Alternatif olarak sekme çubuğu için yumuşak renk geçişlerini tercih edebilirsiniz. Teknik sınırlamalar nedeniyle bu yerel olarak desteklenemediğinden aşağıdaki kodu CSS temanıza ekleyin ([@Moarram](https://github.com/Moarram/)'a teşekkürler):
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
@@ -43,14 +53,6 @@ Sidebery arayüzünde yumuşak renk geçişlerini devreye almak için aşağıda
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
-
-> `}`
-
-Bunun yerine, Firefox'un yerleşik renk geçişini kaldırıp rengin anında değişmesini isterseniz, aşağıdaki kodu CSS temanıza ekleyin:
-
-> `:root {`
-
-> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 
