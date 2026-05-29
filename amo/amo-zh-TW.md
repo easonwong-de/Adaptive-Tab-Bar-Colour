@@ -28,7 +28,7 @@
 
 **自訂色彩轉場**
 
-Firefox 預設會為分頁列的色彩變更套用轉場效果。若要停用此行為並讓變色標題列 (ATBC) 即時更新色彩，請將以下程式碼加入至你的 CSS 佈景主題：
+Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此行為並讓變色標題列 (ATBC) 即時更新色彩，請將以下程式碼加入你的 CSS 主題：
 
 > `:root {`
 
@@ -38,7 +38,7 @@ Firefox 預設會為分頁列的色彩變更套用轉場效果。若要停用此
 
 > `}`
 
-或者，你可能偏好分頁列擁有平滑的色彩轉場。由於技術限制，這無法原生支援。不過，閣下可將以下程式碼加入至你的 CSS 佈景主題（感謝 [@Moarram](https://github.com/Moarram/)）：
+或者，你可能偏好標題列擁有平滑的色彩轉場。由於技術限制，這無法原生支援。不過，閣下可將以下程式碼加入你的 CSS 主題（感謝 [@Moarram](https://github.com/Moarram/)）：
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
