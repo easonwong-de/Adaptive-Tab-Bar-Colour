@@ -19,7 +19,7 @@ Changes the colour of Firefox theme to match the website’s appearance.
 
 This add-on dynamically adjusts the Firefox theme to match the appearance of the website you are viewing, similar to the tab bar tinting feature in Safari on macOS.
 
-<img src="https://addons.mozilla.org/user-media/previews/full/375/375995.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/375/375996.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/375/375997.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/375/375998.png" width="45%">
+<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="45%">
 
 <br>
 
