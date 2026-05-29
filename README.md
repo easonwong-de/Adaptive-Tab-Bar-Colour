@@ -19,7 +19,7 @@ Changes the colour of Firefox theme to match the website’s appearance.
 
 This add-on dynamically adjusts the Firefox theme to match the appearance of the website you are viewing, similar to the tab bar tinting feature in Safari on macOS.
 
-<img src="https://addons.mozilla.org/user-media/previews/full/375/375995.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/375/375996.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/375/375997.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/375/375998.png" width="45%">
+<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="45%">
 
 <br>
 
@@ -69,7 +69,16 @@ To remove the thin shadow cast by web content onto the browser toolbar, navigate
 
 ## Customising Colour Transitions
 
-Due to technical limitations, smooth colour transitions for the tab bar are not natively supported. However, you can enable this effect by adding the following code to your CSS theme (thanks to [@Moarram](https://github.com/Moarram/)):
+Firefox natively applies a transition effect to tab bar colour changes. To disable this behaviour and allow Adaptive Tab Bar Colour (ATBC) to update colours instantaneously, add the following code to your CSS theme:
+
+```css
+:root {
+	--ext-theme-background-transition: none !important;
+	--inactive-window-transition: none !important;
+}
+```
+
+Alternatively, you may prefer smooth colour transitions for the tab bar. As this cannot be natively supported due to technical limitations, add the following code to your CSS theme (thanks to [@Moarram](https://github.com/Moarram/)):
 
 ```css
 #navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {
@@ -84,14 +93,6 @@ To enable smooth colour transitions in the Sidebery UI, add the following code t
 ```css
 .Sidebar, .bottom-space {
 	transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;
-}
-```
-
-Alternatively, if you wish to remove Firefox’s built-in colour transition on the toolbar for an instant colour change, add the following code to your CSS theme:
-
-```css
-:root {
-	--ext-theme-background-transition: none !important;
 }
 ```
 

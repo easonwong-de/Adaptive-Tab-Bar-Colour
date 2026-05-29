@@ -28,7 +28,17 @@
 
 **Настройка цветовых переходов**
 
-Из-за технических ограничений плавные переходы цвета для панели вкладок не поддерживаются изначально. Однако вы можете включить этот эффект, добавив следующий код в вашу CSS-тему (спасибо [@Moarram](https://github.com/Moarram/)):
+Firefox изначально применяет эффект перехода к изменениям цвета панели вкладок. Чтобы отключить это поведение и позволить Adaptive Tab Bar Colour (ATBC) обновлять цвета мгновенно, добавьте следующий код в вашу CSS-тему:
+
+> `:root {`
+
+> > `--ext-theme-background-transition: none !important;`
+
+> > `--inactive-window-transition: none !important;`
+
+> `}`
+
+В качестве альтернативы, вы можете предпочесть плавные цветовые переходы для панели вкладок. Поскольку это не может поддерживаться изначально из-за технических ограничений, добавьте следующий код в вашу CSS-тему (спасибо [@Moarram](https://github.com/Moarram/)):
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
 
@@ -43,14 +53,6 @@
 > `.Sidebar, .bottom-space {`
 
 > > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
-
-> `}`
-
-Кроме того, если вы хотите отключить встроенный переход цвета в Firefox на панели инструментов для мгновенного изменения цвета, добавьте следующий код в свою CSS-тему:
-
-> `:root {`
-
-> > `--ext-theme-background-transition: none !important;`
 
 > `}`
 
