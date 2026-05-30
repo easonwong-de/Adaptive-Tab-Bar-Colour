@@ -98,6 +98,7 @@ jspm_packages/
 # WXT
 .wxt/
 .output/
+.env.submit
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

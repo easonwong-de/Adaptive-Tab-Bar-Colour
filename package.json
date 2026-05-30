@@ -5,10 +5,12 @@
 	"type": "module",
 	"scripts": {
 		"start": "wxt",
-		"build": "npm run format && wxt build",
-		"zip": "npm run format && wxt zip",
+		"build": "wxt build -b firefox",
+		"zip": "wxt zip -b firefox",
 		"format": "prettier --write --list-different src",
-		"postinstall": "wxt prepare"
+		"postinstall": "wxt prepare",
+		"submit:test": "wxt submit --dry-run --firefox-zip .output/${npm_package_name}-${npm_package_version}-firefox.zip --firefox-sources-zip .output/${npm_package_name}-${npm_package_version}-sources.zip",
+		"submit": "wxt submit --firefox-zip .output/${npm_package_name}-${npm_package_version}-firefox.zip --firefox-sources-zip .output/${npm_package_name}-${npm_package_version}-sources.zip"
 	},
 	"repository": {
 		"type": "git",
