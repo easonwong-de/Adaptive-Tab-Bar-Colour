@@ -4,12 +4,14 @@
 	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
 	"type": "module",
 	"scripts": {
+		"build": "wxt build",
+		"format": "prettier --write --list-different src tests",
+		"postinstall": "wxt prepare",
 		"start": "wxt",
-		"build": "npm run format && wxt build",
-		"zip": "npm run format && wxt zip",
-		"format": "prettier --write --list-different src",
 		"test": "tsx tests/run.ts",
-		"postinstall": "wxt prepare"
+		"test:headless": "tsx tests/run.ts --headless",
+		"zip": "wxt zip",
+		"zip:clean": "wxt zip --no-sources"
 	},
 	"repository": {
 		"type": "git",

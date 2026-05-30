@@ -6,29 +6,32 @@ import type { WebDriver } from "selenium-webdriver";
 import { Command } from "selenium-webdriver/lib/command.js";
 import type { TestCase } from "./types.js";
 
-/** Resolves the extension output directory to use for tests. */
-export async function getWebExtDir(dir: string): Promise<string> {
+/** Resolves the extension path to use for tests. */
+export async function getWebExtPath(
+	dir: string,
+	interactive = true,
+): Promise<string> {
 	const entries = await fs.readdir(dir, { withFileTypes: true });
 	const files = entries
 		.filter((entry) => {
 			const entryName = entry.name.toLowerCase();
 			return (
-				entry.isDirectory() ||
 				entryName.endsWith(".zip") ||
-				entryName.endsWith(".xpi")
+				entryName.endsWith(".xpi") ||
+				(interactive && entry.isDirectory())
 			);
 		})
 		.map((entry) => entry.name)
 		.sort((a, b) => a.localeCompare(b));
 
-	if (files.length === 0) {
+	if (files.length === 0)
 		throw new Error(`No extension builds found in ${dir}`);
-	}
 
-	const webExtFile = process.stdin.isTTY
-		? await getSelection(files)
-		: files[0];
-	return path.join(dir, webExtFile);
+	const webExtDir =
+		interactive && process.stdin.isTTY
+			? await getSelection(files)
+			: files[0];
+	return path.join(dir, webExtDir);
 }
 
 /** Prompts the user to select an option from a list. */

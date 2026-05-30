@@ -6,7 +6,7 @@ import { TestResults } from "selenium-webext-bridge";
 import { cleanupBrowser, launchBrowser } from "selenium-webext-bridge";
 import type { TestBrowser } from "selenium-webext-bridge";
 import type { TestContext } from "./helpers/types.js";
-import { createServer, getTestCases, getWebExtDir } from "./helpers/utils.js";
+import { createServer, getTestCases, getWebExtPath } from "./helpers/utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = path.join(__dirname, "..", ".output");
@@ -14,25 +14,28 @@ const SPEC_DIR = path.join(__dirname, "specs");
 const SERVER_PORT = 8080;
 
 async function main() {
+	const headless = process.argv.includes("--headless");
 	const results = new TestResults();
 	const server = await createServer(SERVER_PORT);
 	let browser: TestBrowser | null = null;
 
 	try {
-		const webExtDir = await getWebExtDir(OUTPUT_DIR);
+		const webExtPath = await getWebExtPath(OUTPUT_DIR, !headless);
+		const testCases = await getTestCases(SPEC_DIR);
+
+		console.log(`\nUsing extension at ${webExtPath}\n`);
 		browser = await launchBrowser({
 			waitForInit: 0,
-			headless: false,
+			headless,
 			firefoxArgs: ["-remote-allow-system-access"],
 		});
 		const { driver, testBridge: bridge } = browser;
 
-		const testCases = await getTestCases(SPEC_DIR);
 		for (const testCase of testCases) {
 			console.log(`\n🔍 \x1b[1;34mTest case: ${testCase.name}\x1b[0m\n`);
 			let webExtId: string | null = null;
 			try {
-				webExtId = await driver.installAddon(webExtDir, true);
+				webExtId = await driver.installAddon(webExtPath, true);
 				await driver.sleep(1000);
 				const url = await bridge.getExtensionUrl(webExtId);
 				if (!url || !url.startsWith("moz-extension://"))

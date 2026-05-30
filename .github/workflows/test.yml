@@ -1,4 +1,4 @@
-name: Tests
+name: Test
 
 on:
     push:
@@ -16,4 +16,5 @@ jobs:
                   node-version: 20
             - uses: browser-actions/setup-firefox@v1
             - run: npm install
-            - run: HEADLESS=1 node test.mjs
+            - run: npm run zip:clean
+            - run: npm run test:headless

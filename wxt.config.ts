@@ -35,6 +35,7 @@ export default defineConfig({
 	},
 	manifestVersion: 3,
 	modules: ["@wxt-dev/module-react", "@wxt-dev/i18n/module"],
+	outDirTemplate: "atbc",
 	srcDir: "src",
 	vite: () => ({
 		css: {
@@ -47,5 +48,10 @@ export default defineConfig({
 	webExt: {
 		binaries: { firefox: "firefoxdeveloperedition" },
 		openDevtools: true,
+	},
+	zip: {
+		name: "atbc",
+		artifactTemplate: "{{name}}-{{version}}.zip",
+		sourcesTemplate: "{{name}}-{{version}}-sources.zip",
 	},
 });
