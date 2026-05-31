@@ -274,7 +274,7 @@ export function compareRecord(
 	const extraKeys1 = keys1.filter((key) => !(key in record2));
 	const extraKeys2 = keys2.filter((key) => !(key in record1));
 	const mismatchedValues: string[] = [];
-	for (const key of keys1.filter((key1) => key1 in keys2)) {
+	for (const key of keys1.filter((key1) => key1 in record2)) {
 		const actualValue = JSON.stringify(record2[key]);
 		const expectedValue = JSON.stringify(record1[key]);
 		if (actualValue !== expectedValue) {
