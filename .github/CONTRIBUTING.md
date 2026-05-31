@@ -45,7 +45,4 @@ cd Adaptive-Tab-Bar-Colour
 npm install
 ```
 
-To test the changes, run `npm start`, which:
-
-1. Formats source code using Prettier.
-1. Builds the add-on using WXT and launches it in the browser.
+To test the changes, run `npm start`. The add-on will be built and launch in the browser.

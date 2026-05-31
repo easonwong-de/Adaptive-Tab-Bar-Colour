@@ -4,11 +4,16 @@
 	"description": "Changes the colour of Firefox theme to match the website’s appearance.",
 	"type": "module",
 	"scripts": {
+		"build": "wxt build -b firefox",
+		"format": "prettier --write --list-different src tests",
+		"postinstall": "wxt prepare",
 		"start": "wxt",
-		"build": "npm run format && wxt build",
-		"zip": "npm run format && wxt zip",
-		"format": "prettier --write --list-different src",
-		"postinstall": "wxt prepare"
+		"submit": "wxt submit --firefox-zip .output/atbc-${npm_package_version}.zip --firefox-sources-zip .output/atbc-${npm_package_version}-sources.zip",
+		"submit:test": "wxt submit --dry-run --firefox-zip .output/atbc-${npm_package_version}.zip --firefox-sources-zip .output/atbc-${npm_package_version}-sources.zip",
+		"test": "tsx tests/run.ts",
+		"test:headless": "tsx tests/run.ts --headless",
+		"zip": "bash scripts/zip.sh",
+		"zip:clean": "bash scripts/zip.sh --clean"
 	},
 	"repository": {
 		"type": "git",
@@ -23,19 +28,26 @@
 	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
+		"@types/node": "^22.18.3",
 		"@types/react": "^19.2.15",
+		"@types/selenium-webdriver": "^4.35.5",
 		"@wxt-dev/module-react": "^1.2.2",
 		"prettier": "^3.8.3",
 		"prettier-plugin-css-order": "^2.2.0",
 		"prettier-plugin-jsdoc": "^1.8.0",
 		"prettier-plugin-sort-json": "^4.2.0",
 		"prettier-plugin-yaml": "^1.2.0",
+		"tsx": "^4.19.2",
+		"typescript": "^5.6.3",
 		"wxt": "^0.20.26"
 	},
 	"dependencies": {
 		"@wxt-dev/i18n": "^0.2.5",
 		"clsx": "^2.1.1",
+		"geckodriver": "^6.1.0",
 		"react": "^19.2.6",
-		"react-dom": "^19.2.6"
+		"react-dom": "^19.2.6",
+		"selenium-webdriver": "^4.41.0",
+		"selenium-webext-bridge": "^0.4.0"
 	}
 }
