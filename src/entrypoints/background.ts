@@ -85,11 +85,6 @@ const browserColour: Record<BrowserColour, colour> = Object.freeze({
 			? new colour("#eeeeef")
 			: new colour("#32313a");
 	},
-	get PROFILE() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#2b2a33");
-	},
 	get SVG() {
 		return new colour("#ffffff");
 	},

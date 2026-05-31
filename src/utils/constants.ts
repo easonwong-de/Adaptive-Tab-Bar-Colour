@@ -21,14 +21,14 @@ export const default_compatibilityMode = !supportsThemeAPI();
 /** Colours for about:pages. */
 export const aboutPageColour = Object.freeze({
 	"compat": "COMPAT",
-	"deleteprofile": "PROFILE",
+	"deleteprofile": "HOME",
 	"devtools-toolbox": "TOOLBOX",
-	"editprofile": "PROFILE",
+	"editprofile": "HOME",
 	"firefoxview": "HOME",
 	"home": "HOME",
 	"logo": "IMAGE_VIEWER",
 	"mozilla": "MOTTO",
-	"newprofile": "PROFILE",
+	"newprofile": "HOME",
 	"newtab": "HOME",
 	"privatebrowsing": "PRIVATE",
 	"processes": "PROCESS",
