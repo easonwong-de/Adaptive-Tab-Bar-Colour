@@ -14,6 +14,9 @@ export default function Input({
 	warning = "",
 	onChange,
 }: InputProps) {
+	const [isEditing, setIsEditing] = useState(false);
+	const [text, setText] = useState(value);
+
 	return (
 		<div
 			className={clsx(
@@ -25,12 +28,23 @@ export default function Input({
 				type="text"
 				placeholder={placeholder}
 				title={placeholder}
-				value={value}
-				onChange={(e) => onChange(e.target.value)}
+				value={isEditing ? text : value}
+				onFocus={(e) => {
+					setIsEditing(true);
+					setText(value);
+				}}
+				onBlur={(e) => {
+					setIsEditing(false);
+					e.target.scrollLeft = 0;
+				}}
+				onChange={(e) => {
+					const value = e.target.value;
+					setText(value);
+					onChange(value);
+				}}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") e.currentTarget.blur();
 				}}
-				onBlur={(e) => (e.target.scrollLeft = 0)}
 			/>
 			<div title={warning}>
 				<Icon type="warning" />
