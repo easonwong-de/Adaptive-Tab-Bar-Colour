@@ -12,8 +12,8 @@
 		"submit:test": "wxt submit --dry-run --firefox-zip .output/atbc-${npm_package_version}.zip --firefox-sources-zip .output/atbc-${npm_package_version}-sources.zip",
 		"test": "tsx tests/run.ts",
 		"test:headless": "tsx tests/run.ts --headless",
-		"zip": "wxt zip -b firefox",
-		"zip:clean": "rm -rf .output/* && wxt zip -b firefox --no-sources"
+		"zip": "bash scripts/zip.sh",
+		"zip:clean": "bash scripts/zip.sh --clean"
 	},
 	"repository": {
 		"type": "git",

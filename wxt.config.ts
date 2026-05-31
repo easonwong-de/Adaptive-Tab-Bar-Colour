@@ -53,5 +53,11 @@ export default defineConfig({
 		name: "atbc",
 		artifactTemplate: "{{name}}-{{version}}.zip",
 		sourcesTemplate: "{{name}}-{{version}}-sources.zip",
+		excludeSources: [
+			"tests/**",
+			"scripts/**",
+			"amo/**",
+			"prettier.config.ts",
+		],
 	},
 });
