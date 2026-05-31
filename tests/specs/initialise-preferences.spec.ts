@@ -1,6 +1,6 @@
 import { sleep } from "selenium-webext-bridge";
-import type { TestCase } from "../helpers/types.js";
-import { compareRecord } from "../helpers/utils.js";
+import type { TestCase } from "../types.js";
+import { compareRecord } from "../utils.js";
 
 const expectedPrefs: Record<string, unknown> = {
 	accentColour_dark: "#00cadb",

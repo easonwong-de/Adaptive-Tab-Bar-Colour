@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import { TestResults } from "selenium-webext-bridge";
 import { cleanupBrowser, launchBrowser } from "selenium-webext-bridge";
 import type { TestBrowser } from "selenium-webext-bridge";
-import type { TestContext } from "./helpers/types.js";
-import { createServer, getTestCases, getWebExtPath } from "./helpers/utils.js";
+import type { TestContext } from "./types.js";
+import { createServer, getTestCases, getWebExtPath } from "./utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = path.join(__dirname, "..", ".output");

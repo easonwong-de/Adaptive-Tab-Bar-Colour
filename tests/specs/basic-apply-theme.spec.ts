@@ -1,6 +1,6 @@
 import { sleep } from "selenium-webext-bridge";
-import type { TestCase } from "../helpers/types.js";
-import { compareColour, getFrameColour } from "../helpers/utils.js";
+import type { TestCase } from "../types.js";
+import { compareColour, getFrameColour } from "../utils.js";
 
 export const testCase: TestCase = {
 	name: "Basic Apply Theme",
