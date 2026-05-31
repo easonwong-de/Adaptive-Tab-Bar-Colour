@@ -41,11 +41,15 @@ export const testCase: TestCase = {
 			await sleep(500);
 
 			expectedPrefs.compatibilityMode = (await driver.executeScript(
-				`return typeof browser?.theme?.update !== "function";`,
+				() => {
+					return typeof browser?.theme?.update !== "function";
+				},
 			)) as boolean;
 
 			const { lastSave, ...actualPrefs } = (await driver.executeScript(
-				`return browser.storage.local.get();`,
+				async () => {
+					return await browser.storage.local.get();
+				},
 			)) as Record<string, unknown>;
 
 			const {

@@ -136,14 +136,11 @@ export function createServer(port = 8080): Promise<http.Server> {
 			const backgroundColour = url.searchParams.get("background");
 			const themeColour = url.searchParams.get("theme");
 
-			const bodyStyles = [
-				"margin:0; padding:0; width: 100%; height: 100%;",
-				backgroundColour ? `background:${backgroundColour};` : "",
-			]
-				.filter(Boolean)
-				.join(" ");
+			const bodyStyles = `margin:0; padding:0; width: 100%; height: 100%; ${
+				backgroundColour ? `background:${backgroundColour};` : ""
+			}`;
 			const themeMetaTag = themeColour
-				? `<meta name=\"theme-color\" content=\"${themeColour}\">`
+				? `<meta name="theme-color" content="${themeColour}">`
 				: "";
 
 			res.writeHead(200, { "Content-Type": "text/html" });

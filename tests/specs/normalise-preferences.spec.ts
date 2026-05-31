@@ -1,4 +1,3 @@
-import { version } from "os";
 import { sleep } from "selenium-webext-bridge";
 import type { TestCase } from "../helpers/types.js";
 import { compareRecord } from "../helpers/utils.js";
@@ -124,13 +123,14 @@ export const testCase: TestCase = {
 			await driver.get(optionsUrl);
 			await sleep(500);
 
-			await driver.executeScript(
-				`browser.storage.local.set(arguments[0]);`,
-				importedPrefs,
-			);
+			await driver.executeScript(async () => {
+				await browser.storage.local.set(arguments[0]);
+			}, importedPrefs);
 
 			const { lastSave, ...actualPrefs } = (await driver.executeScript(
-				`return browser.storage.local.get();`,
+				async () => {
+					return await browser.storage.local.get();
+				},
 			)) as Record<string, unknown>;
 
 			const {

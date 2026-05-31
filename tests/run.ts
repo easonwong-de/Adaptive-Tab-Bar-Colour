@@ -22,8 +22,8 @@ async function main() {
 	try {
 		const webExtPath = await getWebExtPath(OUTPUT_DIR, !headless);
 		const testCases = await getTestCases(SPEC_DIR);
-
 		console.log(`\nUsing extension at ${webExtPath}\n`);
+
 		browser = await launchBrowser({
 			waitForInit: 0,
 			headless,

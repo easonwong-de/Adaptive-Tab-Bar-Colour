@@ -14,3 +14,7 @@ export type TestCase = {
 	name: string;
 	run(context: TestContext): Promise<void>;
 };
+
+declare global {
+	const browser: typeof import("wxt/browser").browser;
+}
