@@ -15,6 +15,7 @@ fi
 
 echo "Zipping extension..."
 run_cmd wxt zip -b firefox
+rm -rf .output/atbc
 
 # Extract version from package.json
 VERSION=$(node -p "require('./package.json').version")
@@ -39,8 +40,8 @@ mkdir -p "$MAIN_EXT_DIR" "$SOURCES_DIR"
 unzip -q "$EXT_ZIP" -d "$MAIN_EXT_DIR"
 unzip -q "$SOURCES_ZIP" -d "$SOURCES_DIR"
 
-# Build from the extracted sources
-echo "Building from extracted sources..."
+# Build from the sources zip file
+echo "Building from sources zip file..."
 (
   cd "$SOURCES_DIR"
   run_cmd npm install --no-audit --no-fund
