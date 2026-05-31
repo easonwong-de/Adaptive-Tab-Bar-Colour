@@ -41,20 +41,15 @@ export default class preference {
 
 		this.#storageListener = (changes, areaName) => {
 			if (areaName !== "local" || this.#state.isDisposed) return;
-			const nextLastSave = changes.lastSave?.newValue;
-			if (
-				typeof nextLastSave !== "number" ||
-				isNaN(nextLastSave) ||
-				nextLastSave <= this.#content.lastSave
-			)
-				return;
-			let hasUpdates = false;
-			for (const [key, change] of Object.entries(changes)) {
-				if (!(key in this.#content)) continue;
-				this.#set(key as keyof PreferenceContent, change.newValue);
-				hasUpdates = true;
+			const nextSave = changes.lastSave?.newValue;
+			if (this.#isTimeStamp(nextSave)) {
+				let hasUpdates = false;
+				for (const [key, change] of Object.entries(changes)) {
+					if (key in this.#content) hasUpdates = true;
+					this.#set(key as keyof PreferenceContent, change.newValue);
+				}
+				if (hasUpdates) this.syncUI();
 			}
-			if (hasUpdates) this.syncUI();
 		};
 		addStorageChangeListener(this.#storageListener);
 	}
@@ -97,11 +92,12 @@ export default class preference {
 					...this.#state.pendingUpdates,
 					lastSave,
 				};
-				const didSave = await setStorageContent(contentToSave);
-				if (!didSave) return;
-				this.#content.lastSave = lastSave;
-				this.#state.pendingUpdates = {};
-				this.syncUI();
+				const success = await setStorageContent(contentToSave);
+				if (success) {
+					this.#content.lastSave = lastSave;
+					this.#state.pendingUpdates = {};
+					this.syncUI();
+				}
 			},
 			Math.max(0, 50 + this.#state.lastWrite - Date.now()),
 		);
@@ -178,6 +174,21 @@ export default class preference {
 				console.warn("Unknown preference key:", key);
 				break;
 		}
+	}
+
+	/**
+	 * Checks whether a value is a valid newer timestamp.
+	 *
+	 * @private
+	 * @param {unknown} value - The value to validate.
+	 * @returns {boolean} `true` if the value is a valid newer timestamp.
+	 */
+	#isTimeStamp(value: unknown): value is number {
+		return (
+			typeof value === "number" &&
+			!isNaN(value) &&
+			value > this.#content.lastSave
+		);
 	}
 
 	/**
@@ -347,9 +358,17 @@ export default class preference {
 		return Object.entries(value)
 			.map(([id, rule]) => ({ id: Number(id), rule }))
 			.filter(
-				({ id, rule }) =>
-					Number.isInteger(id) && id > 0 && this.#isRule(rule),
+				(item): item is { id: number; rule: Rule } =>
+					Number.isInteger(item.id) &&
+					item.id > 0 &&
+					this.#isRule(item.rule),
 			)
+			.map(({ id, rule }) => {
+				if (rule?.type === "COLOUR" && typeof rule.value === "string") {
+					rule.value = new colour(rule.value).toHex();
+				}
+				return { id, rule };
+			})
 			.sort((first, second) => first.id - second.id)
 			.reduce(
 				(list, { rule }, i) => ({ ...list, [i + 1]: rule as Rule }),
