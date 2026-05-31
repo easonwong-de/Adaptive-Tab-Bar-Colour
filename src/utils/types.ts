@@ -14,7 +14,6 @@ export type BrowserColour =
 	| "PLAINTEXT"
 	| "PRIVATE"
 	| "PROCESS"
-	| "PROFILE"
 	| "SVG"
 	| "SYSTEM"
 	| "TOOLBOX";
