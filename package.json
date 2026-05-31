@@ -13,7 +13,7 @@
 		"test": "tsx tests/run.ts",
 		"test:headless": "tsx tests/run.ts --headless",
 		"zip": "wxt zip -b firefox",
-		"zip:clean": "wxt zip -b firefox --no-sources"
+		"zip:clean": "rm -rf .output/* && wxt zip -b firefox --no-sources"
 	},
 	"repository": {
 		"type": "git",
