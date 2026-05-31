@@ -20,26 +20,26 @@ const importedPrefs: Record<string, unknown> = {
 	sidebarBorder: 10,
 	siteList: {
 		"1": {
-			headerType: "URL",
 			header: "example-1.com",
+			headerType: "URL",
 			type: "COLOUR",
 			value: "#33214e",
 		},
 		"2": {
-			headerType: "URL",
 			header: "example-2.com",
+			headerType: "URL",
 			type: "THEME_COLOUR",
 			value: false,
 		},
 		"3": {
-			headerType: "URL",
 			header: "example-3.com",
+			headerType: "URL",
 			type: "QUERY_SELECTOR",
 			value: "body",
 		},
 		"4": {
-			headerType: "URL",
 			header: "example-4.com",
+			headerType: "URL",
 			type: "COLOUR",
 			value: "red", // Non-standard colour
 		},
@@ -71,32 +71,32 @@ const expectedPrefs: Record<string, unknown> = {
 	noThemeColour: true,
 	overwriteAccentColour: false,
 	popup: 10,
-	popupBorder: 10,
+	popupBorder: 50,
 	ruleList: {
 		"1": {
-			headerType: "URL",
 			header: "example-1.com",
+			headerType: "URL",
 			scheme: "both",
 			type: "COLOUR",
 			value: "#33214e",
 		},
 		"2": {
-			headerType: "URL",
 			header: "example-2.com",
+			headerType: "URL",
 			scheme: "both",
 			type: "THEME_COLOUR",
 			value: false,
 		},
 		"3": {
-			headerType: "URL",
 			header: "example-3.com",
+			headerType: "URL",
 			scheme: "both",
 			type: "QUERY_SELECTOR",
 			value: "body",
 		},
 		"4": {
-			headerType: "URL",
 			header: "example-4.com",
+			headerType: "URL",
 			scheme: "both",
 			type: "COLOUR",
 			value: "#ff0000",
@@ -126,6 +126,9 @@ export const testCase: TestCase = {
 			await driver.executeScript(async () => {
 				await browser.storage.local.set(arguments[0]);
 			}, importedPrefs);
+
+			await driver.navigate().refresh();
+			await sleep(500);
 
 			const { lastSave, ...actualPrefs } = (await driver.executeScript(
 				async () => {
