@@ -48,6 +48,8 @@
 		"react": "^19.2.6",
 		"react-dom": "^19.2.6",
 		"selenium-webdriver": "^4.44.0",
+		"react-dom": "^19.2.7",
+		"selenium-webdriver": "^4.41.0",
 		"selenium-webext-bridge": "^0.4.0"
 	}
 }
