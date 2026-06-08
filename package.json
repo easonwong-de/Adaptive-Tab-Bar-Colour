@@ -28,7 +28,7 @@
 	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
-		"@types/node": "^22.18.3",
+		"@types/node": "^25.9.2",
 		"@types/react": "^19.2.15",
 		"@types/selenium-webdriver": "^4.35.6",
 		"@wxt-dev/module-react": "^1.2.2",
