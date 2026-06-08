@@ -30,7 +30,7 @@
 		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
 		"@types/node": "^22.18.3",
 		"@types/react": "^19.2.15",
-		"@types/selenium-webdriver": "^4.35.5",
+		"@types/selenium-webdriver": "^4.35.6",
 		"@wxt-dev/module-react": "^1.2.2",
 		"prettier": "^3.8.3",
 		"prettier-plugin-css-order": "^2.2.0",
@@ -46,6 +46,8 @@
 		"clsx": "^2.1.1",
 		"geckodriver": "^6.1.0",
 		"react": "^19.2.6",
+		"react-dom": "^19.2.6",
+		"selenium-webdriver": "^4.44.0",
 		"react-dom": "^19.2.7",
 		"selenium-webdriver": "^4.41.0",
 		"selenium-webext-bridge": "^0.4.0"
