@@ -25,6 +25,7 @@ async function main() {
 		console.log(`\nUsing extension at ${webExtPath}\n`);
 
 		browser = await launchBrowser({
+			waitForInit: 10000,
 			headless,
 			firefoxArgs: ["-remote-allow-system-access"],
 		});
