@@ -33,7 +33,7 @@ export default defineConfig({
 			"management",
 		],
 	},
-	manifestVersion: 3,
+	manifestVersion: 2,
 	modules: ["@wxt-dev/module-react", "@wxt-dev/i18n/module"],
 	outDirTemplate: "atbc",
 	srcDir: "src",
