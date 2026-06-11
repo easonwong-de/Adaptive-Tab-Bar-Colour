@@ -1,5 +1,5 @@
 /** The version of ATBC. */
-export const version = [4, 0];
+export const version = [4, 0, 1];
 
 /** Default light homepage colour. */
 export const default_homeBackground_light = "#ffffff";

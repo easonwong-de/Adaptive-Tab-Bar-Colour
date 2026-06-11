@@ -30,7 +30,7 @@ const expectedPrefs: Record<string, unknown> = {
 	toolbarField: 5,
 	toolbarFieldBorder: 5,
 	toolbarFieldOnFocus: 5,
-	version: [4, 0],
+	version: [4, 0, 1],
 };
 
 export const testCase: TestCase = {
