@@ -222,17 +222,20 @@ export async function updateBrowserTheme(
 export async function getWebExtId(url: string): Promise<string | undefined> {
 	if (!url.startsWith("moz-extension:")) return;
 	const addonList = await browser.management.getAll();
-	for (const addon of addonList) {
-		if (addon.type !== "extension") continue;
-		for (const host of addon.hostPermissions) {
-			if (
-				host.startsWith("moz-extension:") &&
-				url.split(/\/|\?/)[2] === host.split(/\/|\?/)[2]
-			) {
-				return addon.id;
+	addonList
+		.filter((addon) => {
+			addon.type === "extension" && addon.hostPermissions;
+		})
+		.forEach((addon) => {
+			for (const host of addon.hostPermissions) {
+				if (
+					host.startsWith("moz-extension:") &&
+					url.split(/\/|\?/)[2] === host.split(/\/|\?/)[2]
+				) {
+					return addon.id;
+				}
 			}
-		}
-	}
+		});
 }
 
 /**
