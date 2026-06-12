@@ -245,7 +245,7 @@ export async function getWebExtName(id: string): Promise<string | undefined> {
 	try {
 		const addon = await browser.management.get(id);
 		if (addon.type === "extension") return addon.name;
-	} catch { }
+	} catch {}
 }
 
 /**
@@ -271,7 +271,7 @@ export async function sendMessageToBackground<T = unknown>(
 export async function sendMessageToPopup<T = unknown>(
 	message: MessageForPopup,
 ): Promise<T> {
-	return await browser.runtime.sendMessage(message).catch(() => { });
+	return await browser.runtime.sendMessage(message).catch(() => {});
 }
 
 /**
