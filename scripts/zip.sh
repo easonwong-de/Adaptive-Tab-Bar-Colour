@@ -14,7 +14,7 @@ if [ "$1" == "--clean" ]; then
 	print_success "Success: Extension zip is ready."
 	exit 0
 elif [ "$1" == "--beta" ]; then
-	echo "Zipping beta extension..."
+	echo "Building beta extension..."
 	run_cmd wxt build -b firefox --mode beta
 	print_success "Success: Beta extension build is ready."
 	exit 0
