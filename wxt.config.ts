@@ -2,6 +2,15 @@ import { defineConfig } from "wxt";
 
 export default defineConfig({
 	browser: "firefox",
+	hooks: {
+		"build:manifestGenerated": (wxt, manifest) => {
+			if (wxt.config.mode === "beta") {
+				manifest.name += " (BETA)";
+				manifest.browser_specific_settings.gecko.id =
+					"ATBC-beta@EasonWong";
+			}
+		},
+	},
 	manifest: {
 		action: { default_title: "__MSG_extensionName__" },
 		browser_specific_settings: {
@@ -35,7 +44,7 @@ export default defineConfig({
 	},
 	manifestVersion: 2,
 	modules: ["@wxt-dev/module-react", "@wxt-dev/i18n/module"],
-	outDirTemplate: "atbc",
+	outDirTemplate: "atbc{{modeSuffix}}",
 	srcDir: "src",
 	vite: () => ({
 		css: {

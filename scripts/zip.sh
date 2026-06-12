@@ -1,75 +1,73 @@
 #!/bin/bash
-set -e
 
+set -e
 source "$(dirname "$0")/utils.sh"
+VERSION=$(get_version)
 
 cd "$(dirname "$0")/.."
 rm -rf .output/*
 
 if [ "$1" == "--clean" ]; then
-  echo "Zipping extension without source..."
-  run_cmd wxt zip -b firefox --no-sources
-  rm -rf .output/atbc
-  exit 0
-fi
+	echo "Zipping extension without source..."
+	run_cmd wxt zip -b firefox --no-sources
+	rm -rf .output/atbc
+	print_success "Success: Extension zip is ready."
+	exit 0
+elif [ "$1" == "--beta" ]; then
+	echo "Building beta extension..."
+	run_cmd wxt build -b firefox --mode beta
+	print_success "Success: Beta extension build is ready."
+	exit 0
+elif [ -z "$1" ]; then
+	echo "Zipping extension..."
+	run_cmd wxt zip -b firefox
+	rm -rf .output/atbc
 
-echo "Zipping extension..."
-run_cmd wxt zip -b firefox
-rm -rf .output/atbc
+	SOURCES_ZIP=".output/atbc-${VERSION}-sources.zip"
+	EXT_ZIP=".output/atbc-${VERSION}.zip"
 
-# Extract version from package.json
-VERSION=$(node -p "require('./package.json').version")
-SOURCES_ZIP=".output/atbc-${VERSION}-sources.zip"
-EXT_ZIP=".output/atbc-${VERSION}.zip"
+	if [ ! -f "$SOURCES_ZIP" ]; then
+		print_error "Error: Sources zip not found at $SOURCES_ZIP"
+	fi
 
-if [ ! -f "$SOURCES_ZIP" ]; then
-  echo "Error: Sources zip not found at $SOURCES_ZIP"
-  exit 1
-fi
+	if [ ! -f "$EXT_ZIP" ]; then
+		print_error "Error: Extension zip not found at $EXT_ZIP"
+	fi
 
-if [ ! -f "$EXT_ZIP" ]; then
-  echo "Error: Extension zip not found at $EXT_ZIP"
-  exit 1
-fi
+	echo "Comparing build output to extension zip..."
 
-# Extract both zip file to a temporary directory
-TEMP_DIR=$(mktemp -d)
-MAIN_EXT_DIR="$TEMP_DIR/main_ext"
-SOURCES_DIR="$TEMP_DIR/sources"
-mkdir -p "$MAIN_EXT_DIR" "$SOURCES_DIR"
-unzip -q "$EXT_ZIP" -d "$MAIN_EXT_DIR"
-unzip -q "$SOURCES_ZIP" -d "$SOURCES_DIR"
+	TEMP_DIR=$(mktemp -d)
+	MAIN_EXT="$TEMP_DIR/main_ext"
+	SOURCES_DIR="$TEMP_DIR/sources"
+	mkdir -p "$MAIN_EXT" "$SOURCES_DIR"
+	unzip -q "$EXT_ZIP" -d "$MAIN_EXT"
+	unzip -q "$SOURCES_ZIP" -d "$SOURCES_DIR"
 
-# Build from the sources zip file
-echo "Building from sources zip file..."
-(
-  cd "$SOURCES_DIR"
-  run_cmd npm install --no-audit --no-fund
-  run_cmd npm run build
-)
+	(
+		cd "$SOURCES_DIR"
+		run_cmd npm install --no-audit --no-fund
+		run_cmd npm run build
+	)
 
-# Find the build output directory
-SOURCES_BUILD_DIR="$SOURCES_DIR/.output/atbc"
-if [ ! -d "$SOURCES_BUILD_DIR" ]; then
-  echo "Error: Could not find build output at $SOURCES_BUILD_DIR"
-  rm -rf "$TEMP_DIR"
-  exit 1
-fi
+	SOURCES_BUILD_DIR="$SOURCES_DIR/.output/atbc"
+	[ ! -d "$SOURCES_BUILD_DIR" ] && {
+		rm -rf "$TEMP_DIR"
+		print_error "Error: No build output at $SOURCES_BUILD_DIR"
+	}
 
-# Compare the built extension with the extracted extension zip
-echo "Comparing build outputs..."
-set +e
-DIFF_OUTPUT=$(diff -ur "$MAIN_EXT_DIR" "$SOURCES_BUILD_DIR")
-DIFF_EXIT_CODE=$?
-set -e
+	set +e
+	DIFF_OUTPUT=$(diff -ur "$MAIN_EXT" "$SOURCES_BUILD_DIR")
+	DIFF_EXIT_CODE=$?
+	set -e
+	rm -rf "$TEMP_DIR"
 
-if [ $DIFF_EXIT_CODE -ne 0 ]; then
-  echo "Error: Build output from sources does not match the main project!"
-  echo "$DIFF_OUTPUT"
-  rm -rf "$TEMP_DIR"
-  exit 1
+	if [ "$DIFF_EXIT_CODE" -ne 0 ]; then
+		echo "$DIFF_OUTPUT"
+		print_error "Error: Build output does not match the extension zip."
+	else
+		print_success "Success: Extension and source code zips are ready."
+		exit 0
+	fi
 else
-  echo "Success: Build outputs match exactly."
-  rm -rf "$TEMP_DIR"
-  exit 0
+	print_error "Error: Unsupported flag '$1'."
 fi
