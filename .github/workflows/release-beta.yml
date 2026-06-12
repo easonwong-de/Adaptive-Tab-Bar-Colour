@@ -6,7 +6,6 @@ on:
 jobs:
     release-beta:
         runs-on: ubuntu-latest
-        environment: beta
         permissions:
             contents: write
             pull-requests: write
