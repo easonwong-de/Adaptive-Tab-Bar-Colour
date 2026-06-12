@@ -220,22 +220,19 @@ export async function updateBrowserTheme(
  * @returns {Promise<string | undefined>} Matching extension ID, if found.
  */
 export async function getWebExtId(url: string): Promise<string | undefined> {
-	if (!url.startsWith("moz-extension:")) return;
+	if (!url.startsWith("moz-extension:") || !URL.canParse(url)) return;
+	const targetHost = new URL(url).hostname;
 	const addonList = await browser.management.getAll();
-	addonList
-		.filter((addon) => {
-			addon.type === "extension" && addon.hostPermissions;
-		})
-		.forEach((addon) => {
-			for (const host of addon.hostPermissions) {
-				if (
-					host.startsWith("moz-extension:") &&
-					url.split(/\/|\?/)[2] === host.split(/\/|\?/)[2]
-				) {
-					return addon.id;
-				}
-			}
-		});
+	return addonList.find(
+		(addon) =>
+			addon.type === "extension"
+			&& addon.hostPermissions?.some(
+				(host) =>
+					host.startsWith("moz-extension:")
+					&& URL.canParse(host)
+					&& new URL(host).hostname === targetHost
+			)
+	)?.id;
 }
 
 /**
@@ -248,7 +245,7 @@ export async function getWebExtName(id: string): Promise<string | undefined> {
 	try {
 		const addon = await browser.management.get(id);
 		if (addon.type === "extension") return addon.name;
-	} catch {}
+	} catch { }
 }
 
 /**
@@ -274,7 +271,7 @@ export async function sendMessageToBackground<T = unknown>(
 export async function sendMessageToPopup<T = unknown>(
 	message: MessageForPopup,
 ): Promise<T> {
-	return await browser.runtime.sendMessage(message).catch(() => {});
+	return await browser.runtime.sendMessage(message).catch(() => { });
 }
 
 /**
