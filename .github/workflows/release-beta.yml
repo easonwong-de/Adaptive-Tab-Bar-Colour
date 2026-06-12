@@ -51,6 +51,20 @@ jobs:
                       --admin \
                       --merge \
                       --delete-branch
+            - name: Build and upload to AMO (Beta)
+              env:
+                  FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+                  FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+              run: |
+                  npm run zip:beta
+                  npx web-ext sign \
+                      --api-key $FIREFOX_JWT_ISSUER \
+                      --api-secret $FIREFOX_JWT_SECRET \
+                      --channel unlisted \
+                      --source-dir .output/atbc \
+                      --artifacts-dir .output \
+                      --approval-timeout 150000 \
+                      || echo "Signing timed out. Proceeding without XPI."
             - name: Tag and create GitHub Pre-release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,17 +72,14 @@ jobs:
                   git fetch origin main
                   git tag ${{ steps.version.outputs.beta_tag }} origin/main
                   git push origin ${{ steps.version.outputs.beta_tag }}
-                  gh release create "${{ steps.version.outputs.beta_tag }}" \
-                      --title "${{ steps.version.outputs.beta_tag }}" \
-                      --prerelease
-            - name: Build and upload to AMO (Beta)
-              env:
-                  FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
-                  FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-              run: |
-                  npm run zip:beta
-                  npx wxt submit \
-                      --firefox-zip .output/atbc-${{ steps.version.outputs.version }}.zip \
-                      --firefox-jwt-issuer $FIREFOX_JWT_ISSUER \
-                      --firefox-jwt-secret $FIREFOX_JWT_SECRET \
-                      --firefox-channel unlisted
+
+                  XPI_ASSET=$(ls .output/*.xpi 2>/dev/null || true)
+                  if [ -n "$XPI_ASSET" ]; then
+                      gh release create "${{ steps.version.outputs.beta_tag }}" $XPI_ASSET \
+                          --title "${{ steps.version.outputs.beta_tag }}" \
+                          --prerelease
+                  else
+                      gh release create "${{ steps.version.outputs.beta_tag }}" \
+                          --title "${{ steps.version.outputs.beta_tag }}" \
+                          --prerelease
+                  fi

@@ -38,6 +38,7 @@
 		"prettier-plugin-yaml": "^1.2.0",
 		"tsx": "^4.22.4",
 		"typescript": "^6.0.3",
+		"web-ext": "^10.4.0",
 		"wxt": "^0.20.26"
 	},
 	"dependencies": {

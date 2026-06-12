@@ -24,15 +24,6 @@ jobs:
                   BASE_VERSION="${parts[0]}.${parts[1]}.${parts[2]}"
                   npm pkg set version="$BASE_VERSION"
                   echo "version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
-            - name: Tag and create GitHub Release
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git tag v${{ steps.version.outputs.version }}
-                  git push origin v${{ steps.version.outputs.version }}
-                  gh release create "v${{ steps.version.outputs.version }}" \
-                      --title "v${{ steps.version.outputs.version }}" \
-                      --notes "Production release v${{ steps.version.outputs.version }}"
             - name: Build and upload to AMO (Production)
               env:
                   FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
@@ -45,3 +36,12 @@ jobs:
                       --firefox-jwt-issuer $FIREFOX_JWT_ISSUER \
                       --firefox-jwt-secret $FIREFOX_JWT_SECRET \
                       --firefox-channel listed
+            - name: Tag and create GitHub Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  git tag v${{ steps.version.outputs.version }}
+                  git push origin v${{ steps.version.outputs.version }}
+                  gh release create "v${{ steps.version.outputs.version }}" \
+                      --title "v${{ steps.version.outputs.version }}" \
+                      --notes "Production release v${{ steps.version.outputs.version }}"
