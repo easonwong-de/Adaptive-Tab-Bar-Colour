@@ -44,7 +44,7 @@ export default defineConfig({
 	},
 	manifestVersion: 2,
 	modules: ["@wxt-dev/module-react", "@wxt-dev/i18n/module"],
-	outDirTemplate: "atbc{{modeSuffix}}",
+	outDirTemplate: "atbc",
 	srcDir: "src",
 	vite: () => ({
 		css: {

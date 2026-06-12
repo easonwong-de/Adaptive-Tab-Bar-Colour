@@ -1,0 +1,47 @@
+name: Bump Version
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: "Version of the next production release (e.g., 1.0.0)"
+                required: true
+                type: string
+
+jobs:
+    bump:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.ref }}
+                  token: ${{ secrets.ADMIN_PAT }}
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+            - name: Bump version and push changes
+              run: |
+                  git checkout -b bump/v${{ inputs.version }}.0
+                  npm version "${{ inputs.version }}.0" --no-git-tag-version
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add package.json
+                  if [ -f package-lock.json ]; then git add package-lock.json; fi
+                  git commit -m "bump: bump version to ${{ inputs.version }}.0"
+                  git push origin bump/v${{ inputs.version }}.0
+            - name: Create and merge Pull Request
+              env:
+                  GH_TOKEN: ${{ secrets.ADMIN_PAT }}
+              run: |
+                  gh pr create \
+                      --title "Bump version to ${{ inputs.version }}.0" \
+                      --body "Automated version bump to ${{ inputs.version }}.0" \
+                      --head bump/v${{ inputs.version }}.0 \
+                      --base main
+                  gh pr merge bump/v${{ inputs.version }}.0 \
+                      --admin \
+                      --merge \
+                      --delete-branch
