@@ -1,0 +1,85 @@
+name: Release Beta
+
+on:
+    workflow_dispatch:
+
+jobs:
+    release-beta:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.ref }}
+                  token: ${{ secrets.ADMIN_PAT }}
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+            - run: npm ci
+            - name: Prepare version for beta build
+              id: version
+              run: |
+                  CURRENT_VERSION=$(node -p "require('./package.json').version")
+                  IFS='.' read -r -a parts <<< "$CURRENT_VERSION"
+                  parts[3]=$((parts[3] + 1))
+                  NEW_VERSION="${parts[0]}.${parts[1]}.${parts[2]}.${parts[3]}"
+                  npm version "$NEW_VERSION" --no-git-tag-version
+                  echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+                  BASE_VERSION="${parts[0]}.${parts[1]}.${parts[2]}"
+                  echo "beta_tag=v${BASE_VERSION}-beta.${parts[3]}" >> "$GITHUB_OUTPUT"
+            - name: Commit and push changes
+              run: |
+                  git checkout -b bump/v${{ steps.version.outputs.version }}
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add package.json
+                  if [ -f package-lock.json ]; then git add package-lock.json; fi
+                  git commit -m "bump: bump beta version to ${{ steps.version.outputs.version }}"
+                  git push origin bump/v${{ steps.version.outputs.version }}
+            - name: Create and merge Pull Request
+              env:
+                  GH_TOKEN: ${{ secrets.ADMIN_PAT }}
+              run: |
+                  gh pr create \
+                      --title "Bump beta version to ${{ steps.version.outputs.version }}" \
+                      --body "Automated version bump for beta release ${{ steps.version.outputs.version }}" \
+                      --head bump/v${{ steps.version.outputs.version }} \
+                      --base main
+                  gh pr merge bump/v${{ steps.version.outputs.version }} \
+                      --admin \
+                      --merge \
+                      --delete-branch
+            - name: Build and upload to AMO (Beta)
+              env:
+                  FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+                  FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+              run: |
+                  npm run zip:beta
+                  npx web-ext sign \
+                      --api-key $FIREFOX_JWT_ISSUER \
+                      --api-secret $FIREFOX_JWT_SECRET \
+                      --channel unlisted \
+                      --source-dir .output/atbc \
+                      --artifacts-dir .output \
+                      --approval-timeout 150000 \
+                      || echo "Signing timed out. Proceeding without XPI."
+            - name: Tag and create GitHub Pre-release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  git fetch origin main
+                  git tag ${{ steps.version.outputs.beta_tag }} origin/main
+                  git push origin ${{ steps.version.outputs.beta_tag }}
+
+                  XPI_ASSET=$(ls .output/*.xpi 2>/dev/null || true)
+                  if [ -n "$XPI_ASSET" ]; then
+                      gh release create "${{ steps.version.outputs.beta_tag }}" $XPI_ASSET \
+                          --title "${{ steps.version.outputs.beta_tag }}" \
+                          --prerelease
+                  else
+                      gh release create "${{ steps.version.outputs.beta_tag }}" \
+                          --title "${{ steps.version.outputs.beta_tag }}" \
+                          --prerelease
+                  fi

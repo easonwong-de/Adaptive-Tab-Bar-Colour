@@ -1,0 +1,47 @@
+name: Release Production
+
+on:
+    workflow_dispatch:
+
+jobs:
+    release-production:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.ref }}
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+            - run: npm ci
+            - name: Prepare version for production build
+              id: version
+              run: |
+                  CURRENT_VERSION=$(node -p "require('./package.json').version")
+                  IFS='.' read -r -a parts <<< "$CURRENT_VERSION"
+                  BASE_VERSION="${parts[0]}.${parts[1]}.${parts[2]}"
+                  npm pkg set version="$BASE_VERSION"
+                  echo "version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
+            - name: Build and upload to AMO (Production)
+              env:
+                  FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+                  FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+              run: |
+                  npm run zip
+                  npx wxt submit \
+                      --firefox-zip .output/atbc-${{ steps.version.outputs.version }}.zip \
+                      --firefox-sources-zip .output/atbc-${{ steps.version.outputs.version }}-sources.zip \
+                      --firefox-jwt-issuer $FIREFOX_JWT_ISSUER \
+                      --firefox-jwt-secret $FIREFOX_JWT_SECRET \
+                      --firefox-channel listed
+            - name: Tag and create GitHub Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  git tag v${{ steps.version.outputs.version }}
+                  git push origin v${{ steps.version.outputs.version }}
+                  gh release create "v${{ steps.version.outputs.version }}" \
+                      --title "v${{ steps.version.outputs.version }}" \
+                      --notes "Production release v${{ steps.version.outputs.version }}"

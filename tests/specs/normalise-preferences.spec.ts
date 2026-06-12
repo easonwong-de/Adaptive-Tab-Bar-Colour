@@ -1,4 +1,5 @@
 import { sleep } from "selenium-webext-bridge";
+import pkg from "../../package.json" with { type: "json" };
 import type { TestCase } from "../types.js";
 import { compareRecord } from "../utils.js";
 
@@ -113,7 +114,7 @@ const expectedPrefs: Record<string, unknown> = {
 	toolbarField: 5,
 	toolbarFieldBorder: 5,
 	toolbarFieldOnFocus: 5,
-	version: [4, 0, 1],
+	version: pkg.version.split(".").map(Number),
 };
 
 export const testCase: TestCase = {
