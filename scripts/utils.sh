@@ -9,11 +9,6 @@ run_cmd() {
 	fi
 }
 
-# Extract version from package.json
-get_version() {
-	node -p "require('./package.json').version"
-}
-
 # Print success message in green
 print_success() {
 	echo -e "\033[32m$1\033[0m"

@@ -1,0 +1,27 @@
+name: Integration Test
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    run:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v6
+            - name: Setup Node.js Environment
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  cache: "npm"
+            - name: Setup Firefox
+              uses: browser-actions/setup-firefox@v1
+            - name: Execute Integration Tests
+              run: |
+                  npm ci
+                  npm rebuild
+                  npm run zip:clean
+                  npm run test:headless

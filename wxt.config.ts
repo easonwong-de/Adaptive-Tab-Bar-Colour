@@ -59,9 +59,8 @@ export default defineConfig({
 		openDevtools: true,
 	},
 	zip: {
-		name: "atbc",
-		artifactTemplate: "{{name}}-{{version}}.zip",
-		sourcesTemplate: "{{name}}-{{version}}-sources.zip",
+		artifactTemplate: "atbc.zip",
+		sourcesTemplate: "atbc-sources.zip",
 		excludeSources: [
 			"tests/**",
 			"scripts/**",
