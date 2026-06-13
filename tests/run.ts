@@ -71,7 +71,7 @@ async function main() {
 
 			console.log("  Installing Test Bridge extension...");
 			await driver.installAddon(extensionDir, true);
-			await sleep(3000);
+			await sleep(500);
 
 			const handles = await driver.getAllWindowHandles();
 			console.log(`  Windows after extension install: ${handles.length}`);
@@ -83,12 +83,18 @@ async function main() {
 				await driver.switchTo().window(handles[0]);
 			}
 
-			console.log("Opening test page...");
-			driver.get("http://127.0.0.1:8080/test/background=black");
+			console.log("Opening addon page...");
+			await driver.get("about:addons");
+			await (
+				await driver.findElements({ className: "category" })
+			)[1].click();
+			await sleep(10);
 			console.log(
-				await driver.executeScript(async () => {
-					return document.documentElement.getHTML();
-				}),
+				await (
+					await driver.findElement({
+						className: "extension-enabled-section",
+					})
+				).getText(),
 			);
 
 			console.log("  Initializing TestBridge...");
