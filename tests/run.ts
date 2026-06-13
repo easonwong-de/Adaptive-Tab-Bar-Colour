@@ -85,7 +85,7 @@ async function main() {
 
 			console.log("Opening addon page...");
 			await driver.get("about:debugging#/runtime/this-firefox");
-			await sleep(100);
+			await sleep(1000);
 			console.log(
 				await (
 					await driver.findElement({ className: "page" })
