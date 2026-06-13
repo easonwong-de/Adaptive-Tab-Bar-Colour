@@ -2,41 +2,51 @@ name: Release Production
 
 on:
     workflow_dispatch:
+        inputs:
+            notes:
+                description: "Release notes for the release"
+                required: false
+                type: string
 
 jobs:
-    release-production:
+    run:
         runs-on: ubuntu-latest
         permissions:
             contents: write
         steps:
-            - uses: actions/checkout@v6
+            - name: Checkout Repository
+              uses: actions/checkout@v6
               with:
                   ref: ${{ github.ref }}
-            - uses: actions/setup-node@v6
+            - name: Setup Node.js Environment
+              uses: actions/setup-node@v6
               with:
                   node-version: 24
-            - run: npm ci
-            - name: Prepare version for production build
+                  cache: "npm"
+            - name: Prepare Environment And Metadata
               id: version
               run: |
-                  CURRENT_VERSION=$(node -p "require('./package.json').version")
-                  IFS='.' read -r -a parts <<< "$CURRENT_VERSION"
-                  BASE_VERSION="${parts[0]}.${parts[1]}.${parts[2]}"
-                  npm pkg set version="$BASE_VERSION"
+                  npm ci
+                  BASE_VERSION=$(node -p "require('./package.json').version")
                   echo "version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
-            - name: Build and upload to AMO (Production)
+                  jq -n --arg notes "${{ inputs.notes }}" \
+                      '{"version": {"release_notes": {"en-GB": $notes}}}' \
+                      > amo_metadata.json
+            - name: Build And Upload To AMO (Production)
               env:
                   FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
                   FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
               run: |
                   npm run zip
-                  npx wxt submit \
-                      --firefox-zip .output/atbc-${{ steps.version.outputs.version }}.zip \
-                      --firefox-sources-zip .output/atbc-${{ steps.version.outputs.version }}-sources.zip \
-                      --firefox-jwt-issuer $FIREFOX_JWT_ISSUER \
-                      --firefox-jwt-secret $FIREFOX_JWT_SECRET \
-                      --firefox-channel listed
-            - name: Tag and create GitHub Release
+                  npx web-ext sign \
+                      --api-key $FIREFOX_JWT_ISSUER \
+                      --api-secret $FIREFOX_JWT_SECRET \
+                      --channel listed \
+                      --source-dir ./output/atbc \
+                      --upload-source-code ./output/atbc-sources.zip \
+                      --amo-metadata amo_metadata.json \
+                      --approval-timeout 0
+            - name: Tag And Create GitHub Release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
@@ -44,4 +54,4 @@ jobs:
                   git push origin v${{ steps.version.outputs.version }}
                   gh release create "v${{ steps.version.outputs.version }}" \
                       --title "v${{ steps.version.outputs.version }}" \
-                      --notes "Production release v${{ steps.version.outputs.version }}"
+                      --notes "${{ inputs.notes }}"
