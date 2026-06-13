@@ -84,18 +84,15 @@ async function main() {
 			}
 
 			console.log("Opening addon page...");
-			await driver.get("about:addons");
-			await (
-				await driver.findElements({ className: "category" })
-			)[1].click();
-			await sleep(10);
+			await driver.get("about:debugging#/runtime/this-firefox");
+			await sleep(100);
 			console.log(
 				await (
-					await driver.findElement({
-						className: "extension-enabled-section",
-					})
+					await driver.findElement({ className: "page" })
 				).getText(),
 			);
+			/* const screenshot = await driver.takeScreenshot();
+			fs.writeFileSync("screenshot.png", screenshot, "base64"); */
 
 			console.log("  Initializing TestBridge...");
 			bridge = new TestBridge(driver);
