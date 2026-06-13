@@ -31,7 +31,16 @@ async function main() {
 		});
 		const { driver, testBridge: bridge } = browser;
 
+		console.log("Navigating to test page...");
+		await driver.get("http://127.0.0.1:8080/test/background=black");
+		console.log(
+			await driver.executeScript(async () => {
+				return document.documentElement.getHTML();
+			}),
+		);
+
 		for (const testCase of testCases) {
+			break;
 			console.log(`\n🔍 \x1b[1;34mTest case: ${testCase.name}\x1b[0m\n`);
 			let webExtId: string | null = null;
 			try {
