@@ -155,6 +155,10 @@ export function createServer(port = 8080): Promise<http.Server> {
 					<body style="${bodyStyles}">
 						<div id="keepalive"></div>
 						<script>
+							window.capturedErrors = [];
+							window.onerror = function(msg, url, line, col, error) {
+								window.capturedErrors.push({msg, url, line, col, error: error ? error.stack : null});
+							};
 							setInterval(() => {
 								document.getElementById("keepalive").textContent = Date.now();
 								}, 5000);

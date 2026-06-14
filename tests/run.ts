@@ -46,6 +46,12 @@ async function main() {
 		);
 		firefoxOptions.setPreference("services.sync.engine.tabs", false);
 		firefoxOptions.setPreference("services.sync.engine.prefs", false);
+
+		firefoxOptions.setPreference("browser.dom.window.dump.enabled", true);
+		firefoxOptions.setPreference("devtools.console.stdout.content", true);
+		firefoxOptions.setPreference("devtools.console.stdout.chrome", true);
+		firefoxOptions.setPreference("extensions.logging.enabled", true);
+
 		firefoxOptions.addArguments("--new-instance");
 		firefoxOptions.addArguments("-no-remote");
 		firefoxOptions.setPreference("toolkit.startup.max_resumed_crashes", -1);
@@ -100,6 +106,24 @@ async function main() {
 				console.error("Ready state:", await driver.executeScript("return document.readyState"));
 				console.error("Page source:\n", await driver.getPageSource());
 				
+				try {
+					const capturedErrors = await driver.executeScript("return window.capturedErrors || [];");
+					console.error("Page captured errors:\n", JSON.stringify(capturedErrors, null, 2));
+				} catch (e) {}
+
+				try {
+					const browserLogs = await driver.manage().logs().get("browser");
+					console.error("Browser logs:\n", JSON.stringify(browserLogs, null, 2));
+				} catch (e) {}
+
+				try {
+					const geckodriverLogPath = path.join(process.cwd(), "geckodriver.log");
+					if (fs.existsSync(geckodriverLogPath)) {
+						const logs = fs.readFileSync(geckodriverLogPath, "utf-8");
+						console.error("Geckodriver logs (last 50 lines):\n", logs.split("\n").slice(-50).join("\n"));
+					}
+				} catch (e) {}
+
 				const screenshot = await driver.takeScreenshot();
 				const screenshotPath = path.join(OUTPUT_DIR, "debug-injection-timeout.png");
 				fs.writeFileSync(screenshotPath, screenshot, "base64");
