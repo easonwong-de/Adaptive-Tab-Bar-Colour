@@ -108,42 +108,72 @@ async function main() {
 					if (injected) return true;
 
 					checkCount++;
-					if (checkCount % 5 === 0) { // Every ~2.5 seconds, try refreshing
-						console.log("  Bridge missing, triggering page refresh...");
+					if (checkCount % 10 === 0) {
+						// Every ~5 seconds, try refreshing
+						console.log(
+							"  Bridge missing, triggering page refresh...",
+						);
 						await driver.navigate().refresh();
 					}
+					await sleep(500);
 					return false;
-				}, 5000);
+				}, 30000);
 				results.pass("Bridge is injected.");
 			} catch {
 				results.fail("Bridge", "Bridge injection timeout");
-				
+
 				// Dump diagnostic info for CI runner
 				console.error("\n--- DEBUG INFO ---");
 				console.error("Current URL:", await driver.getCurrentUrl());
-				console.error("Ready state:", await driver.executeScript("return document.readyState"));
+				console.error(
+					"Ready state:",
+					await driver.executeScript("return document.readyState"),
+				);
 				console.error("Page source:\n", await driver.getPageSource());
-				
+
 				try {
-					const capturedErrors = await driver.executeScript("return window.capturedErrors || [];");
-					console.error("Page captured errors:\n", JSON.stringify(capturedErrors, null, 2));
+					const capturedErrors = await driver.executeScript(
+						"return window.capturedErrors || [];",
+					);
+					console.error(
+						"Page captured errors:\n",
+						JSON.stringify(capturedErrors, null, 2),
+					);
 				} catch (e) {}
 
 				try {
-					const browserLogs = await driver.manage().logs().get("browser");
-					console.error("Browser logs:\n", JSON.stringify(browserLogs, null, 2));
+					const browserLogs = await driver
+						.manage()
+						.logs()
+						.get("browser");
+					console.error(
+						"Browser logs:\n",
+						JSON.stringify(browserLogs, null, 2),
+					);
 				} catch (e) {}
 
 				try {
-					const geckodriverLogPath = path.join(process.cwd(), "geckodriver.log");
+					const geckodriverLogPath = path.join(
+						process.cwd(),
+						"geckodriver.log",
+					);
 					if (fs.existsSync(geckodriverLogPath)) {
-						const logs = fs.readFileSync(geckodriverLogPath, "utf-8");
-						console.error("Geckodriver logs (last 50 lines):\n", logs.split("\n").slice(-50).join("\n"));
+						const logs = fs.readFileSync(
+							geckodriverLogPath,
+							"utf-8",
+						);
+						console.error(
+							"Geckodriver logs (last 50 lines):\n",
+							logs.split("\n").slice(-50).join("\n"),
+						);
 					}
 				} catch (e) {}
 
 				const screenshot = await driver.takeScreenshot();
-				const screenshotPath = path.join(OUTPUT_DIR, "debug-injection-timeout.png");
+				const screenshotPath = path.join(
+					OUTPUT_DIR,
+					"debug-injection-timeout.png",
+				);
 				fs.writeFileSync(screenshotPath, screenshot, "base64");
 				console.error(`Saved screenshot to: ${screenshotPath}\n`);
 			}
