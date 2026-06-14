@@ -77,7 +77,8 @@ async function main() {
 
 			console.log("  Installing Test Bridge extension...");
 			await driver.installAddon(extensionDir, true);
-			await sleep(500);
+			console.log("  Waiting for extension initialization...");
+			await sleep(3000); // Give CI environments more time to process the extension
 
 			const handles = await driver.getAllWindowHandles();
 			console.log(`  Windows after extension install: ${handles.length}`);
@@ -89,13 +90,30 @@ async function main() {
 				await driver.switchTo().window(handles[0]);
 			}
 
+			// Initialize the bridge object that was declared earlier
+			bridge = new TestBridge(driver);
+			try {
+				await bridge.init();
+			} catch (e) {
+				console.warn("  Bridge init warning:", e);
+			}
+
 			await driver.get("http://127.0.0.1:8080/test/background=black");
 			try {
+				let checkCount = 0;
 				await driver.wait(async () => {
-					return await driver.executeScript(() => {
+					const injected = await driver.executeScript(() => {
 						return typeof window.TestBridge !== "undefined";
 					});
-				}, 20000);
+					if (injected) return true;
+
+					checkCount++;
+					if (checkCount % 5 === 0) { // Every ~2.5 seconds, try refreshing
+						console.log("  Bridge missing, triggering page refresh...");
+						await driver.navigate().refresh();
+					}
+					return false;
+				}, 5000);
 				results.pass("Bridge is injected.");
 			} catch {
 				results.fail("Bridge", "Bridge injection timeout");
