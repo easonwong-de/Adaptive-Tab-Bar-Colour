@@ -83,26 +83,28 @@ async function main() {
 				await driver.switchTo().window(handles[0]);
 			}
 
-			console.log("Opening addon page...");
-			await driver.get("about:debugging#/runtime/this-firefox");
-			await sleep(1000);
-			console.log(
-				await (
-					await driver.findElement({ className: "page" })
-				).getText(),
-			);
-			/* const screenshot = await driver.takeScreenshot();
-			fs.writeFileSync("screenshot.png", screenshot, "base64"); */
-
-			console.log("  Initializing TestBridge...");
-			bridge = new TestBridge(driver);
-			await bridge.init();
-
-			browser = {
-				driver,
-				testBridge: bridge,
-				profilePath,
-			} as unknown as TestBrowser;
+			await driver.get("http://127.0.0.1:8080/test/background=black");
+			try {
+				await driver.wait(async () => {
+					return await driver.executeScript(() => {
+						return typeof window.TestBridge !== "undefined";
+					});
+				}, 20000);
+				results.pass("Bridge is injected.");
+			} catch {
+				results.fail("Bridge", "Bridge injection timeout");
+				
+				// Dump diagnostic info for CI runner
+				console.error("\n--- DEBUG INFO ---");
+				console.error("Current URL:", await driver.getCurrentUrl());
+				console.error("Ready state:", await driver.executeScript("return document.readyState"));
+				console.error("Page source:\n", await driver.getPageSource());
+				
+				const screenshot = await driver.takeScreenshot();
+				const screenshotPath = path.join(OUTPUT_DIR, "debug-injection-timeout.png");
+				fs.writeFileSync(screenshotPath, screenshot, "base64");
+				console.error(`Saved screenshot to: ${screenshotPath}\n`);
+			}
 		} catch (error) {
 			if (fs.existsSync(profilePath)) {
 				fs.rmSync(profilePath, { recursive: true, force: true });
@@ -142,7 +144,7 @@ async function main() {
 		results.error("Test Suite", error);
 	} finally {
 		console.log();
-		await cleanupBrowser(browser);
+		// await cleanupBrowser(browser);
 		server.close();
 	}
 

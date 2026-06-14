@@ -25,3 +25,9 @@ jobs:
                   npm rebuild
                   npm run zip:clean
                   npm run test:headless
+            - name: Upload Test Debug Screenshot
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                name: debug-screenshot
+                path: .output/debug-injection-timeout.png
