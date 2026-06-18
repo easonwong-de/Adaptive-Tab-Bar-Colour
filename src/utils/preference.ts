@@ -6,11 +6,12 @@ export default class preference {
 
 	/** State for storage writes and lifecycle. */
 	#state: {
+		isInitialised: boolean;
 		lastWrite: number;
 		isDisposed: boolean;
 		writeTimeout?: ReturnType<typeof setTimeout>;
 		pendingUpdates: Partial<PreferenceContent>;
-	} = { lastWrite: 0, isDisposed: false, pendingUpdates: {} };
+	} = { isInitialised: false, lastWrite: 0, isDisposed: false, pendingUpdates: {} };
 
 	/** The listeners for preference changes. */
 	#onChangeListeners = new Set<() => void>();
@@ -52,6 +53,7 @@ export default class preference {
 			}
 		};
 		addStorageChangeListener(this.#storageListener);
+		this.#state.isInitialised = true;
 	}
 
 	/**
@@ -572,6 +574,15 @@ export default class preference {
 		} catch {
 			return false;
 		}
+	}
+
+	/**
+	 * Gets preference instance ready state.
+	 *
+	 * @returns {boolean} Instance's ready state.
+	 */
+	get isReady(): boolean {
+		return this.#state.isInitialised && !this.#state.isDisposed;
 	}
 
 	/**

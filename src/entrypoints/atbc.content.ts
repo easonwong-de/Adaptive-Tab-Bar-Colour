@@ -290,21 +290,28 @@ async function sendColourRequiresFocus() {
 	if (document.hasFocus()) await sendColour();
 }
 
+/**
+ * Sends message to background upon the script is loaded.
+ *
+ * @param {number} attempt - The attempt count.
+ */
+async function sendMessageOnLoad(attempt: number = 0) {
+	try {
+		await sendMessageToBackground({ header: "SCRIPT_READY" });
+	} catch {
+		if (attempt < 10) {
+			console.warn("Failed to connect to ATBC background.");
+			setTimeout(() => sendMessageOnLoad(++attempt), 1000);
+		} else {
+			console.error("Could not connect to ATBC background.");
+		}
+	}
+}
+
 export default defineContentScript({
 	matches: ["<all_urls>"],
 	main() {
 		addMessageListener(handleMessage);
-		(async function sendMessageOnLoad(attempt = 0) {
-			try {
-				await sendMessageToBackground({ header: "SCRIPT_READY" });
-			} catch {
-				if (attempt < 10) {
-					console.warn("Failed to connect to ATBC background.");
-					setTimeout(() => sendMessageOnLoad(++attempt), 1000);
-				} else {
-					console.error("Could not connect to ATBC background.");
-				}
-			}
-		})();
+		sendMessageOnLoad();
 	},
 });
