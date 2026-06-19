@@ -51,7 +51,7 @@ jobs:
                       --channel unlisted \
                       --source-dir .output/atbc \
                       --artifacts-dir .output \
-                      --approval-timeout 150000 \
+                      --approval-timeout 200000 \
                       || echo "Signing timed out. Proceeding without XPI."
             - name: Tag And Create GitHub Pre-release
               env:

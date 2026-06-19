@@ -42,8 +42,8 @@ jobs:
                       --api-key $FIREFOX_JWT_ISSUER \
                       --api-secret $FIREFOX_JWT_SECRET \
                       --channel listed \
-                      --source-dir ./output/atbc \
-                      --upload-source-code ./output/atbc-sources.zip \
+                      --source-dir .output/atbc \
+                      --upload-source-code .output/atbc-sources.zip \
                       --amo-metadata amo_metadata.json \
                       --approval-timeout 0
             - name: Tag And Create GitHub Release
