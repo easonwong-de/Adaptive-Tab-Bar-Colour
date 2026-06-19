@@ -30,14 +30,11 @@ export default class colour {
 	 */
 	parse(value: string | colour | undefined = undefined): this {
 		if (typeof value === "string") {
-			const canvas = document.createElement("canvas");
-			canvas.width = 1;
-			canvas.height = 1;
+			const canvas = new OffscreenCanvas(1, 1);
 			const canvasContext = canvas.getContext("2d");
 			if (!canvasContext) return this;
 			canvasContext.fillStyle = value;
 			const parsedColour = canvasContext.fillStyle;
-			canvas.remove();
 			if (parsedColour.startsWith("#")) {
 				return this.rgba(
 					parseInt(parsedColour.slice(1, 3), 16),

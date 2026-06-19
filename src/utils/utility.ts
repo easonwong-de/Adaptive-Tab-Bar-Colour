@@ -1,23 +1,28 @@
-/** Match media for dark mode detection. */
-const darkSchemeDetection = window.matchMedia("(prefers-color-scheme: dark)");
-
 /**
- * Detects the system colour scheme.
- *
- * @returns {Scheme} The current system colour scheme.
+ * Retrieves the media query list for dark mode detection. Guards against
+ * environments lacking the native window object.
  */
+const getDarkSchemeDetection = (): MediaQueryList | null => {
+	if (
+		typeof window === "undefined" ||
+		typeof window.matchMedia !== "function"
+	) {
+		return null;
+	}
+	return window.matchMedia("(prefers-color-scheme: dark)");
+};
+
+/** Detects the system colour scheme. */
 export function getSystemScheme(): Scheme {
-	return darkSchemeDetection?.matches ? "dark" : "light";
+	const detection = getDarkSchemeDetection();
+	return detection?.matches ? "dark" : "light";
 }
 
-/**
- * Registers a listener for colour scheme changes.
- *
- * @param {() => void} listener - The function to call on scheme change.
- */
+/** Registers a listener for colour scheme changes. */
 export function addSchemeChangeListener(listener: () => void): void {
-	darkSchemeDetection?.addEventListener("change", listener);
-	browser.browserSettings?.overrideContentColorScheme?.onChange?.addListener(
+	const detection = getDarkSchemeDetection();
+	detection?.addEventListener("change", listener);
+	browser?.browserSettings?.overrideContentColorScheme?.onChange?.addListener(
 		listener,
 	);
 }
@@ -225,13 +230,13 @@ export async function getWebExtId(url: string): Promise<string | undefined> {
 	const addonList = await browser.management.getAll();
 	return addonList.find(
 		(addon) =>
-			addon.type === "extension"
-			&& addon.hostPermissions?.some(
+			addon.type === "extension" &&
+			addon.hostPermissions?.some(
 				(host) =>
-					host.startsWith("moz-extension:")
-					&& URL.canParse(host)
-					&& new URL(host).hostname === targetHost
-			)
+					host.startsWith("moz-extension:") &&
+					URL.canParse(host) &&
+					new URL(host).hostname === targetHost,
+			),
 	)?.id;
 }
 

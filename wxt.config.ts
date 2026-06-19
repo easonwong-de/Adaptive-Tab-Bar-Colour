@@ -16,7 +16,7 @@ export default defineConfig({
 		browser_specific_settings: {
 			gecko: {
 				id: "ATBC@EasonWong",
-				strict_min_version: "109.0",
+				strict_min_version: "115.0",
 				data_collection_permissions: { required: ["none"] },
 			},
 		},
@@ -42,7 +42,7 @@ export default defineConfig({
 			"management",
 		],
 	},
-	manifestVersion: 2,
+	manifestVersion: 3,
 	modules: ["@wxt-dev/module-react", "@wxt-dev/i18n/module"],
 	outDirTemplate: "atbc",
 	srcDir: "src",

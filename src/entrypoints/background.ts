@@ -187,6 +187,7 @@ async function handleMessage(
  * @returns {Promise<void>} Resolves when all active tabs are processed.
  */
 async function run(): Promise<void> {
+	if (!pref.isReady) return;
 	await cache.clear();
 	(await getActiveTabList()).forEach(updateTab);
 }
@@ -618,12 +619,12 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 }
 
 export default defineBackground(() => {
-	(async () => {
-		await pref.initialise();
-		pref.addOnChangeListener(run);
-		addSchemeChangeListener(run);
-		addTabChangeListener(run);
-		addMessageListener(handleMessage);
-		await run();
-	})();
+	pref.initialise().then(run);
+	pref.addOnChangeListener(run);
+	addSchemeChangeListener(run);
+	addTabChangeListener(run);
+	addMessageListener(handleMessage);
+	setInterval(() => {
+		void browser.runtime.getPlatformInfo();
+	}, 2e4);
 });
