@@ -309,7 +309,7 @@ async function sendMessageOnLoad(attempt: number = 0) {
 }
 
 export default defineContentScript({
-	matches: ["<all_urls>"],
+	matches: ["http://*/*", "https://*/*"],
 	main() {
 		addMessageListener(handleMessage);
 		sendMessageOnLoad();
