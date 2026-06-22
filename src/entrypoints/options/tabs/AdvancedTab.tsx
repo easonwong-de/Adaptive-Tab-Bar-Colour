@@ -30,53 +30,63 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 						pref.compatibilityMode && "disabled",
 					)}
 				>
-					{scheme === "light" ? (
-						<>
-							<h3>{i18n.t("allowDarkTabBar")}</h3>
-							<Switch
-								label={i18n.t("allowDarkTabBarTooltip")}
-								active={pref.allowDarkLight}
-								onChange={(value) =>
-									(pref.allowDarkLight = value)
-								}
-							/>
-						</>
-					) : (
-						<>
-							<h3>{i18n.t("allowLightTabBar")}</h3>
-							<Switch
-								label={i18n.t("allowLightTabBarTooltip")}
-								active={pref.allowDarkLight}
-								onChange={(value) =>
-									(pref.allowDarkLight = value)
-								}
-							/>
-						</>
-					)}
+					<label className={styles.switchWrapper}>
+						<Switch
+							active={pref.allowDarkLight}
+							onChange={(value) => (pref.allowDarkLight = value)}
+						/>
+						{scheme === "light" ? (
+							<div>
+								<h3>{i18n.t("allowDarkTabBar")}</h3>
+								<p>{i18n.t("allowDarkTabBarTooltip")}</p>
+							</div>
+						) : (
+							<div>
+								<h3>{i18n.t("allowLightTabBar")}</h3>
+								<p>{i18n.t("allowLightTabBarTooltip")}</p>
+							</div>
+						)}
+					</label>
 				</section>
 				<section className={styles.cardSection}>
-					<h3>{i18n.t("dynamicColourUpdate")}</h3>
-					<Switch
-						label={i18n.t("dynamicModeTooltip")}
-						active={pref.dynamic}
-						onChange={(value) => (pref.dynamic = value)}
-					/>
+					<label className={styles.switchWrapper}>
+						<Switch
+							active={pref.dynamic}
+							onChange={(value) => (pref.dynamic = value)}
+						/>
+						<div>
+							<h3>{i18n.t("dynamicColourUpdate")}</h3>
+							<p>{i18n.t("dynamicModeTooltip")}</p>
+						</div>
+					</label>
 				</section>
 				<section className={styles.cardSection}>
-					<h3>{i18n.t("ignoreDesignatedThemeColour")}</h3>
-					<Switch
-						label={i18n.t("ignoreDesignatedThemeColourTooltip")}
-						active={pref.noThemeColour}
-						onChange={(value) => (pref.noThemeColour = value)}
-					/>
+					<label className={styles.switchWrapper}>
+						<Switch
+							active={pref.noThemeColour}
+							onChange={(value) => (pref.noThemeColour = value)}
+						/>
+						<div>
+							<h3>{i18n.t("ignoreDesignatedThemeColour")}</h3>
+							<p>
+								{i18n.t("ignoreDesignatedThemeColourTooltip")}
+							</p>
+						</div>
+					</label>
 				</section>
 				<section className={styles.cardSection}>
-					<h3>{i18n.t("compatibilityMode")}</h3>
-					<Switch
-						label={i18n.t("compatibilityModeTooltip")}
-						active={pref.compatibilityMode}
-						onChange={(value) => (pref.compatibilityMode = value)}
-					/>
+					<label className={styles.switchWrapper}>
+						<Switch
+							active={pref.compatibilityMode}
+							onChange={(value) =>
+								(pref.compatibilityMode = value)
+							}
+						/>
+						<div>
+							<h3>{i18n.t("compatibilityMode")}</h3>
+							<p>{i18n.t("compatibilityModeTooltip")}</p>
+						</div>
+					</label>
 				</section>
 				<section
 					className={clsx(
@@ -84,14 +94,18 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 						pref.compatibilityMode && "disabled",
 					)}
 				>
-					<h3>{i18n.t("overwriteAccentColour")}</h3>
-					<Switch
-						label={i18n.t("overwriteAccentColourTooltip")}
-						active={pref.overwriteAccentColour}
-						onChange={(value) =>
-							(pref.overwriteAccentColour = value)
-						}
-					/>
+					<label className={styles.switchWrapper}>
+						<Switch
+							active={pref.overwriteAccentColour}
+							onChange={(value) =>
+								(pref.overwriteAccentColour = value)
+							}
+						/>
+						<div>
+							<h3>{i18n.t("overwriteAccentColour")}</h3>
+							<p>{i18n.t("overwriteAccentColourTooltip")}</p>
+						</div>
+					</label>
 					{pref.overwriteAccentColour && (
 						<div className={styles.colourWrapper}>
 							<div>

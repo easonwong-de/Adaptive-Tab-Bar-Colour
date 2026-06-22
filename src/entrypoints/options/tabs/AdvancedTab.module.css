@@ -107,6 +107,20 @@ main.advanced-tab {
 		}
 	}
 
+	.switch-wrapper {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: var(--unit-16);
+
+		& > div:last-child {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: var(--unit-8);
+		}
+	}
+
 	.text-button {
 		justify-content: start;
 		box-sizing: border-box;
