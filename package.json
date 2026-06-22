@@ -47,7 +47,7 @@
 		"geckodriver": "^6.1.0",
 		"react": "^19.2.7",
 		"react-dom": "^19.2.7",
-		"selenium-webdriver": "^4.44.0",
+		"selenium-webdriver": "^4.45.0",
 		"selenium-webext-bridge": "^0.4.0"
 	}
 }
