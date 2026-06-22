@@ -172,7 +172,8 @@ h6 {
 p {
 	color: var(--text-secondary);
 	font: inherit;
-	text-wrap: pretty;
+	hyphens: auto;
+	word-break: break-word;
 	overflow-wrap: break-word;
 }
 
