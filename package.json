@@ -7,7 +7,7 @@
 		"build": "wxt build -b firefox",
 		"format": "prettier --write --list-different src tests",
 		"postinstall": "wxt prepare",
-		"start": "wxt",
+		"start": "wxt --mode beta",
 		"test": "tsx tests/run.ts",
 		"test:headless": "tsx tests/run.ts --headless",
 		"zip": "bash scripts/zip.sh",

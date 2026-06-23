@@ -8,6 +8,10 @@ export default defineConfig({
 				manifest.name += " (BETA)";
 				manifest.browser_specific_settings.gecko.id =
 					"ATBC-beta@EasonWong";
+				manifest.action = {
+					...manifest.action,
+					default_area: "navbar",
+				};
 			}
 		},
 	},
@@ -57,6 +61,15 @@ export default defineConfig({
 	webExt: {
 		binaries: { firefox: "firefoxdeveloperedition" },
 		openDevtools: true,
+		firefoxArgs: ["about:home"],
+		firefoxPref: {
+			"app.update.auto": false,
+			"app.update.enabled": false,
+			"datareporting.policy.dataSubmissionEnabled": false,
+			"datareporting.policy.dataSubmissionPolicyBypassNotification": true,
+			"devtools.toolbox.alwaysOnTop": false,
+			"toolkit.telemetry.reportingpolicy.firstRun": false,
+		},
 	},
 	zip: {
 		artifactTemplate: "atbc.zip",
