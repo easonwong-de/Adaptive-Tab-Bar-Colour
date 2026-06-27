@@ -1,14 +1,14 @@
 **主要功能**
 
-此擴充套件可動態調整 Firefox 佈景主題，使之與閣下正在瀏覽的網站融為一體——正如 macOS Safari 的標籤列着色功能一樣。
+此擴充套件可動態調整 Firefox 佈景主題，使之與閣下正在瀏覽的網站融為一體——正如 macOS Safari 的標題列着色功能一樣。
 
-**和此套件運作無間的有**
+**和此擴充套件運作無間的有**
 
 - [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
 - [Stylus](https://addons.mozilla.org/firefox/addon/styl-us/)
 - [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
 
-**和此套件不相容的有**
+**和此擴充套件不相容的有**
 
 - [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)

@@ -1,6 +1,6 @@
 **O que a extensão faz?**
 
-Essa extensão ajusta dinamicamente o tema do Firefiox para combinar com a aparência do site que você está visualizando, similar a função de coloração das abas do macOS
+Essa extensão ajusta dinamicamente o tema do Firefox para combinar com a aparência do site que você está visualizando, similar a função de coloração das abas do macOS
 
 **Funciona bem com**
 
