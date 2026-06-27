@@ -44,7 +44,10 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 			>
 				<div>
 					<div
-						className={styles.panel}
+						className={clsx(
+							styles.panel,
+							pref.compatibilityMode && "disabled",
+						)}
 						onMouseEnter={() => setHover("selectedTab")}
 					>
 						<h3>{i18n.t("selectedTab")}</h3>
@@ -70,7 +73,10 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 						</div>
 					</div>
 					<div
-						className={styles.panel}
+						className={clsx(
+							styles.panel,
+							pref.compatibilityMode && "disabled",
+						)}
 						onMouseEnter={() => setHover("toolbar")}
 					>
 						<h3>{i18n.t("toolbar")}</h3>
@@ -96,7 +102,10 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 						</div>
 					</div>
 					<div
-						className={styles.panel}
+						className={clsx(
+							styles.panel,
+							pref.compatibilityMode && "disabled",
+						)}
 						onMouseEnter={() => setHover("sidebar")}
 					>
 						<h3>{i18n.t("sidebar")}</h3>
@@ -134,6 +143,9 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 					<div
 						className={styles.panel}
 						onMouseEnter={() => setHover("tabBar")}
+						onMouseLeave={() => {
+							if (pref.compatibilityMode) setHover("none");
+						}}
 					>
 						<h3>{i18n.t("tabBar")}</h3>
 						<div>
@@ -146,7 +158,11 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 								}
 							/>
 						</div>
-						<div>
+						<div
+							className={clsx(
+								pref.compatibilityMode && "disabled",
+							)}
+						>
 							<Icon type="border" />
 							<Slider
 								inPopup
@@ -158,7 +174,10 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 						</div>
 					</div>
 					<div
-						className={styles.panel}
+						className={clsx(
+							styles.panel,
+							pref.compatibilityMode && "disabled",
+						)}
 						onMouseEnter={() => setHover("urlBar")}
 					>
 						<h3>{i18n.t("urlBar")}</h3>
@@ -196,6 +215,9 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 					<div
 						className={styles.panel}
 						onMouseEnter={() => setHover("popup")}
+						onMouseLeave={() => {
+							if (pref.compatibilityMode) setHover("none");
+						}}
 					>
 						<h3>{i18n.t("popUp")}</h3>
 						<div>
@@ -206,7 +228,11 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 								onChange={(newValue) => (pref.popup = newValue)}
 							/>
 						</div>
-						<div>
+						<div
+							className={clsx(
+								pref.compatibilityMode && "disabled",
+							)}
+						>
 							<Icon type="border" />
 							<Slider
 								inPopup
