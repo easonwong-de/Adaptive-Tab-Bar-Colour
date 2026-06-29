@@ -21,7 +21,7 @@ jobs:
               uses: browser-actions/setup-firefox@v1
             - name: Execute Integration Tests
               run: |
-                  npm ci
-                  npm rebuild
-                  npm run zip:clean
-                  npm run test:headless
+                  npm ci --silent
+                  npm rebuild --silent
+                  node --run zip:clean
+                  node --run test:headless

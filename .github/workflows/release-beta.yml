@@ -22,16 +22,14 @@ jobs:
             - name: Install Dependencies And Prepare Version
               id: version
               run: |
-                  npm ci
+                  npm ci --silent
                   BASE_VERSION=$(node -p "require('./package.json').version")
-                  LATEST_BETA=$(git tag -l "v${BASE_VERSION}-beta.*" \
-                      | sort -V \
-                      | tail -n 1)
-                  if [ -z "$LATEST_BETA" ]; then \
-                      ITERATION=1; \
-                  else \
-                      ITERATION=$(echo "$LATEST_BETA" | awk -F. '{print $NF}'); \
-                      ITERATION=$((ITERATION + 1)); \
+                  LATEST_BETA=$(git tag -l "v${BASE_VERSION}-beta.*" | sort -V | tail -n 1)
+                  if [ -z "$LATEST_BETA" ]; then
+                      ITERATION=1
+                  else
+                      ITERATION=${LATEST_BETA##*.}
+                      ITERATION=$((ITERATION + 1))
                   fi
                   AMO_VERSION="${BASE_VERSION}.${ITERATION}"
                   echo "beta_version=$AMO_VERSION" >> "$GITHUB_OUTPUT"
@@ -41,7 +39,7 @@ jobs:
                   FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
                   FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
               run: |
-                  npm run zip:beta
+                  node --run zip:beta
                   jq --arg ver "${{ steps.version.outputs.beta_version }}" \
                       '.version = $ver' .output/atbc/manifest.json > tmp.json \
                       && mv tmp.json .output/atbc/manifest.json
@@ -60,13 +58,13 @@ jobs:
                   git tag ${{ steps.version.outputs.beta_tag }}
                   git push origin ${{ steps.version.outputs.beta_tag }}
                   XPI_ASSET=$(find .output -name "*.xpi" 2>/dev/null | head -n 1 || true)
-                  if [ -n "$XPI_ASSET" ]; then \
-                      gh release create "${{ steps.version.outputs.beta_tag }}" \
-                          "$XPI_ASSET" \
-                          --title "${{ steps.version.outputs.beta_tag }}" \
-                          --prerelease; \
-                  else \
-                      gh release create "${{ steps.version.outputs.beta_tag }}" \
-                          --title "${{ steps.version.outputs.beta_tag }}" \
-                          --prerelease; \
+                  ASSET_ARGS=()
+                  if [ -n "$XPI_ASSET" ]; then
+                      RENAMED_ASSET=".output/atbc-${{ steps.version.outputs.beta_version }}.xpi"
+                      mv "$XPI_ASSET" "$RENAMED_ASSET"
+                      ASSET_ARGS+=("$RENAMED_ASSET")
                   fi
+                  gh release create "${{ steps.version.outputs.beta_tag }}" \
+                      "${ASSET_ARGS[@]}" \
+                      --title "${{ steps.version.outputs.beta_tag }}" \
+                      --prerelease
