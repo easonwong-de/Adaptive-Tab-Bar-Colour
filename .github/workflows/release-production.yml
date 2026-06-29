@@ -26,7 +26,7 @@ jobs:
             - name: Prepare Environment And Metadata
               id: version
               run: |
-                  npm ci
+                  npm ci --silent
                   BASE_VERSION=$(node -p "require('./package.json').version")
                   echo "version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
                   jq -n --arg notes "${{ inputs.notes }}" \
@@ -37,7 +37,7 @@ jobs:
                   FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
                   FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
               run: |
-                  npm run zip
+                  node --run zip
                   npx web-ext sign \
                       --api-key $FIREFOX_JWT_ISSUER \
                       --api-secret $FIREFOX_JWT_SECRET \
