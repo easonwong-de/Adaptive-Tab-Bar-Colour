@@ -1,6 +1,6 @@
 **主要功能**
 
-此插件可动态调整 Firefox 主题，使之与您正在浏览的网站融为一体——正如 macOS Safari 的标签栏着色功能一样。
+此插件可动态调整 Firefox 背景主题，使之与您正在浏览的网站融为一体——正如 macOS Safari 的标签栏着色功能一样。
 
 **与本插件兼容的插件有**
 
@@ -14,7 +14,7 @@
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
-- 任何修改 Firefox 主题的扩展插件
+- 任何修改 Firefox 背景主题的插件
 
 **移除工具栏底部的阴影**
 

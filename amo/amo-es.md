@@ -1,6 +1,6 @@
-**¿Qué Hace El Complemento?**
+**¿Qué Hace La Extensión?**
 
-Este complemento ajusta dinámicamente el tema de Firefox para que coincida con la apariencia del sitio web que estás viendo, similar a la función de teñido de la barra de pestañas en Safari en macOS.
+Esta extensión ajusta dinámicamente el tema de Firefox para que coincida con la apariencia del sitio web que estás viendo, similar a la función de teñido de la barra de pestañas en Safari en macOS.
 
 **Funciona Bien Con**
 
@@ -14,7 +14,7 @@ Este complemento ajusta dinámicamente el tema de Firefox para que coincida con 
 - [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
 - [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
 - [Envify](https://addons.mozilla.org/firefox/addon/envify/)
-- Cualquier otro complemento que modifique el tema de Firefox
+- Cualquier otra extensión que modifique el tema de Firefox
 
 **Eliminar la Sombra en la Parte Inferior de la Barra de Herramientas**
 
