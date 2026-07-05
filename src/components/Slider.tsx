@@ -9,8 +9,8 @@ interface SliderProps {
 	minorStep?: number;
 	majorStep?: number;
 	value?: number;
-	leftIconType?: IconType;
-	rightIconType?: IconType;
+	leftIconType: IconType;
+	rightIconType: IconType;
 	onChange: (newValue: number) => void;
 	onCommit?: (oldValue: number, newValue: number) => void;
 	onDisplay?: (value: number) => string;
@@ -23,8 +23,8 @@ export default function Slider({
 	minorStep = 1,
 	majorStep = 5,
 	value = minValue,
-	leftIconType = "moon",
-	rightIconType = "sun",
+	leftIconType,
+	rightIconType,
 	onChange,
 	onCommit = () => {},
 	onDisplay = (value) => `${value}%`,

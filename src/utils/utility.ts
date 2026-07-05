@@ -18,15 +18,6 @@ export function getSystemScheme(): Scheme {
 	return detection?.matches ? "dark" : "light";
 }
 
-/** Registers a listener for colour scheme changes. */
-export function addSchemeChangeListener(listener: () => void): void {
-	const detection = getDarkSchemeDetection();
-	detection?.addEventListener("change", listener);
-	browser?.browserSettings?.overrideContentColorScheme?.onChange?.addListener(
-		listener,
-	);
-}
-
 /**
  * Retrieves the preferred colour scheme.
  *
@@ -46,6 +37,21 @@ export async function getCurrentScheme(): Promise<Scheme> {
 	} catch {
 		return getSystemScheme();
 	}
+}
+
+/** Registers a listener for colour scheme changes. */
+export function addSchemeChangeListener(
+	listener: (scheme: Scheme) => void,
+): void {
+	const detection = getDarkSchemeDetection();
+	const onChange = async () => {
+		const scheme = await getCurrentScheme();
+		listener(scheme);
+	};
+	detection?.addEventListener("change", onChange);
+	browser?.browserSettings?.overrideContentColorScheme?.onChange?.addListener(
+		onChange,
+	);
 }
 
 /**

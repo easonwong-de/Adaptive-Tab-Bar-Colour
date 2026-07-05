@@ -20,6 +20,10 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 		() => pref.getLastSave(),
 	);
 
+	const scheme = useCurrentScheme();
+	const leftIconType = scheme === "light" ? "sun" : "moon";
+	const rightIconType = scheme === "light" ? "moon" : "sun";
+
 	const historyRef = useRef<History[]>([]);
 	const headRef = useRef(-1);
 
@@ -53,6 +57,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.tabSelected}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabSelected = newValue)
 								}
@@ -69,6 +75,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.tabSelectedBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabSelectedBorder = newValue)
 								}
@@ -91,6 +99,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.toolbar}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbar = newValue)
 								}
@@ -103,6 +113,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.toolbarBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarBorder = newValue)
 								}
@@ -125,6 +137,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.sidebar}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.sidebar = newValue)
 								}
@@ -137,6 +151,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.sidebarBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.sidebarBorder = newValue)
 								}
@@ -217,6 +233,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.tabbar}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabbar = newValue)
 								}
@@ -234,6 +252,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						>
 							<Slider
 								value={pref.tabbarBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabbarBorder = newValue)
 								}
@@ -264,6 +284,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.toolbarField}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarField = newValue)
 								}
@@ -280,6 +302,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.toolbarFieldOnFocus}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarFieldOnFocus = newValue)
 								}
@@ -296,6 +320,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.toolbarFieldBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarFieldBorder = newValue)
 								}
@@ -318,6 +344,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.popup}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) => (pref.popup = newValue)}
 								onCommit={(oldValue, newValue) =>
 									addHistory("popup", oldValue, newValue)
@@ -333,6 +361,8 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						>
 							<Slider
 								value={pref.popupBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.popupBorder = newValue)
 								}
