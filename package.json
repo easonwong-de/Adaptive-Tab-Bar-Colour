@@ -31,7 +31,7 @@
 		"@types/react": "^19.2.17",
 		"@types/selenium-webdriver": "^4.35.6",
 		"@wxt-dev/module-react": "^1.2.2",
-		"prettier": "^3.8.4",
+		"prettier": "^3.9.4",
 		"prettier-plugin-css-order": "^2.2.0",
 		"prettier-plugin-jsdoc": "^1.8.1",
 		"prettier-plugin-sort-json": "^4.2.0",
