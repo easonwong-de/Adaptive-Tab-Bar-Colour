@@ -6,15 +6,19 @@ import styles from "./ThemeWidget.module.css";
 interface ThemeWidgetProps {
 	ready: boolean;
 	pref: preference;
+	scheme: Scheme;
 }
 
-export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
+export default function ThemeWidget({ ready, pref, scheme }: ThemeWidgetProps) {
 	useSyncExternalStore(
 		(listener) => pref.addOnChangeListener(listener),
 		() => pref.getLastSave(),
 	);
 
 	const [hover, setHover] = useState<GlyphHighlight>("none");
+
+	const leftIconType = scheme === "light" ? "sun" : "moon";
+	const rightIconType = scheme === "light" ? "moon" : "sun";
 
 	return (
 		<section className={clsx(styles.themeWidget, !ready && "disabled")}>
@@ -56,6 +60,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.tabSelected}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabSelected = newValue)
 								}
@@ -66,6 +72,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.tabSelectedBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabSelectedBorder = newValue)
 								}
@@ -85,6 +93,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.toolbar}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbar = newValue)
 								}
@@ -95,6 +105,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.toolbarBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarBorder = newValue)
 								}
@@ -114,6 +126,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.sidebar}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.sidebar = newValue)
 								}
@@ -124,6 +138,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.sidebarBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.sidebarBorder = newValue)
 								}
@@ -153,6 +169,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.tabbar}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabbar = newValue)
 								}
@@ -167,6 +185,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.tabbarBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.tabbarBorder = newValue)
 								}
@@ -186,6 +206,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.toolbarField}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarField = newValue)
 								}
@@ -196,6 +218,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.toolbarFieldOnFocus}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarFieldOnFocus = newValue)
 								}
@@ -206,6 +230,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.toolbarFieldBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.toolbarFieldBorder = newValue)
 								}
@@ -225,6 +251,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.popup}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) => (pref.popup = newValue)}
 							/>
 						</div>
@@ -237,6 +265,8 @@ export default function ThemeWidget({ ready, pref }: ThemeWidgetProps) {
 							<Slider
 								inPopup
 								value={pref.popupBorder}
+								leftIconType={leftIconType}
+								rightIconType={rightIconType}
 								onChange={(newValue) =>
 									(pref.popupBorder = newValue)
 								}

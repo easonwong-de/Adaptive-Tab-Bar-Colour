@@ -14,12 +14,8 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 		() => pref.getLastSave(),
 	);
 
-	const [scheme, setScheme] = useState(getSystemScheme());
+	const scheme = useCurrentScheme();
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-	useEffect(() => {
-		addSchemeChangeListener(() => setScheme(getSystemScheme()));
-	}, []);
 
 	return (
 		<main className={clsx(styles.advancedTab, !ready && "disabled")}>

@@ -16,6 +16,7 @@ export default function App() {
 	const [ready, setReady] = useState(false);
 	const [cache, setCache] = useState<CacheData | undefined>();
 	const windowIdRef = useRef<number | undefined>(0);
+	const currentScheme = useCurrentScheme();
 
 	function handleMessage(message: MessageForPopup): void {
 		if (
@@ -55,7 +56,11 @@ export default function App() {
 			) : (
 				<LoadingWidget />
 			)}
-			<ThemeWidget ready={ready} pref={pref} />
+			<ThemeWidget
+				ready={ready}
+				pref={pref}
+				scheme={cache?.themeData?.scheme ?? currentScheme}
+			/>
 		</>
 	);
 }
