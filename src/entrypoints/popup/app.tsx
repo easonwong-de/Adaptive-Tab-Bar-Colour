@@ -37,10 +37,8 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		document.documentElement.style.setProperty(
-			"--app",
-			cache?.themeData?.popupColour ?? "inherit",
-		);
+		const colour = cache?.themeData?.popupColour;
+		if (colour) document.documentElement.style.setProperty("--app", colour);
 	}, [cache?.themeData?.popupColour]);
 
 	return (

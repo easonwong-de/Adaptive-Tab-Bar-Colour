@@ -11,6 +11,7 @@
 
 	--radius: var(--unit-8);
 
+	--app: hsl(0, 0%, 100%);
 	--app-0: color-mix(in srgb, #000 5%, var(--app));
 	--app-1: color-mix(in srgb, #000 10%, var(--app));
 	--app-2: color-mix(in srgb, #000 15%, var(--app));
@@ -35,6 +36,7 @@
 	--shadow-large: 0 var(--unit-2) var(--unit-4) rgba(0, 0, 0, 0.1);
 
 	@media (prefers-color-scheme: dark) {
+		--app: hsl(247, 12%, 15%);
 		--app-0: color-mix(in srgb, #fff 10%, var(--app));
 		--app-1: color-mix(in srgb, #fff 15%, var(--app));
 		--app-2: color-mix(in srgb, #fff 20%, var(--app));
