@@ -36,7 +36,7 @@
 		"prettier-plugin-jsdoc": "^1.8.1",
 		"prettier-plugin-sort-json": "^4.2.0",
 		"prettier-plugin-yaml": "^1.2.0",
-		"tsx": "^4.22.4",
+		"tsx": "^4.23.0",
 		"typescript": "^6.0.3",
 		"web-ext": "^10.4.0",
 		"wxt": "^0.20.26"
