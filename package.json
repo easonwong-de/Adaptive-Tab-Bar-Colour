@@ -42,7 +42,7 @@
 		"wxt": "^0.20.26"
 	},
 	"dependencies": {
-		"@wxt-dev/i18n": "^0.2.5",
+		"@wxt-dev/i18n": "^0.2.6",
 		"clsx": "^2.1.1",
 		"geckodriver": "^6.1.0",
 		"react": "^19.2.7",
