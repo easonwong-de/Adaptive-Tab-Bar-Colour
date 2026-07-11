@@ -3,6 +3,7 @@ import styles from "./Input.module.css";
 
 interface InputProps {
 	value?: string;
+	inPopup?: boolean;
 	placeholder?: string;
 	warning?: string;
 	onChange: (newValue: string) => void;
@@ -10,6 +11,7 @@ interface InputProps {
 
 export default function Input({
 	value = "",
+	inPopup = false,
 	placeholder = "",
 	warning = "",
 	onChange,
@@ -25,11 +27,12 @@ export default function Input({
 			)}
 		>
 			<input
+				className={clsx(inPopup && styles.inPopup)}
 				type="text"
 				placeholder={placeholder}
 				title={placeholder}
 				value={isEditing ? text : value}
-				onFocus={(e) => {
+				onFocus={() => {
 					setIsEditing(true);
 					setText(value);
 				}}

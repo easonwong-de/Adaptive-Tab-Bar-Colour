@@ -21,6 +21,15 @@
 		&:focus-visible {
 			outline: solid var(--unit) var(--control);
 		}
+
+		&.in-popup {
+			outline: solid var(--unit) var(--control);
+
+			&:hover,
+			&:focus-visible {
+				outline: solid var(--unit) var(--control-hover);
+			}
+		}
 	}
 
 	& > div {

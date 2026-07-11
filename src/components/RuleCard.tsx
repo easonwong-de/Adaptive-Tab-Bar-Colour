@@ -131,6 +131,7 @@ export default function RuleCard({
 						return (
 							<Input
 								value={rule.value}
+								inPopup={inPopup}
 								placeholder={i18n.t("querySelector")}
 								onChange={(newValue) =>
 									onChange({ ...rule, value: newValue })
