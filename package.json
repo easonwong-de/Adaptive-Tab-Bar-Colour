@@ -27,18 +27,18 @@
 	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
-		"@types/node": "^26.1.0",
+		"@types/node": "^26.1.1",
 		"@types/react": "^19.2.17",
 		"@types/selenium-webdriver": "^4.35.6",
 		"@wxt-dev/module-react": "^1.2.2",
-		"prettier": "^3.9.4",
+		"prettier": "^3.9.5",
 		"prettier-plugin-css-order": "^2.2.0",
 		"prettier-plugin-jsdoc": "^1.8.1",
 		"prettier-plugin-sort-json": "^4.2.0",
 		"prettier-plugin-yaml": "^1.2.0",
 		"tsx": "^4.23.0",
-		"typescript": "^6.0.3",
-		"web-ext": "^10.4.0",
+		"typescript": "^7.0.2",
+		"web-ext": "^10.5.0",
 		"wxt": "^0.20.27"
 	},
 	"dependencies": {
@@ -47,7 +47,7 @@
 		"geckodriver": "^6.1.0",
 		"react": "^19.2.7",
 		"react-dom": "^19.2.7",
-		"selenium-webdriver": "^4.45.0",
+		"selenium-webdriver": "^4.46.0",
 		"selenium-webext-bridge": "^0.4.0"
 	}
 }
