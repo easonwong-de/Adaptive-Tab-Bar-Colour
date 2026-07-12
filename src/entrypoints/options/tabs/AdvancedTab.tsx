@@ -147,6 +147,18 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 						</div>
 					)}
 				</section>
+				<section className={styles.cardSection}>
+					<label className={styles.switchWrapper}>
+						<Switch
+							active={pref.nova}
+							onChange={(value) => (pref.nova = value)}
+						/>
+						<div>
+							<h3>{i18n.t("novaUi")}</h3>
+							<p>{i18n.t("novaUiTooltip")}</p>
+						</div>
+					</label>
+				</section>
 			</div>
 			<div className={styles.column}>
 				<section className={styles.cardSection}>

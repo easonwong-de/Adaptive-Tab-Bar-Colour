@@ -49,6 +49,8 @@ minimumContrastTooltip: >-
 moreSettings: "さらに設定"
 moreSettingsTooltip: "オプションページを開く"
 no: "いいえ"
+novaUi: "Nova UI の色を使用する"
+novaUiTooltip: "Firefox が Nova UI を使用している場合に有効にします。"
 overwriteAccentColour: "アクセントカラーを上書き"
 overwriteAccentColourTooltip: >-
     URL バーとツールバーのボタンに、システムの色の代わりにカスタムアクセントカラーを使用します。

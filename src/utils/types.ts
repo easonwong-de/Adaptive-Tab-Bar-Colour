@@ -62,10 +62,11 @@ export interface ThemeBuilderPreferenceContent {
 	toolbarFieldOnFocus: number;
 }
 
-export interface PreferenceContent extends ThemeBuilderPreferenceContent {
-	// rule list
+export interface RuleListPreferenceContent {
 	ruleList: RuleList;
-	// advanced
+}
+
+export interface AdvancedPreferenceContent {
 	accentColour_dark: string;
 	accentColour_light: string;
 	allowDarkLight: boolean;
@@ -78,8 +79,15 @@ export interface PreferenceContent extends ThemeBuilderPreferenceContent {
 	minContrast_dark: number;
 	minContrast_light: number;
 	noThemeColour: boolean;
+	nova: boolean;
 	overwriteAccentColour: boolean;
-	// state
+}
+
+export interface PreferenceContent
+	extends
+		ThemeBuilderPreferenceContent,
+		RuleListPreferenceContent,
+		AdvancedPreferenceContent {
 	lastSave: number;
 	version: number[];
 	[key: string]: PreferenceContent[keyof PreferenceContent];

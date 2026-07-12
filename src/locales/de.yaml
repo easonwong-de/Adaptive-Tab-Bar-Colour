@@ -54,6 +54,8 @@ minimumContrastTooltip: >-
 moreSettings: "Weitere Einstellungen"
 moreSettingsTooltip: "Optionenseite öffnen"
 no: "Nein"
+novaUi: "Nova UI-Farben verwenden"
+novaUiTooltip: "Aktivieren, wenn Firefox die Nova-Benutzeroberfläche verwendet."
 overwriteAccentColour: "Akzentfarbe überschreiben"
 overwriteAccentColourTooltip: >-
     Für die URL-Leiste und die Werkzeugleisten-Buttons eine benutzerdefinierte Akzentfarbe anstelle Ihrer Systemfarbe verwenden.

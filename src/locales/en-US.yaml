@@ -49,6 +49,8 @@ minimumContrastTooltip: >-
 moreSettings: "More settings"
 moreSettingsTooltip: "Open option page"
 no: "No"
+novaUi: "Use Nova UI colors"
+novaUiTooltip: "Enable if Firefox is using the Nova UI."
 overwriteAccentColour: "Overwrite accent color"
 overwriteAccentColourTooltip: >-
     Use a custom accent color instead of your system’s color for the URL bar and toolbar buttons.

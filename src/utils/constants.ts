@@ -123,6 +123,7 @@ export const defaultPreferenceContent = Object.freeze({
 	minContrast_dark: 45,
 	minContrast_light: 90,
 	noThemeColour: true,
+	nova: false,
 	overwriteAccentColour: false,
 	// state
 	lastSave: 0,
