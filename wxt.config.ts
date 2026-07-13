@@ -65,9 +65,11 @@ export default defineConfig({
 		firefoxPref: {
 			"app.update.auto": false,
 			"app.update.enabled": false,
+			"browser.aboutConfig.showWarning": false,
 			"datareporting.policy.dataSubmissionEnabled": false,
 			"datareporting.policy.dataSubmissionPolicyBypassNotification": true,
 			"devtools.toolbox.alwaysOnTop": false,
+			"devtools.toolbox.selectedTool": "webconsole",
 			"toolkit.telemetry.reportingpolicy.firstRun": false,
 		},
 	},
