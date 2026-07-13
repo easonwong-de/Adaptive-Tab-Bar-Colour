@@ -70,7 +70,10 @@ export default class preference {
 	async reset(keys?: string[]): Promise<void> {
 		if (keys) {
 			for (const key of keys)
-				if (key in defaultContent) this.#set(key, defaultContent[key]);
+				if (key in defaultContent) {
+					const prefKey = key as keyof PreferenceContent;
+					this.#set(prefKey, defaultContent[prefKey]);
+				}
 		} else this.#content = { ...defaultContent };
 		await this.#save({ ...this.#content });
 	}
@@ -402,7 +405,10 @@ export default class preference {
 	async importPref(jsonString: string): Promise<boolean> {
 		try {
 			const parsedPref = this.#normalise(JSON.parse(jsonString)).result;
-			for (const key in parsedPref) this.#set(key, parsedPref[key]);
+			for (const key in parsedPref) {
+				const prefKey = key as keyof PreferenceContent;
+				this.#set(prefKey, parsedPref[prefKey]);
+			}
 			await this.#save({ ...this.#content });
 			return true;
 		} catch {
