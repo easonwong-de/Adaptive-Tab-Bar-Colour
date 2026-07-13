@@ -15,6 +15,10 @@ export const default_fallbackColour_dark = "#2b2a33";
 export const default_accentColour_light = "#0062fa";
 /** Default dark accent colour. */
 export const default_accentColour_dark = "#00cadb";
+/** Default light accent colour in Nova UI. */
+export const default_accentColourNova_light = "#764edd";
+/** Default dark accent colour in Nova UI. */
+export const default_accentColourNova_dark = "#b89cff";
 
 /** Default compatibility mode setting. */
 export const default_compatibilityMode = !supportsThemeAPI();

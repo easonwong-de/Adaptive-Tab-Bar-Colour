@@ -105,9 +105,18 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 					<label className={styles.switchWrapper}>
 						<Switch
 							active={pref.overwriteAccentColour}
-							onChange={(value) =>
-								(pref.overwriteAccentColour = value)
-							}
+							onChange={(value) => {
+								if (pref.nova) {
+									pref.accentColour_light =
+										default_accentColourNova_light;
+									pref.accentColour_dark =
+										default_accentColourNova_dark;
+								} else {
+									pref.reset(["accentColour_light"]);
+									pref.reset(["accentColour_dark"]);
+								}
+								pref.overwriteAccentColour = value;
+							}}
 						/>
 						<div>
 							<h3>{i18n.t("overwriteAccentColour")}</h3>
@@ -128,9 +137,16 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 									<button
 										className={styles.resetButton}
 										title={i18n.t("reset")}
-										onClick={() =>
-											pref.reset(["accentColour_light"])
-										}
+										onClick={() => {
+											if (pref.nova) {
+												pref.accentColour_light =
+													default_accentColourNova_light;
+											} else {
+												pref.reset([
+													"accentColour_light",
+												]);
+											}
+										}}
 									>
 										<Icon type="reset" size="text" />
 									</button>
@@ -148,9 +164,16 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 									<button
 										className={styles.resetButton}
 										title={i18n.t("reset")}
-										onClick={() =>
-											pref.reset(["accentColour_dark"])
-										}
+										onClick={() => {
+											if (pref.nova) {
+												pref.accentColour_dark =
+													default_accentColourNova_dark;
+											} else {
+												pref.reset([
+													"accentColour_dark",
+												]);
+											}
+										}}
 									>
 										<Icon type="reset" size="text" />
 									</button>
