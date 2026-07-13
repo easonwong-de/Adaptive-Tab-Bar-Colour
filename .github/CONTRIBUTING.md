@@ -35,7 +35,7 @@ You can work on the locales using the [i18n Ally](https://marketplace.visualstud
 Ensure the following software is installed:
 
 - [Node.js](https://nodejs.org/)
-- [Firefox Developer Edition](https://www.mozilla.org/firefox/developer/)
+- [Firefox](https://www.firefox.com/) or [Firefox Developer Edition](https://www.mozilla.org/firefox/developer/)
 
 To begin contributing, run the following commands:
 
@@ -45,4 +45,4 @@ cd Adaptive-Tab-Bar-Colour
 npm install
 ```
 
-To test the changes, run `npm start`. The add-on will be built and launch in the browser.
+To test the changes with Firefox, run `npm start`. Alternatively, run `npm run start:dev` to test with Firefox Developer Edition. The add-on will be built and launch in the browser.

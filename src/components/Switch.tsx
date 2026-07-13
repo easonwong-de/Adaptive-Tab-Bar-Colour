@@ -6,10 +6,7 @@ interface SwitchProps {
 	onChange: (nextValue: boolean) => void;
 }
 
-export default function Switch({
-	active = false,
-	onChange,
-}: SwitchProps) {
+export default function Switch({ active = false, onChange }: SwitchProps) {
 	return (
 		<button
 			className={clsx(styles.switch, active && styles.active)}

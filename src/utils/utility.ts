@@ -303,16 +303,12 @@ export async function sendMessageToTab<T = unknown>(
 /**
  * Registers a runtime message listener.
  *
- * @param {BackgroundMessageListener
- * 	| PopupMessageListener
- * 	| TabMessageListener} listener
+ * @param {BackgroundMessageListener | PopupMessageListener | TabMessageListener} listener
  *   - The listener to register.
  */
 export function addMessageListener(
 	listener:
-		| BackgroundMessageListener
-		| PopupMessageListener
-		| TabMessageListener,
+		BackgroundMessageListener | PopupMessageListener | TabMessageListener,
 ): void {
 	browser.runtime.onMessage.addListener(listener);
 }
@@ -320,16 +316,12 @@ export function addMessageListener(
 /**
  * Removes a runtime message listener.
  *
- * @param {BackgroundMessageListener
- * 	| PopupMessageListener
- * 	| TabMessageListener} listener
+ * @param {BackgroundMessageListener | PopupMessageListener | TabMessageListener} listener
  *   - The listener to remove.
  */
 export function removeMessageListener(
 	listener:
-		| BackgroundMessageListener
-		| PopupMessageListener
-		| TabMessageListener,
+		BackgroundMessageListener | PopupMessageListener | TabMessageListener,
 ): void {
 	browser.runtime.onMessage.removeListener(listener);
 }

@@ -11,7 +11,12 @@ export default class preference {
 		isDisposed: boolean;
 		writeTimeout?: ReturnType<typeof setTimeout>;
 		pendingUpdates: Partial<PreferenceContent>;
-	} = { isInitialised: false, lastWrite: 0, isDisposed: false, pendingUpdates: {} };
+	} = {
+		isInitialised: false,
+		lastWrite: 0,
+		isDisposed: false,
+		pendingUpdates: {},
+	};
 
 	/** The listeners for preference changes. */
 	#onChangeListeners = new Set<() => void>();
