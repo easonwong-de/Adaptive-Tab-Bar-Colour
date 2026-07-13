@@ -125,6 +125,7 @@ export async function getActiveTabList(): Promise<Browser.tabs.Tab[]> {
 	);
 }
 
+/** Checks whether the browser exposes theme API. */
 export function supportsThemeAPI(): boolean {
 	return typeof browser.theme?.update === "function";
 }
