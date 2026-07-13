@@ -59,7 +59,7 @@ export default defineConfig({
 		},
 	}),
 	webExt: {
-		binaries: { firefox: "firefoxdeveloperedition" },
+		binaries: { firefox: process.env.BINARY || "firefox" },
 		openDevtools: true,
 		firefoxArgs: ["about:home"],
 		firefoxPref: {
