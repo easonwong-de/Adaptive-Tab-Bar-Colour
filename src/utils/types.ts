@@ -1,3 +1,5 @@
+import type { Manifest } from "webextension-polyfill";
+
 export type Scheme = "light" | "dark";
 
 export type BrowserColour =
@@ -158,10 +160,7 @@ export interface ColourCorrectionResult {
 	corrected: boolean;
 }
 
-export interface Theme {
-	colors: Record<string, string>;
-	properties: { color_scheme: "system"; content_color_scheme: "system" };
-}
+export type Theme = Manifest.ThemeType;
 
 export type MessageForBackground =
 	| { header: "UPDATE_COLOUR"; colour: TabColourData }
