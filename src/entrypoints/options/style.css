@@ -35,6 +35,12 @@
 	--shadow-small: 0 0 var(--unit-2) rgba(0, 0, 0, 0.15);
 	--shadow-large: 0 var(--unit-2) var(--unit-4) rgba(0, 0, 0, 0.1);
 
+	&.nova {
+		--accent: #764edd;
+		--accent-hover: #5939a8;
+		--accent-active: #3e2976;
+	}
+
 	@media (prefers-color-scheme: dark) {
 		--app: hsl(247, 12%, 15%);
 		--panel: hsl(247, 12%, 22%);
@@ -58,6 +64,28 @@
 		--accent: oklch(76% 0.14 205);
 		--accent-hover: oklch(86% 0.14 205);
 		--accent-active: oklch(90% 0.14 205);
+
+		&.nova {
+			--app: hsl(255, 5%, 15%);
+			--panel: hsl(255, 5%, 22%);
+			--panel-alt: hsl(255, 5%, 24%);
+			--panel-hover: hsl(255, 5%, 27%);
+			--panel-active: hsl(255, 5%, 25%);
+			--panel-selected: hsl(255, 5%, 35%);
+			--panel-selected-hover: hsl(255, 5%, 40%);
+			--panel-selected-active: hsl(255, 5%, 38%);
+
+			--control: hsl(255, 5%, 34%);
+			--control-hover: hsl(255, 5%, 40%);
+			--control-active: hsl(255, 5%, 38%);
+			--control-selected: hsl(255, 5%, 51%);
+			--control-selected-hover: hsl(255, 5%, 53%);
+			--control-selected-active: hsl(255, 5%, 48%);
+
+			--accent: #b89cff;
+			--accent-hover: #d4c1ff;
+			--accent-active: #eaddff;
+		}
 	}
 }
 

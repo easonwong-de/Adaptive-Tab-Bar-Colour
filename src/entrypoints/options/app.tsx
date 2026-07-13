@@ -10,7 +10,13 @@ export default function App() {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => {
-		pref.initialise().then(() => setReady(true));
+		pref.initialise().then(() => {
+			document.documentElement.classList.toggle("nova", pref.nova);
+			setReady(true);
+		});
+		return pref.addOnChangeListener(() => {
+			document.documentElement.classList.toggle("nova", pref.nova);
+		});
 	}, []);
 
 	return (

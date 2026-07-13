@@ -25,80 +25,7 @@ import preference from "@/utils/preference";
 const pref = new preference();
 
 /** Page colour of Firefox internal page. */
-const browserColour: Record<BrowserColour, colour> = Object.freeze({
-	get ADDON() {
-		return cache.scheme === "light"
-			? new colour("#ececec")
-			: new colour("#323232");
-	},
-	get COMPAT() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#292833");
-	},
-	get DEFAULT() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#1c1b22");
-	},
-	get FALLBACK() {
-		return cache.scheme === "light"
-			? new colour(pref.fallbackColour_light)
-			: new colour(pref.fallbackColour_dark);
-	},
-	get HOME() {
-		return cache.scheme === "light"
-			? new colour(pref.homeBackground_light)
-			: new colour(pref.homeBackground_dark);
-	},
-	get IMAGE_VIEWER() {
-		return new colour("#212121");
-	},
-	get JSON_VIEWER() {
-		return getSystemScheme() === "light"
-			? new colour("#f9f9f8")
-			: new colour("#0c0c0d");
-	},
-	get LOG() {
-		return cache.scheme === "light"
-			? new colour("#ececec")
-			: new colour("#282828");
-	},
-	get MOTTO() {
-		return new colour("#800000");
-	},
-	get PDF_VIEWER() {
-		return cache.scheme === "light"
-			? new colour("#f9f9f8")
-			: new colour("#38383d");
-	},
-	get PLAINTEXT() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#1c1b22");
-	},
-	get PRIVATE() {
-		return new colour("#25003e");
-	},
-	get PROCESS() {
-		return cache.scheme === "light"
-			? new colour("#eeeeef")
-			: new colour("#32313a");
-	},
-	get SVG() {
-		return new colour("#ffffff");
-	},
-	get SYSTEM() {
-		return cache.scheme === "light"
-			? new colour("#ececec")
-			: new colour("#282828");
-	},
-	get TOOLBOX() {
-		return getSystemScheme() === "light"
-			? new colour("#ffffff")
-			: new colour("#232327");
-	},
-});
+const browserColour = createBrowserColour(() => cache.scheme, pref);
 
 /** Runtime cache. */
 const cache: {
@@ -561,17 +488,17 @@ async function setTabThemeColour(
  */
 function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 	if (scheme !== "light" && scheme !== "dark") return;
-	const factor = scheme === "light" ? -1.5 : 1;
-	const primaryColour = scheme === "light" ? "#000000" : "#ffffff";
-	const secondaryColour = scheme === "light" ? "#0000001c" : "#ffffff1c";
-	const accentColour = pref.overwriteAccentColour
-		? scheme === "light"
-			? pref.accentColour_light
-			: pref.accentColour_dark
-		: "AccentColor";
 
+	const lightDark = <T>(light: T, dark: T) =>
+		scheme === "light" ? light : dark;
 	const css = (value: number): string =>
-		colour.brightness(factor * value).toRGBA();
+		colour.brightness(lightDark(-1.5, 1) * value).toRGBA();
+
+	const primaryColour = lightDark("#000000", "#ffffff");
+	const secondaryColour = lightDark("#0000001c", "#ffffff1c");
+	const accentColour = pref.overwriteAccentColour
+		? lightDark(pref.accentColour_light, pref.accentColour_dark)
+		: "AccentColor";
 
 	const theme: Theme = {
 		colors: {
@@ -586,8 +513,15 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 			sidebar_border: css(pref.sidebar + pref.sidebarBorder),
 			tab_line: css(pref.tabSelectedBorder + pref.tabSelected),
 			tab_selected: css(pref.tabSelected),
-			toolbar: css(pref.toolbar),
-			toolbar_bottom_separator: css(pref.toolbarBorder + pref.toolbar),
+			toolbar: pref.nova
+				? `color-mix(in srgb, ${lightDark(
+						"black",
+						"white",
+					)} 5%, ${css(pref.toolbar + pref.tabbar)})`
+				: css(pref.toolbar),
+			toolbar_bottom_separator: pref.nova
+				? css(pref.toolbarBorder + pref.tabbar)
+				: css(pref.toolbarBorder + pref.toolbar),
 			toolbar_field: css(pref.toolbarField),
 			toolbar_field_border: css(
 				pref.toolbarFieldBorder + pref.toolbarField,
@@ -596,7 +530,7 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 			toolbar_top_separator:
 				pref.tabbarBorder === 0
 					? "transparent"
-					: css(pref.tabbarBorder + pref.tabbar),
+					: css(pref.tabbarBorder + pref.tabbar + 5),
 			// static
 			icons: primaryColour,
 			ntp_text: primaryColour,
