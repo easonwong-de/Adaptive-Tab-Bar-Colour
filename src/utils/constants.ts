@@ -2,6 +2,8 @@ import { getAppConfig } from "#imports";
 
 /** The version of ATBC. */
 export const version = getAppConfig().version;
+/** The version of Firefox. */
+export const browserVersion = await getFirefoxVersion();
 
 /** Default light homepage colour. */
 export const default_homeBackground_light = "#ffffff";
