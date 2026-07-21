@@ -2,8 +2,6 @@ import { getAppConfig } from "#imports";
 
 /** The version of ATBC. */
 export const version = getAppConfig().version;
-/** The version of Firefox. */
-export const browserVersion = await getFirefoxVersion();
 
 /** Default light homepage colour. */
 export const default_homeBackground_light = "#ffffff";
@@ -140,6 +138,7 @@ export const defaultPreferenceContent = Object.freeze({
 export function createBrowserColour(
 	getScheme: () => Scheme,
 	pref: preference,
+	getFirefoxVersion: () => number,
 ): Record<BrowserColour, colour> {
 	return Object.freeze({
 		get ADDON() {
@@ -155,7 +154,9 @@ export function createBrowserColour(
 		get DEFAULT() {
 			return getScheme() === "light"
 				? pref.nova
-					? new colour("#fcfbff")
+					? getFirefoxVersion() >= 153
+						? new colour("#fcfbff")
+						: new colour("#f7f6fb")
 					: new colour("#ffffff")
 				: pref.nova
 					? new colour("#121114")

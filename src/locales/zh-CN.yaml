@@ -29,6 +29,7 @@ extensionDescription: "改变 Firefox 背景主题，使其与网页融为一体
 extensionName: "变色标签栏"
 fallbackColourDark: "备选颜色（暗色）"
 fallbackColourLight: "备选颜色（亮色）"
+frame: "窗口背景"
 homepageColourDark: "首页背景色（暗色）"
 homepageColourLight: "首页背景色（亮色）"
 ifVerticalTabsAreEnabled: "如果启用了「垂直标签页」，任何非零值都可能导致窗口控制按钮上方出现间隙，使其难以触及。"

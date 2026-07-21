@@ -207,13 +207,14 @@ export type TabMessageListener = (
 ) => unknown;
 
 export type GlyphHighlight =
-	| "selectedTab"
-	| "toolbar"
-	| "tabBar"
-	| "sidebar"
+	| "frame"
+	| "none"
 	| "popup"
-	| "urlBar"
-	| "none";
+	| "selectedTab"
+	| "sidebar"
+	| "tabBar"
+	| "toolbar"
+	| "urlBar";
 
 export type IconType =
 	| "moon"

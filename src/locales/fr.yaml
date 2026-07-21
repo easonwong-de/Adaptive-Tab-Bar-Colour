@@ -34,6 +34,7 @@ extensionDescription: >-
 extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Couleur de repli : sombre"
 fallbackColourLight: "Couleur de repli : claire"
+frame: "Cadre"
 homepageColourDark: "Couleur de la page d'accueil : sombre"
 homepageColourLight: "Couleur de la page d'accueil : claire"
 ifVerticalTabsAreEnabled: >-

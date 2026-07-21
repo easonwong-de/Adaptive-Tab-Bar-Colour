@@ -35,6 +35,7 @@ extensionDescription: >-
 extensionName: "Anpassende Tableistenfarbe"
 fallbackColourDark: "Fallback-Farbe: dunkel"
 fallbackColourLight: "Fallback-Farbe: hell"
+frame: "Fensterrahmen"
 homepageColourDark: "Startseitenfarbe: dunkel"
 homepageColourLight: "Startseitenfarbe: hell"
 ifVerticalTabsAreEnabled: >-

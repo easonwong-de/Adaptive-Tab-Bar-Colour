@@ -33,6 +33,7 @@ extensionDescription: "Firefox tema rengini web sitesinin görünümüyle eşlem
 extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Yedek renk: koyu"
 fallbackColourLight: "Yedek renk: açık"
+frame: "Çerçeve"
 homepageColourDark: "Giriş sayfası rengi: koyu"
 homepageColourLight: "Giriş sayfası rengi: açık"
 ifVerticalTabsAreEnabled: >-

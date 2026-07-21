@@ -15,7 +15,14 @@ export default function Glyph({ highlight, scale = 1 }: GlyphProps) {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<rect className={styles.background} width={84} height={56} rx={4} />
+			<rect
+				className={
+					highlight === "frame" ? styles.highlight : styles.background
+				}
+				width={84}
+				height={56}
+				rx={4}
+			/>
 			<path
 				className={
 					highlight === "selectedTab"

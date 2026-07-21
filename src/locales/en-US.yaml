@@ -30,6 +30,7 @@ extensionDescription: "Changes the color of Firefox theme to match the websiteâ€
 extensionName: "Adaptive Tab Bar Color"
 fallbackColourDark: "Fallback color: dark"
 fallbackColourLight: "Fallback color: light"
+frame: "Frame"
 homepageColourDark: "Home page color: dark"
 homepageColourLight: "Home page color: light"
 ifVerticalTabsAreEnabled: >-

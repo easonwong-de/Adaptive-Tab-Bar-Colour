@@ -158,12 +158,16 @@ export default function ThemeWidget({ ready, pref, scheme }: ThemeWidgetProps) {
 				<div>
 					<div
 						className={styles.panel}
-						onMouseEnter={() => setHover("tabBar")}
+						onMouseEnter={() =>
+							setHover(pref.nova ? "frame" : "tabBar")
+						}
 						onMouseLeave={() => {
 							if (pref.compatibilityMode) setHover("none");
 						}}
 					>
-						<h3>{i18n.t("tabBar")}</h3>
+						<h3>
+							{pref.nova ? i18n.t("frame") : i18n.t("tabBar")}
+						</h3>
 						<div>
 							<Icon type="background" />
 							<Slider

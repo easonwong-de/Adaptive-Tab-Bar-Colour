@@ -1,10 +1,16 @@
 import "@wxt-dev/browser";
 import type {
 	BrowserSettings,
+	Manifest,
 	Runtime,
 	Tabs,
 	Theme,
 } from "webextension-polyfill";
+
+declare global {
+	type ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum =
+		Manifest.ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum;
+}
 
 declare module "@wxt-dev/browser" {
 	namespace Browser {

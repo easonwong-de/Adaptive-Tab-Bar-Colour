@@ -227,9 +227,11 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 			</div>
 			<div className={styles.column}>
 				<section>
-					<Glyph highlight="tabBar" />
+					<Glyph highlight={pref.nova ? "frame" : "tabBar"} />
 					<div>
-						<h3>{i18n.t("tabBar")}</h3>
+						<h3>
+							{pref.nova ? i18n.t("frame") : i18n.t("tabBar")}
+						</h3>
 						<div className={styles.sliderWrapper}>
 							<Slider
 								value={pref.tabbar}
@@ -267,12 +269,20 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 							/>
 							<h4>
 								{i18n.t("border")}
-								<span
-									className={styles.warning}
-									title={i18n.t("ifVerticalTabsAreEnabled")}
-								>
-									<Icon type="warning" inline size="text" />
-								</span>
+								{!pref.nova && (
+									<span
+										className={styles.warning}
+										title={i18n.t(
+											"ifVerticalTabsAreEnabled",
+										)}
+									>
+										<Icon
+											type="warning"
+											inline
+											size="text"
+										/>
+									</span>
+								)}
 							</h4>
 						</div>
 					</div>

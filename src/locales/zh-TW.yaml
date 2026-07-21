@@ -29,6 +29,7 @@ extensionDescription: "改變 Firefox 佈景主題，使之與網頁融為一體
 extensionName: "變色標題列"
 fallbackColourDark: "備選顏色（暗色）"
 fallbackColourLight: "備選顏色（亮色）"
+frame: "視窗背景"
 homepageColourDark: "首頁背景色（暗色）"
 homepageColourLight: "首頁背景色（亮色）"
 ifVerticalTabsAreEnabled: "如果啟用了「垂直分頁標籤」，任何非零值都可能導致視窗控制按鈕上方出現間隙，使其難以觸及。"
