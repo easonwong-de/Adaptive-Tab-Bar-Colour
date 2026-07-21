@@ -151,6 +151,7 @@ export default class preference {
 			case "compatibilityMode":
 			case "dynamic":
 			case "noThemeColour":
+			case "nova":
 			case "overwriteAccentColour":
 				this.#content[key] =
 					typeof value === "boolean" ? value : defaultContent[key];
@@ -1092,6 +1093,25 @@ export default class preference {
 	set noThemeColour(value: boolean) {
 		this.#set("noThemeColour", value);
 		this.#save({ noThemeColour: this.#content.noThemeColour });
+	}
+
+	/**
+	 * Gets whether Nova UI is used.
+	 *
+	 * @returns {boolean} `true` if Nova UI is used.
+	 */
+	get nova(): boolean {
+		return this.#content.nova;
+	}
+
+	/**
+	 * Sets whether Nova UI is used.
+	 *
+	 * @param {boolean} value - Whether Nova UI is used.
+	 */
+	set nova(value: boolean) {
+		this.#set("nova", value);
+		this.#save({ nova: this.#content.nova });
 	}
 
 	/**

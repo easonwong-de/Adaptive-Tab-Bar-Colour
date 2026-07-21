@@ -15,6 +15,10 @@ export const default_fallbackColour_dark = "#2b2a33";
 export const default_accentColour_light = "#0062fa";
 /** Default dark accent colour. */
 export const default_accentColour_dark = "#00cadb";
+/** Default light accent colour in Nova UI. */
+export const default_accentColourNova_light = "#764edd";
+/** Default dark accent colour in Nova UI. */
+export const default_accentColourNova_dark = "#b89cff";
 
 /** Default compatibility mode setting. */
 export const default_compatibilityMode = !supportsThemeAPI();
@@ -123,8 +127,97 @@ export const defaultPreferenceContent = Object.freeze({
 	minContrast_dark: 45,
 	minContrast_light: 90,
 	noThemeColour: true,
+	nova: false,
 	overwriteAccentColour: false,
 	// state
 	lastSave: 0,
 	version,
 } as PreferenceContent);
+
+/** Creates a `browserColour` object. */
+export function createBrowserColour(
+	getScheme: () => Scheme,
+	getFirefoxVersion: () => number,
+	pref: preference,
+): Record<BrowserColour, colour> {
+	return Object.freeze({
+		get ADDON() {
+			return getScheme() === "light"
+				? new colour("#ececec")
+				: new colour("#323232");
+		},
+		get COMPAT() {
+			return getScheme() === "light"
+				? new colour("#ffffff")
+				: new colour("#292833");
+		},
+		get DEFAULT() {
+			return getScheme() === "light"
+				? pref.nova
+					? getFirefoxVersion() >= 153
+						? new colour("#fcfbff")
+						: new colour("#f7f6fb")
+					: new colour("#ffffff")
+				: pref.nova
+					? new colour("#121114")
+					: new colour("#1c1b22");
+		},
+		get FALLBACK() {
+			return getScheme() === "light"
+				? new colour(pref.fallbackColour_light)
+				: new colour(pref.fallbackColour_dark);
+		},
+		get HOME() {
+			return getScheme() === "light"
+				? new colour(pref.homeBackground_light)
+				: new colour(pref.homeBackground_dark);
+		},
+		get IMAGE_VIEWER() {
+			return new colour("#212121");
+		},
+		get JSON_VIEWER() {
+			return getSystemScheme() === "light"
+				? new colour("#f9f9f8")
+				: new colour("#0c0c0d");
+		},
+		get LOG() {
+			return getScheme() === "light"
+				? new colour("#ececec")
+				: new colour("#282828");
+		},
+		get MOTTO() {
+			return new colour("#800000");
+		},
+		get PDF_VIEWER() {
+			return getScheme() === "light"
+				? new colour("#f9f9f8")
+				: new colour("#38383d");
+		},
+		get PLAINTEXT() {
+			return getScheme() === "light"
+				? new colour("#ffffff")
+				: new colour("#1c1b22");
+		},
+		get PRIVATE() {
+			return new colour("#25003e");
+		},
+		get PROCESS() {
+			return getScheme() === "light"
+				? new colour("#eeeeef")
+				: new colour("#32313a");
+		},
+		get SVG() {
+			return new colour("#ffffff");
+		},
+		get SYSTEM() {
+			return getScheme() === "light"
+				? new colour("#ececec")
+				: new colour("#282828");
+		},
+		get TOOLBOX() {
+			return getSystemScheme() === "light"
+				? new colour("#ffffff")
+				: new colour("#232327");
+		},
+	});
+}

@@ -213,3 +213,18 @@ export function removeMessageListener(
 export function clamp(min: number, num: number, max: number): number {
 	return Math.max(min, Math.min(max, num));
 }
+
+/** Retrieves the major Firefox version. */
+export async function getFirefoxVersion(): Promise<number> {
+	const minVersion = 115;
+	try {
+		if (typeof browser.runtime?.getBrowserInfo !== "function")
+			return minVersion;
+		const browserInfo = await browser.runtime.getBrowserInfo();
+		if (browserInfo.name !== "Firefox") return minVersion;
+		const version = parseInt(browserInfo.version, 10);
+		return isNaN(version) ? minVersion : version;
+	} catch {
+		return minVersion;
+	}
+}

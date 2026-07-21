@@ -33,6 +33,7 @@ extensionDescription: "Firefox tema rengini web sitesinin görünümüyle eşlem
 extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Yedek renk: koyu"
 fallbackColourLight: "Yedek renk: açık"
+frame: "Çerçeve"
 homepageColourDark: "Giriş sayfası rengi: koyu"
 homepageColourLight: "Giriş sayfası rengi: açık"
 ifVerticalTabsAreEnabled: >-
@@ -52,6 +53,8 @@ minimumContrastTooltip: >-
 moreSettings: "Daha fazla ayar"
 moreSettingsTooltip: "Seçenek sayfasını aç"
 no: "Hayır"
+novaUi: "Nova UI renklerini kullan"
+novaUiTooltip: "Firefox Nova UI kullanıyorsa etkinleştirin."
 overwriteAccentColour: "Vurgu renginin üzerine yaz"
 overwriteAccentColourTooltip: >-
     URL çubuğu ve araç çubuğu düğmeleri için sistem renginiz yerine özel bir vurgu rengi kullanmak.

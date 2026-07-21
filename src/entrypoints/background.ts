@@ -20,85 +20,20 @@
  */
 import colour from "@/utils/colour";
 import preference from "@/utils/preference";
+import { AdditionalBackgroundsTilingEnum } from "@/utils/types";
+
+/** Version of Firefox. */
+let firefoxVersion = 115;
 
 /** Preference instance. */
 const pref = new preference();
 
 /** Page colour of Firefox internal page. */
-const browserColour: Record<BrowserColour, colour> = Object.freeze({
-	get ADDON() {
-		return cache.scheme === "light"
-			? new colour("#ececec")
-			: new colour("#323232");
-	},
-	get COMPAT() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#292833");
-	},
-	get DEFAULT() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#1c1b22");
-	},
-	get FALLBACK() {
-		return cache.scheme === "light"
-			? new colour(pref.fallbackColour_light)
-			: new colour(pref.fallbackColour_dark);
-	},
-	get HOME() {
-		return cache.scheme === "light"
-			? new colour(pref.homeBackground_light)
-			: new colour(pref.homeBackground_dark);
-	},
-	get IMAGE_VIEWER() {
-		return new colour("#212121");
-	},
-	get JSON_VIEWER() {
-		return getSystemScheme() === "light"
-			? new colour("#f9f9f8")
-			: new colour("#0c0c0d");
-	},
-	get LOG() {
-		return cache.scheme === "light"
-			? new colour("#ececec")
-			: new colour("#282828");
-	},
-	get MOTTO() {
-		return new colour("#800000");
-	},
-	get PDF_VIEWER() {
-		return cache.scheme === "light"
-			? new colour("#f9f9f8")
-			: new colour("#38383d");
-	},
-	get PLAINTEXT() {
-		return cache.scheme === "light"
-			? new colour("#ffffff")
-			: new colour("#1c1b22");
-	},
-	get PRIVATE() {
-		return new colour("#25003e");
-	},
-	get PROCESS() {
-		return cache.scheme === "light"
-			? new colour("#eeeeef")
-			: new colour("#32313a");
-	},
-	get SVG() {
-		return new colour("#ffffff");
-	},
-	get SYSTEM() {
-		return cache.scheme === "light"
-			? new colour("#ececec")
-			: new colour("#282828");
-	},
-	get TOOLBOX() {
-		return getSystemScheme() === "light"
-			? new colour("#ffffff")
-			: new colour("#232327");
-	},
-});
+const browserColour = createBrowserColour(
+	() => cache.scheme,
+	() => firefoxVersion,
+	pref,
+);
 
 /** Runtime cache. */
 const cache: {
@@ -556,24 +491,56 @@ async function setTabThemeColour(
  * @param {number} windowId - Target browser window ID.
  * @param {colour} colour - Base colour.
  * @param {Scheme} scheme - Target colour scheme.
- * @returns {void}
+ * @returns {Promise<void>}
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
  */
-function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
+async function applyTheme(
+	windowId: number,
+	colour: colour,
+	scheme: Scheme,
+): Promise<void> {
 	if (scheme !== "light" && scheme !== "dark") return;
-	const factor = scheme === "light" ? -1.5 : 1;
-	const primaryColour = scheme === "light" ? "#000000" : "#ffffff";
-	const secondaryColour = scheme === "light" ? "#0000001c" : "#ffffff1c";
+
+	const lightDark = <T>(light: T, dark: T) =>
+		scheme === "light" ? light : dark;
+	const css = (value: number): string =>
+		colour.brightness(lightDark(-1.5, 1) * value).toRGBA();
+	const dataURL = async (colour: string): Promise<string> => {
+		const canvas = new OffscreenCanvas(16, 16);
+		const context = canvas.getContext("2d")!;
+		context.fillStyle = colour;
+		context.fillRect(0, 0, 16, 16);
+		const blob = await canvas.convertToBlob();
+		return new Promise((resolve) => {
+			const reader = new FileReader();
+			reader.onloadend = () => resolve(reader.result as string);
+			reader.readAsDataURL(blob);
+		});
+	};
+	const nova = <T>(mapping: Record<number, () => T>): T | undefined => {
+		const match = pref.nova
+			? Object.keys(mapping)
+					.map(Number)
+					.sort((a, b) => b - a)
+					.find((v) => firefoxVersion >= v)
+			: 0;
+		return mapping[match ?? 0]();
+	};
+
+	const primaryColour = lightDark("#000000", "#ffffff");
+	const secondaryColour = lightDark("#0000001c", "#ffffff1c");
 	const accentColour = pref.overwriteAccentColour
-		? scheme === "light"
-			? pref.accentColour_light
-			: pref.accentColour_dark
+		? lightDark(pref.accentColour_light, pref.accentColour_dark)
 		: "AccentColor";
 
-	const css = (value: number): string =>
-		colour.brightness(factor * value).toRGBA();
-
 	const theme: Theme = {
+		images: {
+			additional_backgrounds: await nova({
+				0: () => undefined,
+				152: async () => [await dataURL(css(pref.tabbar))],
+				153: () => undefined,
+			}),
+		},
 		colors: {
 			// adaptive
 			button_background_active: css(pref.tabSelected),
@@ -586,17 +553,38 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 			sidebar_border: css(pref.sidebar + pref.sidebarBorder),
 			tab_line: css(pref.tabSelectedBorder + pref.tabSelected),
 			tab_selected: css(pref.tabSelected),
-			toolbar: css(pref.toolbar),
-			toolbar_bottom_separator: css(pref.toolbarBorder + pref.toolbar),
+			toolbar: nova({
+				0: () => css(pref.toolbar),
+				153: () =>
+					pref.toolbar === 0
+						? "transparent"
+						: css(pref.toolbar + pref.tabbar + 5),
+			}),
+			toolbar_bottom_separator: nova({
+				0: () => css(pref.toolbarBorder + pref.toolbar),
+				152: () => css(pref.tabbarBorder + pref.tabbar),
+			}),
 			toolbar_field: css(pref.toolbarField),
 			toolbar_field_border: css(
 				pref.toolbarFieldBorder + pref.toolbarField,
 			),
 			toolbar_field_focus: css(pref.toolbarFieldOnFocus),
-			toolbar_top_separator:
-				pref.tabbarBorder === 0
-					? "transparent"
-					: css(pref.tabbarBorder + pref.tabbar),
+			toolbar_top_separator: nova({
+				0: () =>
+					pref.tabbarBorder === 0
+						? "transparent"
+						: css(pref.tabbarBorder + pref.tabbar + 5),
+				152: () => css(pref.toolbarBorder + pref.toolbar),
+				153: () =>
+					pref.toolbarBorder === 0
+						? "transparent"
+						: css(
+								pref.toolbarBorder +
+									pref.toolbar +
+									pref.tabbar +
+									5,
+							),
+			}),
 			// static
 			icons: primaryColour,
 			ntp_text: primaryColour,
@@ -613,9 +601,17 @@ function applyTheme(windowId: number, colour: colour, scheme: Scheme): void {
 			sidebar_highlight: accentColour,
 			icons_attention: accentColour,
 		},
-		properties: { color_scheme: "system", content_color_scheme: "system" },
+		properties: {
+			color_scheme: "system",
+			content_color_scheme: "system",
+			additional_backgrounds_tiling: nova({
+				0: () => undefined,
+				152: () => ["repeat"] as AdditionalBackgroundsTilingEnum[],
+				153: () => undefined,
+			}),
+		},
 	};
-	updateBrowserTheme(windowId, theme);
+	void updateBrowserTheme(windowId, theme);
 }
 
 export default defineBackground(() => {
@@ -624,7 +620,6 @@ export default defineBackground(() => {
 	addSchemeChangeListener(run);
 	addTabChangeListener(run);
 	addMessageListener(handleMessage);
-	setInterval(() => {
-		void browser.runtime.getPlatformInfo();
-	}, 2e4);
+	getFirefoxVersion().then((version) => (firefoxVersion = version));
+	setInterval(() => void browser.runtime.getPlatformInfo(), 2e4);
 });

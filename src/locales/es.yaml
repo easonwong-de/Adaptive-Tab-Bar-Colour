@@ -34,6 +34,7 @@ extensionDescription: >-
 extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Color de respaldo: oscuro"
 fallbackColourLight: "Color de respaldo: claro"
+frame: "Marco"
 homepageColourDark: "Color de la página de inicio: oscuro"
 homepageColourLight: "Color de la página de inicio: claro"
 ifVerticalTabsAreEnabled: >-
@@ -53,6 +54,8 @@ minimumContrastTooltip: >-
 moreSettings: "Más opciones"
 moreSettingsTooltip: "Abrir página de opciones"
 no: "No"
+novaUi: "Usar colores de Nova UI"
+novaUiTooltip: "Activar si Firefox está usando Nova UI."
 overwriteAccentColour: "Sobrescribir color de acento"
 overwriteAccentColourTooltip: >-
     Usar un color de énfasis personalizado en lugar del color de su sistema para la barra de URL y los botones de la barra de herramientas.

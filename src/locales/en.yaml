@@ -30,6 +30,7 @@ extensionDescription: "Changes the colour of Firefox theme to match the websiteâ
 extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Fallback colour: dark"
 fallbackColourLight: "Fallback colour: light"
+frame: "Frame"
 homepageColourDark: "Home page colour: dark"
 homepageColourLight: "Home page colour: light"
 ifVerticalTabsAreEnabled: >-
@@ -49,6 +50,8 @@ minimumContrastTooltip: >-
 moreSettings: "More settings"
 moreSettingsTooltip: "Open option page"
 no: "No"
+novaUi: "Use Nova UI colours"
+novaUiTooltip: "Enable if Firefox is using the Nova UI."
 overwriteAccentColour: "Overwrite accent colour"
 overwriteAccentColourTooltip: >-
     Use a custom accent colour instead of your systemâ€™s colour for the URL bar and toolbar buttons.

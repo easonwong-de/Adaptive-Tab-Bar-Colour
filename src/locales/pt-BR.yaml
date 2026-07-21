@@ -30,6 +30,7 @@ extensionDescription: "Muda a cor do tema do Firefox para combinar com a aparên
 extensionName: "Adaptive Tab Bar Colour"
 fallbackColourDark: "Cor alternativa: Escuro"
 fallbackColourLight: "Cor alternativa: Claro"
+frame: "Moldura"
 homepageColourDark: "Cor da página inicial: Escuro"
 homepageColourLight: "Cor da página inicial: Claro"
 ifVerticalTabsAreEnabled: >-
@@ -49,6 +50,8 @@ minimumContrastTooltip: >-
 moreSettings: "Mais opções"
 moreSettingsTooltip: "Abre a página de opções"
 no: "Não"
+novaUi: "Usar cores da Nova UI"
+novaUiTooltip: "Ative se o Firefox estiver usando a Nova UI."
 overwriteAccentColour: "Substituir cor de destaque"
 overwriteAccentColourTooltip: >-
     Usar uma cor de destaque personalizada em vez da cor do seu sistema para a barra de URL e os botões da barra de ferramentas.

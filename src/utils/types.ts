@@ -64,10 +64,11 @@ export interface ThemeBuilderPreferenceContent {
 	toolbarFieldOnFocus: number;
 }
 
-export interface PreferenceContent extends ThemeBuilderPreferenceContent {
-	// rule list
+export interface RuleListPreferenceContent {
 	ruleList: RuleList;
-	// advanced
+}
+
+export interface AdvancedPreferenceContent {
 	accentColour_dark: string;
 	accentColour_light: string;
 	allowDarkLight: boolean;
@@ -80,8 +81,15 @@ export interface PreferenceContent extends ThemeBuilderPreferenceContent {
 	minContrast_dark: number;
 	minContrast_light: number;
 	noThemeColour: boolean;
+	nova: boolean;
 	overwriteAccentColour: boolean;
-	// state
+}
+
+export interface PreferenceContent
+	extends
+		ThemeBuilderPreferenceContent,
+		RuleListPreferenceContent,
+		AdvancedPreferenceContent {
 	lastSave: number;
 	version: number[];
 	[key: string]: PreferenceContent[keyof PreferenceContent];
@@ -162,6 +170,9 @@ export interface ColourCorrectionResult {
 
 export type Theme = Manifest.ThemeType;
 
+export type AdditionalBackgroundsTilingEnum =
+	Manifest.ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum;
+
 export type MessageForBackground =
 	| { header: "UPDATE_COLOUR"; colour: TabColourData }
 	| { header: "SCRIPT_READY" | "CACHE_REQUEST" };
@@ -199,29 +210,30 @@ export type TabMessageListener = (
 ) => unknown;
 
 export type GlyphHighlight =
-	| "selectedTab"
-	| "toolbar"
-	| "tabBar"
-	| "sidebar"
+	| "frame"
+	| "none"
 	| "popup"
-	| "urlBar"
-	| "none";
+	| "selectedTab"
+	| "sidebar"
+	| "tabBar"
+	| "toolbar"
+	| "urlBar";
 
 export type IconType =
-	| "moon"
-	| "sun"
-	| "sunMoon"
-	| "warning"
-	| "delete"
-	| "contrast"
+	| "background"
+	| "backgroundOnFocus"
+	| "border"
 	| "circle"
-	| "undo"
-	| "redo"
-	| "reset"
-	| "upload"
+	| "contrast"
+	| "delete"
 	| "download"
 	| "info"
+	| "moon"
 	| "redirect"
-	| "border"
-	| "background"
-	| "backgroundOnFocus";
+	| "redo"
+	| "reset"
+	| "sun"
+	| "sunMoon"
+	| "undo"
+	| "upload"
+	| "warning";
