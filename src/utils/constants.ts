@@ -137,8 +137,8 @@ export const defaultPreferenceContent = Object.freeze({
 /** Creates a `browserColour` object. */
 export function createBrowserColour(
 	getScheme: () => Scheme,
-	pref: preference,
 	getFirefoxVersion: () => number,
+	pref: preference,
 ): Record<BrowserColour, colour> {
 	return Object.freeze({
 		get ADDON() {

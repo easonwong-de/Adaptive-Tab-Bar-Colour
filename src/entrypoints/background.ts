@@ -20,6 +20,7 @@
  */
 import colour from "@/utils/colour";
 import preference from "@/utils/preference";
+import { AdditionalBackgroundsTilingEnum } from "@/utils/types";
 
 /** Version of Firefox. */
 let firefoxVersion = 115;
@@ -30,8 +31,8 @@ const pref = new preference();
 /** Page colour of Firefox internal page. */
 const browserColour = createBrowserColour(
 	() => cache.scheme,
-	pref,
 	() => firefoxVersion,
+	pref,
 );
 
 /** Runtime cache. */
@@ -505,10 +506,10 @@ async function applyTheme(
 	const css = (value: number): string =>
 		colour.brightness(lightDark(-1.5, 1) * value).toRGBA();
 	const dataURL = async (colour: string): Promise<string> => {
-		const canvas = new OffscreenCanvas(256, 256);
+		const canvas = new OffscreenCanvas(16, 16);
 		const context = canvas.getContext("2d")!;
 		context.fillStyle = colour;
-		context.fillRect(0, 0, 256, 256);
+		context.fillRect(0, 0, 16, 16);
 		const blob = await canvas.convertToBlob();
 		return new Promise((resolve) => {
 			const reader = new FileReader();
@@ -516,15 +517,14 @@ async function applyTheme(
 			reader.readAsDataURL(blob);
 		});
 	};
-	const nova = <T>(mapping: Record<number, T | (() => T)>): T | undefined => {
+	const nova = <T>(mapping: Record<number, () => T>): T | undefined => {
 		const match = pref.nova
 			? Object.keys(mapping)
 					.map(Number)
 					.sort((a, b) => b - a)
 					.find((v) => firefoxVersion >= v)
 			: 0;
-		const value = mapping[match ?? 0];
-		return typeof value === "function" ? (value as Function)() : value;
+		return mapping[match ?? 0]();
 	};
 
 	const primaryColour = lightDark("#000000", "#ffffff");
@@ -554,15 +554,15 @@ async function applyTheme(
 			tab_line: css(pref.tabSelectedBorder + pref.tabSelected),
 			tab_selected: css(pref.tabSelected),
 			toolbar: nova({
-				0: css(pref.toolbar),
-				153:
+				0: () => css(pref.toolbar),
+				153: () =>
 					pref.toolbar === 0
 						? "transparent"
 						: css(pref.toolbar + pref.tabbar + 5),
 			}),
 			toolbar_bottom_separator: nova({
-				0: css(pref.toolbarBorder + pref.toolbar),
-				152: css(pref.tabbarBorder + pref.tabbar),
+				0: () => css(pref.toolbarBorder + pref.toolbar),
+				152: () => css(pref.tabbarBorder + pref.tabbar),
 			}),
 			toolbar_field: css(pref.toolbarField),
 			toolbar_field_border: css(
@@ -570,12 +570,12 @@ async function applyTheme(
 			),
 			toolbar_field_focus: css(pref.toolbarFieldOnFocus),
 			toolbar_top_separator: nova({
-				0:
+				0: () =>
 					pref.tabbarBorder === 0
 						? "transparent"
 						: css(pref.tabbarBorder + pref.tabbar + 5),
-				152: css(pref.toolbarBorder + pref.toolbar),
-				153:
+				152: () => css(pref.toolbarBorder + pref.toolbar),
+				153: () =>
 					pref.toolbarBorder === 0
 						? "transparent"
 						: css(
@@ -605,15 +605,13 @@ async function applyTheme(
 			color_scheme: "system",
 			content_color_scheme: "system",
 			additional_backgrounds_tiling: nova({
-				150: undefined,
-				152: [
-					"repeat",
-				] as ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum[],
-				153: undefined,
+				0: () => undefined,
+				152: () => ["repeat"] as AdditionalBackgroundsTilingEnum[],
+				153: () => undefined,
 			}),
 		},
 	};
-	updateBrowserTheme(windowId, theme);
+	void updateBrowserTheme(windowId, theme);
 }
 
 export default defineBackground(() => {

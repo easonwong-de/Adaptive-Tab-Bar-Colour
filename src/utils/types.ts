@@ -170,6 +170,9 @@ export interface ColourCorrectionResult {
 
 export type Theme = Manifest.ThemeType;
 
+export type AdditionalBackgroundsTilingEnum =
+	Manifest.ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum;
+
 export type MessageForBackground =
 	| { header: "UPDATE_COLOUR"; colour: TabColourData }
 	| { header: "SCRIPT_READY" | "CACHE_REQUEST" };
@@ -217,20 +220,20 @@ export type GlyphHighlight =
 	| "urlBar";
 
 export type IconType =
-	| "moon"
-	| "sun"
-	| "sunMoon"
-	| "warning"
-	| "delete"
-	| "contrast"
+	| "background"
+	| "backgroundOnFocus"
+	| "border"
 	| "circle"
-	| "undo"
-	| "redo"
-	| "reset"
-	| "upload"
+	| "contrast"
+	| "delete"
 	| "download"
 	| "info"
+	| "moon"
 	| "redirect"
-	| "border"
-	| "background"
-	| "backgroundOnFocus";
+	| "redo"
+	| "reset"
+	| "sun"
+	| "sunMoon"
+	| "undo"
+	| "upload"
+	| "warning";

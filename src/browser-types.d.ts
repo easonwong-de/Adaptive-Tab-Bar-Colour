@@ -7,11 +7,6 @@ import type {
 	Theme,
 } from "webextension-polyfill";
 
-declare global {
-	type ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum =
-		Manifest.ThemeTypePropertiesAdditionalBackgroundsTilingItemEnum;
-}
-
 declare module "@wxt-dev/browser" {
 	namespace Browser {
 		export const theme: Theme.Static;
