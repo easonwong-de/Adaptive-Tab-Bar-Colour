@@ -34,7 +34,7 @@ You can work on the locales using the [i18n Ally](https://marketplace.visualstud
 
 Ensure the following software is installed:
 
-- [Node.js](https://nodejs.org/)
+- [Node.js](https://nodejs.org/) (v20 or higher)
 - [Firefox](https://www.firefox.com/) or [Firefox Developer Edition](https://www.mozilla.org/firefox/developer/)
 
 To begin contributing, run the following commands:
