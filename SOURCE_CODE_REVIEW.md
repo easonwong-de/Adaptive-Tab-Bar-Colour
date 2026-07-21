@@ -4,7 +4,7 @@ This document contains instructions for Mozilla reviewers to build the Adaptive 
 
 ## Prerequisites
 
-- Node.js (v18 or higher recommended)
+- Node.js (v20 or higher)
 - npm
 
 ## Build Steps
