@@ -518,13 +518,13 @@ async function applyTheme(
 		});
 	};
 	const nova = <T>(mapping: Record<number, () => T>): T | undefined => {
-		const match = pref.nova
-			? Object.keys(mapping)
-					.map(Number)
-					.sort((a, b) => b - a)
-					.find((v) => firefoxVersion >= v)
-			: 0;
-		return mapping[match ?? 0]();
+		if (!pref.nova) return mapping[0]();
+		let match = 0;
+		for (const key in mapping) {
+			const version = Number(key);
+			if (firefoxVersion >= version && version > match) match = version;
+		}
+		return mapping[match]();
 	};
 
 	const primaryColour = lightDark("#000000", "#ffffff");
