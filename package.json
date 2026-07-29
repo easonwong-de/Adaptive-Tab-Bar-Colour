@@ -7,8 +7,8 @@
 		"build": "wxt build -b firefox",
 		"format": "prettier --write --list-different src tests",
 		"postinstall": "wxt prepare",
-		"start": "BINARY=firefox wxt --mode beta",
-		"start:dev": "BINARY=deved wxt --mode beta",
+		"start": "cross-env BINARY=firefox wxt --mode beta",
+		"start:dev": "cross-env BINARY=deved wxt --mode beta",
 		"test": "tsx tests/run.ts",
 		"test:headless": "tsx tests/run.ts --headless",
 		"zip": "bash scripts/zip.sh",
@@ -28,17 +28,21 @@
 	"homepage": "https://github.com/easonwong-de/Adaptive-Tab-Bar-Colour",
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
-		"@types/node": "^26.1.1",
+		"@types/node": "^26.1.2",
 		"@types/react": "^19.2.17",
 		"@types/selenium-webdriver": "^4.35.6",
 		"@types/webextension-polyfill": "^0.12.5",
 		"@wxt-dev/browser": "^0.2.2",
 		"@wxt-dev/module-react": "^1.2.2",
+		"cross-env": "^10.1.0",
+		"geckodriver": "^6.1.1",
 		"prettier": "^3.9.6",
 		"prettier-plugin-css-order": "^2.2.0",
 		"prettier-plugin-jsdoc": "^1.8.1",
 		"prettier-plugin-sort-json": "^4.2.0",
 		"prettier-plugin-yaml": "^1.2.0",
+		"selenium-webdriver": "^4.46.0",
+		"selenium-webext-bridge": "^0.4.0",
 		"tsx": "^4.23.1",
 		"typescript": "^7.0.2",
 		"web-ext": "^10.5.0",
@@ -48,10 +52,7 @@
 	"dependencies": {
 		"@wxt-dev/i18n": "^0.2.6",
 		"clsx": "^2.1.1",
-		"geckodriver": "^6.1.1",
 		"react": "^19.2.8",
-		"react-dom": "^19.2.8",
-		"selenium-webdriver": "^4.46.0",
-		"selenium-webext-bridge": "^0.4.0"
+		"react-dom": "^19.2.8"
 	}
 }
