@@ -1,11 +1,11 @@
-import preference from "@/utils/preference";
+import Preference from "@/utils/preference";
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
 import styles from "./ThemeWidget.module.css";
 
 interface ThemeWidgetProps {
 	ready: boolean;
-	pref: preference;
+	pref: Preference;
 	scheme: Scheme;
 }
 

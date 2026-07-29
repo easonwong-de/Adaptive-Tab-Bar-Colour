@@ -1,9 +1,9 @@
-import preference from "@/utils/preference";
+import Preference from "@/utils/preference";
 import { useSyncExternalStore } from "react";
 import styles from "./RuleWidget.module.css";
 
 interface RuleWidgetProps {
-	pref: preference;
+	pref: Preference;
 	ruleData: RuleQueryResult;
 	metaData: MetaQueryResult;
 }
@@ -124,7 +124,7 @@ function ReasonText({ reason, info }: ReasonTextProps) {
 }
 
 interface RuleControlsProps {
-	pref: preference;
+	pref: Preference;
 	ruleData: RuleQueryResult;
 	metaData: MetaQueryResult;
 }
@@ -196,7 +196,7 @@ function RuleControls({ pref, ruleData, metaData }: RuleControlsProps) {
 		return (
 			<div className={styles.colourWrapper}>
 				<div>
-					<Colour
+					<Palette
 						inPopup
 						value={pref.homeBackground_light}
 						onChange={(value) =>
@@ -215,7 +215,7 @@ function RuleControls({ pref, ruleData, metaData }: RuleControlsProps) {
 					</h4>
 				</div>
 				<div>
-					<Colour
+					<Palette
 						inPopup
 						value={pref.homeBackground_dark}
 						onChange={(value) => (pref.homeBackground_dark = value)}

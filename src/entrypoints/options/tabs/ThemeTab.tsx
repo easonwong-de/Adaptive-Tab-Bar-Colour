@@ -1,10 +1,10 @@
-import preference from "@/utils/preference";
+import Preference from "@/utils/preference";
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
 import styles from "./ThemeTab.module.css";
 
 interface ThemeTabProps {
-	pref: preference;
+	pref: Preference;
 	ready: boolean;
 }
 

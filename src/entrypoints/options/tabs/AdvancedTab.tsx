@@ -1,10 +1,10 @@
-import preference from "@/utils/preference";
+import Preference from "@/utils/preference";
 import clsx from "clsx";
 import { useSyncExternalStore } from "react";
 import styles from "./AdvancedTab.module.css";
 
 interface AdvancedTabProps {
-	pref: preference;
+	pref: Preference;
 	ready: boolean;
 }
 
@@ -126,7 +126,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 					{pref.overwriteAccentColour && (
 						<div className={styles.colourWrapper}>
 							<div>
-								<Colour
+								<Palette
 									value={pref.accentColour_light}
 									onChange={(value) =>
 										(pref.accentColour_light = value)
@@ -153,7 +153,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 								</h4>
 							</div>
 							<div>
-								<Colour
+								<Palette
 									value={pref.accentColour_dark}
 									onChange={(value) =>
 										(pref.accentColour_dark = value)
@@ -228,7 +228,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 				>
 					<div>
 						<h3>{i18n.t("homepageColourLight")}</h3>
-						<Colour
+						<Palette
 							value={pref.homeBackground_light}
 							onChange={(value) =>
 								(pref.homeBackground_light = value)
@@ -237,7 +237,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 					</div>
 					<div>
 						<h3>{i18n.t("homepageColourDark")}</h3>
-						<Colour
+						<Palette
 							value={pref.homeBackground_dark}
 							onChange={(value) =>
 								(pref.homeBackground_dark = value)
@@ -246,7 +246,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 					</div>
 					<div>
 						<h3>{i18n.t("fallbackColourLight")}</h3>
-						<Colour
+						<Palette
 							value={pref.fallbackColour_light}
 							onChange={(value) =>
 								(pref.fallbackColour_light = value)
@@ -255,7 +255,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 					</div>
 					<div>
 						<h3>{i18n.t("fallbackColourDark")}</h3>
-						<Colour
+						<Palette
 							value={pref.fallbackColour_dark}
 							onChange={(value) =>
 								(pref.fallbackColour_dark = value)

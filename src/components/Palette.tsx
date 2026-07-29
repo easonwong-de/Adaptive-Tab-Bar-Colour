@@ -1,9 +1,9 @@
-import colour from "@/utils/colour";
+import Colour from "@/utils/colour";
 import clsx from "clsx";
 import { type CSSProperties } from "react";
-import styles from "./Colour.module.css";
+import styles from "./Palette.module.css";
 
-interface ColourProps {
+interface PaletteProps {
 	value?: string;
 	inPopup?: boolean;
 	onChange: (newValue: string) => void;
@@ -14,11 +14,11 @@ interface Location {
 	deviation: "none" | "left" | "right";
 }
 
-export default function Colour({
+export default function Palette({
 	value = "#000000",
 	inPopup = false,
 	onChange,
-}: ColourProps) {
+}: PaletteProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const previewRef = useRef<HTMLDivElement | null>(null);
 	const textInputRef = useRef<HTMLInputElement | null>(null);
@@ -35,7 +35,7 @@ export default function Colour({
 
 	const displayValue = isPopupOpen ? popupValue : value;
 	const displayColour = useMemo(
-		() => new colour(displayValue),
+		() => new Colour(displayValue),
 		[displayValue],
 	);
 
@@ -65,7 +65,7 @@ export default function Colour({
 	}, []);
 
 	return (
-		<div className={styles.colour} ref={containerRef}>
+		<div className={styles.palette} ref={containerRef}>
 			<input
 				type="text"
 				ref={textInputRef}
@@ -83,7 +83,7 @@ export default function Colour({
 				}}
 				onChange={(e) => {
 					const value = e.target.value;
-					const hex = new colour(value).toHex();
+					const hex = new Colour(value).toHex();
 					setText(value);
 					setPopupValue(hex);
 					onChange(hex);
@@ -133,7 +133,7 @@ export default function Colour({
 					value={displayValue}
 					onChange={(e) => {
 						const value = e.target.value;
-						const hex = new colour(value).toHex();
+						const hex = new Colour(value).toHex();
 						setText(value);
 						setPopupValue(hex);
 						onChange(hex);
@@ -141,7 +141,7 @@ export default function Colour({
 				/>
 			)}
 			{isPopupOpen && (
-				<ColourPopup
+				<PalettePopup
 					value={displayColour}
 					inPopup={inPopup}
 					location={popupLocation}
@@ -160,8 +160,8 @@ export default function Colour({
 	);
 }
 
-interface ColourPopupProps {
-	value: colour;
+interface PalettePopupProps {
+	value: Colour;
 	inPopup: boolean;
 	location: Location;
 	openColourInput: () => void;
@@ -170,13 +170,13 @@ interface ColourPopupProps {
 
 type ColourFormat = "HEX" | "RGB" | "HWB" | "CSS";
 
-function ColourPopup({
+function PalettePopup({
 	value,
 	inPopup,
 	location,
 	openColourInput,
 	onChange,
-}: ColourPopupProps) {
+}: PalettePopupProps) {
 	const wbPlaneRef = useRef<HTMLDivElement | null>(null);
 	const hSliderRef = useRef<HTMLDivElement | null>(null);
 	const lastXRef = useRef(0);
@@ -185,7 +185,7 @@ function ColourPopup({
 
 	useEffect(() => {
 		setHwb((lastHwb) => {
-			const previousHex = new colour()
+			const previousHex = new Colour()
 				.hwb(lastHwb.h, lastHwb.w, lastHwb.b)
 				.toHex();
 			if (value.toHex() === previousHex) return lastHwb;
@@ -218,7 +218,7 @@ function ColourPopup({
 			const w = 100 * (1 - x) * (1 - y);
 			const b = 100 * y;
 			setHwb({ h: hwb.h, w, b });
-			onChange(new colour().hwb(hwb.h, w, b).toHex());
+			onChange(new Colour().hwb(hwb.h, w, b).toHex());
 		},
 		[hwb.h, onChange, onMoveStop],
 	);
@@ -231,7 +231,7 @@ function ColourPopup({
 			const rect = hSliderRef.current.getBoundingClientRect();
 			const h = 360 * clamp(0, (e.clientX - rect.left) / rect.width, 1);
 			setHwb({ h, w: hwb.w, b: hwb.b });
-			onChange(new colour().hwb(h, hwb.w, hwb.b).toHex());
+			onChange(new Colour().hwb(h, hwb.w, hwb.b).toHex());
 		},
 		[hwb.w, hwb.b, onChange, onMoveStop],
 	);
@@ -315,7 +315,7 @@ function ColourPopup({
 								<HEXInput
 									hex={value.toHex().slice(1)}
 									onChange={(css) =>
-										onChange(new colour(css).toHex())
+										onChange(new Colour(css).toHex())
 									}
 								/>
 							);
@@ -325,7 +325,7 @@ function ColourPopup({
 									rgb={value}
 									onChange={(rgb) => {
 										onChange(
-											new colour()
+											new Colour()
 												.rgb(rgb.r, rgb.g, rgb.b)
 												.toHex(),
 										);
@@ -339,7 +339,7 @@ function ColourPopup({
 									onChange={(hwb) => {
 										setHwb(hwb);
 										onChange(
-											new colour()
+											new Colour()
 												.hwb(hwb.h, hwb.w, hwb.b)
 												.toHex(),
 										);
@@ -351,7 +351,7 @@ function ColourPopup({
 								<CSSInput
 									css={value.toHex()}
 									onChange={(css) =>
-										onChange(new colour(css).toHex())
+										onChange(new Colour(css).toHex())
 									}
 								/>
 							);

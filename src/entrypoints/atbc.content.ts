@@ -1,14 +1,7 @@
 let query: string | undefined;
 let colourDataCache: TabColourData | undefined;
 
-/**
- * Handles incoming runtime messages from the background script.
- *
- * @param {MessageForTab} message - Runtime message payload.
- * @param {Browser.runtime.MessageSender} _ - Message sender metadata.
- * @param {(response?: unknown) => void} sendResponse - Callback used to return
- *   a response to the sender.
- */
+/** Handles incoming runtime messages from the background script. */
 function handleMessage(
 	message: MessageForTab,
 	_: Browser.runtime.MessageSender,
@@ -35,11 +28,7 @@ function handleMessage(
 	}
 }
 
-/**
- * Retrieves the colour data from the current page.
- *
- * @returns {TabColourData} The colour data object.
- */
+/** Retrieves the colour data from the current page. */
 function getColourData(): TabColourData {
 	const page = getPageColourData();
 	const tabColourData: TabColourData = {
@@ -52,11 +41,7 @@ function getColourData(): TabColourData {
 	return tabColourData;
 }
 
-/**
- * Extracts the theme colour from meta tags.
- *
- * @returns {TabThemeColourData} The extracted theme colours.
- */
+/** Extracts the theme colour from meta tags. */
 function getThemeColourData(): TabThemeColourData {
 	const metaThemeColour = document.querySelector<HTMLMetaElement>(
 		`meta[name="theme-color"]:not([media])`,
@@ -75,11 +60,7 @@ function getThemeColourData(): TabThemeColourData {
 	};
 }
 
-/**
- * Extracts visible element colours from the top of the viewport.
- *
- * @returns {TabElementColourData[]} List of element colour objects.
- */
+/** Extracts visible element colours from the top of the viewport. */
 function getPageColourData(): TabElementColourData[] {
 	return document
 		.elementsFromPoint(window.innerWidth / 2, 3)
@@ -97,11 +78,7 @@ function getPageColourData(): TabElementColourData[] {
 		.filter((colourData) => colourData !== undefined);
 }
 
-/**
- * Extracts colour from an element matching the query.
- *
- * @returns {TabElementColourData | undefined} Element colour object.
- */
+/** Extracts colour from an element matching the query. */
 function getQueryColourData(): TabElementColourData | undefined {
 	try {
 		return query
@@ -112,11 +89,7 @@ function getQueryColourData(): TabElementColourData | undefined {
 	}
 }
 
-/**
- * Determines the special page type when no page colour candidates are found.
- *
- * @returns {TabSpecialColourData} The detected special page type.
- */
+/** Determines the special page type when no page colour candidates are found. */
 function getSpecialColourData(): TabSpecialColourData {
 	if (
 		getComputedStyle(document.documentElement).backgroundImage ===
@@ -137,12 +110,7 @@ function getSpecialColourData(): TabSpecialColourData {
 	return document.documentElement instanceof SVGSVGElement ? "svg" : "none";
 }
 
-/**
- * Extracts style properties from an element.
- *
- * @param {Element | null} element - The target element.
- * @returns {TabElementColourData | undefined} The extracted styles.
- */
+/** Extracts style properties from an element. */
 function getElementColour(
 	element: Element | null,
 ): TabElementColourData | undefined {
@@ -234,11 +202,7 @@ function disableDynamic(): void {
 	styleTagObserver.disconnect();
 }
 
-/**
- * Sets the theme colour by adding a meta tag.
- *
- * @param {string} themeColour - The colour string.
- */
+/** Sets the theme colour by adding a meta tag. */
 function setThemeColour(themeColour: string): void {
 	const metaThemeColourList = document.querySelectorAll(
 		`meta[name="theme-color"]`,
@@ -254,11 +218,7 @@ let dispatchTimeout: ReturnType<typeof setTimeout> | undefined;
 let lastSentAt = 0;
 const throttleIntervalMs = 250;
 
-/**
- * Sends the current page colour to the background script with throttling.
- *
- * @async
- */
+/** Sends the current page colour to the background script with throttling. */
 async function sendColour() {
 	clearTimeout(dispatchTimeout);
 	const remaining = throttleIntervalMs + lastSentAt - Date.now();
@@ -281,20 +241,12 @@ async function sendColour() {
 			}, remaining));
 }
 
-/**
- * Sends colour update if the document has focus.
- *
- * @async
- */
+/** Sends colour update if the document has focus. */
 async function sendColourRequiresFocus() {
 	if (document.hasFocus()) await sendColour();
 }
 
-/**
- * Sends message to background upon the script is loaded.
- *
- * @param {number} attempt - The attempt count.
- */
+/** Sends message to background upon the script is loaded. */
 async function sendMessageOnLoad(attempt: number = 0) {
 	try {
 		await sendMessageToBackground({ header: "SCRIPT_READY" });

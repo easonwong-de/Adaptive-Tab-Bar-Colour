@@ -1,10 +1,10 @@
-import preference from "@/utils/preference";
+import Preference from "@/utils/preference";
 import CorrectionWidget from "./widgets/CorrectionWidget";
 import LoadingWidget from "./widgets/LoadingWidget";
 import RuleWidget from "./widgets/RuleWidget";
 import ThemeWidget from "./widgets/ThemeWidget";
 
-const pref = new preference();
+const pref = new Preference();
 
 async function getCache(): Promise<CacheData | undefined> {
 	return await sendMessageToBackground<CacheData | undefined>({
