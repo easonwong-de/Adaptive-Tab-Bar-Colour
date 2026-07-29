@@ -27,14 +27,23 @@ export default function App() {
 	}
 
 	useEffect(() => {
-		pref.initialise().then(() => setReady(true));
+		pref.initialise().then(() => {
+			document.documentElement.classList.toggle("nova", pref.nova);
+			setReady(true);
+		});
 		getCache().then(async (newCache) => {
 			const windowId = await getActiveWindowId();
 			windowIdRef.current = windowId;
 			if (windowId !== undefined) setCache(newCache);
 		});
 		addMessageListener(handleMessage);
-		return () => removeMessageListener(handleMessage);
+		const removePrefListener = pref.addOnChangeListener(() => {
+			document.documentElement.classList.toggle("nova", pref.nova);
+		});
+		return () => {
+			removeMessageListener(handleMessage);
+			removePrefListener();
+		};
 	}, []);
 
 	useEffect(() => {

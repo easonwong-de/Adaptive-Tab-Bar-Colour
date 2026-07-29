@@ -35,6 +35,12 @@
 	--shadow-small: 0 0 var(--unit-2) rgba(0, 0, 0, 0.15);
 	--shadow-large: 0 var(--unit-2) var(--unit-4) rgba(0, 0, 0, 0.1);
 
+	&.nova {
+		--accent: #764edd;
+		--accent-hover: #5939a8;
+		--accent-active: #3e2976;
+	}
+
 	@media (prefers-color-scheme: dark) {
 		--app: hsl(247, 12%, 15%);
 		--app-0: color-mix(in srgb, #fff 10%, var(--app));
@@ -50,6 +56,12 @@
 		--accent: oklch(76% 0.14 205);
 		--accent-hover: oklch(86% 0.14 205);
 		--accent-active: oklch(90% 0.14 205);
+
+		&.nova {
+			--accent: #b89cff;
+			--accent-hover: #d4c1ff;
+			--accent-active: #eaddff;
+		}
 	}
 }
 
