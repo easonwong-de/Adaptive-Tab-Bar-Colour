@@ -518,13 +518,13 @@ async function applyTheme(
 		});
 	};
 	const nova = <T>(mapping: Record<number, () => T>): T | undefined => {
-		const match = pref.nova
-			? Object.keys(mapping)
-					.map(Number)
-					.sort((a, b) => b - a)
-					.find((v) => firefoxVersion >= v)
-			: 0;
-		return mapping[match ?? 0]();
+		if (!pref.nova) return mapping[0]();
+		let match = 0;
+		for (const key in mapping) {
+			const version = Number(key);
+			if (firefoxVersion >= version && version > match) match = version;
+		}
+		return mapping[match]();
 	};
 
 	const primaryColour = lightDark("#000000", "#ffffff");
@@ -564,11 +564,18 @@ async function applyTheme(
 				0: () => css(pref.toolbarBorder + pref.toolbar),
 				152: () => css(pref.tabbarBorder + pref.tabbar),
 			}),
-			toolbar_field: css(pref.toolbarField),
-			toolbar_field_border: css(
-				pref.toolbarFieldBorder + pref.toolbarField,
-			),
-			toolbar_field_focus: css(pref.toolbarFieldOnFocus),
+			toolbar_field: nova({
+				0: () => css(pref.toolbarField),
+				152: () => css(pref.toolbarField + 5),
+			}),
+			toolbar_field_border: nova({
+				0: () => css(pref.toolbarFieldBorder + pref.toolbarField),
+				152: () => css(pref.toolbarFieldBorder + pref.toolbarField + 5),
+			}),
+			toolbar_field_focus: nova({
+				0: () => css(pref.toolbarFieldOnFocus),
+				152: () => css(pref.toolbarFieldOnFocus + 5),
+			}),
 			toolbar_top_separator: nova({
 				0: () =>
 					pref.tabbarBorder === 0
