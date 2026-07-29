@@ -6,29 +6,19 @@
  *
  * @class
  */
-export default class colour {
+export default class Colour {
 	#r = 0;
 	#g = 0;
 	#b = 0;
 	#a = 0;
 
-	/**
-	 * Parses the initialiser to set the colour.
-	 *
-	 * @param {string | colour} [initialiser] - A CSS string, or `colour`
-	 *   instance.
-	 */
-	constructor(initialiser: string | colour | undefined = undefined) {
+	/** Parses the initialiser to set the colour. */
+	constructor(initialiser: string | Colour | undefined = undefined) {
 		this.parse(initialiser);
 	}
 
-	/**
-	 * Parses the value to set the colour.
-	 *
-	 * @param {string | colour} [value] - A CSS string, or `colour` instance.
-	 * @returns {this} This instance.
-	 */
-	parse(value: string | colour | undefined = undefined): this {
+	/** Parses the value to set the colour. */
+	parse(value: string | Colour | undefined = undefined): this {
 		if (typeof value === "string") {
 			const canvas = new OffscreenCanvas(1, 1);
 			const canvasContext = canvas.getContext("2d");
@@ -52,22 +42,14 @@ export default class colour {
 					rgbaValues[3] ?? 1,
 				);
 			}
-		} else if (value instanceof colour) {
+		} else if (value instanceof Colour) {
 			return this.rgba(value.r, value.g, value.b, value.a);
 		} else {
 			return this;
 		}
 	}
 
-	/**
-	 * Assigns RGBA values.
-	 *
-	 * @param {number} r - Red (0-255).
-	 * @param {number} g - Green (0-255).
-	 * @param {number} b - Blue (0-255).
-	 * @param {number} a - Alpha (0-1).
-	 * @returns {this} This instance.
-	 */
+	/** Assigns RGBA values. */
 	rgba(r: number, g: number, b: number, a: number): this {
 		this.r = r;
 		this.g = g;
@@ -76,14 +58,7 @@ export default class colour {
 		return this;
 	}
 
-	/**
-	 * Assigns RGB values.
-	 *
-	 * @param {number} r - Red (0-255).
-	 * @param {number} g - Green (0-255).
-	 * @param {number} b - Blue (0-255).
-	 * @returns {this} This instance.
-	 */
+	/** Assigns RGB values. */
 	rgb(r: number, g: number, b: number): this {
 		this.r = r;
 		this.g = g;
@@ -91,14 +66,7 @@ export default class colour {
 		return this;
 	}
 
-	/**
-	 * Assigns HWB values.
-	 *
-	 * @param {number} h - Hue in degrees (0-360).
-	 * @param {number} w - Whiteness percentage (0-100).
-	 * @param {number} b - Blackness percentage (0-100).
-	 * @returns {this} This instance.
-	 */
+	/** Assigns HWB values. */
 	hwb(h: number, w: number, b: number): this {
 		const hw = w / 100;
 		const hb = b / 100;
@@ -150,22 +118,13 @@ export default class colour {
 		return this;
 	}
 
-	/**
-	 * Applies an opacity factor to the current colour.
-	 *
-	 * @param {number} opacity - The opacity factor to apply (0-1).
-	 * @returns {this} This instance.
-	 */
+	/** Applies an opacity factor to the current colour. */
 	opacity(opacity: number): this {
 		this.#a *= Math.max(0, Math.min(1, opacity));
 		return this;
 	}
 
-	/**
-	 * Randomises the colour.
-	 *
-	 * @returns {this} This instance.
-	 */
+	/** Randomises the colour. */
 	random(): this {
 		this.r = Math.floor(Math.random() * 256);
 		this.g = Math.floor(Math.random() * 256);
@@ -178,53 +137,44 @@ export default class colour {
 	 * Returns a new colour instance with its brightness adjusted by the
 	 * specified percentage.
 	 *
-	 * @param {number} percentage - The brightness factor as a percentage.
-	 *
-	 *   - 0 returns the original colour.
-	 *   - Positive values move the colour towards white (100 is white).
-	 *   - Negative values move the colour towards black (-100 is black).
-	 *   - Values beyond the range of -100 to 100 make the colour black or white.
-	 *
-	 * @returns {colour} A new colour instance with adjusted brightness.
+	 * - 0 returns the original colour.
+	 * - Positive values move the colour towards white (100 is white).
+	 * - Negative values move the colour towards black (-100 is black).
+	 * - Values beyond the range of -100 to 100 make the colour black or white.
 	 */
-	brightness(percentage: number): colour {
+	brightness(percentage: number): Colour {
 		const cent = percentage / 100;
 		if (1 < cent) {
-			return new colour().rgba(255, 255, 255, this.#a);
+			return new Colour().rgba(255, 255, 255, this.#a);
 		} else if (0 < cent && cent <= 1) {
-			return new colour().rgba(
+			return new Colour().rgba(
 				cent * 255 + (1 - cent) * this.#r,
 				cent * 255 + (1 - cent) * this.#g,
 				cent * 255 + (1 - cent) * this.#b,
 				this.#a,
 			);
 		} else if (cent === 0) {
-			return new colour(this);
+			return new Colour(this);
 		} else if (-1 <= cent && cent < 0) {
-			return new colour().rgba(
+			return new Colour().rgba(
 				(cent + 1) * this.#r,
 				(cent + 1) * this.#g,
 				(cent + 1) * this.#b,
 				this.#a,
 			);
 		} else if (cent < -1) {
-			return new colour().rgba(0, 0, 0, this.#a);
+			return new Colour().rgba(0, 0, 0, this.#a);
 		} else {
-			return new colour(this);
+			return new Colour(this);
 		}
 	}
 
-	/**
-	 * Mixes this colour with another underneath.
-	 *
-	 * @param {colour} colourValue - The colour underneath.
-	 * @returns {colour} The result of the mix.
-	 */
-	mix(colourValue: colour): colour {
+	/** Mixes this colour with another underneath. */
+	mix(colourValue: Colour): Colour {
 		const a = this.#a + colourValue.a * (1 - this.#a);
 		return a === 0
-			? new colour()
-			: new colour().rgba(
+			? new Colour()
+			: new Colour().rgba(
 					(this.#a * this.#r +
 						colourValue.a * (1 - this.#a) * colourValue.r) /
 						a,
@@ -238,25 +188,14 @@ export default class colour {
 				);
 	}
 
-	/**
-	 * Adjusts colour to meet minimum contrast.
-	 *
-	 * @param {Scheme} preferredScheme - Preferred scheme.
-	 * @param {boolean} allowDarkLight - Allow opposite scheme.
-	 * @param {number} minContrastLightX10 - Min contrast for light (x10).
-	 * @param {number} minContrastDarkX10 - Min contrast for dark (x10).
-	 * @param {colour} [contrastColourLight] - Light mode contrast target.
-	 * @param {colour} [contrastColourDark] - Dark mode contrast target.
-	 * @returns {ColourCorrectionResult} Correction result.
-	 * @throws {Error} If correction fails.
-	 */
+	/** Adjusts colour to meet minimum contrast. */
 	contrastCorrection(
 		preferredScheme: Scheme,
 		allowDarkLight: boolean,
 		minContrastLightX10: number,
 		minContrastDarkX10: number,
-		contrastColourLight: colour = new colour().rgba(0, 0, 0, 1),
-		contrastColourDark: colour = new colour().rgba(255, 255, 255, 1),
+		contrastColourLight: Colour = new Colour().rgba(0, 0, 0, 1),
+		contrastColourDark: Colour = new Colour().rgba(255, 255, 255, 1),
 	): ColourCorrectionResult {
 		const contrastRatioLight = this.#contrastRatio(contrastColourLight);
 		const contrastRatioDark = this.#contrastRatio(contrastColourDark);
@@ -303,13 +242,9 @@ export default class colour {
 	 *
 	 * Contrast ratio over 4.5 is considered adequate for accessibility.
 	 *
-	 * @private
-	 * @param {colour} colourValue - The colour to compare against.
-	 * @returns {number} The contrast ratio between the two colours (1.05 to
-	 *   21).
 	 * @see https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
 	 */
-	#contrastRatio(colourValue: colour): number {
+	#contrastRatio(colourValue: Colour): number {
 		const luminance1X255 = this.#luminanceX255();
 		const luminance2X255 = colourValue.#luminanceX255();
 		return luminance1X255 > luminance2X255
@@ -320,8 +255,6 @@ export default class colour {
 	/**
 	 * Calculates the relative luminance of the colour (times 255).
 	 *
-	 * @private
-	 * @returns {number} The relative luminance of the colour (0-255).
 	 * @see https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
 	 */
 	#luminanceX255(): number {
@@ -332,14 +265,7 @@ export default class colour {
 		);
 	}
 
-	/**
-	 * Converts an sRGB channel value to channel luminance (times 255).
-	 *
-	 * @private
-	 * @param {number} value - The sRGB channel value (0-255).
-	 * @returns {number} The linear approximation of the channel's luminance
-	 *   (times 255).
-	 */
+	/** Converts an sRGB channel value to channel luminance (times 255). */
 	#channelLuminance(value: number): number {
 		if (value < 0) {
 			return 0;
@@ -364,29 +290,17 @@ export default class colour {
 		}
 	}
 
-	/**
-	 * Returns the colour as an RGB CSS string.
-	 *
-	 * @returns {string} The RGB CSS string.
-	 */
+	/** Returns the colour as an RGB CSS string. */
 	toRGB(): string {
 		return `rgb(${this.#r}, ${this.#g}, ${this.#b})`;
 	}
 
-	/**
-	 * Returns the colour as an RGBA CSS string.
-	 *
-	 * @returns {string} The RGBA CSS string.
-	 */
+	/** Returns the colour as an RGBA CSS string. */
 	toRGBA(): string {
 		return `rgba(${this.#r}, ${this.#g}, ${this.#b}, ${this.#a})`;
 	}
 
-	/**
-	 * Returns the colour as a hex string.
-	 *
-	 * @returns {string} The hex string.
-	 */
+	/** Returns the colour as a hex string. */
 	toHex(): string {
 		const hexR = Math.round(this.#r).toString(16).padStart(2, "0");
 		const hexG = Math.round(this.#g).toString(16).padStart(2, "0");
@@ -394,11 +308,7 @@ export default class colour {
 		return `#${hexR}${hexG}${hexB}`;
 	}
 
-	/**
-	 * Returns the colour as a hex string with alpha.
-	 *
-	 * @returns {string} The hex string with alpha.
-	 */
+	/** Returns the colour as a hex string with alpha. */
 	toHexa(): string {
 		const hexR = Math.round(this.#r).toString(16).padStart(2, "0");
 		const hexG = Math.round(this.#g).toString(16).padStart(2, "0");
@@ -409,12 +319,7 @@ export default class colour {
 		return `#${hexR}${hexG}${hexB}${hexA}`;
 	}
 
-	/**
-	 * Returns the colour as HWB channel values.
-	 *
-	 * @returns {{ h: number; w: number; b: number }} HWB values where `h` is in
-	 *   degrees (0-360), and `w`/`b` are percentage values (0-100).
-	 */
+	/** Returns the colour as HWB channel values. */
 	toHWB(): { h: number; w: number; b: number } {
 		const cr = this.#r / 255;
 		const cg = this.#g / 255;
@@ -434,94 +339,53 @@ export default class colour {
 		return { h, w, b };
 	}
 
-	/**
-	 * Checks if the colour is fully opaque.
-	 *
-	 * @returns {boolean} `true` if the colour is opaque (alpha = 1), `false`
-	 *   otherwise.
-	 */
+	/** Checks if the colour is fully opaque. */
 	isOpaque(): boolean {
 		return this.#a === 1;
 	}
 
-	/**
-	 * Gets the red channel value.
-	 *
-	 * @returns {number} The red channel value (0-255).
-	 */
+	/** Gets the red channel value. */
 	get r(): number {
 		return this.#r;
 	}
 
-	/**
-	 * Sets the red channel value.
-	 *
-	 * @param {number} value - The red channel value to set.
-	 * @throws {Error} If the value is invalid.
-	 */
+	/** Sets the red channel value. */
 	set r(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for r");
 		this.#r = Math.max(0, Math.min(255, num));
 	}
 
-	/**
-	 * Gets the green channel value.
-	 *
-	 * @returns {number} The green channel value (0-255).
-	 */
+	/** Gets the green channel value. */
 	get g(): number {
 		return this.#g;
 	}
 
-	/**
-	 * Sets the green channel value.
-	 *
-	 * @param {number} value - The green channel value to set.
-	 * @throws {Error} If the value is invalid.
-	 */
+	/** Sets the green channel value. */
 	set g(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for g");
 		this.#g = Math.max(0, Math.min(255, num));
 	}
 
-	/**
-	 * Gets the blue channel value.
-	 *
-	 * @returns {number} The blue channel value (0-255).
-	 */
+	/** Gets the blue channel value. */
 	get b(): number {
 		return this.#b;
 	}
 
-	/**
-	 * Sets the blue channel value.
-	 *
-	 * @param {number} value - The blue channel value to set.
-	 * @throws {Error} If the value is invalid.
-	 */
+	/** Sets the blue channel value. */
 	set b(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for b");
 		this.#b = Math.max(0, Math.min(255, num));
 	}
 
-	/**
-	 * Gets the alpha channel value.
-	 *
-	 * @returns {number} The alpha channel value (0-1).
-	 */
+	/** Gets the alpha channel value. */
 	get a(): number {
 		return this.#a;
 	}
 
-	/**
-	 * Sets the alpha channel value.
-	 *
-	 * @param {number} value - The alpha channel value to set (0-1).
-	 * @throws {Error} If the value is invalid.
-	 */
+	/** Sets the alpha channel value. */
 	set a(value: number) {
 		const num = Number(value);
 		if (isNaN(num)) throw new Error("Invalid value for a");

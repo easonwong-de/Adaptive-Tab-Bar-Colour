@@ -1,9 +1,9 @@
-import preference from "@/utils/preference";
+import Preference from "@/utils/preference";
 import AdvancedTab from "./tabs/AdvancedTab";
 import RuleTab from "./tabs/RuleTab";
 import ThemeTab from "./tabs/ThemeTab";
 
-const pref = new preference();
+const pref = new Preference();
 
 export default function App() {
 	const [activeTab, setActiveTab] = useState(0);

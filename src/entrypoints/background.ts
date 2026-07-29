@@ -18,15 +18,14 @@
  * Theme:
  * An object that defines the colour of the Firefox UI.
  */
-import colour from "@/utils/colour";
-import preference from "@/utils/preference";
-import { AdditionalBackgroundsTilingEnum } from "@/utils/types";
+import Colour from "@/utils/colour";
+import Preference from "@/utils/preference";
 
 /** Version of Firefox. */
 let firefoxVersion = 115;
 
 /** Preference instance. */
-const pref = new preference();
+const pref = new Preference();
 
 /** Page colour of Firefox internal page. */
 const browserColour = createBrowserColour(
@@ -61,13 +60,7 @@ const cache: {
 	},
 };
 
-/**
- * Handles incoming messages based on their header.
- *
- * @param {MessageForBackground} message - The runtime message payload.
- * @param {Browser.runtime.MessageSender} sender - Metadata about the sender.
- * @returns {Promise<unknown>} Message response payload.
- */
+/** Handles incoming messages based on their header. */
 async function handleMessage(
 	message: MessageForBackground,
 	sender: Browser.runtime.MessageSender,
@@ -116,23 +109,14 @@ async function handleMessage(
 	return true;
 }
 
-/**
- * Triggers colour update for all active tabs.
- *
- * @returns {Promise<void>} Resolves when all active tabs are processed.
- */
+/** Triggers colour update for all active tabs. */
 async function run(): Promise<void> {
 	if (!pref.isReady) return;
 	await cache.clear();
 	(await getActiveTabList()).forEach(updateTab);
 }
 
-/**
- * Updates the colour for a tab and caches its meta information.
- *
- * @param {Browser.tabs.Tab} tab - The target tab.
- * @returns {Promise<void>} Resolves when tab processing is completed.
- */
+/** Updates the colour for a tab and caches its meta information. */
 async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	const windowId = tab.windowId;
 	const ruleData = (cache.ruleData[windowId] = await pref.getRule(
@@ -154,13 +138,7 @@ async function updateTab(tab: Browser.tabs.Tab): Promise<void> {
 	});
 }
 
-/**
- * Gets colour metadata for a tab.
- *
- * @param {Browser.tabs.Tab} tab - Target tab.
- * @param {RuleQueryResult} ruleData - Rule query result for the tab URL.
- * @returns {Promise<MetaQueryResult>} Tab metadata.
- */
+/** Gets colour metadata for a tab. */
 async function getTabMeta(
 	tab: Browser.tabs.Tab,
 	ruleData: RuleQueryResult,
@@ -185,14 +163,14 @@ async function getTabMeta(
 
 		if (rule.headerType === "URL") {
 			return {
-				colour: new colour(rule.value),
+				colour: new Colour(rule.value),
 				reason: "COLOUR_SPECIFIED",
 			};
 		} else if (rule.headerType === "ADDON_ID") {
 			const info = await getWebExtName(rule.header);
 			if (info)
 				return {
-					colour: new colour(rule.value),
+					colour: new Colour(rule.value),
 					reason: "ADDON_SPECIFIED",
 					info,
 				};
@@ -246,33 +224,26 @@ async function getTabMeta(
 	}
 }
 
-/**
- * Parses raw tab colour data to determine final colour metadata.
- *
- * @param {TabColourData} tabColourData - Raw colour data extracted from the
- *   tab.
- * @param {Rule} rule - Matching rule for the tab.
- * @returns {MetaQueryResult} Tab metadata.
- */
+/** Parses raw tab colour data to determine final colour metadata. */
 function parseTabColourData(
 	tabColourData: TabColourData,
 	rule: Rule,
 ): MetaQueryResult {
 	const { page, theme, query, special } = tabColourData;
 	const parsePageColour = () => {
-		let pageColour = new colour();
+		let pageColour = new Colour();
 		for (const element of page) {
 			const opacity = parseFloat(element.opacity);
 			if (isNaN(opacity)) continue;
 			pageColour = pageColour.mix(
-				new colour(element.colour).opacity(opacity),
+				new Colour(element.colour).opacity(opacity),
 			);
 			if (pageColour.isOpaque()) return pageColour;
 		}
 		return pageColour.mix(browserColour.FALLBACK);
 	};
-	const parseThemeColour = () => new colour(theme[cache.scheme]);
-	const parseQueryColour = () => new colour(query?.colour);
+	const parseThemeColour = () => new Colour(theme[cache.scheme]);
+	const parseQueryColour = () => new Colour(query?.colour);
 	const getFallbackColour = () => {
 		switch (special) {
 			case "image":
@@ -336,13 +307,7 @@ function parseTabColourData(
 	}
 }
 
-/**
- * Gets the colour metadata for source pages.
- *
- * @param {string} protocol - The page protocol.
- * @param {string} href - The full page URL.
- * @returns {MetaQueryResult} Metadata of the source page.
- */
+/** Gets the colour metadata for source pages. */
 function getSourcePageMeta(protocol: string, href: string): MetaQueryResult {
 	const reason = "PROTECTED_PAGE";
 	if (
@@ -357,15 +322,7 @@ function getSourcePageMeta(protocol: string, href: string): MetaQueryResult {
 	} else return { colour: browserColour.SYSTEM, reason };
 }
 
-/**
- * Gets colour metadata for an about page.
- *
- * @param {number} windowId - The window ID of the tab.
- * @param {string} href - Parsed tab href.
- * @param {string} pathname - Parsed tab pathname.
- * @param {string} [title] - Tab title.
- * @returns {Promise<MetaQueryResult>} Metadata of the about page tab.
- */
+/** Gets colour metadata for an about page. */
 async function getAboutPageMeta(
 	windowId: number,
 	href: string,
@@ -404,12 +361,7 @@ async function getAboutPageMeta(
 	}
 }
 
-/**
- * Gets the colour metadata for an extension page.
- *
- * @param {string} [webExtId] - Extension ID parsed from the page URL.
- * @returns {Promise<MetaQueryResult>} Metadata of the extension page.
- */
+/** Gets the colour metadata for an extension page. */
 async function getWebExtPageMeta(webExtId?: string): Promise<MetaQueryResult> {
 	if (webExtId !== undefined) {
 		const webExtName =
@@ -431,13 +383,7 @@ async function getWebExtPageMeta(webExtId?: string): Promise<MetaQueryResult> {
 	}
 }
 
-/**
- * Applies the colour to the browser frame.
- *
- * @param {Browser.tabs.Tab} tab - Target tab.
- * @param {MetaQueryResult} meta - Parsed tab metadata.
- * @returns {ApplyThemeResult} Theme cache payload when applied.
- */
+/** Applies the colour to the browser frame. */
 function setFrameColour(
 	tab: Browser.tabs.Tab,
 	meta: MetaQueryResult,
@@ -465,14 +411,10 @@ function setFrameColour(
  * Applies theme colour to a tab using content script (compatibility mode).
  *
  * Used when the theme API is not supported or compatibility mode is enabled.
- *
- * @param {Browser.tabs.Tab} tab - Target tab.
- * @param {colour} colour - Colour to apply.
- * @returns {Promise<void>} Resolves when message delivery is attempted.
  */
 async function setTabThemeColour(
 	tab: Browser.tabs.Tab,
-	colour: colour,
+	colour: Colour,
 ): Promise<void> {
 	if (!tab.id) return;
 	try {
@@ -488,15 +430,11 @@ async function setTabThemeColour(
 /**
  * Applies a browser theme to a window.
  *
- * @param {number} windowId - Target browser window ID.
- * @param {colour} colour - Base colour.
- * @param {Scheme} scheme - Target colour scheme.
- * @returns {Promise<void>}
  * @see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/theme
  */
 async function applyTheme(
 	windowId: number,
-	colour: colour,
+	colour: Colour,
 	scheme: Scheme,
 ): Promise<void> {
 	if (scheme !== "light" && scheme !== "dark") return;

@@ -109,7 +109,7 @@ export default function RuleCard({
 				switch (rule.type) {
 					case "COLOUR":
 						return (
-							<Colour
+							<Palette
 								value={rule.value}
 								inPopup={inPopup}
 								onChange={(newValue) =>
