@@ -566,15 +566,15 @@ async function applyTheme(
 			}),
 			toolbar_field: nova({
 				0: () => css(pref.toolbarField),
-				152: () => css(pref.toolbarField + 5),
+				153: () => css(pref.toolbarField + 5),
 			}),
 			toolbar_field_border: nova({
 				0: () => css(pref.toolbarFieldBorder + pref.toolbarField),
-				152: () => css(pref.toolbarFieldBorder + pref.toolbarField + 5),
+				153: () => css(pref.toolbarFieldBorder + pref.toolbarField + 5),
 			}),
 			toolbar_field_focus: nova({
 				0: () => css(pref.toolbarFieldOnFocus),
-				152: () => css(pref.toolbarFieldOnFocus + 5),
+				153: () => css(pref.toolbarFieldOnFocus + 5),
 			}),
 			toolbar_top_separator: nova({
 				0: () =>
