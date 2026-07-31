@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "wxt build -b firefox",
-		"format": "prettier --write --list-different src tests",
+		"format": "prettier --write --list-different .",
 		"postinstall": "wxt prepare",
 		"start": "cross-env BINARY=firefox wxt --mode beta",
 		"start:dev": "cross-env BINARY=deved wxt --mode beta",
