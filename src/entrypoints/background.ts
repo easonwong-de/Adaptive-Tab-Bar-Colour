@@ -456,13 +456,13 @@ async function applyTheme(
 		});
 	};
 	const nova = <T>(mapping: Record<number, () => T>): T | undefined => {
-		if (!pref.nova) return mapping[0]();
+		if (!pref.nova) return mapping[0]?.();
 		let match = 0;
 		for (const key in mapping) {
 			const version = Number(key);
 			if (firefoxVersion >= version && version > match) match = version;
 		}
-		return mapping[match]();
+		return mapping[match]?.();
 	};
 
 	const primaryColour = lightDark("#000000", "#ffffff");

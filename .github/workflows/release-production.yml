@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
         inputs:
             notes:
-                description: "Release notes for the release"
+                description: Release notes for the release
                 required: false
                 type: string
 
@@ -22,36 +22,20 @@ jobs:
               uses: actions/setup-node@v6
               with:
                   node-version: 24
-                  cache: "npm"
+                  cache: npm
             - name: Prepare Environment And Metadata
               id: version
-              run: |
-                  npm ci --silent
-                  BASE_VERSION=$(node -p "require('./package.json').version")
-                  echo "version=$BASE_VERSION" >> "$GITHUB_OUTPUT"
-                  jq -n --arg notes "${{ inputs.notes }}" \
-                      '{"version": {"release_notes": {"en-GB": $notes}}}' \
-                      > amo_metadata.json
+              run:
+                  bash scripts/utils.sh prepare_production_metadata "${{
+                  inputs.notes }}"
             - name: Build And Upload To AMO (Production)
               env:
                   FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
                   FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-              run: |
-                  node --run zip
-                  npx web-ext sign \
-                      --api-key $FIREFOX_JWT_ISSUER \
-                      --api-secret $FIREFOX_JWT_SECRET \
-                      --channel listed \
-                      --source-dir .output/atbc \
-                      --upload-source-code .output/atbc-sources.zip \
-                      --amo-metadata amo_metadata.json \
-                      --approval-timeout 0
+              run: bash scripts/utils.sh build_and_sign_production
             - name: Tag And Create GitHub Release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  git tag v${{ steps.version.outputs.version }}
-                  git push origin v${{ steps.version.outputs.version }}
-                  gh release create "v${{ steps.version.outputs.version }}" \
-                      --title "v${{ steps.version.outputs.version }}" \
-                      --notes "${{ inputs.notes }}"
+              run:
+                  bash scripts/utils.sh create_production_release "${{
+                  steps.version.outputs.version }}" "${{ inputs.notes }}"

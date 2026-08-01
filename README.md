@@ -45,11 +45,13 @@ This add-on dynamically adjusts the Firefox theme to match the appearance of the
 
 To remove the thin shadow cast by web content onto the browser toolbar, navigate to Settings (`about:preferences`) and disable “Show sidebar” in the “Browser Layout” section. Alternatively, add the following code to your CSS theme:
 
+<!-- prettier-ignore-start -->
 ```css
 #tabbrowser-tabbox, .browserContainer {
 	box-shadow: none !important;
 }
 ```
+<!-- prettier-ignore-end -->
 
 <details>
 <summary>How to apply custom CSS</summary>
@@ -71,15 +73,18 @@ To remove the thin shadow cast by web content onto the browser toolbar, navigate
 
 Firefox natively applies a transition effect to tab bar colour changes. To disable this behaviour and allow Adaptive Tab Bar Colour (ATBC) to update colours instantaneously, add the following code to your CSS theme:
 
+<!-- prettier-ignore-start -->
 ```css
 :root {
 	--ext-theme-background-transition: none !important;
 	--inactive-window-transition: none !important;
 }
 ```
+<!-- prettier-ignore-end -->
 
 Alternatively, you may prefer smooth colour transitions for the tab bar. As this cannot be natively supported due to technical limitations, add the following code to your CSS theme (thanks to [@Moarram](https://github.com/Moarram/)):
 
+<!-- prettier-ignore-start -->
 ```css
 #navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {
 	transition:
@@ -87,14 +92,17 @@ Alternatively, you may prefer smooth colour transitions for the tab bar. As this
 		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;
 }
 ```
+<!-- prettier-ignore-end -->
 
 To enable smooth colour transitions in the Sidebery UI, add the following code to the Sidebery Style Editor (thanks to [@MaxHasBeenUsed](https://github.com/MaxHasBeenUsed/)):
 
+<!-- prettier-ignore-start -->
 ```css
 .Sidebar, .bottom-space {
 	transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;
 }
 ```
+<!-- prettier-ignore-end -->
 
 <details>
 <summary>How to apply custom CSS</summary>

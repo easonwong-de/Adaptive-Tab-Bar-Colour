@@ -4,7 +4,8 @@ on:
     workflow_dispatch:
         inputs:
             version:
-                description: "Version of the next production release (e.g., 1.0.0)"
+                description:
+                    Version of the next production release (e.g., 1.0.0)
                 required: true
                 type: string
 
@@ -25,31 +26,12 @@ jobs:
               with:
                   node-version: 24
             - name: Validate Format And Bump Version
-              run: |
-                  if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then \
-                      echo "Error: Expects version format (X.Y.Z)."; \
-                      exit 1; \
-                  fi
-                  git checkout -b bump/v${{ inputs.version }}
-                  npm version "${{ inputs.version }}" --no-git-tag-version
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git add package.json
-                  if [ -f package-lock.json ]; then \
-                      git add package-lock.json; \
-                  fi
-                  git commit -m "bump: bump version to ${{ inputs.version }}"
-                  git push origin bump/v${{ inputs.version }}
+              run:
+                  bash scripts/utils.sh bump_package_version "${{
+                  inputs.version}}"
             - name: Create And Merge Pull Request
               env:
                   GH_TOKEN: ${{ secrets.ADMIN_PAT }}
-              run: |
-                  gh pr create \
-                      --title "Bump version to ${{ inputs.version }}" \
-                      --body "Automated version bump to ${{ inputs.version }}" \
-                      --head bump/v${{ inputs.version }} \
-                      --base main
-                  gh pr merge bump/v${{ inputs.version }} \
-                      --admin \
-                      --merge \
-                      --delete-branch
+              run:
+                  bash scripts/utils.sh create_and_merge_pr "${{
+                  inputs.version}}"

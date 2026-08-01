@@ -52,7 +52,7 @@ export const mozillaPageColour = Object.freeze({
 	"discovery.addons.mozilla.org": { light: new colour("#ffffff"), dark: new colour("#1c1b22") },
 	"install.mozilla.org": { light: new colour("#ffffff"), dark: new colour("#1c1b22") },
 	"support.mozilla.org": { light: new colour("#ffffff"), dark: new colour("#ffffff") },
-} as Record<string, Record<Scheme, colour> | undefined>);
+} as Record<string, Record<Scheme, Colour> | undefined>);
 
 // prettier-ignore
 /**
@@ -76,7 +76,7 @@ export const presetAddonPageColour = Object.freeze({
 	"jid1-KdTtiCj6wxVAFA@jetpack": { light: new colour("#f9f9f8"), dark: new colour("#171a18") }, // Swift Selection Search
 	"sponsorBlocker@ajay.app": { light: new colour("f9f9f9"), dark: new colour("#333333") }, // SponsorBlock for YouTube
 	"uBlock0@raymondhill.net": { light: new colour("#f0f0f2"), dark: new colour("#1b1b24") }, // uBlock Origin
-} as Record<string, Record<Scheme, colour> | undefined>);
+} as Record<string, Record<Scheme, Colour> | undefined>);
 
 /** Protocols of Firefox source pages. */
 export const sourcePageProtocol = [
@@ -138,8 +138,8 @@ export const defaultPreferenceContent = Object.freeze({
 export function createBrowserColour(
 	getScheme: () => Scheme,
 	getFirefoxVersion: () => number,
-	pref: preference,
-): Record<BrowserColour, colour> {
+	pref: Preference,
+): Record<BrowserColour, Colour> {
 	return Object.freeze({
 		get ADDON() {
 			return getScheme() === "light"

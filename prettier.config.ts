@@ -10,6 +10,12 @@ const config: Config = {
 	],
 	importOrderSortSpecifiers: true,
 	objectWrap: "collapse",
+	overrides: [
+		{
+			files: ["*.yml", "*.yaml"],
+			options: { proseWrap: "always", useTabs: false },
+		},
+	],
 	plugins: [
 		"@trivago/prettier-plugin-sort-imports",
 		"prettier-plugin-css-order",
@@ -22,7 +28,7 @@ const config: Config = {
 	useTabs: true,
 	yamlBlockStyle: "folded",
 	yamlQuoteKeys: false,
-	yamlQuoteValues: true,
+	yamlQuoteValues: false,
 };
 
 export default config;
