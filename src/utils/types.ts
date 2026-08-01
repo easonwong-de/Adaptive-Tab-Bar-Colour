@@ -145,7 +145,7 @@ export type TabMetaReason =
 	| "THEME_USED";
 
 export interface MetaQueryResult {
-	colour: colour;
+	colour: Colour;
 	reason: TabMetaReason;
 	info?: string;
 }
@@ -163,7 +163,7 @@ export interface CacheData {
 }
 
 export interface ColourCorrectionResult {
-	colour: colour;
+	colour: Colour;
 	scheme: Scheme;
 	corrected: boolean;
 }

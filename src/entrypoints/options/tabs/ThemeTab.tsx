@@ -174,8 +174,10 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 						onClick={() => {
 							if (!canUndo) return;
 							const item = historyRef.current[headRef.current];
-							pref[item.handle] = item.oldValue;
-							headRef.current -= 1;
+							if (item) {
+								pref[item.handle] = item.oldValue;
+								headRef.current -= 1;
+							}
 						}}
 					>
 						<Icon type="undo" />
@@ -186,8 +188,10 @@ export default function ThemeTab({ pref, ready }: ThemeTabProps) {
 							if (!canRedo) return;
 							const item =
 								historyRef.current[headRef.current + 1];
-							pref[item.handle] = item.newValue;
-							headRef.current += 1;
+							if (item) {
+								pref[item.handle] = item.newValue;
+								headRef.current += 1;
+							}
 						}}
 					>
 						<Icon type="redo" />

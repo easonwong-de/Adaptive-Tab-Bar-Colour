@@ -1,4 +1,9 @@
 {
+	"[yaml]": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": true,
+		"editor.detectIndentation": false
+	},
 	"i18n-ally.displayLanguage": "en",
 	"i18n-ally.keystyle": "nested",
 	"i18n-ally.localeCountryMap": { "en": "gb" },

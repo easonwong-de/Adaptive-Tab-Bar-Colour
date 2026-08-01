@@ -30,7 +30,7 @@ export async function getWebExtPath(
 	const webExtDir =
 		interactive && process.stdin.isTTY
 			? await getSelection(files)
-			: files[0];
+			: files[0]!;
 	return path.join(dir, webExtDir);
 }
 
@@ -73,7 +73,11 @@ export function getSelection(options: string[]): Promise<string> {
 				case "\r":
 					const selection = options[index];
 					cleanup();
-					resolve(selection);
+					if (selection === undefined) {
+						reject(new Error("Invalid selection index"));
+					} else {
+						resolve(selection);
+					}
 					return;
 				case "\u001b[A":
 					index = (index - 1 + options.length) % options.length;
@@ -109,11 +113,11 @@ export async function getTestCases(dir: string): Promise<TestCase[]> {
 		.sort((a, b) => a.localeCompare(b));
 
 	const testCases: TestCase[] = [];
-	for (const specFiles of files) {
-		const specPath = path.join(dir, specFiles);
+	for (const specFile of files) {
+		const specPath = path.join(dir, specFile);
 		const module = await import(specPath);
 		if (!module.testCase)
-			throw new Error(`Missing testCase export in ${specFiles}`);
+			throw new Error(`Missing testCase export in ${specFile}`);
 		testCases.push(module.testCase as TestCase);
 	}
 	return testCases;
@@ -203,14 +207,14 @@ function parseColourString(colour: string): ColourChannel {
 	const trimmed = colour.trim();
 	const hexMatch = trimmed.match(/^#([0-9a-f]{3,8})$/i);
 	const channel: ColourChannel = { r: 0, g: 0, b: 0, a: 1 };
-	if (hexMatch) {
+	if (hexMatch && hexMatch[1]) {
 		const hex = hexMatch[1];
 		if (hex.length === 3 || hex.length === 4) {
-			channel.r = parseInt(hex[0] + hex[0], 16);
-			channel.g = parseInt(hex[1] + hex[1], 16);
-			channel.b = parseInt(hex[2] + hex[2], 16);
+			channel.r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+			channel.g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+			channel.b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
 			if (hex.length === 4)
-				channel.a = parseInt(hex[3] + hex[3], 16) / 255;
+				channel.a = parseInt(hex.charAt(3) + hex.charAt(3), 16) / 255;
 		} else if (hex.length === 6 || hex.length === 8) {
 			channel.r = parseInt(hex.slice(0, 2), 16);
 			channel.g = parseInt(hex.slice(2, 4), 16);
@@ -220,7 +224,7 @@ function parseColourString(colour: string): ColourChannel {
 		}
 	} else {
 		const rgbMatch = trimmed.match(/^rgba?\((.+)\)$/i);
-		if (rgbMatch) {
+		if (rgbMatch && rgbMatch[1]) {
 			const parts = rgbMatch[1].split(",").map((part) => part.trim());
 			if (parts[0]) {
 				channel.r = parts[0].endsWith("%")

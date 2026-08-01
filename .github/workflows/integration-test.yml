@@ -16,12 +16,8 @@ jobs:
               uses: actions/setup-node@v6
               with:
                   node-version: 24
-                  cache: "npm"
+                  cache: npm
             - name: Setup Firefox
               uses: browser-actions/setup-firefox@v1
             - name: Execute Integration Tests
-              run: |
-                  npm ci --silent
-                  npm rebuild --silent
-                  node --run zip:clean
-                  node --run test:headless
+              run: bash scripts/utils.sh execute_integration_tests

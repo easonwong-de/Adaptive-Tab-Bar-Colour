@@ -1,99 +1,102 @@
-addANewRule: "新建自定义规则"
-addonNotFound: "未找到该插件"
-advanced: "高级设置"
-allowDarkTabBar: "允许标签栏使用暗色"
-allowDarkTabBarTooltip: "允许标签栏使用暗色（浅色文字和深色背景）。"
-allowLightTabBar: "允许标签栏使用亮色"
-allowLightTabBarTooltip: "允许标签栏使用亮色（深色文字和浅色背景）。"
-anyCSSColour: "任何格式"
-background: "背景"
-backgroundOnFocus: "被选中时的背景"
-backupAndReset: "备份和重置"
-border: "边界"
-colourIsAdjusted: "为达到最小对比度设置，原颜色已被调整"
-compatibilityMode: "兼容模式"
-compatibilityModeTooltip: "更改网页的「theme-color」元数据，而非使用 Theme API。支持该功能的浏览器会相应地调整其标签栏颜色。"
-confirmResetAll: "是否确定重置所有设置？"
-confirmResetThemeBuilder: "是否确定重置背景主题？"
+addANewRule: 新建自定义规则
+addonNotFound: 未找到该插件
+advanced: 高级设置
+allowDarkTabBar: 允许标签栏使用暗色
+allowDarkTabBarTooltip: 允许标签栏使用暗色（浅色文字和深色背景）。
+allowLightTabBar: 允许标签栏使用亮色
+allowLightTabBarTooltip: 允许标签栏使用亮色（深色文字和浅色背景）。
+anyCSSColour: 任何格式
+background: 背景
+backgroundOnFocus: 被选中时的背景
+backupAndReset: 备份和重置
+border: 边界
+colourIsAdjusted: 为达到最小对比度设置，原颜色已被调整
+compatibilityMode: 兼容模式
+compatibilityModeTooltip:
+    更改网页的「theme-color」元数据，而非使用 Theme
+    API。支持该功能的浏览器会相应地调整其标签栏颜色。
+confirmResetAll: 是否确定重置所有设置？
+confirmResetThemeBuilder: 是否确定重置背景主题？
 couldNotFindElement: "找不到符合 "
 couldNotFindElementEnd: " 的网页元素，改为使用从网页中提取的颜色"
-delete: "删除"
-deleteRule: "删除规则"
-dynamicColourUpdate: "动态更新颜色"
-dynamicModeTooltip: "在同一个网页停留时，持续更新标签栏颜色。"
-errorOccured: "发生错误，使用备选颜色"
+delete: 删除
+deleteRule: 删除规则
+dynamicColourUpdate: 动态更新颜色
+dynamicModeTooltip: 在同一个网页停留时，持续更新标签栏颜色。
+errorOccured: 发生错误，使用备选颜色
 errorOccuredLocatingElement: "当寻找符合 "
-errorOccuredLocatingElementEnd: " 的网页元素时发生错误，标签栏的颜色已按普通方法从网页中获取"
-exportSettings: "保存偏好设置至文件"
-extensionDescription: "改变 Firefox 背景主题，使其与网页融为一体。"
-extensionName: "变色标签栏"
-fallbackColourDark: "备选颜色（暗色）"
-fallbackColourLight: "备选颜色（亮色）"
-frame: "窗口背景"
-homepageColourDark: "首页背景色（暗色）"
-homepageColourLight: "首页背景色（亮色）"
-ifVerticalTabsAreEnabled: "如果启用了「垂直标签页」，任何非零值都可能导致窗口控制按钮上方出现间隙，使其难以触及。"
-ignore: "忽略"
-ignoreDesignatedThemeColour: "总是忽略网站指定的主题色"
-ignoreDesignatedThemeColourTooltip: "有些网站会提供一个主题色。开启此选项，这些颜色将被自动忽略。"
-importFailed: "导入偏好设置失败。请检查文件是否正确并重试。"
-importSettings: "从文件导入偏好设置"
-inDarkMode: "在暗色模式下"
-inLightMode: "在亮色模式下"
-loading: "加载中⋯⋯"
-minimumContrast: "最小对比度设置"
-minimumContrastTooltip: "在此设置标签栏和文字的最小对比度。如果未达到该指标，标签栏的颜色将会被调整，使之达到设置的最小对比度。"
-moreSettings: "更多设置"
-moreSettingsTooltip: "打开设置页"
-no: "否"
-novaUi: "使用 Nova UI 颜色"
-novaUiTooltip: "如果 Firefox 正在使用 Nova UI，请打开此选项。"
-overwriteAccentColour: "覆盖强调色"
-overwriteAccentColourTooltip: "在网址列与工具列按钮使用自订强调色，而不是系统的颜色。"
-pageIsProtected: "此页面受浏览器保护"
-pickColourFromElement: "从网页元素取色"
-popUp: "弹出菜单"
-querySelector: "CSS 选择器名称"
-reportAnIssue: "报告问题 / 提供建议 / 提供翻译"
-reset: "重新设定"
-resetAll: "全部重置"
-resetAllSettings: "重置所有设置"
-ruleAppliedInBothMode: "该规则将应用于浅色和深色模式"
-ruleAppliedInDarkMode: "该规则仅适用于深色模式"
-ruleAppliedInLightMode: "该规则仅适用于亮色模式"
-ruleList: "自定义规则"
-ruleWillBeIgnored: "该规则将被忽略"
-selectedTab: "被选中的标签页"
-settingsAreExported: "偏好设置已经被保存到下载文件夹。"
-settingsAreImported: "已导入偏好设置。"
-sidebar: "侧栏"
-specifyAColour: "指定颜色"
-system: "系统内置"
-tabBar: "标签栏"
-themeBuilder: "背景主题"
-themeColourIsIgnored: "此网站指定的主题色被忽略"
-themeColourIsUnignored: "此网站指定的主题色被重新采用"
-themeColourNotFound: "网站未指定主题色，标签栏的颜色已从网页获取"
-toolbar: "工具栏"
-urlBar: "地址栏"
-urlDomainOrRegex: "网址 / 正则表达式 / 通配符 / 域名"
-use: "使用"
-useIgnoreThemeColour: "使用 / 忽略主题色"
-usingColourForHomePage: "使用首页背景色"
-usingColourForJSONViewer: "从 JSON 阅读器获取颜色"
-usingColourForPDFViewer: "从 PDF 阅读器获取颜色"
-usingColourForPlainTextViewer: "从文本阅读器获取颜色"
+errorOccuredLocatingElementEnd:
+    " 的网页元素时发生错误，标签栏的颜色已按普通方法从网页中获取"
+exportSettings: 保存偏好设置至文件
+extensionDescription: 改变 Firefox 背景主题，使其与网页融为一体。
+extensionName: 变色标签栏
+fallbackColourDark: 备选颜色（暗色）
+fallbackColourLight: 备选颜色（亮色）
+frame: 窗口背景
+homepageColourDark: 首页背景色（暗色）
+homepageColourLight: 首页背景色（亮色）
+ifVerticalTabsAreEnabled: 如果启用了「垂直标签页」，任何非零值都可能导致窗口控制按钮上方出现间隙，使其难以触及。
+ignore: 忽略
+ignoreDesignatedThemeColour: 总是忽略网站指定的主题色
+ignoreDesignatedThemeColourTooltip: 有些网站会提供一个主题色。开启此选项，这些颜色将被自动忽略。
+importFailed: 导入偏好设置失败。请检查文件是否正确并重试。
+importSettings: 从文件导入偏好设置
+inDarkMode: 在暗色模式下
+inLightMode: 在亮色模式下
+loading: 加载中⋯⋯
+minimumContrast: 最小对比度设置
+minimumContrastTooltip: 在此设置标签栏和文字的最小对比度。如果未达到该指标，标签栏的颜色将会被调整，使之达到设置的最小对比度。
+moreSettings: 更多设置
+moreSettingsTooltip: 打开设置页
+no: 否
+novaUi: 使用 Nova UI 颜色
+novaUiTooltip: 如果 Firefox 正在使用 Nova UI，请打开此选项。
+overwriteAccentColour: 覆盖强调色
+overwriteAccentColourTooltip: 在网址列与工具列按钮使用自订强调色，而不是系统的颜色。
+pageIsProtected: 此页面受浏览器保护
+pickColourFromElement: 从网页元素取色
+popUp: 弹出菜单
+querySelector: CSS 选择器名称
+reportAnIssue: 报告问题 / 提供建议 / 提供翻译
+reset: 重新设定
+resetAll: 全部重置
+resetAllSettings: 重置所有设置
+ruleAppliedInBothMode: 该规则将应用于浅色和深色模式
+ruleAppliedInDarkMode: 该规则仅适用于深色模式
+ruleAppliedInLightMode: 该规则仅适用于亮色模式
+ruleList: 自定义规则
+ruleWillBeIgnored: 该规则将被忽略
+selectedTab: 被选中的标签页
+settingsAreExported: 偏好设置已经被保存到下载文件夹。
+settingsAreImported: 已导入偏好设置。
+sidebar: 侧栏
+specifyAColour: 指定颜色
+system: 系统内置
+tabBar: 标签栏
+themeBuilder: 背景主题
+themeColourIsIgnored: 此网站指定的主题色被忽略
+themeColourIsUnignored: 此网站指定的主题色被重新采用
+themeColourNotFound: 网站未指定主题色，标签栏的颜色已从网页获取
+toolbar: 工具栏
+urlBar: 地址栏
+urlDomainOrRegex: 网址 / 正则表达式 / 通配符 / 域名
+use: 使用
+useIgnoreThemeColour: 使用 / 忽略主题色
+usingColourForHomePage: 使用首页背景色
+usingColourForJSONViewer: 从 JSON 阅读器获取颜色
+usingColourForPDFViewer: 从 PDF 阅读器获取颜色
+usingColourForPlainTextViewer: 从文本阅读器获取颜色
 usingColourFromElement: "标签栏的颜色是从符合 "
 usingColourFromElementEnd: " 的网页元素中获取"
-usingColourFromWebpage: "颜色已从网页中提取"
+usingColourFromWebpage: 颜色已从网页中提取
 usingDefaultColourForAddon: "使用 "
 usingDefaultColourForAddonEnd: " 相关页面的默认颜色"
-usingFallbackColour: "未能从网页获取颜色，使用备选颜色"
-usingImageViewer: "按图像查看器着色"
+usingFallbackColour: 未能从网页获取颜色，使用备选颜色
+usingImageViewer: 按图像查看器着色
 usingPresetColourForAddon: "使用 "
 usingPresetColourForAddonEnd: " 相关页面的默认颜色"
-usingSpecifiedColour: "此网站对应的标签栏颜色已被指定"
+usingSpecifiedColour: 此网站对应的标签栏颜色已被指定
 usingSpecifiedColourForAddon: "使用 "
 usingSpecifiedColourForAddonEnd: " 相关页面指定的颜色"
-usingThemeColour: "使用此网站指定的主题色"
-yes: "是"
+usingThemeColour: 使用此网站指定的主题色
+yes: 是
