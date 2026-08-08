@@ -56,6 +56,23 @@ Firefox 原生会为标签栏的颜色更改应用过渡效果。如果您希望
 
 > `}`
 
+**在右键菜单中启用变色主题**
+
+要在右键菜单中应用变色主题，请将以下代码添加到您的 CSS 主题中：
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+此外，还必须通过打开 `about:config` 并将以下首选项设置为 `false` 来禁用原生右键菜单：
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **与第三方 CSS 主题的兼容性**
 
 第三方 CSS 主题可与变色标签栏（ATBC）兼容，只要它们使用 Firefox 的标准颜色变量（例如，`--lwt-accent-color` 用于标签栏颜色）。比如，[这](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一个与 ATBC 兼容的 CSS 主题。

@@ -56,6 +56,23 @@ Sidebery UI で滑らかな色遷移を有効にするには、次のコード�
 
 > `}`
 
+**コンテキストメニューへの適応テーマの適用**
+
+コンテキストメニューに適応テーマを適用するには、次のコードを CSS テーマに追加してください：
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+さらに、`about:config` を開き、以下の設定を `false` に変更してネイティブコンテキストメニューを無効にする必要があります：
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **サードパーティ CSS テーマとの互換性**
 
 サードパーティの CSS テーマは、Firefox の標準カラー変数（例：タブバーの色に `--lwt-accent-color`）を使用していれば Adaptive Tab Bar Colour（ATBC）と連携できます。[こちら](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) は ATBC 対応 CSS テーマの例です。

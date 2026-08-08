@@ -56,6 +56,23 @@ Firefox изначально применяет эффект перехода к
 
 > `}`
 
+**Адаптивная тема в контекстных меню**
+
+Чтобы применить адаптивную тему к контекстным меню, добавьте следующий код в вашу CSS-тему:
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+Кроме того, необходимо отключить нативные контекстные меню, открыв `about:config` и установив следующие параметры в значение `false`:
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **Совместимость со сторонними CSS-темами**
 
 Сторонняя CSS-тема работает с Adaptive Tab Bar Colour (ATBC), если они используют стандартные цветовые переменные Firefox (например, `--lwt-accent-color` для цвета панели вкладок). [Вот пример](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) CSS-темы, совместимой с ATBC.
