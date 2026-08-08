@@ -120,6 +120,40 @@ To enable smooth colour transitions in the Sidebery UI, add the following code t
 
 <br>
 
+## Adaptive Theme in Context Menus
+
+To apply the adaptive theme to context menus, add the following code to your CSS theme:
+
+<!-- prettier-ignore-start -->
+```css
+:is(menupopup, panel):where(:not([type="arrow"])) {
+	--panel-background-color: unset !important;
+	--panel-border-color: unset !important;
+}
+```
+<!-- prettier-ignore-end -->
+
+Additionally, native context menus must be disabled by opening `about:config` and setting the following preferences to `false`:
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
+<details>
+<summary>How to apply custom CSS</summary>
+
+1. Type `about:config` in the address bar and press Enter.
+2. Search for `toolkit.legacyUserProfileCustomizations.stylesheets` and set it to `true`.
+3. Type `about:support` in the address bar.
+4. Find “Profile Folder” and click the “Show in Finder” (macOS) or “Open Folder” (Windows/Linux) button.
+5. Create a new folder named `chrome` in your profile directory.
+6. Inside the `chrome` folder, create a text file named `userChrome.css`.
+7. Paste the code above into `userChrome.css` and save the file.
+8. Restart Firefox.
+
+</details>
+
+<br>
+
 ## Compatibility with Third-Party CSS Themes
 
 A third-party CSS theme works with Adaptive Tab Bar Colour (ATBC), as long as they use Firefox’s standard colour variables (e.g. `--lwt-accent-color` for the tab bar colour). [This](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) is an example of an ATBC-compatible CSS theme.
