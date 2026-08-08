@@ -56,6 +56,23 @@ Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此
 
 > `}`
 
+**在右鍵功能表套用動態主題**
+
+若要在右鍵功能表套用動態主題，請將以下程式碼加入你的 CSS 主題：
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+此外，亦必須透過開啟 `about:config` 並將以下偏好設定設為 `false` 以停用原生右鍵功能表：
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **與第三方 CSS 主題的相容性**
 
 第三方 CSS 主題可與變色標題列（ATBC）相容，只要它們使用 Firefox 的標準顏色變數（例如，`--lwt-accent-color` 用於標題列顏色）。譬如，[這](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme)是一個與 ATBC 相容的 CSS 主題。

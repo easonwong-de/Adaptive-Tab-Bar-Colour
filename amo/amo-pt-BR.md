@@ -56,6 +56,23 @@ Para ativar a transição suave de cores na interface da Sidebery, adicione o se
 
 > `}`
 
+**Tema adaptativo em menus de contexto**
+
+Para aplicar o tema adaptativo aos menus de contexto, adicione o seguinte código ao seu tema CSS:
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+Além disso, os menus de contexto nativos devem ser desativados abrindo `about:config` e definindo as seguintes preferências como `false`:
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **Compatibilidade com temas CSS de terceiros**
 
 Um tema de CSS de terceiros funciona com Adaptive Tab Bar Colour (ATBC), desde que use as variáveis de cor padrão do Firefox (por exemplo: `--lwt-accent-color` para a cor da barra de abas). [Esse](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) é um exemplo de um tema CSS compatível com ATBC.

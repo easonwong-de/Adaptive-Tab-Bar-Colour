@@ -56,6 +56,23 @@ Sidebery arayüzünde yumuşak renk geçişlerini devreye almak için aşağıda
 
 > `}`
 
+**Sağ Tık Menülerinde Uyumlu Tema**
+
+Uyumlu temayı sağ tık (bağlam) menülerine uygulamak için aşağıdaki kodu CSS temanıza ekleyin:
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+Ayrıca `about:config` sayfasını açıp aşağıdaki tercihleri `false` olarak ayarlayarak yerel sağ tık menülerini devre dışı bırakmalısınız:
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **Üçüncü Taraf CSS Temalarıyla Uyumluluk**
 
 Firefox'un standart renk değişkenlerini (örneğin sekme çubuğu rengi için `--lwt-accent-color`) kullandığı sürece üçüncü taraf bir CSS teması Adaptive Tab Bar Colour (ATBC) ile beraber çalışır. [Burada](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) ATBC ile uyumlu bir CSS temasının örneğini bulabilirsiniz.

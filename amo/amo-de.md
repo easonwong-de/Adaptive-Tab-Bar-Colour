@@ -56,6 +56,23 @@ Um sanfte Farbübergänge in der Sidebery-Benutzeroberfläche zu aktivieren, fü
 
 > `}`
 
+**Anpassendes Theme in Kontextmenüs**
+
+Um das anpassende Theme auf Kontextmenüs anzuwenden, füge den folgenden Code zu deinem CSS-Theme hinzu:
+
+> `:is(menupopup, panel):where(:not([type="arrow"])) {`
+
+> > `--panel-background-color: unset !important;`
+
+> > `--panel-border-color: unset !important;`
+
+> `}`
+
+Zusätzlich müssen native Kontextmenüs deaktiviert werden, indem du `about:config` öffnest und die folgenden Einstellungen auf `false` setzt:
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
 **Kompatibilität mit Drittanbieter-CSS-Themes**
 
 Ein Drittanbieter-CSS-Theme funktioniert mit Anpassender Tableistenfarbe (ATBC), solange sie Firefoxs Standard-Farbvariablen verwenden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/Firefox-Adaptive-Sur-Theme) ist ein Beispiel für ein ATBC-kompatibles CSS-Theme.
