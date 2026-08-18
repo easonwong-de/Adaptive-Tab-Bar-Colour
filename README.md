@@ -86,10 +86,12 @@ Alternatively, you may prefer smooth colour transitions for the tab bar. As this
 
 <!-- prettier-ignore-start -->
 ```css
-#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {
+#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body
+{
 	transition:
-		background-color 0.5s cubic-bezier(0, 0, 0, 1),
-		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;
+		background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+		outline 0.5s cubic-bezier(0, 0, 0, 1) !important;
 }
 ```
 <!-- prettier-ignore-end -->
