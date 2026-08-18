@@ -40,11 +40,9 @@ Firefox изначально применяет эффект перехода к
 
 В качестве альтернативы, вы можете предпочесть плавные цветовые переходы для панели вкладок. Поскольку это не может поддерживаться изначально из-за технических ограничений, добавьте следующий код в вашу CSS-тему (спасибо [@Moarram](https://github.com/Moarram/)):
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 
