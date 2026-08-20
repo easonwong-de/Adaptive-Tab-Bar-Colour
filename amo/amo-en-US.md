@@ -32,9 +32,10 @@ Firefox natively applies a transition effect to tab bar color changes. To disabl
 
 > `:root {`
 
-> > `--ext-theme-background-transition: none !important;`
-
-> > `--inactive-window-transition: none !important;`
+> > ```
+> > --ext-theme-background-transition: none !important;
+> > --inactive-window-transition: none !important;
+> > ```
 
 > `}`
 
@@ -42,7 +43,13 @@ Alternatively, you may prefer smooth color transitions for the tab bar. As this 
 
 > `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition:`
+
+> > > ```
+> > > background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+> > > border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+> > > outline 0.5s cubic-bezier(0, 0, 0, 1) !important;
+> > > ```
 
 > `}`
 
@@ -60,9 +67,10 @@ To apply the adaptive theme to context menus, add the following code to your CSS
 
 > `:is(menupopup, panel):where(:not([type="arrow"])) {`
 
-> > `--panel-background-color: unset !important;`
-
-> > `--panel-border-color: unset !important;`
+> > ```
+> > --panel-background-color: unset !important;
+> > --panel-border-color: unset !important;
+> > ```
 
 > `}`
 
