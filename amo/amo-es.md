@@ -32,19 +32,24 @@ Firefox aplica de forma nativa un efecto de transición a los cambios de color d
 
 > `:root {`
 
-> > `--ext-theme-background-transition: none !important;`
-
-> > `--inactive-window-transition: none !important;`
+> > ```
+> > --ext-theme-background-transition: none !important;
+> > --inactive-window-transition: none !important;
+> > ```
 
 > `}`
 
 Alternativamente, puede que prefiera transiciones de color suaves para la barra de pestañas. Como esto no puede ser soportado de forma nativa debido a limitaciones técnicas, añada el siguiente código a su tema CSS (gracias a [@Moarram](https://github.com/Moarram/)):
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
 > > `transition:`
 
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > > ```
+> > > background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+> > > border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+> > > outline 0.5s cubic-bezier(0, 0, 0, 1) !important;
+> > > ```
 
 > `}`
 
@@ -62,9 +67,10 @@ Para aplicar el tema adaptativo a los menús contextuales, añade el siguiente c
 
 > `:is(menupopup, panel):where(:not([type="arrow"])) {`
 
-> > `--panel-background-color: unset !important;`
-
-> > `--panel-border-color: unset !important;`
+> > ```
+> > --panel-background-color: unset !important;
+> > --panel-border-color: unset !important;
+> > ```
 
 > `}`
 
