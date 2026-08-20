@@ -40,11 +40,9 @@ Firefox 原生会为标签栏的颜色更改应用过渡效果。如果您希望
 
 另外，您可能更喜欢标签栏拥有平滑的颜色过渡。由于技术限制，这无法原生支持。不过，您可以通过将以下代码添加到您的 CSS 主题来启用此效果（感谢 [@Moarram](https://github.com/Moarram/)）：
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 

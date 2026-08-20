@@ -40,11 +40,9 @@ Firefox sekme çubuğu renk değişikliklerine yerel olarak bir geçiş efekti u
 
 Alternatif olarak sekme çubuğu için yumuşak renk geçişlerini tercih edebilirsiniz. Teknik sınırlamalar nedeniyle bu yerel olarak desteklenemediğinden aşağıdaki kodu CSS temanıza ekleyin ([@Moarram](https://github.com/Moarram/)'a teşekkürler):
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 

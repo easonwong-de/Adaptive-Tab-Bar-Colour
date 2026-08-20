@@ -40,11 +40,9 @@ Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此
 
 或者，你可能偏好標題列擁有平滑的色彩轉場。由於技術限制，這無法原生支援。不過，閣下可將以下程式碼加入你的 CSS 主題（感謝 [@Moarram](https://github.com/Moarram/)）：
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 

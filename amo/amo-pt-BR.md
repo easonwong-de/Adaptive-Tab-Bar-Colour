@@ -40,11 +40,9 @@ O Firefox aplica nativamente um efeito de transição às mudanças de cor da ba
 
 Alternativamente, você pode preferir transições de cores suaves para a barra de abas. Como isso não pode ser suportado nativamente devido a limitações técnicas, adicione o seguinte código ao seu tema CSS (obrigado a [@Moarram](https://github.com/Moarram/)):
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 

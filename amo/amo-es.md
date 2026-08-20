@@ -40,11 +40,9 @@ Firefox aplica de forma nativa un efecto de transición a los cambios de color d
 
 Alternativamente, puede que prefiera transiciones de color suaves para la barra de pestañas. Como esto no puede ser soportado de forma nativa debido a limitaciones técnicas, añada el siguiente código a su tema CSS (gracias a [@Moarram](https://github.com/Moarram/)):
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 

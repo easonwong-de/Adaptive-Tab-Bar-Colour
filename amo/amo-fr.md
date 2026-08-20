@@ -40,11 +40,9 @@ Firefox applique nativement un effet de transition aux changements de couleur de
 
 Alternativement, vous préférerez peut-être des transitions de couleur fluides pour la barre d’onglets. Comme cela ne peut pas être pris en charge nativement en raison de limitations techniques, ajoutez le code suivant à votre thème CSS (merci à [@Moarram](https://github.com/Moarram/)) :
 
-> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar {`
+> `#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {`
 
-> > `transition:`
-
-> > > `background-color 0.5s cubic-bezier(0, 0, 0, 1), border-color 0.5s cubic-bezier(0, 0, 0, 1) !important;`
+> > `transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important, border-color 0.5s cubic-bezier(0, 0, 0, 1) !important, outline 0.5s cubic-bezier(0, 0, 0, 1) !important;`
 
 > `}`
 
