@@ -29,7 +29,7 @@ done
 
 body=$(jq -n --argjson desc "$description" '{"description": $desc}')
 
-curl -sSf -X PATCH "https://addons.mozilla.org/api/v5/addons/addon/adaptive-tab-bar-colour/" \
+curl -sSf -o /dev/null -X PATCH "https://addons.mozilla.org/api/v5/addons/addon/adaptive-tab-bar-colour/" \
 	-H "Authorization: JWT ${token}" \
 	-H "Content-Type: application/json" \
 	-d "$body"
