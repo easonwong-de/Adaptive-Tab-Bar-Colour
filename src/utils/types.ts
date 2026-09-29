@@ -15,6 +15,7 @@ export type BrowserColour =
 	| "MOTTO"
 	| "PDF_VIEWER"
 	| "PLAINTEXT"
+	| "PREFERENCES"
 	| "PRIVATE"
 	| "PROCESS"
 	| "SVG"
@@ -82,7 +83,6 @@ export interface AdvancedPreferenceContent {
 	minContrast_dark: number;
 	minContrast_light: number;
 	noThemeColour: boolean;
-	nova: boolean;
 	overwriteAccentColour: boolean;
 }
 

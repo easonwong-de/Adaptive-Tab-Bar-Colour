@@ -12,13 +12,9 @@ export const default_fallbackColour_light = "#ffffff";
 /** Default dark fallback colour. */
 export const default_fallbackColour_dark = "#2b2a33";
 /** Default light accent colour. */
-export const default_accentColour_light = "#0062fa";
+export const default_accentColour_light = "#764edd";
 /** Default dark accent colour. */
-export const default_accentColour_dark = "#00cadb";
-/** Default light accent colour in Nova UI. */
-export const default_accentColourNova_light = "#764edd";
-/** Default dark accent colour in Nova UI. */
-export const default_accentColourNova_dark = "#b89cff";
+export const default_accentColour_dark = "#b89cff";
 
 /** Default compatibility mode setting. */
 export const default_compatibilityMode = !supportsThemeAPI();
@@ -27,6 +23,7 @@ export const default_compatibilityMode = !supportsThemeAPI();
 /** Colours for about:pages. */
 export const aboutPageColour = Object.freeze({
 	"blank": { colour: "BLANK", reason: "PROTECTED_PAGE" },
+	"checkerboard": { colour: "BLANK", reason: "PROTECTED_PAGE" },
 	"compat": { colour: "COMPAT", reason: "PROTECTED_PAGE" },
 	"deleteprofile": { colour: "HOME", reason: "HOME_PAGE" },
 	"devtools-toolbox": { colour: "TOOLBOX", reason: "PROTECTED_PAGE" },
@@ -37,9 +34,9 @@ export const aboutPageColour = Object.freeze({
 	"mozilla": { colour: "MOTTO", reason: "PROTECTED_PAGE" },
 	"newprofile": { colour: "HOME", reason: "HOME_PAGE" },
 	"newtab": { colour: "HOME", reason: "HOME_PAGE" },
+	"preferences": { colour: "PREFERENCES", reason: "PROTECTED_PAGE" },
 	"privatebrowsing": { colour: "PRIVATE", reason: "PROTECTED_PAGE" },
 	"processes": { colour: "PROCESS", reason: "PROTECTED_PAGE" },
-	"sync-log": { colour: "LOG", reason: "PROTECTED_PAGE" },
 } as Record<string, { colour: BrowserColour, reason: TabMetaReason } | undefined>);
 
 // prettier-ignore
@@ -128,7 +125,6 @@ export const defaultPreferenceContent = Object.freeze({
 	minContrast_dark: 45,
 	minContrast_light: 90,
 	noThemeColour: true,
-	nova: false,
 	overwriteAccentColour: false,
 	// state
 	lastSave: 0,
@@ -158,12 +154,8 @@ export function createBrowserColour(
 		},
 		get DEFAULT() {
 			return getScheme() === "light"
-				? pref.nova
-					? new colour("#fcfbff")
-					: new colour("#ffffff")
-				: pref.nova
-					? new colour("#121114")
-					: new colour("#1c1b22");
+				? new colour("#f7f6fb")
+				: new colour("#131215");
 		},
 		get FALLBACK() {
 			return getScheme() === "light"
@@ -189,7 +181,9 @@ export function createBrowserColour(
 				: new colour("#282828");
 		},
 		get MOTTO() {
-			return new colour("#800000");
+			return getScheme() === "light"
+				? new colour("#8e0707")
+				: new colour("#890505");
 		},
 		get PDF_VIEWER() {
 			return getScheme() === "light"
@@ -201,13 +195,18 @@ export function createBrowserColour(
 				? new colour("#ffffff")
 				: new colour("#1c1b22");
 		},
+		get PREFERENCES() {
+			return getScheme() === "light"
+				? new colour("#fcfbff")
+				: new colour("#121114");
+		},
 		get PRIVATE() {
-			return pref.nova ? new colour("#121114") : new colour("#3c2e7c");
+			return new colour("#121114");
 		},
 		get PROCESS() {
 			return getScheme() === "light"
-				? new colour("#eeeeef")
-				: new colour("#32313a");
+				? new colour("#ffffff")
+				: new colour("#252428");
 		},
 		get SVG() {
 			return new colour("#ffffff");

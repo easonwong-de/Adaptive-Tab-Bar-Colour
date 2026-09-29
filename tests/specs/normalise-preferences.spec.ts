@@ -58,8 +58,8 @@ const importedPrefs: Record<string, unknown> = {
 };
 
 const expectedPrefs: Record<string, unknown> = {
-	accentColour_dark: "#00cadb",
-	accentColour_light: "#0062fa",
+	accentColour_dark: "#b89cff",
+	accentColour_light: "#764edd",
 	allowDarkLight: true,
 	compatibilityMode: false,
 	dynamic: true,
@@ -70,7 +70,6 @@ const expectedPrefs: Record<string, unknown> = {
 	minContrast_dark: 45,
 	minContrast_light: 90,
 	noThemeColour: true,
-	nova: false,
 	overwriteAccentColour: false,
 	popup: 10,
 	popupBorder: 50,

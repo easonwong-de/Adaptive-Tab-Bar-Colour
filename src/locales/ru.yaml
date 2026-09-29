@@ -65,8 +65,6 @@ minimumContrastTooltip:
 moreSettings: Больше настроек
 moreSettingsTooltip: Открыть страницу настроек
 no: Нет
-novaUi: Использовать цвета Nova UI
-novaUiTooltip: Включите, если Firefox использует интерфейс Nova.
 overwriteAccentColour: Перезаписать акцентный цвет
 overwriteAccentColourTooltip:
   Использовать собственный цвет акцента вместо цвета системы для адресной строки

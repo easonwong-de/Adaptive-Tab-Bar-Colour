@@ -19,18 +19,6 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 	return (
 		<main className={clsx(styles.advancedTab, !ready && "disabled")}>
 			<div className={styles.column}>
-				<section className={styles.cardSection}>
-					<label className={styles.switchWrapper}>
-						<Switch
-							active={pref.nova}
-							onChange={(value) => (pref.nova = value)}
-						/>
-						<div>
-							<h3>{i18n.t("novaUi")}</h3>
-							<p>{i18n.t("novaUiTooltip")}</p>
-						</div>
-					</label>
-				</section>
 				<section
 					className={clsx(
 						styles.cardSection,
@@ -105,15 +93,8 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 						<Switch
 							active={pref.overwriteAccentColour}
 							onChange={(value) => {
-								if (pref.nova) {
-									pref.accentColour_light =
-										default_accentColourNova_light;
-									pref.accentColour_dark =
-										default_accentColourNova_dark;
-								} else {
-									pref.reset(["accentColour_light"]);
-									pref.reset(["accentColour_dark"]);
-								}
+								pref.reset(["accentColour_light"]);
+								pref.reset(["accentColour_dark"]);
 								pref.overwriteAccentColour = value;
 							}}
 						/>
@@ -137,14 +118,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 										className={styles.resetButton}
 										title={i18n.t("reset")}
 										onClick={() => {
-											if (pref.nova) {
-												pref.accentColour_light =
-													default_accentColourNova_light;
-											} else {
-												pref.reset([
-													"accentColour_light",
-												]);
-											}
+											pref.reset(["accentColour_light"]);
 										}}
 									>
 										<Icon type="reset" size="text" />
@@ -164,14 +138,7 @@ export default function AdvancedTab({ pref, ready }: AdvancedTabProps) {
 										className={styles.resetButton}
 										title={i18n.t("reset")}
 										onClick={() => {
-											if (pref.nova) {
-												pref.accentColour_dark =
-													default_accentColourNova_dark;
-											} else {
-												pref.reset([
-													"accentColour_dark",
-												]);
-											}
+											pref.reset(["accentColour_dark"]);
 										}}
 									>
 										<Icon type="reset" size="text" />

@@ -71,8 +71,6 @@ minimumContrastTooltip:
 moreSettings: Plus de paramètres
 moreSettingsTooltip: Ouvrir la page d'options
 no: Non
-novaUi: Utiliser les couleurs de Nova UI
-novaUiTooltip: Activer si Firefox utilise Nova UI.
 overwriteAccentColour: Remplacer la couleur d'accentuation
 overwriteAccentColourTooltip:
   Utiliser une couleur d’accentuation personnalisée au lieu de la couleur de
