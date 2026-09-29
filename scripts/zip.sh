@@ -1,13 +1,13 @@
 #!/bin/bash
 
 set -euo pipefail
-source "$(dirname "$0")/utils.sh"
-cd "$(dirname "$0")/.."
+source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 mkdir -p .output
 rm -rf .output/*
 
-if [ "${1:-}" == "--clean" ]; then
+if [ "${1:-}" = "--clean" ]; then
 	echo "Zipping extension without source..."
 	run_cmd wxt zip -b firefox --no-sources
 	rm -rf .output/atbc
@@ -29,7 +29,7 @@ elif [ -z "${1:-}" ]; then
 	echo "Validating sources zip..."
 
 	SOURCES_DIR=$(mktemp -d)
-	trap 'rm -rf "$SOURCES_DIR"' EXIT
+	trap "rm -rf '${SOURCES_DIR}'" EXIT
 	mkdir -p "$SOURCES_DIR"
 	unzip -q "$SOURCES_ZIP" -d "$SOURCES_DIR"
 

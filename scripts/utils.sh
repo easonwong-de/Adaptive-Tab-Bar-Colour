@@ -119,8 +119,11 @@ convert_markdown_to_amo() {
 
 # Generate a JWT for Firefox Add-ons API authentication
 generate_amo_jwt() {
-	local issuer="${1:-${FIREFOX_JWT_ISSUER}}"
-	local secret="${2:-${FIREFOX_JWT_SECRET}}"
+	local issuer="${1:-${FIREFOX_JWT_ISSUER:-}}"
+	local secret="${2:-${FIREFOX_JWT_SECRET:-}}"
+	[ -z "$issuer" ] && print_error "Error: FIREFOX_JWT_ISSUER is required."
+	[ -z "$secret" ] && print_error "Error: FIREFOX_JWT_SECRET is required."
+
 	local header issued_at expires_at nonce payload signature
 
 	header=$(echo -n '{"alg":"HS256","typ":"JWT"}' | base64url)
