@@ -314,7 +314,7 @@ export class Preference {
 			)
 			.map(({ id, rule }) => {
 				if (rule?.type === "COLOUR" && typeof rule.value === "string") {
-					rule.value = new colour(rule.value).toHex();
+					rule.value = new Colour(rule.value).toHex();
 				}
 				return { id, rule };
 			})

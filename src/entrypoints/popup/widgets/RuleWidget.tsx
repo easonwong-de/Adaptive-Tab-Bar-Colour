@@ -162,7 +162,7 @@ function RuleControls({ pref, ruleData, metaData }: RuleControlsProps) {
 						headerType: "URL",
 						header: hostname,
 						type: "COLOUR",
-						value: new colour().random().toHex(),
+						value: new Colour().random().toHex(),
 						scheme: "both",
 					});
 				}}
@@ -183,7 +183,7 @@ function RuleControls({ pref, ruleData, metaData }: RuleControlsProps) {
 						headerType: "ADDON_ID",
 						header: webExtId,
 						type: "COLOUR",
-						value: new colour().random().toHex(),
+						value: new Colour().random().toHex(),
 						scheme: "both",
 					});
 				}}
