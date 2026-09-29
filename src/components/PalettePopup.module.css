@@ -5,11 +5,7 @@
 	flex-direction: column;
 	gap: var(--unit-12);
 	z-index: 20;
-	filter: drop-shadow(0 var(--unit) 0 var(--app-1))
-		drop-shadow(0 calc(-1 * var(--unit)) 0 var(--app-1))
-		drop-shadow(var(--unit) 0 0 var(--app-1))
-		drop-shadow(calc(-1 * var(--unit)) 0 0 var(--app-1))
-		drop-shadow(var(--shadow-small)) drop-shadow(var(--shadow-large));
+	filter: drop-shadow(var(--shadow-small)) drop-shadow(var(--shadow-large));
 	border-radius: var(--unit-16);
 	background-color: var(--panel-alt, var(--app-0));
 	padding: var(--unit-12);
@@ -93,6 +89,11 @@
 		--control: var(--app-1);
 		--control-hover: var(--app-2);
 		--control-active: var(--app-3);
+		filter: drop-shadow(0 var(--unit) 0 var(--app-1))
+			drop-shadow(0 calc(-1 * var(--unit)) 0 var(--app-1))
+			drop-shadow(var(--unit) 0 0 var(--app-1))
+			drop-shadow(calc(-1 * var(--unit)) 0 0 var(--app-1))
+			drop-shadow(var(--shadow-small)) drop-shadow(var(--shadow-large));
 	}
 
 	& > div {
