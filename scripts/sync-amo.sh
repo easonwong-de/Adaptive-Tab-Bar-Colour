@@ -48,7 +48,7 @@ sync_amo_descriptions() {
 	token=$(generate_amo_jwt)
 	description=$(build_amo_descriptions "${files[@]}")
 	response_file=$(mktemp)
-	trap 'rm -f "$response_file"' EXIT
+	trap "rm -f '${response_file}'" EXIT
 
 	while true; do
 		local body http_code

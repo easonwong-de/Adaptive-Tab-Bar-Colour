@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -euo pipefail
-source "$(dirname "$0")/utils.sh"
-cd "$(dirname "$0")/.."
+source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 # Configure git user identity for GitHub Actions bot
 setup_git_author() {
