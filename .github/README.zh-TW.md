@@ -67,7 +67,7 @@ Firefox 預設會為標題列的色彩變更套用轉場效果。若要停用此
 
 <!-- prettier-ignore-start -->
 ```css
-#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {
+body, findbar, #navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background {
 	transition:
 		background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
 		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,

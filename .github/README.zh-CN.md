@@ -67,7 +67,7 @@ Firefox 原生会为标签栏的颜色更改应用过渡效果。如果您希望
 
 <!-- prettier-ignore-start -->
 ```css
-#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {
+body, findbar, #navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background {
 	transition:
 		background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
 		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
