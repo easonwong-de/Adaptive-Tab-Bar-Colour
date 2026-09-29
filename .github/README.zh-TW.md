@@ -1,8 +1,13 @@
 <!-- amo-ignore-start -->
+<div align="center">
 
-<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/atbc-rich-icon.svg" width="120">
+<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/atbc-rich-icon.svg" width="100">
 
 <br>
+
+# 變色標題列
+
+改變 Firefox 佈景主題色彩，使之與網頁融為一體。
 
 [![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
 [![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
@@ -12,13 +17,11 @@
 
 [English](README.md) | [English (US)](README.en-US.md) | [Azərbaycan](README.az.md) | [Deutsch](README.de.md) | [Español](README.es-ES.md) | [Français](README.fr.md) | [日本語](README.ja.md) | [Português (Brasil)](README.pt-BR.md) | [Русский](README.ru.md) | [Türkçe](README.tr.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
 
-# 變色標題列
-
-改變 Firefox 佈景主題色彩，使之與網頁融為一體。
-
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
-	<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/amo-download-button.svg" width="150">
+	<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/amo-download-button.svg" width="150" alt="Get the Add-on">
 </a>
+
+</div>
 <!-- amo-ignore-end -->
 
 ## 主要功能
@@ -26,8 +29,11 @@
 此擴充套件可動態調整 Firefox 佈景主題，使之與閣下正在瀏覽的網站融為一體——正如 macOS Safari 的標題列着色功能一樣。
 
 <!-- amo-ignore-start -->
+<div align="center">
 
-<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="45%">
+<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="48%">
+
+</div>
 <!-- amo-ignore-end -->
 
 ## 和此擴充套件運作無間的有

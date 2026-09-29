@@ -1,8 +1,13 @@
 <!-- amo-ignore-start -->
+<div align="center">
 
-<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/atbc-rich-icon.svg" width="120">
+<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/atbc-rich-icon.svg" width="100">
 
 <br>
+
+# Adaptive Tab Bar Colour
+
+Muda a cor do tema do Firefox para combinar com a aparência dos sites.
 
 [![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
 [![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
@@ -12,13 +17,11 @@
 
 [English](README.md) | [English (US)](README.en-US.md) | [Azərbaycan](README.az.md) | [Deutsch](README.de.md) | [Español](README.es-ES.md) | [Français](README.fr.md) | [日本語](README.ja.md) | [Português (Brasil)](README.pt-BR.md) | [Русский](README.ru.md) | [Türkçe](README.tr.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
 
-# Adaptive Tab Bar Colour
-
-Muda a cor do tema do Firefox para combinar com a aparência dos sites.
-
 <a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
-	<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/amo-download-button.svg" width="150">
+	<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/amo-download-button.svg" width="150" alt="Get the Add-on">
 </a>
+
+</div>
 <!-- amo-ignore-end -->
 
 ## O que a extensão faz?
@@ -26,8 +29,11 @@ Muda a cor do tema do Firefox para combinar com a aparência dos sites.
 Essa extensão ajusta dinamicamente o tema do Firefox para combinar com a aparência do site que você está visualizando, similar a função de coloração das abas do macOS
 
 <!-- amo-ignore-start -->
+<div align="center">
 
-<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="45%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="45%">
+<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="48%">
+
+</div>
 <!-- amo-ignore-end -->
 
 ## Funciona bem com
