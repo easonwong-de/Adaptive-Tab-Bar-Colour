@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -euo pipefail
-source "$(dirname "$0")/utils.sh"
-cd "$(dirname "$0")/.."
+source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 # Build JSON object containing all localised AMO descriptions
 build_amo_descriptions() {
@@ -17,21 +17,23 @@ build_amo_descriptions() {
 
 # Write AMO synchronisation results table to GitHub Actions step summary
 write_step_summary() {
-	local -a files=("${!1}")
-	local -a skipped=("${!2}")
+	local skipped_str=" ${1:-} "
+	shift || true
 
 	{
 		echo "### AMO Descriptions Synchronisation"
 		echo ""
 		echo "| Locale | Status | AMO Page |"
 		echo "| :--- | :--- | :--- |"
-		for file in "${files[@]}"; do
-			local loc status="Synchronised"
+		for file in "$@"; do
+			local loc status="Synchronised" page
 			loc=$(get_locale_from_readme "$file")
-			if [[ " ${skipped[*]:-} " =~ [[:space:]]"${loc}"[[:space:]] ]]; then
+			page="[View](https://addons.mozilla.org/${loc}/firefox/addon/adaptive-tab-bar-colour/)"
+			if [[ "$skipped_str" =~ [[:space:]]"${loc}"[[:space:]] ]]; then
 				status="Skipped (unsupported)"
+				page=""
 			fi
-			echo "| \`${loc}\` | ${status} | [View](https://addons.mozilla.org/${loc}/firefox/addon/adaptive-tab-bar-colour/) |"
+			echo "| \`${loc}\` | ${status} | ${page} |"
 		done
 	} >>"$GITHUB_STEP_SUMMARY"
 }
@@ -82,7 +84,7 @@ sync_amo_descriptions() {
 	done
 
 	if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-		write_step_summary files[@] skipped_locales[@]
+		write_step_summary "${skipped_locales[*]:-}" "${files[@]}"
 	fi
 
 	print_success "Success: AMO descriptions synchronised."
