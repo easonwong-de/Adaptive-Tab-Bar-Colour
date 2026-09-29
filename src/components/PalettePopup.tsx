@@ -174,6 +174,7 @@ export default function PalettePopup({
 		pageCtxRef.current = ctx;
 		if (!ctx) return;
 		ctx.drawImage(pageImg, 0, 0);
+		pickColour(x, y, z);
 	}, [pageImg]);
 
 	return (
