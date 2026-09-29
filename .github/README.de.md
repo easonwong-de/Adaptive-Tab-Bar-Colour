@@ -67,7 +67,7 @@ Alternativ bevorzugst du vielleicht sanfte Farbübergänge für die Tableiste. D
 
 <!-- prettier-ignore-start -->
 ```css
-#navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background, findbar, body {
+body, findbar, #navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background {
 	transition:
 		background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
 		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
