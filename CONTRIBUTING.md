@@ -52,7 +52,7 @@ Rendered result:
 
 ### Store Description
 
-When adding a new language, provide a translated store description in [`amo/amo-xx.md`](amo). These files update the listing on Mozilla Add-ons and the “Details” tab in Firefox. You can also edit existing descriptions there.
+When adding a new language, provide a translated store description in [`.github/README.xx.md`](.github). These files update the listing on Mozilla Add-ons and the “Details” tab in Firefox. You can also edit existing descriptions there.
 
 ## Development
 

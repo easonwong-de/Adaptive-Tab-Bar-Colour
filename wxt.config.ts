@@ -98,9 +98,8 @@ export default defineConfig({
 		excludeSources: [
 			"tests/**",
 			"scripts/**",
-			"amo/**",
+			".github/**",
 			"prettier.config.ts",
-			"README.md",
 			"CONTRIBUTING.md",
 		],
 	},
