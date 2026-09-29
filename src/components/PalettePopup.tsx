@@ -129,7 +129,9 @@ export default function PalettePopup({
 			img.src = dataUrl;
 			img.onload = () => {
 				if (isCancelled) return;
-				setPageAspectRatio(img.naturalWidth / img.naturalHeight);
+				setPageAspectRatio(
+					Math.max(1, img.naturalWidth / img.naturalHeight),
+				);
 				setPageImg(img);
 			};
 			img.onerror = () => {
@@ -169,7 +171,7 @@ export default function PalettePopup({
 		if (!pageImg || !pageCanvasRef.current) return;
 		const canvas = pageCanvasRef.current;
 		canvas.width = pageImg.naturalWidth;
-		canvas.height = pageImg.naturalHeight;
+		canvas.height = Math.min(pageImg.naturalWidth, pageImg.naturalHeight);
 		const ctx = canvas.getContext("2d", { willReadFrequently: true });
 		pageCtxRef.current = ctx;
 		if (!ctx) return;
