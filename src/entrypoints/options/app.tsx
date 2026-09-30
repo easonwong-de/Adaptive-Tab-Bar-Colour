@@ -10,11 +10,7 @@ export default function App() {
 
 	useEffect(() => {
 		pref.initialise().then(() => {
-			document.documentElement.classList.toggle("nova", pref.nova);
 			setReady(true);
-		});
-		return pref.addOnChangeListener(() => {
-			document.documentElement.classList.toggle("nova", pref.nova);
 		});
 	}, []);
 

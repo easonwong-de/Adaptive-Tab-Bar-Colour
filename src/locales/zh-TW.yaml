@@ -19,6 +19,7 @@ confirmResetAll: 是否確定重設所有設定？
 confirmResetThemeBuilder: 是否確定重設佈景主題設定？
 couldNotFindElement: 未能找到符合
 couldNotFindElementEnd: 的網頁元件，改為使用從網頁中提取的顏色
+currentPage: 目前網頁
 delete: 刪除
 deleteRule: 刪除規則
 dynamicColourUpdate: 動態更新顏色
@@ -48,8 +49,6 @@ minimumContrastTooltip: 在此設定標題列和文字的最小對比度。若�
 moreSettings: 更多設定
 moreSettingsTooltip: 開啟設定頁
 no: 否
-novaUi: 使用 Nova UI 顏色
-novaUiTooltip: 若 Firefox 正在使用 Nova UI，請啟用此選項。
 overwriteAccentColour: 覆蓋強調色
 overwriteAccentColourTooltip: 於網址列與工具列按鈕採用自訂強調色，而非系統顏色。
 pageIsProtected: 此頁面受瀏覽器保護

@@ -451,28 +451,15 @@ function applyTheme(windowId: number, colour: Colour, scheme: Scheme): void {
 			sidebar_border: css(pref.sidebar + pref.sidebarBorder),
 			tab_line: css(pref.tabSelectedBorder + pref.tabSelected),
 			tab_selected: css(pref.tabSelected),
-			toolbar: pref.nova
-				? pref.toolbar === 0
-					? "transparent"
-					: css(pref.toolbar + pref.tabbar + 5)
-				: css(pref.toolbar),
-			toolbar_bottom_separator: pref.nova
-				? css(pref.tabbarBorder + pref.tabbar)
-				: css(pref.toolbarBorder + pref.toolbar),
-			toolbar_field: pref.nova
-				? css(pref.toolbarField + 5)
-				: css(pref.toolbarField),
-			toolbar_field_border: pref.nova
-				? css(pref.toolbarFieldBorder + pref.toolbarField + 5)
-				: css(pref.toolbarFieldBorder + pref.toolbarField),
-			toolbar_field_focus: pref.nova
-				? css(pref.toolbarFieldOnFocus + 5)
-				: css(pref.toolbarFieldOnFocus),
-			toolbar_top_separator: pref.nova
-				? pref.toolbarBorder === 0
-					? "transparent"
-					: css(pref.toolbarBorder + pref.toolbar + pref.tabbar + 5)
-				: pref.tabbarBorder === 0
+			toolbar: css(pref.toolbar),
+			toolbar_bottom_separator: css(pref.toolbarBorder + pref.toolbar),
+			toolbar_field: css(pref.toolbarField),
+			toolbar_field_border: css(
+				pref.toolbarFieldBorder + pref.toolbarField,
+			),
+			toolbar_field_focus: css(pref.toolbarFieldOnFocus),
+			toolbar_top_separator:
+				pref.tabbarBorder === 0
 					? "transparent"
 					: css(pref.tabbarBorder + pref.tabbar + 5),
 			// static

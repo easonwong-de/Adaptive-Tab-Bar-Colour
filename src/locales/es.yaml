@@ -28,6 +28,7 @@ confirmResetThemeBuilder:
 couldNotFindElement: No se pudo encontrar el elemento HTML que coincide con
 couldNotFindElementEnd:
   ", utilizando en su lugar el color extraído de la página web"
+currentPage: Página actual
 delete: Eliminar
 deleteRule: Eliminar regla
 dynamicColourUpdate: Actualización dinámica de color
@@ -71,8 +72,6 @@ minimumContrastTooltip:
 moreSettings: Más opciones
 moreSettingsTooltip: Abrir página de opciones
 no: No
-novaUi: Usar colores de Nova UI
-novaUiTooltip: Activar si Firefox está usando Nova UI.
 overwriteAccentColour: Sobrescribir color de acento
 overwriteAccentColourTooltip:
   Usar un color de énfasis personalizado en lugar del color de su sistema para

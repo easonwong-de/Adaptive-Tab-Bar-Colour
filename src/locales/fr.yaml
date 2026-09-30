@@ -27,6 +27,7 @@ confirmResetThemeBuilder:
 couldNotFindElement: N'a pas pu trouver l'élément HTML correspondant
 couldNotFindElementEnd:
   ", utilisation de la couleur extraite de la page web à la place"
+currentPage: Page actuelle
 delete: Supprimer
 deleteRule: Supprimer la règle
 dynamicColourUpdate: Mise à jour dynamique des couleurs
@@ -70,8 +71,6 @@ minimumContrastTooltip:
 moreSettings: Plus de paramètres
 moreSettingsTooltip: Ouvrir la page d'options
 no: Non
-novaUi: Utiliser les couleurs de Nova UI
-novaUiTooltip: Activer si Firefox utilise Nova UI.
 overwriteAccentColour: Remplacer la couleur d'accentuation
 overwriteAccentColourTooltip:
   Utiliser une couleur d’accentuation personnalisée au lieu de la couleur de

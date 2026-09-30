@@ -7,7 +7,7 @@
 		background-color: transparent;
 		padding: 0;
 
-		select {
+		> select {
 			width: auto;
 		}
 	}

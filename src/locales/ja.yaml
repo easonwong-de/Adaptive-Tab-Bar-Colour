@@ -19,6 +19,7 @@ confirmResetAll: すべての設定をリセットしてもよろしいですか
 confirmResetThemeBuilder: テーマビルダーをリセットしてもよろしいですか？
 couldNotFindElement: 一致する HTML 要素
 couldNotFindElementEnd: が見つかりませんでした。代わりにウェブページから取得した色を使用します
+currentPage: 現在のページ
 delete: 削除
 deleteRule: ルールを削除
 dynamicColourUpdate: 動的な色の更新
@@ -49,8 +50,6 @@ minimumContrastTooltip: タブバーとテキストの最小コントラスト�
 moreSettings: さらに設定
 moreSettingsTooltip: オプションページを開く
 no: いいえ
-novaUi: Nova UI の色を使用する
-novaUiTooltip: Firefox が Nova UI を使用している場合に有効にします。
 overwriteAccentColour: アクセントカラーを上書き
 overwriteAccentColourTooltip:
   URL
