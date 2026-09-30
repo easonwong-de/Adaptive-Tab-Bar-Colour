@@ -1,0 +1,149 @@
+<!-- amo-ignore-start -->
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/atbc-rich-icon.svg" width="100">
+
+<br>
+
+# Anpassende Tableistenfarbe
+
+Ändert die Farbe des Firefox-Themes, um dem Erscheinungsbild der Website zu entsprechen.
+
+[![Mozilla Add-on Users](https://img.shields.io/amo/users/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
+[![Mozilla Add-on Rating](https://img.shields.io/amo/stars/adaptive-tab-bar-colour)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
+[![Mozilla Add-on](https://img.shields.io/amo/v/adaptive-tab-bar-colour?color=violet&label=version)](https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/)
+[![Sponsors](https://img.shields.io/badge/sponsors-31-gold)](https://www.buymeacoffee.com/easonwong/)
+[![WXT](https://img.shields.io/badge/WXT-67D55E?logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTM1NC40MzUgNDE4LjE0MUMzODMuMjE3IDQxOC4xNDEgNDA2LjU1IDM5NC44MDggNDA2LjU1IDM2Ni4wMjZWMzEzLjkxSDQxNi4wMjZDNDQ0LjgwOCAzMTMuOTEgNDY4LjE0MSAyOTAuNTc4IDQ2OC4xNDEgMjYxLjc5NUM0NjguMTQxIDIzMy4wMTMgNDQ0LjgwOCAyMDkuNjggNDE2LjAyNiAyMDkuNjhINDA2LjU1VjE1Ny41NjVDNDA2LjU1IDEyOC43ODMgMzgzLjIxNyAxMDUuNDUgMzU0LjQzNSAxMDUuNDVIMzAyLjMyVjk1Ljk3NDVDMzAyLjMyIDY3LjE5MjEgMjc4Ljk4NyA0My44NTk0IDI1MC4yMDUgNDMuODU5NEMyMjEuNDIyIDQzLjg1OTQgMTk4LjA5IDY3LjE5MjEgMTk4LjA5IDk1Ljk3NDVWMTA1LjQ1SDE0NS45NzRDMTE3LjE5MiAxMDUuNDUgOTMuODU5NCAxMjguNzgzIDkzLjg1OTQgMTU3LjU2NVYyMDkuNjhIMTAzLjMzNUMxMzIuMTE3IDIwOS42OCAxNTUuNDUgMjMzLjAxMyAxNTUuNDUgMjYxLjc5NUMxNTUuNDUgMjkwLjU3OCAxMzIuMTE3IDMxMy45MSAxMDMuMzM1IDMxMy45MUg5My44NTk0VjQxOC4xNDFIMTk4LjA5VjQwOC42NjVDMTk4LjA5IDM3OS44ODMgMjIxLjQyMiAzNTYuNTUgMjUwLjIwNSAzNTYuNTVDMjc4Ljk4NyAzNTYuNTUgMzAyLjMyIDM3OS44ODMgMzAyLjMyIDQwOC42NjVWNDE4LjE0MUgzNTQuNDM1WiIgc3Ryb2tlPSIjNjdENTVFIiBzdHJva2Utd2lkdGg9IjQwIi8+PC9zdmc+&labelColor=grey&color=%2367D55E)](https://wxt.dev/)
+
+[English](README.md) | [English (US)](README.en-US.md) | [Azərbaycan](README.az.md) | [Deutsch](README.de.md) | [Español](README.es-ES.md) | [Français](README.fr.md) | [日本語](README.ja.md) | [Português (Brasil)](README.pt-BR.md) | [Русский](README.ru.md) | [Türkçe](README.tr.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
+
+<a href="https://addons.mozilla.org/firefox/addon/adaptive-tab-bar-colour/" target="_blank">
+	<img src="https://raw.githubusercontent.com/atbc-org/Assets/refs/heads/main/amo-download-button.svg" width="150" alt="Get the Add-on">
+</a>
+
+</div>
+<!-- amo-ignore-end -->
+
+## Was macht die Erweiterung?
+
+Diese Erweiterung passt das Theme von Firefox dynamisch an das Erscheinungsbild der von dir besuchten Website an, ähnlich wie die Tab-Leisten-Einfärbung in Safari auf macOS.
+
+<!-- amo-ignore-start -->
+<div align="center">
+
+<img src="https://addons.mozilla.org/user-media/previews/full/376/376401.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376402.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376403.png" width="48%"> <img src="https://addons.mozilla.org/user-media/previews/full/376/376404.png" width="48%">
+
+</div>
+<!-- amo-ignore-end -->
+
+## Funktioniert gut mit
+
+- [Dark Reader](https://addons.mozilla.org/firefox/addon/darkreader/)
+- [Stylus](https://addons.mozilla.org/firefox/addon/styl-us/)
+- [Dark Mode Website Switcher](https://addons.mozilla.org/firefox/addon/dark-mode-website-switcher/)
+
+## Inkompatibel mit
+
+- [Adaptive Theme Creator](https://addons.mozilla.org/firefox/addon/adaptive-theme-creator/)
+- [Chameleon Dynamic Theme](https://addons.mozilla.org/firefox/addon/chameleon-dynamic-theme-fixed/)
+- [VivaldiFox](https://addons.mozilla.org/firefox/addon/vivaldifox/)
+- [Envify](https://addons.mozilla.org/firefox/addon/envify/)
+- Jede andere Erweiterung, die das Firefox-Theme ändert
+
+## Farbübergänge anpassen
+
+Firefox wendet von Haus aus einen Übergangseffekt auf Farbänderungen der Tableiste an. Um dieses Verhalten zu deaktivieren und Anpassende Tableistenfarbe (ATBC) zu ermöglichen, Farben sofort zu aktualisieren, füge den folgenden Code zu deinem CSS-Theme hinzu:
+
+<!-- prettier-ignore-start -->
+```css
+:root {
+	--ext-theme-background-transition: none !important;
+	--inactive-window-transition: none !important;
+}
+```
+<!-- prettier-ignore-end -->
+
+Alternativ bevorzugst du vielleicht sanfte Farbübergänge für die Tableiste. Da dies aufgrund technischer Einschränkungen nicht nativ unterstützt werden kann, füge den folgenden Code zu deinem CSS-Theme hinzu (Dank an [@Moarram](https://github.com/Moarram/)):
+
+<!-- prettier-ignore-start -->
+```css
+body, findbar, #navigator-toolbox, #TabsToolbar, #nav-bar, #PersonalToolbar, #sidebar-box, .tab-background, .urlbar-background {
+	transition:
+		background-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+		border-color 0.5s cubic-bezier(0, 0, 0, 1) !important,
+		outline 0.5s cubic-bezier(0, 0, 0, 1) !important;
+}
+```
+<!-- prettier-ignore-end -->
+
+Um sanfte Farbübergänge in der Sidebery-Benutzeroberfläche zu aktivieren, füge den folgenden Code zum Sidebery Style Editor hinzu (dank an [@MaxHasBeenUsed](https://github.com/MaxHasBeenUsed/)):
+
+<!-- prettier-ignore-start -->
+```css
+.Sidebar, .bottom-space {
+	transition: background-color 0.5s cubic-bezier(0, 0, 0, 1) !important;
+}
+```
+<!-- prettier-ignore-end -->
+
+<!-- amo-ignore-start -->
+<details>
+<summary>How to apply custom CSS</summary>
+
+1. Type `about:config` in the address bar and press Enter.
+2. Search for `toolkit.legacyUserProfileCustomizations.stylesheets` and set it to `true`.
+3. Type `about:support` in the address bar.
+4. Find “Profile Folder” and click the “Show in Finder” (macOS) or “Open Folder” (Windows/Linux) button.
+5. Create a new folder named `chrome` in your profile directory.
+6. Inside the `chrome` folder, create a text file named `userChrome.css`.
+7. Paste the code above into `userChrome.css` and save the file.
+8. Restart Firefox.
+
+</details>
+<!-- amo-ignore-end -->
+
+## Anpassendes Theme in Kontextmenüs
+
+Um das anpassende Theme auf Kontextmenüs anzuwenden, füge den folgenden Code zu deinem CSS-Theme hinzu:
+
+<!-- prettier-ignore-start -->
+```css
+:is(menupopup, panel):where(:not([type="arrow"])) {
+	--panel-background-color: unset !important;
+	--panel-border-color: unset !important;
+}
+```
+<!-- prettier-ignore-end -->
+
+Zusätzlich müssen native Kontextmenüs deaktiviert werden, indem du `about:config` öffnest und die folgenden Einstellungen auf `false` setzt:
+
+- `widget.gtk.native-context-menus` (Linux)
+- `widget.macos.native-context-menus` (macOS)
+
+<!-- amo-ignore-start -->
+<details>
+<summary>How to apply custom CSS</summary>
+
+1. Type `about:config` in the address bar and press Enter.
+2. Search for `toolkit.legacyUserProfileCustomizations.stylesheets` and set it to `true`.
+3. Type `about:support` in the address bar.
+4. Find “Profile Folder” and click the “Show in Finder” (macOS) or “Open Folder” (Windows/Linux) button.
+5. Create a new folder named `chrome` in your profile directory.
+6. Inside the `chrome` folder, create a text file named `userChrome.css`.
+7. Paste the code above into `userChrome.css` and save the file.
+8. Restart Firefox.
+
+</details>
+<!-- amo-ignore-end -->
+
+## Kompatibilität mit Drittanbieter-CSS-Themes
+
+Ein Drittanbieter-CSS-Theme funktioniert mit Anpassender Tableistenfarbe (ATBC), solange sie Firefoxs Standard-Farbvariablen verwenden (z. B. `--lwt-accent-color` für die Farbe der Tableiste). [Hier](https://github.com/easonwong-de/Firefox-Simple-One-Line) ist ein Beispiel für ein ATBC-kompatibles CSS-Theme.
+
+## Titelleisten-Schaltflächen unter Linux mit GTK-Theme
+
+Die Titelleisten-Schaltflächen von Firefox könnten auf den Windows-Stil zurückgesetzt werden. Um dies zu verhindern, öffne die „Erweiterten Einstellungen“ (`about:config`) und setze `widget.gtk.non-native-titlebar-buttons.enabled` auf `false`. (Dank an [@anselstetter](https://github.com/anselstetter/))
+
+## Sicherheitserinnerung
+
+Achte auf bösartige Web-UIs. Es ist wichtig, zwischen der Browser-Benutzeroberfläche und der Web-Benutzeroberfläche zu unterscheiden. Für weitere Informationen siehe [The Line of Death](https://textslashplain.com/2017/01/14/the-line-of-death/). (Dank an [u/KazaHesto](https://www.reddit.com/user/KazaHesto/))

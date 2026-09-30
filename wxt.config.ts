@@ -97,11 +97,12 @@ export default defineConfig({
 		artifactTemplate: "atbc.zip",
 		sourcesTemplate: "atbc-sources.zip",
 		excludeSources: [
-			"amo/**",
+			".github/**",
 			"scripts/**",
 			"tests/**",
 			"CONTRIBUTING.md",
 			"README.md",
+			"prettier.config.ts",
 			"prettier.config.ts",
 			"vitest.config.ts",
 		],
